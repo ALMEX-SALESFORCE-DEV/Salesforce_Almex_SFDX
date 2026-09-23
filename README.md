@@ -1,58 +1,77 @@
-# Salesforce DX Project
+# 🌽 Salesforce ALMEX — Wiki del Proyecto
 
-Salesforce DX is a development approach that brings source-driven development, team collaboration, and continuous integration to the Salesforce Platform. Instead of working directly in an org through a web browser, you work with metadata as source files in a local DX project, track changes in version control, and deploy through automated processes.
+Repositorio de código fuente (SFDX) de la org **Almidones Mexicanos (ALMEX)**. Aquí vive todo el metadata de Salesforce: LWC, Apex, Flows, objetos, layouts, permisos, etc. Se edita en local, se versiona en Git y se despliega con la Salesforce CLI.
 
-This project template gets you started with the tools and structure you need to build Salesforce applications using source control, scratch orgs, and the Salesforce CLI.
+> **Repo:** `ALMEX-SALESFORCE-DEV/Salesforce_Almex_SFDX` (privado) · **Org:** `force-app-5145.my.salesforce.com` · **API:** 67.0
 
-## Prerequisites
+---
 
-Before you start, make sure you have:
+## 📚 Índice de la Wiki
 
-- **Salesforce CLI** - Download from [developer.salesforce.com/tools/salesforcecli](https://developer.salesforce.com/tools/salesforcecli). See [Install Salesforce CLI](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm) for details.
-- **VS Code with Salesforce Extension Pack** - See [Installation Instructions](https://developer.salesforce.com/docs/platform/sfvscode-extensions/guide/install.html) for details. Includes the Agentforce Vibes extension.
-- **A development org** - Sign up for a free Developer Edition org [here](https://developer.salesforce.com/signup).
-- **Dev Hub enabled** (optional, required to create scratch orgs) - You can enable Dev Hub in your development org under Setup > Dev Hub.  See [Provide Developers Access to Salesforce DX Tools](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_setup_dx_tools.htm).
+| Página | Contenido |
+|--------|-----------|
+| [1. Setup del entorno](docs/01-setup.md) | Instalar CLI, clonar repo, autenticar orgs |
+| [2. Git Flow y ramas](docs/02-gitflow.md) | Cómo trabajar en `dev`, PRs a `main`, protección |
+| [3. CI/CD](docs/03-cicd.md) | Workflows de GitHub Actions, secrets, despliegues |
+| [4. Estructura y orgs](docs/04-estructura.md) | Metadata, componentes LWC, orgs disponibles |
+| [5. Recetario de comandos](docs/05-comandos.md) | Comandos `sf` de uso diario |
+| [6. Troubleshooting](docs/06-troubleshooting.md) | Errores comunes y cómo resolverlos |
 
-## Project Structure
+---
 
-Your DX project follows this structure:
+## ⚡ Inicio rápido
 
-- **`force-app/main/default/`** - Your metadata source files live in this default package directory. You can configure additional package directories in the `sfdx-project.json` file.
-- **`config/`** - Scratch org definitions and project settings
-- **`scripts/`** - Automation scripts for common tasks
-- **`sfdx-project.json`** - Project manifest that defines package directories, namespace, API version, and other project-level settings
+```bash
+# 1. Clonar
+git clone https://github.com/ALMEX-SALESFORCE-DEV/Salesforce_Almex_SFDX.git
+cd Salesforce_Almex_SFDX
 
-See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm).
+# 2. Instalar dependencias
+npm install
 
-## Get Started
+# 3. Autenticar la org de producción (abre el navegador)
+sf org login web --alias ALMEX-Production --instance-url https://login.salesforce.com
 
-Ready to start developing? The [Get Started with Salesforce DX](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_get_started_dx.htm) guide walks you through your first project, from creating a scratch org to creating a simple Apex class or LWC to deploying your code to a sandbox.
+# 4. Trabajar SIEMPRE en dev
+git checkout dev
+```
 
-## Common Salesforce CLI Commands
+---
 
-Here are common CLI commands that you'll use the most:
+## 🔀 Regla de oro del flujo
 
-- `sf org login web`: Authorize an org
-- `sf org open`: Open your org in a browser
-- `sf org create scratch`: Create a scratch org
-- `sf project deploy start`: Deploy metadata to your org
-- `sf project retrieve start`: Retrieve metadata from your org
-- `sf template generate <artifact>`: Scaffold new components, such as Apex classes and triggers, LWC components, Lightning apps, and more
-- `sf apex <command>`: Run Apex tests, run anonymous Apex blocks, and view logs
-- `sf data <command>`: Work with test data
-- `sf alias <command>`: Manage org aliases
-- `sf config <command>`: Configure CLI settings
+- **El equipo commitea solo a `dev`.** Push directo permitido.
+- **`main` es producción y está protegida.** Solo se llega por **Pull Request** aprobado por **@Getsemani-Avila-Almidones**.
+- **Los despliegues a producción NO están automatizados** — se ejecutan manualmente. Ver [CI/CD](docs/03-cicd.md).
 
-## Use Agentforce Vibes to Build Lightning Apps
+```
+dev  ──commit──►  dev (remoto)  ──Pull Request──►  main (prod, requiere tu aprobación)
+```
 
-Transform your ideas into custom Lightning apps that extend CRM workflows directly in Lightning Experience. Through natural conversations with Agentforce Vibes, implement custom objects and fields, complex business logic, and dynamic UI components. See [Build a Lightning App Using Agentforce Vibes](https://developer.salesforce.com/docs/platform/einstein-for-devs/guide/lexapp-overview.html).
+---
 
-## Additional Resources
+## 🗂️ Estructura resumida
 
-- [Agentforce Vibes Developer Guide](https://developer.salesforce.com/docs/platform/einstein-for-devs/guide/einstein-overview.html)
-- [Salesforce CLI Installation Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
-- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/)
+```
+force-app/main/default/   Todo el metadata de Salesforce
+  ├── lwc/                7 componentes Lightning Web
+  ├── classes/           43 clases Apex
+  ├── triggers/          7 triggers
+  ├── flows/             73 flows
+  ├── objects/           350 objetos (estándar + custom)
+  └── ... (layouts, permissionsets, flexipages, etc.)
+.github/workflows/        CI (ci.yml) y Deploy (deploy.yml)
+.github/CODEOWNERS        Define quién aprueba PRs a main
+manifest/package.xml      Manifiesto del metadata de la org
+docs/                     Esta wiki
+```
+
+Detalle completo en [Estructura y orgs](docs/04-estructura.md).
+
+---
+
+## 🔗 Enlaces útiles
+
 - [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/)
-- [Salesforce CLI Plugin Development Guide](https://developer.salesforce.com/docs/platform/salesforce-cli-plugin/guide/conceptual-overview.html)
-- [Salesforce VS Code Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
-
+- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/)
+- [LWC Developer Guide](https://developer.salesforce.com/docs/platform/lwc/guide)
