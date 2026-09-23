@@ -1,0 +1,40 @@
+name: CI
+
+# Validacion en cada PR y push a las ramas de integracion/produccion.
+on:
+  pull_request:
+    branches: [dev, main]
+  push:
+    branches: [dev, main]
+
+jobs:
+  validate:
+    name: Lint, formato y tests unitarios
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      # Gate real: los tests unitarios deben pasar.
+      - name: Tests unitarios (Jest)
+        run: npm run test:unit
+
+      # Informativos: el repo tiene componentes legacy con violaciones
+      # preexistentes de ESLint/Prettier. Se dejan como no-bloqueantes hasta
+      # limpiarlos; entonces quitar el `continue-on-error`.
+      - name: ESLint (informativo)
+        run: npm run lint
+        continue-on-error: true
+
+      - name: Prettier (informativo)
+        run: npm run prettier:verify
+        continue-on-error: true

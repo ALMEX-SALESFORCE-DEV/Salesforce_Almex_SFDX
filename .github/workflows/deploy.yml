@@ -1,0 +1,111 @@
+name: Deploy
+
+# Solo despliega el bundle cotizadorManufacturados (flag -d). NUNCA toca otros
+# componentes de la org.
+#   - Push a dev            => deploy automatico a Sandbox.
+#   - Ejecucion manual      => deploy a Produccion (desde la rama main, con
+#                              confirmacion escribiendo "DEPLOY").
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Escribe DEPLOY para confirmar el despliegue a Produccion"
+        required: true
+        default: ""
+
+env:
+  DEPLOY_PATH: force-app/main/default/lwc/cotizadorManufacturados
+
+jobs:
+  sandbox:
+    name: Deploy a Sandbox
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      # Si el secret no esta configurado, el job queda verde y solo avisa.
+      - name: Verificar credenciales
+        id: guard
+        run: |
+          if [ -z "${{ secrets.SF_AUTH_URL_SANDBOX }}" ]; then
+            echo "::warning::SF_AUTH_URL_SANDBOX no configurado; se omite el deploy."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Instalar dependencias
+        if: steps.guard.outputs.ready == 'true'
+        run: npm ci
+
+      - name: Tests unitarios (gate)
+        if: steps.guard.outputs.ready == 'true'
+        run: npm run test:unit
+
+      - name: Instalar Salesforce CLI
+        if: steps.guard.outputs.ready == 'true'
+        run: |
+          curl -fsSL https://developer.salesforce.com/media/salesforce-cli/sf/channels/stable/sf-linux-x64.tar.xz | tar xJ -C "$HOME"
+          echo "$HOME/sf/bin" >> "$GITHUB_PATH"
+
+      - name: Autenticar Sandbox (SFDX Auth URL)
+        if: steps.guard.outputs.ready == 'true'
+        run: |
+          printf '%s' "${{ secrets.SF_AUTH_URL_SANDBOX }}" > "$RUNNER_TEMP/sfauth"
+          sf org login sfdx-url --sfdx-url-file "$RUNNER_TEMP/sfauth" --alias sandbox --set-default
+          rm -f "$RUNNER_TEMP/sfauth"
+
+      - name: Deploy (solo cotizadorManufacturados)
+        if: steps.guard.outputs.ready == 'true'
+        run: sf project deploy start -d "$DEPLOY_PATH" -o sandbox
+
+  prod:
+    name: Deploy a Produccion (manual)
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.confirm == 'DEPLOY'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Verificar credenciales
+        id: guard
+        run: |
+          if [ -z "${{ secrets.SF_AUTH_URL_PROD }}" ]; then
+            echo "::error::SF_AUTH_URL_PROD no configurado; no se puede desplegar a Produccion."
+            exit 1
+          fi
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Tests unitarios (gate)
+        run: npm run test:unit
+
+      - name: Instalar Salesforce CLI
+        run: |
+          curl -fsSL https://developer.salesforce.com/media/salesforce-cli/sf/channels/stable/sf-linux-x64.tar.xz | tar xJ -C "$HOME"
+          echo "$HOME/sf/bin" >> "$GITHUB_PATH"
+
+      - name: Autenticar Produccion (SFDX Auth URL)
+        run: |
+          printf '%s' "${{ secrets.SF_AUTH_URL_PROD }}" > "$RUNNER_TEMP/sfauth"
+          sf org login sfdx-url --sfdx-url-file "$RUNNER_TEMP/sfauth" --alias prod --set-default
+          rm -f "$RUNNER_TEMP/sfauth"
+
+      - name: Validar (dry-run, solo cotizadorManufacturados)
+        run: sf project deploy start -d "$DEPLOY_PATH" -o prod --dry-run
+
+      - name: Deploy a Produccion (solo cotizadorManufacturados)
+        run: sf project deploy start -d "$DEPLOY_PATH" -o prod
