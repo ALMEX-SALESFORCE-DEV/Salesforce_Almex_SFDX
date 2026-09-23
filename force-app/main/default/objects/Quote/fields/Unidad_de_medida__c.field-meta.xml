@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Unidad_de_medida__c</fullName>
+    <label>Unidad de medida</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>mt</fullName>
+                <default>false</default>
+                <label>Toneladas</label>
+            </value>
+            <value>
+                <fullName>kg</fullName>
+                <default>false</default>
+                <label>Kilogramos</label>
+            </value>
+            <value>
+                <fullName>Litro</fullName>
+                <default>false</default>
+                <label>Litros</label>
+            </value>
+            <value>
+                <fullName>Pza</fullName>
+                <default>false</default>
+                <label>Piezas</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

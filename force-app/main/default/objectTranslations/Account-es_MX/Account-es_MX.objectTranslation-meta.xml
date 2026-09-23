@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <layouts>
+        <layout>Account Layout</layout>
+        <sections>
+            <label><!-- Account Summary --></label>
+            <section>Account Summary</section>
+        </sections>
+        <sections>
+            <label><!-- Estatus del cliente --></label>
+            <section>Estatus del cliente</section>
+        </sections>
+        <sections>
+            <label><!-- Información adicional --></label>
+            <section>Información adicional</section>
+        </sections>
+        <sections>
+            <label><!-- Información financiera --></label>
+            <section>Información financiera</section>
+        </sections>
+        <sections>
+            <label><!-- Market Share --></label>
+            <section>Market Share</section>
+        </sections>
+    </layouts>
+    <validationRules>
+        <errorMessage><!-- El campo RFC debe contener exactamente 13 caracteres. --></errorMessage>
+        <name>RV_01_RFC</name>
+    </validationRules>
+    <webLinks>
+        <label><!-- GoogleMaps --></label>
+        <name>GoogleMaps</name>
+    </webLinks>
+    <webLinks>
+        <label><!-- GoogleNews --></label>
+        <name>GoogleNews</name>
+    </webLinks>
+    <webLinks>
+        <label><!-- GoogleSearch --></label>
+        <name>GoogleSearch</name>
+    </webLinks>
+</CustomObjectTranslation>

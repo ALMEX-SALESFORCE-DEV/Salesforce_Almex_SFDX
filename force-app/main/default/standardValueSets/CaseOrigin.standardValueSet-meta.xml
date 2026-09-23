@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>Email</fullName>
+        <default>false</default>
+        <label>Email</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Formulario web</fullName>
+        <default>false</default>
+        <label>Formulario web</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Comunidades</fullName>
+        <default>false</default>
+        <label>Comunidades</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Chatbot</fullName>
+        <default>false</default>
+        <label>Chatbot</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Otro</fullName>
+        <default>false</default>
+        <label>Otro</label>
+    </standardValue>
+</StandardValueSet>

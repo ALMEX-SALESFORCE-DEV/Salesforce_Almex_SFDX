@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Credito_de_cuenta</fullName>
+        <description>Credito de cuenta</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>desarrollo.almex@etcloudmx.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>unfiled$public/Plantilla_cuenta_credito</template>
+    </alerts>
+</Workflow>

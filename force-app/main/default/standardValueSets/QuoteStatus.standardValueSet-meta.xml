@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>Cedula de cotizacion</fullName>
+        <default>true</default>
+        <label>Cedula de cotizacion</label>
+        <allowEmail>true</allowEmail>
+    </standardValue>
+    <standardValue>
+        <fullName>Autorizacion y aviso a personal</fullName>
+        <default>false</default>
+        <label>Autorizacion y aviso a personal</label>
+        <allowEmail>true</allowEmail>
+    </standardValue>
+    <standardValue>
+        <fullName>Aprobado</fullName>
+        <default>false</default>
+        <label>Aprobado</label>
+        <allowEmail>true</allowEmail>
+    </standardValue>
+    <standardValue>
+        <fullName>Rechazado</fullName>
+        <default>false</default>
+        <label>Rechazado</label>
+        <allowEmail>true</allowEmail>
+    </standardValue>
+</StandardValueSet>

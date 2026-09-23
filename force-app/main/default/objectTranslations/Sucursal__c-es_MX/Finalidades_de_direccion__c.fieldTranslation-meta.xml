@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label><!-- Finalidades de dirección --></label>
+    <name>Finalidades_de_direccion__c</name>
+    <picklistValues>
+        <masterLabel>DESTINO DE ENVIO</masterLabel>
+        <translation><!-- DESTINO DE ENVIO --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>DESTINO DE FACTURACION</masterLabel>
+        <translation><!-- DESTINO DE FACTURACION --></translation>
+    </picklistValues>
+</CustomFieldTranslation>

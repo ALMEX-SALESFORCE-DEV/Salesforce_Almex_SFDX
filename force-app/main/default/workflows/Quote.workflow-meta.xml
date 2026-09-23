@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Actualizacion_estado</fullName>
+        <field>Status</field>
+        <literalValue>Aprobado</literalValue>
+        <name>Actualizacion estado</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Actualizacion_estado_rechazado</fullName>
+        <field>Status</field>
+        <literalValue>Rechazado</literalValue>
+        <name>Actualizacion estado rechazado</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Actualizar_bandera</fullName>
+        <field>Bandera_aprobado__c</field>
+        <literalValue>1</literalValue>
+        <name>Actualizar bandera</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Primer_estado_de_cotizaci_n</fullName>
+        <field>Status</field>
+        <literalValue>Cedula de cotizacion</literalValue>
+        <name>Primer estado de cotización</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Update_Stage_Quote</fullName>
+        <field>Status</field>
+        <literalValue>Aprobado</literalValue>
+        <name>Update Stage Quote</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+</Workflow>

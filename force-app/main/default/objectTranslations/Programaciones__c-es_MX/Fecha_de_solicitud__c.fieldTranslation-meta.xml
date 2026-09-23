@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <help><!-- Agrega una fecha posterior a 72 horas o 3 días --></help>
+    <label><!-- Fecha de solicitud --></label>
+    <name>Fecha_de_solicitud__c</name>
+</CustomFieldTranslation>

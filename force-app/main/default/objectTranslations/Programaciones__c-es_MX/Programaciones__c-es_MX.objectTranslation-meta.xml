@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Programación</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Programaciones</value>
+    </caseValues>
+    <gender>Feminine</gender>
+    <layouts>
+        <layout>Formato Programación</layout>
+        <sections>
+            <label><!-- Vínculos personalizados --></label>
+            <section>Vínculos personalizados</section>
+        </sections>
+    </layouts>
+    <validationRules>
+        <errorMessage><!-- No es posible desactivar esta casilla --></errorMessage>
+        <name>No_poder_desactivar_una_programacion</name>
+    </validationRules>
+    <validationRules>
+        <errorMessage><!-- La fecha de programación no es valida --></errorMessage>
+        <name>No_poder_programar_dentro_de_72_hrs</name>
+    </validationRules>
+</CustomObjectTranslation>

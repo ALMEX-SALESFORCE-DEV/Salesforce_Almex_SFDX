@@ -1,0 +1,5 @@
+Buen día
+
+Se notifica que acaba de crearse un prospecto en nuestra plataforma de salesforce. 
+Echa un vistazo al registro. 
+{!Lead.Link}

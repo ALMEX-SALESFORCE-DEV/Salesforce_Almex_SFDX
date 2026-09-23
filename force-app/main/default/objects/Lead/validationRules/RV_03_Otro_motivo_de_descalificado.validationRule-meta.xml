@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RV_03_Otro_motivo_de_descalificado</fullName>
+    <active>true</active>
+    <description>Si selecciona otro en el motivo de descalificado, sera necesario llenar el campo &quot;otro motivo de descalificado&quot;</description>
+    <errorConditionFormula>AND(
+    ISPICKVAL(Motivo_de_descalificaci_n__c, &quot;Otro&quot;),  
+     ISBLANK(Otro_motivo_de_descalificacion__c)
+)</errorConditionFormula>
+    <errorMessage>Si selecciona &quot;Otro&quot; como Motivo de Descalificación, debe proporcionar una razón en el campo &quot;Otro motivo de descalificación&quot;.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Formato_compacto_Linea_pedido</fullName>
+    <fields>OrderNumber</fields>
+    <fields>EffectiveDate</fields>
+    <fields>Linea_de_pedido__c</fields>
+    <fields>AccountId</fields>
+    <fields>SalesAgreementId</fields>
+    <fields>Status</fields>
+    <fields>Cantidad_programada__c</fields>
+    <fields>TotalAmount</fields>
+    <label>Formato compacto Linea pedido</label>
+</CompactLayout>

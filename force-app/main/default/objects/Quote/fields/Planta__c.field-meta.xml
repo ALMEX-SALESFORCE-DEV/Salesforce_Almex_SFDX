@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Planta__c</fullName>
+    <label>Planta</label>
+    <required>false</required>
+    <trackFeedHistory>true</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>customer-plant</fullName>
+                <default>false</default>
+                <label>Customer plant</label>
+            </value>
+            <value>
+                <fullName>almex-plant</fullName>
+                <default>false</default>
+                <label>Almex Plant</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

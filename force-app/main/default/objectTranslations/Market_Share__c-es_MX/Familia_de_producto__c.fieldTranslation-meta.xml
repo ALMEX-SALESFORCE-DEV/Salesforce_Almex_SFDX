@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label><!-- Familia de producto --></label>
+    <name>Familia_de_producto__c</name>
+    <picklistValues>
+        <masterLabel>Aceite</masterLabel>
+        <translation><!-- Aceite --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Alcohol</masterLabel>
+        <translation><!-- Alcohol --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Almidón</masterLabel>
+        <translation><!-- Almidón --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Dextrosa</masterLabel>
+        <translation><!-- Dextrosa --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Fructosa 42</masterLabel>
+        <translation><!-- Fructosa 42 --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Fructosa 55</masterLabel>
+        <translation><!-- Fructosa 55 --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Glucosa</masterLabel>
+        <translation><!-- Glucosa --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Glucosa 43/44</masterLabel>
+        <translation><!-- Glucosa 43/44 --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Glucosa 63</masterLabel>
+        <translation><!-- Glucosa 63 --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Gluten de maíz</masterLabel>
+        <translation><!-- Gluten de maíz --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Krystar</masterLabel>
+        <translation><!-- Krystar --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Maltosa</masterLabel>
+        <translation><!-- Maltosa --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Pasta de germen</masterLabel>
+        <translation><!-- Pasta de germen --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Salvado de maíz</masterLabel>
+        <translation><!-- Salvado de maíz --></translation>
+    </picklistValues>
+</CustomFieldTranslation>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ShouldUserSpecPlnQuantity</fullName>
+    <inlineHelpText>Selecting the checkbox lets the user specify the planned quantity for products in the sales agreement. To distribute the initial planned quantity across all schedules automatically, deselect the checkbox.</inlineHelpText>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+</CustomField>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label><!-- Planta --></label>
+    <name>Planta__c</name>
+    <picklistValues>
+        <masterLabel>Almex Plant</masterLabel>
+        <translation><!-- Almex Plant --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Customer plant</masterLabel>
+        <translation><!-- Customer plant --></translation>
+    </picklistValues>
+</CustomFieldTranslation>

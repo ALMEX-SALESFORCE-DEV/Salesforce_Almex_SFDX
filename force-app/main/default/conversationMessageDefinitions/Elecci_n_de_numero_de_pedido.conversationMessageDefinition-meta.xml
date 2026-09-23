@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ConversationMessageDefinition xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <constants>
+        <constantType>Title</constantType>
+        <primitiveValues>
+            <textValue>¿De que pedido deseas consultar información?</textValue>
+            <type>Text</type>
+        </primitiveValues>
+    </constants>
+    <label>Elección de numero de pedido</label>
+    <language>es_MX</language>
+    <messageLayouts>
+        <formatType>Buttons</formatType>
+        <layoutItems>
+            <collectionType>DynamicList</collectionType>
+            <compositeValues>
+                <compositeTypeName>TitleOptionItem</compositeTypeName>
+                <layoutItems>
+                    <collectionType>None</collectionType>
+                    <compositeValues>
+                        <compositeTypeName>TitleItem</compositeTypeName>
+                        <layoutItems>
+                            <collectionType>None</collectionType>
+                            <name>title</name>
+                            <primitiveValues>
+                                <fieldName>Order.OrderNumber</fieldName>
+                                <type>SourceSobjectFieldValue</type>
+                                <valueSourceReference>Parameters.RecordIdOptions.ListItem</valueSourceReference>
+                            </primitiveValues>
+                        </layoutItems>
+                    </compositeValues>
+                    <name>titleItem</name>
+                </layoutItems>
+                <valueSourceReference>Parameters.RecordIdOptions</valueSourceReference>
+            </compositeValues>
+            <name>optionItems</name>
+        </layoutItems>
+        <layoutItems>
+            <collectionType>None</collectionType>
+            <name>text</name>
+            <primitiveValues>
+                <literalValue>Selecciona el pedido que quieras consultar</literalValue>
+                <type>Literal</type>
+            </primitiveValues>
+        </layoutItems>
+        <layoutVariant xsi:nil="true"/>
+        <messageType>Choices</messageType>
+    </messageLayouts>
+    <messageLayouts>
+        <formatType>Text</formatType>
+        <layoutItems>
+            <collectionType>None</collectionType>
+            <name>text</name>
+            <primitiveValues>
+                <formulaTemplate>{!$Constants.Title}
+
+Seleccione una opción:
+
+{!$ListTemplates.OptionsList}</formulaTemplate>
+                <mergeFields>
+                    <formulaTemplate>{!$ListItem.Index}. {!$ListItem.Value.OrderNumber}{!BR()}</formulaTemplate>
+                    <mergeFieldType>ListTemplate</mergeFieldType>
+                    <name>OptionsList</name>
+                    <valueSourceReference>Parameters.RecordIdOptions</valueSourceReference>
+                </mergeFields>
+                <type>FormulaTemplate</type>
+            </primitiveValues>
+        </layoutItems>
+        <layoutVariant xsi:nil="true"/>
+        <messageType>StaticContent</messageType>
+    </messageLayouts>
+    <optionsParameter>
+        <optionsParameterType>RecordIdOptions</optionsParameterType>
+        <primitiveTypeDetails>
+            <maxListItems>5</maxListItems>
+            <sobjectType>Order</sobjectType>
+        </primitiveTypeDetails>
+    </optionsParameter>
+    <type>RecordPicker</type>
+</ConversationMessageDefinition>

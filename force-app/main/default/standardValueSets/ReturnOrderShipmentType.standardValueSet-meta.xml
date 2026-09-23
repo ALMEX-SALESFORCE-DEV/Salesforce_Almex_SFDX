@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>Estándar</fullName>
+        <default>true</default>
+        <label>Estándar</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Urgente</fullName>
+        <default>false</default>
+        <label>Urgente</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Al día siguiente</fullName>
+        <default>false</default>
+        <label>Al día siguiente</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Siguiente día hábil</fullName>
+        <default>false</default>
+        <label>Siguiente día hábil</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Recogida</fullName>
+        <default>false</default>
+        <label>Recogida</label>
+    </standardValue>
+</StandardValueSet>

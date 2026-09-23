@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Requerimientos Especiales-Z-SAC-08</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Requerimientos Especiales-Z-SAC-08</value>
+    </caseValues>
+    <gender>Feminine</gender>
+    <layouts>
+        <layout>Formato Requerimientos Especiales</layout>
+        <sections>
+            <label><!-- Datos del articulo --></label>
+            <section>Datos del articulo</section>
+        </sections>
+        <sections>
+            <label><!-- Vínculos personalizados --></label>
+            <section>Vínculos personalizados</section>
+        </sections>
+    </layouts>
+</CustomObjectTranslation>

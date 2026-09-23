@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label><!-- Mes --></label>
+    <name>Mes__c</name>
+    <picklistValues>
+        <masterLabel>Abril</masterLabel>
+        <translation><!-- Abril --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Agosto</masterLabel>
+        <translation><!-- Agosto --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Diciembre</masterLabel>
+        <translation><!-- Diciembre --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Enero</masterLabel>
+        <translation><!-- Enero --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Febrero</masterLabel>
+        <translation><!-- Febrero --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Julio</masterLabel>
+        <translation><!-- Julio --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Junio</masterLabel>
+        <translation><!-- Junio --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Marzo</masterLabel>
+        <translation><!-- Marzo --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Mayo</masterLabel>
+        <translation><!-- Mayo --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Noviembre</masterLabel>
+        <translation><!-- Noviembre --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Octubre</masterLabel>
+        <translation><!-- Octubre --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Septiembre</masterLabel>
+        <translation><!-- Septiembre --></translation>
+    </picklistValues>
+</CustomFieldTranslation>

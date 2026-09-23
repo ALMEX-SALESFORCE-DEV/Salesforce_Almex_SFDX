@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>64.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <description>Flujo que actualiza el volumen del acuerdo renovado tomando en cuenta el volumen del acuerdo origen y restandole la cantidad vendida.</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>VolumenPlanificado</name>
+        <dataType>Number</dataType>
+        <expression>{!$Record.RenewedFromAgreement.Volumen_total__c} - {!$Record.RenewedFromAgreement.Cantidad_vendida__c}</expression>
+        <scale>2</scale>
+    </formulas>
+    <interviewLabel>F-AS-ActualizarRenovado {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>F-AS-ActualizarRenovado</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Actualizar_volumen_planificado</name>
+        <label>Actualizar volumen planificado</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>InitialPlannedQtyValue</field>
+            <operator>GreaterThan</operator>
+            <value>
+                <numberValue>2.0</numberValue>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>InitialPlannedQtyValue</field>
+            <value>
+                <elementReference>VolumenPlanificado</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record.SalesAgreementProducts</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Actualizar_volumen_planificado</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>RenewedFromAgreementId</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <object>SalesAgreement</object>
+        <recordTriggerType>Create</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

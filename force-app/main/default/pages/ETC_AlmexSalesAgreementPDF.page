@@ -1,0 +1,317 @@
+<apex:page standardController="SalesAgreement" extensions="ETC_ControllerAcuertdoPdf" renderAs="advanced_pdf" showHeader="false" standardStylesheets="false" applyBodyTag="false"
+    applyHtmlTag="false">
+
+    <head>
+        <style type="text/css" media="print"> 
+            * {
+                font-size: 8pt;
+                margin: 0;
+                padding: 0;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            
+            @page {
+                margin: 3cm .5cm 2.75cm .5cm;
+                padding-top: 0px;
+                size: A4;
+                @top-center {
+                    content: element(header);
+                }
+                @bottom-center {
+                    content: element(footer);
+                }
+            }
+
+            div.header {
+                position: running(header);
+                padding: 0px;
+            }
+
+            div.footer {
+                display: block;
+                padding: 0px;
+                position: running(footer);
+            }
+            
+            h1 {
+                background-color: red
+            }
+
+            /* Textos */
+            .text-l {
+                font-size: 12pt;
+            }
+            
+            .text-ml {
+                font-size: 10pt;
+            }
+
+            .text-m {
+                font-size: 9pt;
+            }
+
+            .text-s {
+                font-size: 7pt;
+            }
+
+            .bold {
+                font-weight: bold;
+            }
+
+            .text-center {
+                text-align: center;
+            }
+            
+            .text-right {
+                text-align: right;
+            }
+
+            .underline {
+                text-decoration: underline;
+            }
+
+            /* Imagenes */
+            .logo {
+                width: 100px;
+            }
+
+            /* Table */
+            .table {
+                display: table;
+                table-layout: fixed;
+            }
+
+            .col {
+                display: table-cell;
+                /* border: 1px solid gray */
+            }
+
+            .col-middle {
+                vertical-align: middle;
+            }
+
+            .col-bottom {
+                vertical-align: bottom;
+            }
+
+            .w-125 {
+                width: 125px;
+            }
+
+            .w-75 {
+                width: 75px;
+            }
+            
+            .w-100 {
+                width: 100px;
+            }
+
+            .h-75 {
+                height: 75px;
+            }
+
+            .h-100 {
+                height: 100px;
+            }
+
+            .w-full {
+                width: 100%;
+            }
+
+            /* Spacing */
+            .mt-1 {
+                margin-top: 1em;
+            }
+            
+            .mt-05 {
+                margin-top: .5em;
+            }
+
+            .my-1 {
+                margin: 1em 0;
+            }
+
+            .my-05 {
+                margin: .5em 0;
+            }
+
+            .p-05 {
+                padding: .5em;
+            }
+
+            .p-1 {
+                padding: 1em;
+            }
+
+            .sign {
+                height: 80px;
+                vertical-align: bottom;
+            }
+
+            .sign-line {
+                border-bottom: 1px solid black;
+                margin: 0 3em;
+            }
+
+            /* Colors */
+            .bg-gray {
+                background-color: #bfbfbf;
+            }
+
+            .bg-lgray {
+                background-color: #d9d9d9;
+                padding: .4em;
+            }
+
+            .bg-green {
+                background-color: #00b050;
+            }
+
+            .bg-red {
+                background-color: #ff5152;
+                color: white
+            }
+
+            /* custom */
+            .product-table .col {
+                border: 1px solid #bfbfbf;
+                text-align: center;
+                vertical-align: middle;
+            }
+
+            ol {
+                list-style: none;
+                counter-reset: list-counter;
+            }
+
+            ol li {
+                counter-increment: list-counter;
+                margin-bottom: 5px;
+            }
+
+            ol li::before {
+                content: counter(list-counter) ")  ";
+                /* font-weight: bold; */
+            }
+        </style>
+    </head>
+
+    <div class="header">
+        <div class="table">
+            <div class="col col-middle">
+                <p>N° de Acuerdo de Suministro</p>
+                <p class="bold text-m">{!sa.Folio__c}</p>
+            </div>
+            <div class="col col-middle text-center text-ml bold">ACUERDO DE SUMINISTRO</div>
+            <div class="col text-right col-middle">
+                <apex:image url="{!URLFOR($Resource.logosPDF,'logo-almex.png')}" styleClass="logo"/>
+            </div>
+        </div>
+        <!-- <apex:image url="{!URLFOR($Resource.logosPDF,'logo-promer.jpg')}" styleClass="logo"/> -->
+    </div>
+
+    <div class="footer">
+        <div>
+            <p class="text-center bold">Almidones Mexicanos, S.A de C.V.</p>
+            <p class="text-center">Calle 26 No. 2756 Zona Industrial, C.P.44940, Guadalajara, Jalisco.</p>
+            <p class="text-center">Tel: (33) 36 68 45 00.</p>
+            <p class="text-center bold">www.almidones.com.mx</p>
+            <p class="text-center text-s" style="color: gray;">“ALMEX da a conocer al Cliente su Código de Conducta como parte de su estándar ético de cierre de negocios, el cual puede ser consultado en <a href="www.almidones.com.mx">www.almidones.com.mx</a>”</p>
+            <div class="bg-red mt-05" style="height: 8px"></div>
+            <div class="bg-gray" style="height: 8px; margin-top: 2px"></div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="table">
+            <div class="col">
+                <p class="bold">{!sa.Account.Raz_n_social__c}</p>
+                <p>{!sa.Account.Representante_legal__c}</p>
+                <p>Puesto del representante</p>
+            </div>
+            <div class="col col-bottom text-right">Guadalajara, Jal., a {!today}</div>
+        </div>
+
+        <p class="mt-05">Estimado/a {!sa.Account.Representante_legal__c}:</p>
+
+        <p class="my-05">Le presentamos a usted los términos y condiciones para formalizar nuestro acuerdo de suministro (<b>AS</b>) de <b>{!q.Opportunity.Producto__r.Name}</b> confirmado el pasado <b><apex:outputText value="{0,date,dd'/'MM'/'yyyy}"><apex:param value="{!today()}" /></apex:outputText></b> por <b>{!sa.Account.Raz_n_social__c}</b> (<b>Cliente</b>) a Almidones Mexicanos, S.A. de C.V. (<b>ALMEX</b>), por un volumen de <b>{!TEXT(q.Total_de_volumen__c)} {!q.Unidad_de_medida__c}</b> base comercial con embarques mensuales aproximados de <b>{!TRUNC(tonsPerMonth, 3)} {!q.Unidad_de_medida__c}</b> según se disponga en el programa de entregas que envíe el Cliente a <b>ALMEX</b>. Lo anterior alineado al siguiente acuerdo:</p>
+
+        <div class="table product-table">
+            <div class="table">
+                <div class="col bold bg-lgray">PRODUCTO</div>
+                <div class="col bold bg-lgray">VOLUMEN CONTRATADO (MT)</div>
+                <div class="col bold bg-lgray">VIGENCIA DE AS</div>
+                <div class="col bold bg-lgray">LUGAR DE ENTREGA (Destino)</div>
+                <div class="col bold bg-lgray" style="width: 192px;">TIPO DE EMBARQUE</div>
+                <!-- <div class="col bold bg-lgray">FLETE</div> -->
+                <div class="col bold bg-lgray">PRECIO TOTAL ENTREGADO US$ (MT)</div>
+            </div>
+            <apex:repeat var="i" value="{!q.QuoteLineItems}">
+                <div class="table">
+                    <div class="col"><b>{!q.Opportunity.Producto__r.Name}</b></div>
+                    <div class="col"><b>{!i.Volumen__c}</b></div>
+                    <div class="col">
+                        <b>{!initDate}</b> &nbsp;a &nbsp;<b>{!endDate}</b>
+                    </div>
+                    <div class="col"><b>{!i.Customer_Site_Name__r.Ciudad__c}</b></div>
+                    <div class="col" style="width: 200px;">
+                        <b><apex:outputText value="{!if(i.Transportation_Method__c != null, i.Transportation_Method__c, 'NA')}"/> &nbsp; <apex:outputText value="{!if(ISBLANK(i.Tons__c), i.Month_Volume__c, i.Tons__c)}"/>T</b>
+                    </div>
+                    <!-- <div class="col"><b>{!i.Flete_de_Salida_a_Cliente_OUTBOUND__c}</b></div> -->
+                    <div class="col"><b>{!i.Precio_facturado__c}</b></div>
+                </div>
+            </apex:repeat>
+        </div>
+
+        <p class="underline mt-05">Condiciones Generales de Venta:</p>
+
+        <div class="my-05">
+            <ol>
+                <li>El Cliente enviará firmado el <b>AS</b> a <b>ALMEX</b>, a efecto de que inicie el procedimiento correspondiente para la entrega del Producto.</li>
+                <li>El precio entregado corresponde al término de entrega DAP / CIF / EXW   en los destinos que se indican, con un precio a facturar al momento de la entrega del Producto; al monto del precio entregado se le deberá de adicionar el 16% del Impuesto al Valor Agregado (IVA) o el que corresponda conforme a la legislación fiscal aplicable.</li>
+                <li>La vigencia del presente <b>AS</b> será del&nbsp;<apex:outputText value="{0,date,dd'/'MM'/'yyyy}"><apex:param value="{!q.Fecha_de_inicio__c}" /></apex:outputText>&nbsp;a&nbsp;<apex:outputText value="{0,date,dd'/'MM'/'yyyy}"><apex:param value="{!q.ExpirationDate}" /></apex:outputText>.
+                </li>
+                <li>Los montos de los fletes considerados en el precio de entrega son determinados a la fecha de la firma del correspondiente <b>AS</b>. Cualquier incremento al combustible superior al 5%, requerirá de un ajuste al precio.</li>
+                <li>El Producto se facturará tomando como base el volumen indicado en la báscula <b>ALMEX</b> con una tolerancia de <b>+/- {!tolerance} al millar</b> versus báscula del Cliente. Será responsabilidad del Cliente verificar que el volumen entregado sea el mismo que se indica en la orden de embarque <b>ALMEX</b>. Toda diferencia deberá de ser notificada por escrito a la brevedad posible a <b>ALMEX</b>.</li>
+                <li>El Cliente deberá de pagar el monto de la factura correspondiente dentro de un plazo de {!sa.Account.Condicion_de_pago__c} días naturales siguientes a la fecha de recepción del Producto. El pago podrá realizarse en dólares americanos (US$) o en Moneda Nacional (MN); en caso de realizarse en MN, se aplicará el tipo de cambio publicado en el Diario Oficial de la Federación a la fecha de pago de la factura.</li>
+                <li>El Producto será embarcado de acuerdo al programa de entregas que entregue el Cliente a <b>ALMEX</b> con cuando menos de <b>7 días</b> de anticipación a la fecha programada de entrega por parte del Cliente. </li>
+                <li>En caso de interferencia y/o nuevas disposiciones del Gobierno Federal y/o local (por ejemplo: barreras arancelarias y no arancelarias, cuotas compensatorias u otros) que perjudique la viabilidad económica de este <b>AS</b>, las partes conjuntamente tendrán la opción de negociarlo para reflejar los cambios necesarios y en caso de no llegar a un acuerdo, podrán cancelarlo. </li>
+                <li>Las causas de fuerza mayor o caso fortuito serán tratadas de acuerdo con las leyes vigentes. Caso fortuito o de fuerza mayor incluirá, en forma enunciativa y no limitativa, los siguientes eventos: (i) catástrofes naturales entendidas como desgracias de causa natural que escapan al control humano, tales como tormentas, inundaciones, rayos, incendios y terremotos; (ii) guerras, disturbios civiles, revueltas, actos de terrorismo, bloqueos, motines, insurrecciones, sabotaje; (iii) desastres de transportación, ya sean marítimos, ferroviarios, terrestres o aéreos, así como embargos al ferrocarril en los Estados Unidos de América o los Estados Unidos Mexicanos; (iv) huelgas, paros u otras disputas laborales en México que no sean motivadas por el incumplimiento de algún contrato laboral por la parte afectada; (v) cierres fronterizos por flujos migratorios.</li>
+                <li>El tiempo de descarga en el lugar destino es de 6 horas a partir del horario en que se solicitó la recepción de Producto. En caso de rebasar las 6 horas convenidas, se procederá con el cobro de demoras a un costo de $1,000.00 pesos MN por hora extra más IVA. </li>
+                <li>En caso de cualquier incumplimiento al <b>AS</b>, la parte que lo cause deberá de pagar a la otra parte el costo por daños y perjuicios, pudiendo las partes reunirse con la intención de encontrar una solución al respecto.</li>
+                <li><b>ALMEX</b> y el Cliente acuerdan que en caso de surgir cualquier diferencia, controversia o reclamación resultante o relativa a este <b>AS</b>, se resolverá mediante arbitraje de conformidad con el Reglamento de Arbitraje de la Cámara Nacional de Comercio de la Ciudad de México. El arbitraje será resuelto por un árbitro; la sede del arbitraje será la Ciudad de Guadalajara, Jalisco; el idioma el español y el derecho aplicable, el Código de Comercio.</li>
+            </ol>
+        </div>
+
+        <p><b>ALMEX</b> y el Cliente, se obligan a dar cumplimiento a los términos y condiciones del presente <b>AS</b>, para lo cual firman por conducto de sus representantes legales, el {!today}.</p>
+
+        <div class="table mt-1">
+            <div class="col text-center bold sign">
+                <p class="sign-line"></p>
+                <p style="vertical-align:middle; min-height: 16px;">{!q.Opportunity.Owner.Name}</p>
+                <p>Ejecutivo de Ventas</p>
+                <p>Almidones Mexicanos, S.A. de C.V.</p>
+            </div>
+            <div class="col text-center bold sign">
+                <p class="sign-line"></p>
+                <p style="vertical-align:middle; min-height: 16px;">{!IF(ISBLANK(sa.Account.Representante_legal__c),' ', sa.Account.Representante_legal__c)}</p>
+                <!-- <p>&#8203;</p> -->
+                <p>Representante del cliente</p>
+                <p>&#8203;</p>
+            </div>
+        </div>
+
+        <div class="table mt-05">
+            <div class="col text-center bold sign">
+                <p class="sign-line"></p>
+                <p>Gerente Comercial / Luis Casillas</p>
+                <p>Almidones Mexicanos, S.A. de C.V.</p>
+            </div>
+            <div class="col text-center bold sign">
+                <p class="sign-line"></p>
+                <p>Representante del cliente</p>
+                <p>&#8203;</p>
+            </div>
+        </div>
+    </div>
+</apex:page>

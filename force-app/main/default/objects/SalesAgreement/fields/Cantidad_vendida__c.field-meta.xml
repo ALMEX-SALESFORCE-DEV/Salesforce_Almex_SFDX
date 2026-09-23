@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cantidad_vendida__c</fullName>
+    <label>Cantidad vendida</label>
+    <summarizedField>SalesAgreementProduct.TotalActualQuantityValue</summarizedField>
+    <summaryForeignKey>SalesAgreementProduct.SalesAgreementId</summaryForeignKey>
+    <summaryOperation>sum</summaryOperation>
+    <trackHistory>false</trackHistory>
+    <type>Summary</type>
+</CustomField>

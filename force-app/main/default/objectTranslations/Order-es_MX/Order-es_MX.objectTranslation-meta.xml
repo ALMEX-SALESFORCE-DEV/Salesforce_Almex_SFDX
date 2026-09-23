@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Línea de pedido</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Líneas de pedidos</value>
+    </caseValues>
+    <gender>Masculine</gender>
+    <layouts>
+        <layout>Order Layout</layout>
+        <sections>
+            <label><!-- Datos cliente --></label>
+            <section>Datos cliente</section>
+        </sections>
+        <sections>
+            <label><!-- ORACLE --></label>
+            <section>ORACLE</section>
+        </sections>
+    </layouts>
+</CustomObjectTranslation>

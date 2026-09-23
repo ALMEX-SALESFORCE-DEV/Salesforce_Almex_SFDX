@@ -1,0 +1,5 @@
+Buen día, se notifica que se ha creado un acuerdo de suministro con los siguientes datos:
+
+Fecha inicio: {!SalesAgreement.StartDate}
+Fecha de finalización: {!SalesAgreement.EndDate}
+Volumen total planificado: {!SalesAgreement.Volumen_total__c} {!SalesAgreement.Unidad_de_medida__c}

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DiscountPercentage</fullName>
+    <inlineHelpText>The discount percentage applies to the sales price for this product.</inlineHelpText>
+    <trackHistory>false</trackHistory>
+</CustomField>

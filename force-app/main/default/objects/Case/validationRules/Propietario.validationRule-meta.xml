@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Propietario</fullName>
+    <active>false</active>
+    <errorConditionFormula>IF( AND(OwnerId =  Owner:User.Id,
+        TEXT( Origin ) = &apos;Whatsapp&apos;,
+        TEXT(  Type  ) = &apos;Cotización&apos;),
+    OwnerId = &apos;3D00GDy000002ohMv&apos; ,
+    OwnerId = &apos;3D00GDy000002ohN5&apos;)</errorConditionFormula>
+    <errorDisplayField>OwnerId</errorDisplayField>
+    <errorMessage>El propietario tiene que ser cola de ventas</errorMessage>
+</ValidationRule>

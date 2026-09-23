@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>wsDeletePriceList</label>
+    <protected>false</protected>
+    <values>
+        <field>auth_type__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>client_id__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>client_secret__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>grant_type__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>host__c</field>
+        <value xsi:type="xsd:string">https://oic-test-idichocg2yfy-ia.integration.us-ashburn-1.ocp.oraclecloud.com</value>
+    </values>
+    <values>
+        <field>method__c</field>
+        <value xsi:type="xsd:string">DELETE</value>
+    </values>
+    <values>
+        <field>path__c</field>
+        <value xsi:type="xsd:string">/ic/api/integration/v1/flows/rest/ETC_OM_PRICE_LIST/1.0/priceLists/</value>
+    </values>
+    <values>
+        <field>response__c</field>
+        <value xsi:type="xsd:string">{
+	&quot;PriceListName&quot;: &quot;300000400681062&quot;
+}</value>
+    </values>
+    <values>
+        <field>scope__c</field>
+        <value xsi:nil="true"/>
+    </values>
+</CustomMetadata>

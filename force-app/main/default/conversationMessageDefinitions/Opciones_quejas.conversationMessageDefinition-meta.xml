@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ConversationMessageDefinition xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <constants>
+        <compositeValues>
+            <constantItems>
+                <constantType>Title</constantType>
+                <primitiveValues>
+                    <textValue>Rechazo o devoluciones</textValue>
+                    <type>Text</type>
+                </primitiveValues>
+            </constantItems>
+            <identifier>b9dfb29c-df33-e4a2-c000-783125f9e0c3</identifier>
+        </compositeValues>
+        <compositeValues>
+            <constantItems>
+                <constantType>Title</constantType>
+                <primitiveValues>
+                    <textValue>Problemas con entrega</textValue>
+                    <type>Text</type>
+                </primitiveValues>
+            </constantItems>
+            <identifier>6ae9ffbe-cf9b-db03-9008-62014ea355e6</identifier>
+        </compositeValues>
+        <compositeValues>
+            <constantItems>
+                <constantType>Title</constantType>
+                <primitiveValues>
+                    <textValue>BPMs</textValue>
+                    <type>Text</type>
+                </primitiveValues>
+            </constantItems>
+            <identifier>f04a747c-d844-482f-dbe8-2ffa1715aa81</identifier>
+        </compositeValues>
+        <compositeValues>
+            <constantItems>
+                <constantType>Title</constantType>
+                <primitiveValues>
+                    <textValue>Documentación</textValue>
+                    <type>Text</type>
+                </primitiveValues>
+            </constantItems>
+            <identifier>a6c93b22-48b9-853b-44c1-cb23abd673d1</identifier>
+        </compositeValues>
+        <compositeValues>
+            <constantItems>
+                <constantType>Title</constantType>
+                <primitiveValues>
+                    <textValue>Calidad</textValue>
+                    <type>Text</type>
+                </primitiveValues>
+            </constantItems>
+            <identifier>d0833cdd-e76c-f10f-e6dc-e4a1e44b549c</identifier>
+        </compositeValues>
+        <compositeValues>
+            <constantItems>
+                <constantType>Title</constantType>
+                <primitiveValues>
+                    <textValue>Inocuidad</textValue>
+                    <type>Text</type>
+                </primitiveValues>
+            </constantItems>
+            <identifier>d89aef66-c9a8-dc1e-0096-288804f0eb51</identifier>
+        </compositeValues>
+        <constantType>Options</constantType>
+    </constants>
+    <constants>
+        <constantType>Title</constantType>
+        <primitiveValues>
+            <textValue>Por favor, selecciona el tipo de problema que quieras reportar</textValue>
+            <type>Text</type>
+        </primitiveValues>
+    </constants>
+    <label>Opciones quejas</label>
+    <language>es_MX</language>
+    <messageLayouts>
+        <formatType>Buttons</formatType>
+        <layoutItems>
+            <collectionType>DynamicList</collectionType>
+            <compositeValues>
+                <compositeTypeName>TitleOptionItem</compositeTypeName>
+                <layoutItems>
+                    <collectionType>None</collectionType>
+                    <compositeValues>
+                        <compositeTypeName>TitleItem</compositeTypeName>
+                        <layoutItems>
+                            <collectionType>None</collectionType>
+                            <name>title</name>
+                            <primitiveValues>
+                                <type>SourcePrimitiveValue</type>
+                                <valueSourceReference>Constants.Options.ListItem.Title</valueSourceReference>
+                            </primitiveValues>
+                        </layoutItems>
+                    </compositeValues>
+                    <name>titleItem</name>
+                </layoutItems>
+                <valueSourceReference>Constants.Options</valueSourceReference>
+            </compositeValues>
+            <name>optionItems</name>
+        </layoutItems>
+        <layoutItems>
+            <collectionType>None</collectionType>
+            <name>text</name>
+            <primitiveValues>
+                <literalValue>Por favor, específica el tipo de problema</literalValue>
+                <type>Literal</type>
+            </primitiveValues>
+        </layoutItems>
+        <layoutVariant xsi:nil="true"/>
+        <messageType>Choices</messageType>
+    </messageLayouts>
+    <messageLayouts>
+        <formatType>Text</formatType>
+        <layoutItems>
+            <collectionType>None</collectionType>
+            <name>text</name>
+            <primitiveValues>
+                <formulaTemplate>{!$Constants.Title}
+
+Seleccione una opción:
+
+{!$ListTemplates.OptionsList}</formulaTemplate>
+                <mergeFields>
+                    <formulaTemplate>{!$ListItem.Index}. {!$ListItem.Value.Title}{!BR()}</formulaTemplate>
+                    <mergeFieldType>ListTemplate</mergeFieldType>
+                    <name>OptionsList</name>
+                    <valueSourceReference>Constants.Options</valueSourceReference>
+                </mergeFields>
+                <type>FormulaTemplate</type>
+            </primitiveValues>
+        </layoutItems>
+        <layoutVariant xsi:nil="true"/>
+        <messageType>StaticContent</messageType>
+    </messageLayouts>
+    <type>Picklist</type>
+</ConversationMessageDefinition>

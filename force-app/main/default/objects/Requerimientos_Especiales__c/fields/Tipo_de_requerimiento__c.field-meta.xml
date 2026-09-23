@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Tipo_de_requerimiento__c</fullName>
+    <label>Tipo de requerimiento</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Calidad</fullName>
+                <default>false</default>
+                <label>Calidad</label>
+            </value>
+            <value>
+                <fullName>Días y Horarios de entrega</fullName>
+                <default>false</default>
+                <label>Días y Horarios de entrega</label>
+            </value>
+            <value>
+                <fullName>Documentación</fullName>
+                <default>false</default>
+                <label>Documentación</label>
+            </value>
+            <value>
+                <fullName>Embalajes</fullName>
+                <default>false</default>
+                <label>Embalajes</label>
+            </value>
+            <value>
+                <fullName>EPP</fullName>
+                <default>false</default>
+                <label>EPP</label>
+            </value>
+            <value>
+                <fullName>Muestras</fullName>
+                <default>false</default>
+                <label>Muestras</label>
+            </value>
+            <value>
+                <fullName>Otros</fullName>
+                <default>false</default>
+                <label>Otros</label>
+            </value>
+            <value>
+                <fullName>Unidades de Transporte</fullName>
+                <default>false</default>
+                <label>Unidades de Transporte</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

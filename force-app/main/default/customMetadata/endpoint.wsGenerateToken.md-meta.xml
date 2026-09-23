@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>wsGenerateToken</label>
+    <protected>false</protected>
+    <values>
+        <field>auth_type__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>client_id__c</field>
+        <value xsi:type="xsd:string">4d6e94af266b49e5a2b708e7f1b681a1</value>
+    </values>
+    <values>
+        <field>client_secret__c</field>
+        <value xsi:type="xsd:string">34373720-9106-48ec-9405-e201b35b9644</value>
+    </values>
+    <values>
+        <field>grant_type__c</field>
+        <value xsi:type="xsd:string">client_credentials</value>
+    </values>
+    <values>
+        <field>host__c</field>
+        <value xsi:type="xsd:string">https://idcs-296c4e00e2d1417b9d034f27474910b9.identity.oraclecloud.com:443/oauth2/v1/token</value>
+    </values>
+    <values>
+        <field>method__c</field>
+        <value xsi:type="xsd:string">POST</value>
+    </values>
+    <values>
+        <field>path__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>response__c</field>
+        <value xsi:type="xsd:string">{
+	&quot;access_token&quot;: &quot;eyJ4NXQjUzI1NiI6Ikoybi1DUzd1aFFnU2hCenlWV2xCWjE2RXE4MEU4NGsyNjhqSXhpZTlMMzQiLCJ4NXQiOiJ3OHFqbkF6YkRtSmVjM21oZjIxSzlYeGhWQWciLCJraWQiOiJTSUdOSU5HX0tFWSIsImFsZyI6IlJTMjU2In0.eyJjbGllbnRfb2NpZCI6Im9jaWQxLmRvbWFpbmFwcC5vYzEuaWFkLmFtYWFhYWFhMjR1Y2U2YWFjdW1kN25vaGdzZGdmYmZ1dzVlZ2o0aXZyNHd5dXh4enRpdTI1YjUybW4zYSIsInN1YiI6IjRkNmU5NGFmMjY2YjQ5ZTVhMmI3MDhlN2YxYjY4MWExIiwic2lkbGUiOjQ4MCwidXNlci50ZW5hbnQubmFtZSI6ImlkY3MtMjk2YzRlMDBlMmQxNDE3YjlkMDM0ZjI3NDc0OTEwYjkiLCJpc3MiOiJodHRwczpcL1wvaWRlbnRpdHkub3JhY2xlY2xvdWQuY29tXC8iLCJkb21haW5faG9tZSI6InVzLWFzaGJ1cm4tMSIsImNhX29jaWQiOiJvY2lkMS50ZW5hbmN5Lm9jMS4uYWFhYWFhYWF1cjY2dWZsaDd2dGoza3hobGM3bmJqeHBkcDJiaG5zNzYyN2FmaWdscGppNnJuZ3hjYXlxIiwiY2xpZW50X2lkIjoiNGQ2ZTk0YWYyNjZiNDllNWEyYjcwOGU3ZjFiNjgxYTEiLCJkb21haW5faWQiOiJvY2lkMS5kb21haW4ub2MxLi5hYWFhYWFhYWVoNGgzeWU1aHRrMjc2MzdiMzNldmJlc3NyZGQyM2xidjZhbXdwYWk1NXM3aGZxZ2F6Z2EiLCJzdWJfdHlwZSI6ImNsaWVudCIsInNjb3BlIjoidXJuOm9wYzpyZXNvdXJjZTpjb25zdW1lcjo6YWxsIiwiY2xpZW50X3RlbmFudG5hbWUiOiJpZGNzLTI5NmM0ZTAwZTJkMTQxN2I5ZDAzNGYyNzQ3NDkxMGI5IiwicmVnaW9uX25hbWUiOiJ1cy1hc2hidXJuLWlkY3MtMSIsImV4cCI6MTczNDQ4Njg3NywiaWF0IjoxNzM0NDgzMjc3LCJjbGllbnRfZ3VpZCI6ImIzZDNhZWFkZDI5ZjQ2N2RiOWMxYWM0MjQ0NDE4NjlkIiwiY2xpZW50X25hbWUiOiJTRkNYX0F1dGhfT0lDIiwidGVuYW50IjoiaWRjcy0yOTZjNGUwMGUyZDE0MTdiOWQwMzRmMjc0NzQ5MTBiOSIsImp0aSI6ImI2NTJjMTFhNTczNTRhODdhNWM5MTAwYjRkYzE4Y2U2IiwiZ3RwIjoiY2MiLCJvcGMiOmZhbHNlLCJzdWJfbWFwcGluZ2F0dHIiOiJ1c2VyTmFtZSIsInByaW1UZW5hbnQiOnRydWUsInRva190eXBlIjoiQVQiLCJjYV9ndWlkIjoiY2FjY3QtMGIzNDE1MjZkMDIyNDZhOWE3MGJmOTk1MjA5Nzc3MzkiLCJhdWQiOlsiaHR0cHM6XC9cL29pYy10ZXN0LWlkaWNob2NnMnlmeS1pYS5pbnRlZ3JhdGlvbi51cy1hc2hidXJuLTEub2NwLm9yYWNsZWNsb3VkLmNvbTo0NDMiLCJodHRwczpcL1wvZGVzaWduLmludGVncmF0aW9uLnVzLWFzaGJ1cm4tMS5vY3Aub3JhY2xlY2xvdWQuY29tP2ludGVncmF0aW9uSW5zdGFuY2U9b2ljLXRlc3QtaWRpY2hvY2cyeWZ5LWlhIiwiaHR0cHM6XC9cLzY4N0NEQTBBNERDODQ5RTk5RTcwNDM3Q0ExMzRBRkJFLmludGVncmF0aW9uLnVzLWFzaGJ1cm4tMS5vY3Aub3JhY2xlY2xvdWQuY29tOjQ0MyIsInVybjpvcGM6bGJhYXM6bG9naWNhbGd1aWQ9Njg3Q0RBMEE0REM4NDlFOTlFNzA0MzdDQTEzNEFGQkUiXSwiY2FfbmFtZSI6ImNhY2N0ZW16dWluZnJhIiwiZG9tYWluIjoiT3JhY2xlSWRlbnRpdHlDbG91ZFNlcnZpY2UiLCJ0ZW5hbnRfaXNzIjoiaHR0cHM6XC9cL2lkY3MtMjk2YzRlMDBlMmQxNDE3YjlkMDM0ZjI3NDc0OTEwYjkuaWRlbnRpdHkub3JhY2xlY2xvdWQuY29tOjQ0MyIsInJlc291cmNlX2FwcF9pZCI6Ijg2MjlhZGIzYjA0ZTQ1NDFhNmZkMjZlMWU1ZTIwZmU2In0.CKZUGCWLZqi_zaIZJqmxAamBDlW7SMCU63ziWzrnMxBN-VJGr2wNcN6QaMdjcKZLVXuE8jClNUfZ1DFR0VQWGu1VjRAPZ26WR6CCPKkg_BzXawddS4zzZvFB7W9VCvdKaEK4s1Bd0ieWi7V_80WRVOddAJimU2qeVPkabIledDjEC4hFAG2jDi3q7ENd3d_MTkU9ots-mh8pR8qKWV6r2qBNAkCXBKbdRgUXqdLaKHFlS83wQPReQE9KsYq3Ob8GIOeA5ezy6Kl6HkOdNCsqttcGRb22ozt74s5nbOv60S214VQHB_VCuoUmsXR0VBajbPHDJFZtuM5eQG_BfJvRZA&quot;,
+	&quot;token_type&quot;: &quot;Bearer&quot;,
+	&quot;expires_in&quot;: 3600
+}</value>
+    </values>
+    <values>
+        <field>scope__c</field>
+        <value xsi:type="xsd:string">https://687CDA0A4DC849E99E70437CA134AFBE.integration.us-ashburn-1.ocp.oraclecloud.com:443urn:opc:resource:consumer::all</value>
+    </values>
+</CustomMetadata>

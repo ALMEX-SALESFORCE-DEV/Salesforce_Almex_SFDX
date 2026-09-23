@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label><!-- Total precio entregado con cliente --></label>
+    <name>Total_precio_entregado_con_cliente__c</name>
+</CustomFieldTranslation>

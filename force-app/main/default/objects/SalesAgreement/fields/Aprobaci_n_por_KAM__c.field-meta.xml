@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Aprobaci_n_por_KAM__c</fullName>
+    <formula>OwnerId =  KAM__r.Id</formula>
+    <label>Aprobación por KAM</label>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,0 +1,3 @@
+Buen día, se le notifica que el acuerdo de suministro de nombre {!SalesAgreement.Name} Esta a punto de vencer en los próximos 60 días con un consumo de {!SalesAgreement.Porcentaje_de_cumplimiento__c}
+
+Echa un vistazo al registro en el siguiente link {!SalesAgreement.Link}

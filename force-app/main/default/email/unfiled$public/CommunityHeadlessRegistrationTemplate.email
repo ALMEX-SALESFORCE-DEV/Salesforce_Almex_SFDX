@@ -1,0 +1,7 @@
+Hola, {!HeadlessAuth.FirstName} {!HeadlessAuth.LastName},
+
+            Para confirmar su registro como {!HeadlessAuth.Username} en {!Community.Name},
+
+            verifiquemos su identidad. Ingrese esta contraseña simultánea donde se le solicite.
+
+            Contraseña: {!Verification.Code}

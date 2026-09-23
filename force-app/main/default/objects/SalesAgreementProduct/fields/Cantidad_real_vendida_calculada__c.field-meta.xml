@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cantidad_real_vendida_calculada__c</fullName>
+    <label>Cantidad real vendida calculada</label>
+    <summarizedField>SalesAgreementProductSchedule.Cantidad_real_vendida__c</summarizedField>
+    <summaryForeignKey>SalesAgreementProductSchedule.SalesAgreementProductId</summaryForeignKey>
+    <summaryOperation>sum</summaryOperation>
+    <trackHistory>false</trackHistory>
+    <type>Summary</type>
+</CustomField>

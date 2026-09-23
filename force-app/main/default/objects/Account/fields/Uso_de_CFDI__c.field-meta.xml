@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Uso_de_CFDI__c</fullName>
+    <label>Uso de CFDI</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Donativos (D04)</fullName>
+                <default>false</default>
+                <label>Donativos (D04)</label>
+            </value>
+            <value>
+                <fullName>Intereses reales efectivamente pagados por créditos hipotecarios (casa habitación) (D05)</fullName>
+                <default>false</default>
+                <label>Intereses reales efectivamente pagados por créditos hipotecarios (casa habitación) (D05)</label>
+            </value>
+            <value>
+                <fullName>Adquisicion de mercancias (G01)</fullName>
+                <default>false</default>
+                <label>Adquisicion de mercancias (G01)</label>
+            </value>
+            <value>
+                <fullName>Devoluciones, descuentos o bonificaciones (G02)</fullName>
+                <default>false</default>
+                <label>Devoluciones, descuentos o bonificaciones (G02)</label>
+            </value>
+            <value>
+                <fullName>Gastos en general (G03)</fullName>
+                <default>false</default>
+                <label>Gastos en general (G03)</label>
+            </value>
+            <value>
+                <fullName>Construcciones (I01)</fullName>
+                <default>false</default>
+                <label>Construcciones (I01)</label>
+            </value>
+            <value>
+                <fullName>Mobiliario y equipo de oficina por inversiones (I02)</fullName>
+                <default>false</default>
+                <label>Mobiliario y equipo de oficina por inversiones (I02)</label>
+            </value>
+            <value>
+                <fullName>Equipo de transporte (I03)</fullName>
+                <default>false</default>
+                <label>Equipo de transporte (I03)</label>
+            </value>
+            <value>
+                <fullName>Equipo de computo y accesorios (I04)</fullName>
+                <default>false</default>
+                <label>Equipo de computo y accesorios (I04)</label>
+            </value>
+            <value>
+                <fullName>Dados, troqueles, moldes, matrices y herramental (I05)</fullName>
+                <default>false</default>
+                <label>Dados, troqueles, moldes, matrices y herramental (I05)</label>
+            </value>
+            <value>
+                <fullName>Comunicaciones telefónicas (I06)</fullName>
+                <default>false</default>
+                <label>Comunicaciones telefónicas (I06)</label>
+            </value>
+            <value>
+                <fullName>Comunicaciones satelitales (I07)</fullName>
+                <default>false</default>
+                <label>Comunicaciones satelitales (I07)</label>
+            </value>
+            <value>
+                <fullName>Otra maquinaria y equipo (I08)</fullName>
+                <default>false</default>
+                <label>Otra maquinaria y equipo (I08)</label>
+            </value>
+            <value>
+                <fullName>Por definir (P01)</fullName>
+                <default>false</default>
+                <label>Por definir (P01)</label>
+            </value>
+            <value>
+                <fullName>Sin efectos fiscales (S01)</fullName>
+                <default>false</default>
+                <label>Sin efectos fiscales (S01)</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

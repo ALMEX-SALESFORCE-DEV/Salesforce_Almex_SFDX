@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <help><!-- (Venta neta) --></help>
+    <label><!-- Total precio LAB transfer station --></label>
+    <name>Total_precio_LAB_transfer_station__c</name>
+</CustomFieldTranslation>

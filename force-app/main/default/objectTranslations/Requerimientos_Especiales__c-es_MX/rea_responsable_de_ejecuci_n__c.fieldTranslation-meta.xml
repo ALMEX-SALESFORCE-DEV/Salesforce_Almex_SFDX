@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label><!-- Área responsable de ejecución --></label>
+    <name>rea_responsable_de_ejecuci_n__c</name>
+    <picklistValues>
+        <masterLabel>Calidad</masterLabel>
+        <translation><!-- Calidad --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Facturación</masterLabel>
+        <translation><!-- Facturación --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Otro</masterLabel>
+        <translation><!-- Otro --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Punto de carga</masterLabel>
+        <translation><!-- Punto de carga --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>SAC</masterLabel>
+        <translation><!-- SAC --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Tráfico</masterLabel>
+        <translation><!-- Tráfico --></translation>
+    </picklistValues>
+</CustomFieldTranslation>

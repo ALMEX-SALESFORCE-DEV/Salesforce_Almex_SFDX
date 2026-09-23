@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Familia_de_maiz__c</fullName>
+    <label>Familia de maíz</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>N/A</fullName>
+                <default>false</default>
+                <label>N/A</label>
+            </value>
+            <value>
+                <fullName>Almidones</fullName>
+                <default>false</default>
+                <label>Almidones</label>
+            </value>
+            <value>
+                <fullName>Dextrosa</fullName>
+                <default>false</default>
+                <label>Dextrosa</label>
+            </value>
+            <value>
+                <fullName>Glucosas</fullName>
+                <default>false</default>
+                <label>Glucosas</label>
+            </value>
+            <value>
+                <fullName>Alta Maltosa</fullName>
+                <default>false</default>
+                <label>Alta Maltosa</label>
+            </value>
+            <value>
+                <fullName>HFCS 42</fullName>
+                <default>false</default>
+                <label>HFCS 42</label>
+            </value>
+            <value>
+                <fullName>COPRODUCTOS</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>COPRODUCTOS</label>
+            </value>
+            <value>
+                <fullName>ESPECIALIDADES</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>ESPECIALIDADES</label>
+            </value>
+            <value>
+                <fullName>FRUCTOSAS</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>FRUCTOSAS</label>
+            </value>
+            <value>
+                <fullName>GLUCO-MALTOSAS</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>GLUCO-MALTOSAS</label>
+            </value>
+            <value>
+                <fullName>PROMER</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>PROMER</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

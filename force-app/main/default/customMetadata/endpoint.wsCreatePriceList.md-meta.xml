@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>wsCreatePriceList</label>
+    <protected>false</protected>
+    <values>
+        <field>auth_type__c</field>
+        <value xsi:type="xsd:string">Basic</value>
+    </values>
+    <values>
+        <field>client_id__c</field>
+        <value xsi:type="xsd:string">OIC_PROD_BASICAUTH</value>
+    </values>
+    <values>
+        <field>client_secret__c</field>
+        <value xsi:type="xsd:string">idcscs-2051302f-a8a0-4315-9418-c57e1f819caf</value>
+    </values>
+    <values>
+        <field>grant_type__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>host__c</field>
+        <value xsi:type="xsd:string">https://oic-prod-idichocg2yfy-qr.integration.mx-queretaro-1.ocp.oraclecloud.com</value>
+    </values>
+    <values>
+        <field>method__c</field>
+        <value xsi:type="xsd:string">POST</value>
+    </values>
+    <values>
+        <field>path__c</field>
+        <value xsi:type="xsd:string">/ic/api/integration/v1/flows/rest/ETC_OM_PRICE_LIST/1.0/priceList/create</value>
+    </values>
+    <values>
+        <field>response__c</field>
+        <value xsi:type="xsd:string">{
+	&quot;PriceListName&quot;: &quot;ALMIDONES GUADALAJARA_Pruebas punta a punta_2025-01-16_v7&quot;,
+	&quot;PriceListId&quot;: 300000400681031
+}</value>
+    </values>
+    <values>
+        <field>scope__c</field>
+        <value xsi:nil="true"/>
+    </values>
+</CustomMetadata>

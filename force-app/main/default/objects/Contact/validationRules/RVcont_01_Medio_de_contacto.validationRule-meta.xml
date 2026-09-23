@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RVcont_01_Medio_de_contacto</fullName>
+    <active>true</active>
+    <errorConditionFormula>ISBLANK(MobilePhone) &amp;&amp; ISBLANK(Phone) &amp;&amp; ISBLANK(Email)</errorConditionFormula>
+    <errorMessage>Deberá contar con al menos un medio de contacto, Celular, correo o telefono</errorMessage>
+</ValidationRule>

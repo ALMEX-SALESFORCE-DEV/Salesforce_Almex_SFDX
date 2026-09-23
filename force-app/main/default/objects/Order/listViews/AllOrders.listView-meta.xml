@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AllOrders</fullName>
+    <columns>ORDERS.ORDER_NUMBER</columns>
+    <columns>Oracle_Id__c</columns>
+    <columns>Linea_de_pedido__c</columns>
+    <columns>SALES.ACCOUNT.NAME</columns>
+    <columns>Purchase_order__c</columns>
+    <columns>Cantidad__c</columns>
+    <columns>Cantidad_programada__c</columns>
+    <columns>ORDERS.EFFECTIVE_DATE</columns>
+    <columns>Fecha_de_Envio_Programada__c</columns>
+    <columns>ORDERS.STATUS</columns>
+    <columns>Pedido__c</columns>
+    <columns>Codigo_Producto__c</columns>
+    <columns>ORDERS.CREATED_DATE</columns>
+    <columns>ORDERS.LAST_UPDATE</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>ORDERS.STATUS</field>
+        <operation>equals</operation>
+        <value>Cerrado</value>
+    </filters>
+    <filters>
+        <field>ORDERS.STATUS</field>
+        <operation>equals</operation>
+        <value>Cerrado</value>
+    </filters>
+    <label>Todos los pedidos</label>
+</ListView>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All</fullName>
+    <columns>NAME</columns>
+    <columns>Documento__c</columns>
+    <columns>DOCUMENT_DEF_XID__c</columns>
+    <columns>DOCUMENT_XID__c</columns>
+    <columns>CREATED_DATE</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>DOCUMENT_DEF_XID__c</field>
+        <operation>equals</operation>
+        <value>CERTIFICADO-DE-CALIDAD</value>
+    </filters>
+    <label>Todos</label>
+</ListView>

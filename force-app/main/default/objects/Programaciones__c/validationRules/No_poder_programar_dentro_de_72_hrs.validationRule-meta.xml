@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>No_poder_programar_dentro_de_72_hrs</fullName>
+    <active>true</active>
+    <errorConditionFormula>Fecha_de_solicitud__c &lt;  TODAY() + 3</errorConditionFormula>
+    <errorMessage>La fecha de programación no es valida</errorMessage>
+</ValidationRule>

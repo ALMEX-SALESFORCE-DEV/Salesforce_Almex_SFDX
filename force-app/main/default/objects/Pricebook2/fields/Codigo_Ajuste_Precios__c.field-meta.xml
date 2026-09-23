@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Codigo_Ajuste_Precios__c</fullName>
+    <defaultValue>TEXT(300000007065220)</defaultValue>
+    <description>Código que indica en la matriz de precios que se trata de un ajuste de precios</description>
+    <externalId>false</externalId>
+    <label>Código Ajuste Precios</label>
+    <length>255</length>
+    <required>false</required>
+    <trackHistory>true</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

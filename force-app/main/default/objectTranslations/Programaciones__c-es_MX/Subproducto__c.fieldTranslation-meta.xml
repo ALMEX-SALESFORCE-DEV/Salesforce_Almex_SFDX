@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label><!-- Subproducto --></label>
+    <name>Subproducto__c</name>
+    <picklistValues>
+        <masterLabel>BIDON 20 LTR</masterLabel>
+        <translation><!-- BIDON 20 LTR --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>BOTELLA 800</masterLabel>
+        <translation><!-- BOTELLA 800 --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>GRANEL</masterLabel>
+        <translation><!-- GRANEL --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>SACO 25</masterLabel>
+        <translation><!-- SACO 25 --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>SS</masterLabel>
+        <translation><!-- SS --></translation>
+    </picklistValues>
+</CustomFieldTranslation>

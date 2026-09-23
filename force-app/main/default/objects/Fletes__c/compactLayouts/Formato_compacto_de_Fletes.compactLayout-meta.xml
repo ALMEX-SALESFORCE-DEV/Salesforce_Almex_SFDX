@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Formato_compacto_de_Fletes</fullName>
+    <fields>Name</fields>
+    <fields>Ciudad_de_destino__c</fields>
+    <fields>Planta__c</fields>
+    <fields>Medio_de_transporte__c</fields>
+    <fields>Costo_de_flete__c</fields>
+    <label>Formato compacto de Fletes</label>
+</CompactLayout>

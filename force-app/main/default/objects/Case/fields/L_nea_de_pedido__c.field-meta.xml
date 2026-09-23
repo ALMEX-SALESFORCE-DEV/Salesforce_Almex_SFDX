@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>L_nea_de_pedido__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <label>Línea de pedido</label>
+    <lookupFilter>
+        <active>true</active>
+        <filterItems>
+            <field>Order.Pedido__c</field>
+            <operation>equals</operation>
+            <valueField>$Source.Pedido__c</valueField>
+        </filterItems>
+        <isOptional>false</isOptional>
+    </lookupFilter>
+    <referenceTo>Order</referenceTo>
+    <relationshipLabel>Casos</relationshipLabel>
+    <relationshipName>Casos</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

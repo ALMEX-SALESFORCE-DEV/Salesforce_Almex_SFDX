@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label><!-- Familia de productos --></label>
+    <name>Familia_de_producto__c</name>
+    <picklistValues>
+        <masterLabel>ALCOHOL</masterLabel>
+        <translation><!-- ALCOHOL --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>ALMIDON</masterLabel>
+        <translation><!-- ALMIDON --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>COPRODUCTOS</masterLabel>
+        <translation><!-- COPRODUCTOS --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>DEXTROSAS</masterLabel>
+        <translation><!-- DEXTROSAS --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>ESPECIALIDADES</masterLabel>
+        <translation><!-- ESPECIALIDADES --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>FRUCTOSAS</masterLabel>
+        <translation><!-- FRUCTOSAS --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>GLUCO-MALTOSAS</masterLabel>
+        <translation><!-- GLUCO-MALTOSAS --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>PROMER</masterLabel>
+        <translation><!-- PROMER --></translation>
+    </picklistValues>
+</CustomFieldTranslation>

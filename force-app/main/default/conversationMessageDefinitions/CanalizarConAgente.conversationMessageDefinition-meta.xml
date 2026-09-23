@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ConversationMessageDefinition xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <constants>
+        <compositeValues>
+            <constantItems>
+                <constantType>Title</constantType>
+                <primitiveValues>
+                    <textValue>Si</textValue>
+                    <type>Text</type>
+                </primitiveValues>
+            </constantItems>
+            <identifier>715f0b05-2fc9-3961-46a9-a0deb3cd706a</identifier>
+        </compositeValues>
+        <compositeValues>
+            <constantItems>
+                <constantType>Title</constantType>
+                <primitiveValues>
+                    <textValue>No</textValue>
+                    <type>Text</type>
+                </primitiveValues>
+            </constantItems>
+            <identifier>f8889d11-3da7-959d-43d9-eafac2430e65</identifier>
+        </compositeValues>
+        <constantType>Options</constantType>
+    </constants>
+    <constants>
+        <constantType>Title</constantType>
+        <primitiveValues>
+            <textValue>¿Deseas obtener más información?</textValue>
+            <type>Text</type>
+        </primitiveValues>
+    </constants>
+    <label>CanalizarConAgente</label>
+    <language>es_MX</language>
+    <messageLayouts>
+        <formatType>Buttons</formatType>
+        <layoutItems>
+            <collectionType>DynamicList</collectionType>
+            <compositeValues>
+                <compositeTypeName>TitleOptionItem</compositeTypeName>
+                <layoutItems>
+                    <collectionType>None</collectionType>
+                    <compositeValues>
+                        <compositeTypeName>TitleItem</compositeTypeName>
+                        <layoutItems>
+                            <collectionType>None</collectionType>
+                            <name>title</name>
+                            <primitiveValues>
+                                <type>SourcePrimitiveValue</type>
+                                <valueSourceReference>Constants.Options.ListItem.Title</valueSourceReference>
+                            </primitiveValues>
+                        </layoutItems>
+                    </compositeValues>
+                    <name>titleItem</name>
+                </layoutItems>
+                <valueSourceReference>Constants.Options</valueSourceReference>
+            </compositeValues>
+            <name>optionItems</name>
+        </layoutItems>
+        <layoutItems>
+            <collectionType>None</collectionType>
+            <name>text</name>
+            <primitiveValues>
+                <literalValue>¿Deseas obtener mas información?</literalValue>
+                <type>Literal</type>
+            </primitiveValues>
+        </layoutItems>
+        <layoutVariant xsi:nil="true"/>
+        <messageType>Choices</messageType>
+    </messageLayouts>
+    <messageLayouts>
+        <formatType>Text</formatType>
+        <layoutItems>
+            <collectionType>None</collectionType>
+            <name>text</name>
+            <primitiveValues>
+                <formulaTemplate>{!$Constants.Title}
+
+Seleccione una opción:
+
+{!$ListTemplates.OptionsList}</formulaTemplate>
+                <mergeFields>
+                    <formulaTemplate>{!$ListItem.Index}. {!$ListItem.Value.Title}{!BR()}</formulaTemplate>
+                    <mergeFieldType>ListTemplate</mergeFieldType>
+                    <name>OptionsList</name>
+                    <valueSourceReference>Constants.Options</valueSourceReference>
+                </mergeFields>
+                <type>FormulaTemplate</type>
+            </primitiveValues>
+        </layoutItems>
+        <layoutVariant xsi:nil="true"/>
+        <messageType>StaticContent</messageType>
+    </messageLayouts>
+    <type>Picklist</type>
+</ConversationMessageDefinition>

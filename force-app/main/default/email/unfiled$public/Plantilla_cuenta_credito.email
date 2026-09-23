@@ -1,0 +1,3 @@
+Un cliente dentro de salesforce esta solicitando crédito, 
+Por favor revisa en el siguiente link el registro
+{!Account.Link}

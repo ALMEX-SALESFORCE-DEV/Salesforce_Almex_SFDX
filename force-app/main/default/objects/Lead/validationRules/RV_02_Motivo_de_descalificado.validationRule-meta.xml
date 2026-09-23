@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RV_02_Motivo_de_descalificado</fullName>
+    <active>true</active>
+    <description>Se deberá seleccionar un motivo de descalificación</description>
+    <errorConditionFormula>AND(
+    ISPICKVAL(Status, &quot;Descalificado&quot;),
+      ISBLANK(TEXT(Motivo_de_descalificaci_n__c))
+)</errorConditionFormula>
+    <errorMessage>Debe seleccionar un Motivo de Descalificación cuando el estado del prospecto sea &quot;Descalificado&quot;.</errorMessage>
+</ValidationRule>

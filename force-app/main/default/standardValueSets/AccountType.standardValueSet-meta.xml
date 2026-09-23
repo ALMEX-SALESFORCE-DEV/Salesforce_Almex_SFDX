@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>NACIONAL</fullName>
+        <default>false</default>
+        <label>NACIONAL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>EXTRANJERO</fullName>
+        <default>false</default>
+        <label>EXTRANJERO</label>
+    </standardValue>
+    <standardValue>
+        <fullName>INTERCOMPAÑIA NACIONAL</fullName>
+        <default>false</default>
+        <label>INTERCOMPAÑIA NACIONAL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>INTERCOMPAÑIA EXTRANJERO</fullName>
+        <default>false</default>
+        <label>INTERCOMPAÑIA EXTRANJERO</label>
+    </standardValue>
+</StandardValueSet>

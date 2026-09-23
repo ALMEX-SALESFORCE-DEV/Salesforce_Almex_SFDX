@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ExtlClntAppConfigurablePolicies xmlns="http://soap.sforce.com/2006/04/metadata">
+    <externalClientApplication>ALMEX_SF_API</externalClientApplication>
+    <isEnabled>false</isEnabled>
+    <isOauthPluginEnabled>true</isOauthPluginEnabled>
+    <label>ALMEX_SF_API_plcy</label>
+    <startPage>None</startPage>
+</ExtlClntAppConfigurablePolicies>

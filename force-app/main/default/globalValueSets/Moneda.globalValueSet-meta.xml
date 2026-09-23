@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>MXN</fullName>
+        <default>true</default>
+        <label>MXN</label>
+    </customValue>
+    <customValue>
+        <fullName>USD</fullName>
+        <default>false</default>
+        <label>USD</label>
+    </customValue>
+    <masterLabel>Moneda</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sucursal__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <label>Sucursal</label>
+    <lookupFilter>
+        <active>true</active>
+        <filterItems>
+            <field>$Source.Cuenta__c</field>
+            <operation>equals</operation>
+            <valueField>Sucursal__c.Cuenta__r.Id</valueField>
+        </filterItems>
+        <isOptional>false</isOptional>
+    </lookupFilter>
+    <referenceTo>Sucursal__c</referenceTo>
+    <relationshipLabel>Partidas de cotizaciones (Sucursal)</relationshipLabel>
+    <relationshipName>Partidas_de_cotizaciones</relationshipName>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Lookup</type>
+</CustomField>

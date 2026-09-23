@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Definicion_de_cargos__c</fullName>
+    <label>Definición de cargos</label>
+    <required>true</required>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>QP_SALE_PRICE</fullName>
+                <default>true</default>
+                <label>Precio de venta</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

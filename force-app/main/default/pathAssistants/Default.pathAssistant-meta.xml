@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PathAssistant xmlns="http://soap.sforce.com/2006/04/metadata">
+    <active>true</active>
+    <entityName>Lead</entityName>
+    <fieldName>Status</fieldName>
+    <masterLabel>Default</masterLabel>
+    <pathAssistantSteps>
+        <info>&lt;p&gt;&lt;strong style=&quot;font-size: 13px;&quot;&gt;TU PROSPECTO HA SIDO APROBADO Y ESTA PROXIMO A CONVERTIRSE EN UNA CUENTA Y UN CONTACTO.&lt;/strong&gt;&lt;/p&gt;</info>
+        <picklistValueName>Convertido</picklistValueName>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <fieldNames>Name</fieldNames>
+        <fieldNames>Company</fieldNames>
+        <fieldNames>MobilePhone</fieldNames>
+        <fieldNames>Email</fieldNames>
+        <info>&lt;p&gt;&lt;strong style=&quot;font-size: 13px;&quot;&gt;¡SE HA CREADO UN NUEVO PROSPECTO!&lt;/strong&gt;&lt;/p&gt;</info>
+        <picklistValueName>Creado</picklistValueName>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <fieldNames>Motivo_de_descalificaci_n__c</fieldNames>
+        <fieldNames>Otro_motivo_de_descalificacion__c</fieldNames>
+        <picklistValueName>Descalificado</picklistValueName>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <fieldNames>RFC__c</fieldNames>
+        <fieldNames>Raz_n_social__c</fieldNames>
+        <fieldNames>Representante_legal__c</fieldNames>
+        <info>&lt;p&gt;&lt;strong style=&quot;font-size: 13px;&quot;&gt;EN ESTA ETAPA COMENZAREMOS A SOLICITAR LA INFORMACIÓN NECESARIA PARA QUE EL PROSPECTO PUEDA SER VALIDADO POR EL EQUIPO LEGAL&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;&lt;strong style=&quot;font-size: 13px;&quot;&gt;CAMPOS NECESARIOS:&lt;/strong&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;strong style=&quot;font-size: 13px;&quot;&gt;RFC&lt;/strong&gt;&lt;/li&gt;&lt;li&gt;&lt;strong style=&quot;font-size: 13px;&quot;&gt;Razón Social&lt;/strong&gt;&lt;/li&gt;&lt;li&gt;&lt;strong style=&quot;font-size: 13px;&quot;&gt;Representante legal&lt;/strong&gt;&lt;/li&gt;&lt;li&gt;&lt;br&gt;&lt;/li&gt;&lt;/ul&gt;</info>
+        <picklistValueName>En prospección</picklistValueName>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <info>&lt;p&gt;&lt;strong style=&quot;font-size: 13px;&quot;&gt;¡TU PROSPECTO HA SIDO APROBADO POR LEGAL!&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;Ahora puedes mandar el prospecto a aprobación por parte del equipo de Datos Maestros y del equipo de Crédito y Cobranza.&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;Considera los siguientes puntos antes de mandar a aprobación:&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Revisa que todos los campos contengan información.&lt;/li&gt;&lt;li&gt;Puedes agregar un comentario al momento del envió de la aprobación.&lt;/li&gt;&lt;li&gt;Durante el proceso de aprobación no podrás modificar el registro.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;</info>
+        <picklistValueName>Prospecto Validado</picklistValueName>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <info>&lt;p&gt;&lt;strong style=&quot;font-size: 13px;&quot;&gt;TU PROSPECTO ESTA SIENDO APROBADO POR DATOS MAESTROS.&lt;/strong&gt;&lt;/p&gt;</info>
+        <picklistValueName>Validacion Cuenta datos maestros</picklistValueName>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <info>&lt;p&gt;&lt;strong style=&quot;font-size: 13px;&quot;&gt;TU PROSPECTO HA SIDO APROBADO POR DATOS MAESTROS Y ESTA EN APROBACIÓN POR PARTE DE CRÉDITO Y COBRANZA.&lt;/strong&gt;&lt;/p&gt;</info>
+        <picklistValueName>Validacion de cuenta (Credito y Cobranza)</picklistValueName>
+    </pathAssistantSteps>
+    <pathAssistantSteps>
+        <picklistValueName>Validación legal</picklistValueName>
+    </pathAssistantSteps>
+    <recordTypeName>__MASTER__</recordTypeName>
+</PathAssistant>

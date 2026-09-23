@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Datos_Exportacion_e_Importacion__c</fullName>
+    <inlineHelpText>Apartado de Datos Exportación e Importación</inlineHelpText>
+    <label>Datos Exportación e Importación</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Comercio Exterior</fullName>
+                <default>false</default>
+                <label>Comercio Exterior</label>
+            </value>
+            <value>
+                <fullName>Información Exportación / Importación</fullName>
+                <default>false</default>
+                <label>Información Exportación / Importación</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

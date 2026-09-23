@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Formato_compacto_suministro</fullName>
+    <fields>Name</fields>
+    <fields>Mes_ormula__c</fields>
+    <fields>Basis__c</fields>
+    <fields>Corn__c</fields>
+    <fields>Fx__c</fields>
+    <fields>Gas__c</fields>
+    <fields>Valor_del_dolar__c</fields>
+    <label>Formato compacto suministro</label>
+</CompactLayout>

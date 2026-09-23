@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label><!-- Unidad de medida --></label>
+    <name>Unidad_de_medida__c</name>
+    <picklistValues>
+        <masterLabel>KILOGRAMOS</masterLabel>
+        <translation><!-- KILOGRAMOS --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>LTS.</masterLabel>
+        <translation><!-- LTS. --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>PIEZAS</masterLabel>
+        <translation><!-- PIEZAS --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>TONELADAS</masterLabel>
+        <translation><!-- TONELADAS --></translation>
+    </picklistValues>
+</CustomFieldTranslation>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label><!-- Forma de pago --></label>
+    <name>Forma_de_pago__c</name>
+    <picklistValues>
+        <masterLabel>Aplicación de anticipos (30)</masterLabel>
+        <translation><!-- Aplicación de anticipos (30) --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Cheque nominativo (02)</masterLabel>
+        <translation><!-- Cheque nominativo (02) --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Compensación (17)</masterLabel>
+        <translation><!-- Compensación (17) --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Condonación (15)</masterLabel>
+        <translation><!-- Condonación (15) --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Dación en pago (12)</masterLabel>
+        <translation><!-- Dación en pago (12) --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Efectivo (01)</masterLabel>
+        <translation><!-- Efectivo (01) --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Intermediario pagos (31)</masterLabel>
+        <translation><!-- Intermediario pagos (31) --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Pago por consignación (14)</masterLabel>
+        <translation><!-- Pago por consignación (14) --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Pago por subrogación (13)</masterLabel>
+        <translation><!-- Pago por subrogación (13) --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Por definir (99)</masterLabel>
+        <translation><!-- Por definir (99) --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Transferencia electrónica de fondos (03)</masterLabel>
+        <translation><!-- Transferencia electrónica de fondos (03) --></translation>
+    </picklistValues>
+</CustomFieldTranslation>

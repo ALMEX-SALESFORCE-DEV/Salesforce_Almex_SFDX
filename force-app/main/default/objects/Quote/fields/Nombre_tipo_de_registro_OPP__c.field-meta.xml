@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Nombre_tipo_de_registro_OPP__c</fullName>
+    <externalId>false</externalId>
+    <formula>Opportunity.RecordType.DeveloperName</formula>
+    <label>Nombre tipo de registro OPP</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

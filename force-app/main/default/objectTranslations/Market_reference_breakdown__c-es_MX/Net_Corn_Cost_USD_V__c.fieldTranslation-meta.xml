@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label><!-- Net Corn Cost USD V --></label>
+    <name>Net_Corn_Cost_USD_V__c</name>
+</CustomFieldTranslation>

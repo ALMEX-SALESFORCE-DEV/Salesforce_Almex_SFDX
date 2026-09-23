@@ -1,0 +1,17 @@
+NO. REQUERIMIENTO: 0208
+
+SUCURSAL: {!Requerimientos_Especiales__c.Sucursal__c}
+
+TIPO DE REQUERIMIENTO: {!Requerimientos_Especiales__c.Tipo_de_requerimiento__c}
+
+FAMILIA  DE PRODUCTO: {!Requerimientos_Especiales__c.Familia_de_producto__c}
+
+DESCRIPCIÓN: {!Requerimientos_Especiales__c.Descripci_n_del_requerimiento__c}
+
+ÁREA RESPONSABLE DE EJECUCIÓN: {!Requerimientos_Especiales__c.rea_responsable_de_ejecuci_n__c}
+
+CREADO POR: {!Requerimientos_Especiales__c.CreatedBy}
+
+ÚLTIMA MODIFICACIÓN: {!Requerimientos_Especiales__c.LastModifiedBy}
+
+ESTATUS: {!Requerimientos_Especiales__c.Estatus__c}

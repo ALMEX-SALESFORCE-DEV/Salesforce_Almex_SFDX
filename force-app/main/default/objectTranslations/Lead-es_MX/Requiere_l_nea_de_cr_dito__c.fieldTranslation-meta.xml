@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label><!-- ¿Requiere línea de crédito? --></label>
+    <name>Requiere_l_nea_de_cr_dito__c</name>
+    <picklistValues>
+        <masterLabel>NO</masterLabel>
+        <translation><!-- NO --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>SI</masterLabel>
+        <translation><!-- SI --></translation>
+    </picklistValues>
+</CustomFieldTranslation>

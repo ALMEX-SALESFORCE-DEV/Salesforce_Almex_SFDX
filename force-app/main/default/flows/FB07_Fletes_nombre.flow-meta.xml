@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>63.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <description>Concatenacion del nombre al momento de crear un registro de flete &quot;Ciudad de la planta, ciudad destino y medio de transporte&quot;</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>nombraconcatenado</name>
+        <dataType>String</dataType>
+        <expression>{!$Record.Planta__r.Ciudad__c} &amp; &quot; - &quot; &amp; 
+{!$Record.Ciudad_de_destino__c} &amp; &quot; - &quot; &amp; 
+TEXT({!$Record.Medio_de_transporte__c})</expression>
+    </formulas>
+    <interviewLabel>FB07 - Fletes - nombre {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>FB07 - Fletes - nombre</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Concatenar_nombre</name>
+        <label>Concatenar nombre</label>
+        <locationX>176</locationX>
+        <locationY>323</locationY>
+        <inputAssignments>
+            <field>Name</field>
+            <value>
+                <elementReference>nombraconcatenado</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Concatenar_nombre</targetReference>
+        </connector>
+        <object>Fletes__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Corn_Freight_to_Almex__c</fullName>
+    <defaultValue>0.25</defaultValue>
+    <description>Almacenaje y Transporte Tysa</description>
+    <externalId>false</externalId>
+    <label>Corn Freight to Almex</label>
+    <precision>7</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

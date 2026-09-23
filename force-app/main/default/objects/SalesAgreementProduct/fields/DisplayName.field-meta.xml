@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DisplayName</fullName>
+    <inlineHelpText>Enter the name of the product that’s shown in the sales agreement table. Leave it blank to show the default product name.</inlineHelpText>
+    <trackHistory>false</trackHistory>
+</CustomField>

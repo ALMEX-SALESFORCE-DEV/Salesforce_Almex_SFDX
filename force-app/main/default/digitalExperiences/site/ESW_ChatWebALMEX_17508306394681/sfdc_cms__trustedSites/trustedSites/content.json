@@ -1,0 +1,12 @@
+{
+  "type" : "sfdc_cms__trustedSites",
+  "title" : "trustedSites",
+  "contentBody" : {
+    "trustedSites" : [ {
+      "isActive" : true,
+      "source" : "https://force-app-5145.my.salesforce-scrt.com",
+      "sourceName" : "Mensajería para host web"
+    } ]
+  },
+  "urlName" : "trustedsites"
+}

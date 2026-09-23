@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cotizaciones_sin_lista_de_precios</fullName>
+    <columns>QUOTE.NAME</columns>
+    <columns>QUOTE.ISSYNCING</columns>
+    <columns>QUOTE.EXPIRATIONDATE</columns>
+    <columns>QUOTE.SUBTOTAL</columns>
+    <columns>QUOTE.TOTALPRICE</columns>
+    <columns>OPPORTUNITY.NAME</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Lista_Generada__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <label>Cotizaciones sin lista de precios</label>
+</ListView>

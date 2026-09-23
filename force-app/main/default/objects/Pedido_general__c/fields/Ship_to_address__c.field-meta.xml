@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Ship_to_address__c</fullName>
+    <externalId>false</externalId>
+    <formula>Ship_to_customer__r.Datos_de_direccion__Street__s &amp; &quot;, &quot; &amp;
+Ship_to_customer__r.Datos_de_direccion__City__s &amp; &quot;, &quot; &amp;
+TEXT(Ship_to_customer__r.Datos_de_direccion__StateCode__s) &amp; &quot; &quot; &amp;
+Ship_to_customer__r.Datos_de_direccion__PostalCode__s</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Ship to address</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

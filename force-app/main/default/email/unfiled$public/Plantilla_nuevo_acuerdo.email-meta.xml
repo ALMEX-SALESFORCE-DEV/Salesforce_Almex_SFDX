@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <encodingKey>UTF-8</encodingKey>
+    <name>Plantilla nuevo acuerdo</name>
+    <style>none</style>
+    <subject>Se ha creado un acuerdo de suministro</subject>
+    <textOnly>Buen día, se notifica que se ha creado un acuerdo de suministro con los siguientes datos:  
+
+Fecha inicio: {!SalesAgreement.StartDate}
+Fecha de finalización: {!SalesAgreement.EndDate} 
+Volumen total planificado: {!SalesAgreement.Volumen_total__c} {!SalesAgreement.Unidad_de_medida__c}</textOnly>
+    <type>custom</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

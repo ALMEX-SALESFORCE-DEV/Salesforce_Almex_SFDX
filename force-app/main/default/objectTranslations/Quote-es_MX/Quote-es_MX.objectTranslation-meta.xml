@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <caseValues>
+        <plural>false</plural>
+        <value>Cotización</value>
+    </caseValues>
+    <caseValues>
+        <plural>true</plural>
+        <value>Cotizaciones</value>
+    </caseValues>
+    <gender>Masculine</gender>
+    <layouts>
+        <layout>Formato de pagina co productos</layout>
+        <sections>
+            <label><!-- Generales --></label>
+            <section>Generales</section>
+        </sections>
+    </layouts>
+    <layouts>
+        <layout>Formato de pagina importado y alcohol</layout>
+        <sections>
+            <label><!-- Costo venta total --></label>
+            <section>Costo venta total</section>
+        </sections>
+        <sections>
+            <label><!-- Detalles Cotizador --></label>
+            <section>Detalles Cotizador</section>
+        </sections>
+        <sections>
+            <label><!-- Extras --></label>
+            <section>Extras</section>
+        </sections>
+        <sections>
+            <label><!-- Generales --></label>
+            <section>Generales</section>
+        </sections>
+        <sections>
+            <label><!-- Logistica --></label>
+            <section>Logistica</section>
+        </sections>
+        <sections>
+            <label><!-- P Neto --></label>
+            <section>P Neto</section>
+        </sections>
+        <sections>
+            <label><!-- P Venta --></label>
+            <section>P Venta</section>
+        </sections>
+    </layouts>
+    <layouts>
+        <layout>Formato de pagina manufacturado</layout>
+        <sections>
+            <label><!-- Información general --></label>
+            <section>Información general</section>
+        </sections>
+        <sections>
+            <label><!-- Market references --></label>
+            <section>Market references</section>
+        </sections>
+        <sections>
+            <label><!-- Sales quotation Scenarios --></label>
+            <section>Sales quotation Scenarios</section>
+        </sections>
+        <sections>
+            <label><!-- Vínculos personalizados --></label>
+            <section>Vínculos personalizados</section>
+        </sections>
+    </layouts>
+    <layouts>
+        <layout>Formato de pagina venta spot</layout>
+        <sections>
+            <label><!-- Costo venta total --></label>
+            <section>Costo venta total</section>
+        </sections>
+        <sections>
+            <label><!-- Detalles Cotizador --></label>
+            <section>Detalles Cotizador</section>
+        </sections>
+        <sections>
+            <label><!-- Extras --></label>
+            <section>Extras</section>
+        </sections>
+        <sections>
+            <label><!-- Generales --></label>
+            <section>Generales</section>
+        </sections>
+        <sections>
+            <label><!-- Logistica --></label>
+            <section>Logistica</section>
+        </sections>
+        <sections>
+            <label><!-- P Neto --></label>
+            <section>P Neto</section>
+        </sections>
+        <sections>
+            <label><!-- P Venta --></label>
+            <section>P Venta</section>
+        </sections>
+    </layouts>
+    <recordTypes>
+        <label><!-- Co producto --></label>
+        <name>Co_producto</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Cotización Importados --></label>
+        <name>Cotizacion_Importados</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Cotización Manufacturado --></label>
+        <name>Cotizacion_Manufacturado</name>
+    </recordTypes>
+    <recordTypes>
+        <label><!-- Venta Spot --></label>
+        <name>Venta_Spot</name>
+    </recordTypes>
+</CustomObjectTranslation>

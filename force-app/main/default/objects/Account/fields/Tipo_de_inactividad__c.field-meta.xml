@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Tipo_de_inactividad__c</fullName>
+    <label>Tipo de inactividad</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Bloqueado por Crédito</fullName>
+                <default>false</default>
+                <label>Bloqueado por Crédito</label>
+            </value>
+            <value>
+                <fullName>Inactivo por Datos Maestros</fullName>
+                <default>false</default>
+                <label>Inactivo por Datos Maestros</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

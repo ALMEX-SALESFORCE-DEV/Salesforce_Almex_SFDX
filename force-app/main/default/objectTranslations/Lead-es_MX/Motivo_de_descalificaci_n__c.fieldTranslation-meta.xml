@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label><!-- Motivo de descalificación --></label>
+    <name>Motivo_de_descalificaci_n__c</name>
+    <picklistValues>
+        <masterLabel>Cantidad solicitada demasiado pequeña</masterLabel>
+        <translation><!-- Cantidad solicitada demasiado pequeña --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Descartado por el equipo legal</masterLabel>
+        <translation><!-- Descartado por el equipo legal --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>No contamos con el producto requerido</masterLabel>
+        <translation><!-- No contamos con el producto requerido --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>No cumple con los criterios para realizar la conversión</masterLabel>
+        <translation><!-- No cumple con los criterios para realizar la conversión --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Otro</masterLabel>
+        <translation><!-- Otro --></translation>
+    </picklistValues>
+</CustomFieldTranslation>

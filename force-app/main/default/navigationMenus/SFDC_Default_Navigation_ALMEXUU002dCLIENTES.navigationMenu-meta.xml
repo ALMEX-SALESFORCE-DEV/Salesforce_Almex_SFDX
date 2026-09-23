@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NavigationMenu xmlns="http://soap.sforce.com/2006/04/metadata">
+    <container>ALMEX-CLIENTES</container>
+    <containerType>Network</containerType>
+    <label>Default Navigation</label>
+    <navigationMenuItem>
+        <label>Crear caso</label>
+        <menuItemBranding>
+            <tileImage>ALMEX_FONDO</tileImage>
+        </menuItemBranding>
+        <position>1</position>
+        <publiclyAvailable>false</publiclyAvailable>
+        <target>NuevoCasoComunidades</target>
+        <type>GlobalAction</type>
+    </navigationMenuItem>
+    <navigationMenuItem>
+        <defaultListViewId>AllOpenCases</defaultListViewId>
+        <label>Casos</label>
+        <position>2</position>
+        <publiclyAvailable>true</publiclyAvailable>
+        <target>Case</target>
+        <type>SalesforceObject</type>
+    </navigationMenuItem>
+    <navigationMenuItem>
+        <defaultListViewId>All</defaultListViewId>
+        <label>Documentos</label>
+        <position>3</position>
+        <publiclyAvailable>false</publiclyAvailable>
+        <target>Documento__c</target>
+        <type>SalesforceObject</type>
+    </navigationMenuItem>
+    <navigationMenuItem>
+        <defaultListViewId>All_SalesAgreements</defaultListViewId>
+        <label>Acuerdos de Suministro</label>
+        <position>4</position>
+        <publiclyAvailable>true</publiclyAvailable>
+        <target>SalesAgreement</target>
+        <type>SalesforceObject</type>
+    </navigationMenuItem>
+    <navigationMenuItem>
+        <label>Registrar una programación</label>
+        <position>5</position>
+        <publiclyAvailable>true</publiclyAvailable>
+        <target>NuevaProgramacion</target>
+        <type>GlobalAction</type>
+    </navigationMenuItem>
+    <navigationMenuItem>
+        <label>Programaciones</label>
+        <position>6</position>
+        <publiclyAvailable>true</publiclyAvailable>
+        <target>Programaciones__c</target>
+        <type>SalesforceObject</type>
+    </navigationMenuItem>
+    <navigationMenuItem>
+        <label>Pedidos</label>
+        <position>7</position>
+        <publiclyAvailable>true</publiclyAvailable>
+        <target>Pedido_general__c</target>
+        <type>SalesforceObject</type>
+    </navigationMenuItem>
+</NavigationMenu>

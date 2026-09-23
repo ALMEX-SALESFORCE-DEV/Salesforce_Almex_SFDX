@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentAsset xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isVisibleByExternalUsers>false</isVisibleByExternalUsers>
+    <language>es_MX</language>
+    <masterLabel>Artboard2xpng</masterLabel>
+    <versions>
+        <version>
+            <number>1</number>
+            <pathOnClient>images/Artboard2x.png</pathOnClient>
+        </version>
+    </versions>
+</ContentAsset>

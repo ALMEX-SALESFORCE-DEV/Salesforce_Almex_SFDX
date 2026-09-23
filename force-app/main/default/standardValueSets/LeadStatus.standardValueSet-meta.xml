@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>Creado</fullName>
+        <default>true</default>
+        <label>Creado</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>En prospección</fullName>
+        <default>false</default>
+        <label>En prospección</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Validación legal</fullName>
+        <default>false</default>
+        <label>Validación legal</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Prospecto Validado</fullName>
+        <default>false</default>
+        <label>Prospecto Validado</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Validacion Cuenta datos maestros</fullName>
+        <default>false</default>
+        <label>Validacion Cuenta datos maestros</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Validacion de cuenta (Credito y Cobranza)</fullName>
+        <default>false</default>
+        <label>Validacion de cuenta (Credito y Cobranza)</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Descalificado</fullName>
+        <default>false</default>
+        <label>Descalificado</label>
+        <converted>false</converted>
+    </standardValue>
+    <standardValue>
+        <fullName>Convertido</fullName>
+        <default>false</default>
+        <label>Convertido</label>
+        <converted>true</converted>
+    </standardValue>
+</StandardValueSet>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label><!-- Familia de maiz --></label>
+    <name>Familia_de_maiz__c</name>
+    <picklistValues>
+        <masterLabel>Almidones</masterLabel>
+        <translation><!-- Almidones --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Alta Maltosa</masterLabel>
+        <translation><!-- Alta Maltosa --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Dextrosa</masterLabel>
+        <translation><!-- Dextrosa --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Glucosas</masterLabel>
+        <translation><!-- Glucosas --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>HFCS 42</masterLabel>
+        <translation><!-- HFCS 42 --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>N/A</masterLabel>
+        <translation><!-- N/A --></translation>
+    </picklistValues>
+</CustomFieldTranslation>

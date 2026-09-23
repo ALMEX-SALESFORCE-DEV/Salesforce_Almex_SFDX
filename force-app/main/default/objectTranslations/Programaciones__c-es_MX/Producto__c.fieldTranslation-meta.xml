@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label><!-- Producto --></label>
+    <name>Producto__c</name>
+    <picklistValues>
+        <masterLabel>ACEITE</masterLabel>
+        <translation><!-- ACEITE --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>ALCOHOL 95</masterLabel>
+        <translation><!-- ALCOHOL 95 --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>ALCOHOL 96</masterLabel>
+        <translation><!-- ALCOHOL 96 --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>ALMIDÓN</masterLabel>
+        <translation><!-- ALMIDÓN --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>ALTA MALTOSA</masterLabel>
+        <translation><!-- ALTA MALTOSA --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>DEXTROSA</masterLabel>
+        <translation><!-- DEXTROSA --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>FRUCTOSA 42</masterLabel>
+        <translation><!-- FRUCTOSA 42 --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>FRUCTOSA 55</masterLabel>
+        <translation><!-- FRUCTOSA 55 --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>GLUCOSA 43</masterLabel>
+        <translation><!-- GLUCOSA 43 --></translation>
+    </picklistValues>
+</CustomFieldTranslation>

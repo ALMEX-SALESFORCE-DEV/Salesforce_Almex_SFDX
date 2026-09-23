@@ -1,0 +1,57 @@
+<template>
+	<template if:true={showMenu}>
+		<main class="main">
+			<h1>¿Qué tipo de cotización deseas realizar?</h1>
+			<section class="menu-section">
+				<div class="card" onclick={onSelectType} data-id="imported">
+					<div class="image-card">
+						<!-- plane -->
+						<lightning-icon
+							icon-name="utility:plane"
+							alternative-text="Importados"
+							title="Impartados"
+							size="large"
+						></lightning-icon>
+					</div>
+					<p class="label-card">Importados/Alcohol</p>
+				</div>
+				<div class="card" onclick={onSelectType} data-id="importedOil">
+					<div class="image-card">
+						<!-- plane -->
+						<lightning-icon
+							icon-name="utility:world"
+							alternative-text="Aceites"
+							title="Aceites"
+							size="large"
+						></lightning-icon>
+					</div>
+					<p class="label-card">Aceites</p>
+				</div>
+				<div class="card" onclick={onSelectType} data-id="manufactured">
+					<div class="image-card">
+						<!-- settings -->
+						<lightning-icon
+							icon-name="utility:settings"
+							alternative-text="Manufacturados"
+							title="Manufacturados"
+							size="large"
+						></lightning-icon>
+					</div>
+					<p class="label-card">Manufacturados</p>
+				</div>
+			</section>
+		</main>
+	</template>
+	<template if:true={quoters.imported}>
+		<button onclick={goBack} class="button-gray">Regresar</button>
+		<c-cotizador-importados record-id={recordId} close-modal={closeModal}></c-cotizador-importados>
+	</template>
+	<template if:true={quoters.importedOil}>
+		<button onclick={goBack} class="button-gray">Regresar</button>
+		<c-cotizador-aceites record-id={recordId} close-modal={closeModal}></c-cotizador-aceites>
+	</template>
+	<template if:true={quoters.manufactured}>
+		<button onclick={goBack} class="button-gray">Regresar</button>
+		<c-cotizador-manufacturados record-id={recordId} close-modal={closeModal}></c-cotizador-manufacturados>
+	</template>
+</template>

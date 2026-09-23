@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RV_04_RFC</fullName>
+    <active>true</active>
+    <description>El campo rfc solo soporta 13 digitos</description>
+    <errorConditionFormula>AND(
+  NOT(ISBLANK(RFC__c)),
+  AND(LEN(RFC__c) &lt;&gt; 12, LEN(RFC__c) &lt;&gt; 13)
+)</errorConditionFormula>
+    <errorMessage>El campo RFC debe contener 12 o 13 caracteres.</errorMessage>
+</ValidationRule>

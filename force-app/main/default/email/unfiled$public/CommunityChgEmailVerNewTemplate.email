@@ -1,0 +1,9 @@
+Hola {!User.FirstName},
+
+            Recibimos una solicitud para cambiar la dirección de email para el nombre de usuario {!User.Username}. Asegúrese de que los siguientes cambios son correctos:
+
+            Dirección de email anterior:  {!ChgEmailVer.OldEmail}
+            Nueva dirección de email: {!ChgEmailVer.NewEmail}
+
+            Para terminar de cambiar su dirección de email, vaya al siguiente vínculo. Este vínculo caduca en 72 horas. 
+            {!ChgEmailVer.Url}

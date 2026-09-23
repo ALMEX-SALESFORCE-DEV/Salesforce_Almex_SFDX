@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Oportunidad_para_venta_spot</fullName>
+    <active>true</active>
+    <businessProcess>Oportunidad de venta Spot</businessProcess>
+    <compactLayoutAssignment>New_Awesome_Companct_Layout</compactLayoutAssignment>
+    <label>Oportunidad para venta spot</label>
+    <picklistValues>
+        <picklist>Familia_de_productos__c</picklist>
+        <values>
+            <fullName>ALMIDON DE MAIZ BP 25 KG</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ALMIDON DE MAIZ GRANEL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ALMIDON DE MAIZ PNC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ALMIDON DE MAIZ SS 500 KG</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ALMIDON DE MAIZ SS1T</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ALTA FRUCTOSA 42 GRANEL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ALTA FRUCTOSA 42 PNC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ALTA MALTOSA GRANEL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ALTA MALTOSA PNC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DEXTROSA CIX GRANEL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DEXTROSA CIX PNC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DEXTROSA SIX GRANEL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>DEXTROSA SIX PNC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>FRUCTOSA CRISTALINA BP</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>GLUCOSA 23-28 DE GRANEL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>GLUCOSA 43 BE GRANEL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>GLUCOSA 43 BE PNC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>GLUCOSA 44 BE GRANEL</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>GLUCOSA 44 BE PNC</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>KOL GUARD 7467 R 22%2E68 KG</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>N%2FA</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>STAR DRI 100 MALTODEXTRIN BP</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>ForecastCategoryName</picklist>
+        <values>
+            <fullName>Best Case</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Closed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Commit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Omitted</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pipeline</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>LeadSource</picklist>
+        <values>
+            <fullName>Chatbot</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Email</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Otro</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Página web</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Redes sociales</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Loss_Reason__c</picklist>
+        <values>
+            <fullName>Otro</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Precio</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Unidad_de_negocio_Picklist__c</picklist>
+        <values>
+            <fullName>BU_ALMEX</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>BU_PROMER</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

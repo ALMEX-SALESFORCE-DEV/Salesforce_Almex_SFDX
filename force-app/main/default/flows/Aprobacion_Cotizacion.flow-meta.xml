@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>64.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <constants>
+        <description>Almacena el valor del estado de un paso que ha sido aprobado. El valor de la constante debe ser Aprobado.</description>
+        <name>Approved</name>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Approve</stringValue>
+        </value>
+    </constants>
+    <decisions>
+        <description>Determina si la presentación de aprobación fue aprobada o rechazada. Si tiene acciones finales que completar cuando se aprueba un envío de aprobación, añada uno o más pasos en segundo plano a la etapa Procesar Envío aprobado. Si tiene acciones finales que completar cuando se rechaza una presentación, añada uno o más pasos en segundo plano a la etapa Procesar Envío rechazado. Por último, actualice esta descripción para que refleje lo que hace esta decisión.</description>
+        <name>Is_Submission_Approved_or_Rejected</name>
+        <label>¿El envío se ha aprobado o rechazado?</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Process_Rejected_Submission</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Rechazado (predeterminado)</defaultConnectorLabel>
+        <rules>
+            <name>Is_Approved</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Approval_Step_1_of_Approval_Stage_1.Outputs.approvalDecision</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <elementReference>Approved</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Process_Approved_Submission</targetReference>
+            </connector>
+            <label>Aprobado</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <interviewLabel>Aprobación Cotizacion {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Aprobación Cotizacion</label>
+    <orchestratedStages>
+        <description>Si el envío de su aprobación tiene elementos de trabajo de aprobación que pueden ser revisados simultáneamente por diferentes aprobadores, agregue más pasos de aprobación a esta etapa. Si tiene otros procesos que realizar, añada pasos en segundo plano. Por último, actualice la etiqueta, el nombre de la API y la descripción para reflejar lo que hace esta etapa.</description>
+        <name>Approval_Stage_1</name>
+        <label>Fase de aprobación 1</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Is_Submission_Approved_or_Rejected</targetReference>
+        </connector>
+        <exitConditionLogic>and</exitConditionLogic>
+        <stageSteps>
+            <description>Seleccione un aprobador para completar el paso. Si tiene un flujo de pantallas personalizado al que invocar para este paso de autorización, en Acción, elimine Flujo de trabajo de aprobaciones: Evalúe las solicitudes de aprobación y seleccione su flujo de pantalla personalizado. Por último, actualice la etiqueta, el nombre de API y la descripción para reflejar lo que hace este paso.</description>
+            <name>Approval_Step_1_of_Approval_Stage_1</name>
+            <actionName>standard_approvals__EvaluateApproval</actionName>
+            <actionType>stepApproval</actionType>
+            <assignees>
+                <assigneeType>User</assigneeType>
+            </assignees>
+            <canAssigneeEdit>true</canAssigneeEdit>
+            <debugSimulateStep>false</debugSimulateStep>
+            <entryConditionLogic>and</entryConditionLogic>
+            <exitConditionLogic>and</exitConditionLogic>
+            <inputParameters>
+                <name>ActionInput__CustomEmailSubject</name>
+            </inputParameters>
+            <inputParameters>
+                <name>ActionInput__CustomEmailBody</name>
+            </inputParameters>
+            <inputParameters>
+                <name>ActionInput__RecordId</name>
+                <value>
+                    <elementReference>recordId</elementReference>
+                </value>
+            </inputParameters>
+            <label>Aprobación Paso 1 de Fase de aprobación 1</label>
+            <requiresAsyncProcessing>false</requiresAsyncProcessing>
+            <runAsUser>false</runAsUser>
+            <shouldLock>true</shouldLock>
+            <stepSubtype>ApprovalStep</stepSubtype>
+        </stageSteps>
+    </orchestratedStages>
+    <orchestratedStages>
+        <description>Contiene las acciones finales que se ejecutarán cuando se apruebe un envío de aprobación. Si la opción Enviar notificaciones por email del estado del envío de aprobación a los remitentes está activada, se notifica automáticamente a la persona que presentó la aprobación que su envío de aprobación ha sido aprobado. Si tiene acciones que completar cuando se apruebe este envío, añada uno o más pasos en segundo plano a esta etapa. Por último, actualice esta descripción para que refleje lo que hace esta etapa.</description>
+        <name>Process_Approved_Submission</name>
+        <label>Procesar el envío aprobado</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <exitConditionLogic>and</exitConditionLogic>
+    </orchestratedStages>
+    <orchestratedStages>
+        <description>Contiene las acciones finales a ejecutar cuando se rechaza un envío de aprobación. Si la opción Enviar notificaciones de estado de envío de aprobación por email a los remitentes está activada, se notifica automáticamente a la persona que envió la aprobación que su envío ha sido rechazado. Si tiene acciones que completar cuando se rechaza este envío, agregue uno o más pasos en segundo plano a esta etapa. Por último, actualice esta descripción para que refleje lo que hace esta etapa.</description>
+        <name>Process_Rejected_Submission</name>
+        <label>Procesar el envío rechazado</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <exitConditionLogic>and</exitConditionLogic>
+    </orchestratedStages>
+    <orchestratedStages>
+        <description>Contiene pasos para ejecutar después de que la persona que envió una aprobación recupera su envío de aprobación. La etapa de ruta de recuperación se ejecuta después de la etapa en curso y sus pasos relacionados se cancelan y los elementos de trabajo de aprobación se terminan. Agregue y configure uno o más pasos en segundo plano a esta etapa y luego actualice esta descripción para reflejar lo que hace esta etapa.</description>
+        <name>Recall_Path_Stage</name>
+        <label>Recuperar etapa de ruta</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <exitConditionLogic>and</exitConditionLogic>
+    </orchestratedStages>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>ApprovalWorkflow</processType>
+    <runInMode>SystemModeWithoutSharing</runInMode>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Approval_Stage_1</targetReference>
+        </connector>
+        <scheduledPaths>
+            <connector>
+                <targetReference>Recall_Path_Stage</targetReference>
+            </connector>
+            <pathType>ApprovalRecall</pathType>
+        </scheduledPaths>
+    </start>
+    <status>InvalidDraft</status>
+    <variables>
+        <description>Almacena el ID del registro que se va a aprobar y se pasa al proceso de aprobación del flujo. Se trata de una variable de entrada obligatoria.</description>
+        <name>recordId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>Almacena comentarios sobre la aprobación y se pasa al proceso de aprobación del flujo. Se trata de una variable de entrada obligatoria.</description>
+        <name>submissionComments</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>Almacena el ID del usuario que envía la aprobación y se pasa al proceso de aprobación del flujo. Se trata de una variable de entrada obligatoria.</description>
+        <name>submitter</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

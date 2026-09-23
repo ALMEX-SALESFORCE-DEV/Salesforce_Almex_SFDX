@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <alerts>
+        <fullName>Nuevo_prospecto</fullName>
+        <description>Nuevo prospecto</description>
+        <protected>false</protected>
+        <recipients>
+            <recipient>desarrollo.almex@etcloudmx.com</recipient>
+            <type>user</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>unfiled$public/Plantilla_Nuevo_Prospecto</template>
+    </alerts>
+    <fieldUpdates>
+        <fullName>Actualizacion_a_prospecto</fullName>
+        <field>Status</field>
+        <literalValue>Convertido</literalValue>
+        <name>Actualizacion a prospecto</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Actualizacion_estado</fullName>
+        <field>Status</field>
+        <literalValue>Segunda aprobación de Datos Maestros</literalValue>
+        <name>Actualizacion estado</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Actualizar_estado</fullName>
+        <field>Status</field>
+        <literalValue>Aprobación de Gerente de Crédito</literalValue>
+        <name>Actualizar estado</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Actualizar_estado_a_convertido</fullName>
+        <field>Status</field>
+        <literalValue>Convertido</literalValue>
+        <name>Actualizar estado a convertido</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Actualizar_estado_de_prospecto</fullName>
+        <field>Status</field>
+        <literalValue>Validacion de cuenta (Credito y Cobranza)</literalValue>
+        <name>Actualizar estado de prospecto</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Actualizar_etapa</fullName>
+        <field>Status</field>
+        <literalValue>Validacion Cuenta datos maestros</literalValue>
+        <name>Actualizar etapa</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Aprobaci_n_de_Credito</fullName>
+        <field>Status</field>
+        <literalValue>Validacion de cuenta (Credito y Cobranza)</literalValue>
+        <name>Aprobación de Credito</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Aprobaci_n_inicial</fullName>
+        <field>Status</field>
+        <literalValue>Validacion Cuenta datos maestros</literalValue>
+        <name>Aprobación inicial</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Aprobacion_completada</fullName>
+        <field>Status</field>
+        <literalValue>Convertido</literalValue>
+        <name>Aprobacion completada</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Aprobacion_de_Credito</fullName>
+        <field>Status</field>
+        <literalValue>Convertido</literalValue>
+        <name>Aprobacion de Credito</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Correcci_n_de_registro</fullName>
+        <field>Status</field>
+        <literalValue>Prospecto Validado</literalValue>
+        <name>Corrección de registro</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Estado_a_aprobacion_por_DM</fullName>
+        <field>Status</field>
+        <literalValue>Validacion Cuenta datos maestros</literalValue>
+        <name>Estado a aprobacion por DM</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Primer_aprobaci_n</fullName>
+        <field>Status</field>
+        <literalValue>Validacion Cuenta datos maestros</literalValue>
+        <name>Primer aprobación</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Regresar_registro</fullName>
+        <field>Status</field>
+        <literalValue>Prospecto Validado</literalValue>
+        <name>Regresar registro</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Regresar_registro_1</fullName>
+        <field>Status</field>
+        <literalValue>Prospecto Validado</literalValue>
+        <name>Regresar registro 1</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Regreso_a_primer_contacto</fullName>
+        <field>Status</field>
+        <literalValue>Primer contacto</literalValue>
+        <name>Regreso a primer contacto</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>aprobaci_n_de_cyc</fullName>
+        <field>Status</field>
+        <literalValue>Validacion de cuenta (Credito y Cobranza)</literalValue>
+        <name>aprobación de cyc</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <tasks>
+        <fullName>Convierte_el_Prospecto</fullName>
+        <assignedTo>rogelio.paredes@almidones.com.mx</assignedTo>
+        <assignedToType>user</assignedToType>
+        <description>Convierte el prospecto referente a esta tarea</description>
+        <dueDateOffset>40</dueDateOffset>
+        <notifyAssignee>false</notifyAssignee>
+        <priority>High</priority>
+        <protected>false</protected>
+        <status>Open</status>
+        <subject>Convierte el Prospecto</subject>
+    </tasks>
+</Workflow>

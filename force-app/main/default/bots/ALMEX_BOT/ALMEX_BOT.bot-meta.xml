@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bot xmlns="http://soap.sforce.com/2006/04/metadata">
+    <agentDSLEnabled>false</agentDSLEnabled>
+    <botMlDomain>
+        <label>ALMEX-BOT</label>
+        <mlIntents>
+            <developerName>Datos_de_prospecto</developerName>
+            <label>Datos de prospecto</label>
+        </mlIntents>
+        <mlIntents>
+            <developerName>Proporciona_tus_siguientes_datos</developerName>
+            <label>Proporciona tus siguientes datos</label>
+        </mlIntents>
+        <mlIntents>
+            <developerName>Welcome</developerName>
+            <label>Bienvenida</label>
+        </mlIntents>
+        <mlSlotClasses>
+            <dataType>Text</dataType>
+            <developerName>Email_Personalizado</developerName>
+            <extractionRegex>^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$</extractionRegex>
+            <extractionType>Pattern</extractionType>
+            <label>Email Personalizado</label>
+        </mlSlotClasses>
+        <mlSlotClasses>
+            <dataType>Text</dataType>
+            <developerName>Es_cliente_ALMEX</developerName>
+            <extractionType>Value</extractionType>
+            <label>Es cliente ALMEX</label>
+        </mlSlotClasses>
+        <mlSlotClasses>
+            <dataType>Text</dataType>
+            <developerName>ID_de_cliente</developerName>
+            <extractionType>Value</extractionType>
+            <label>ID de cliente</label>
+        </mlSlotClasses>
+        <mlSlotClasses>
+            <dataType>Text</dataType>
+            <developerName>Telefono_personalizado</developerName>
+            <extractionRegex>^\d{10}$</extractionRegex>
+            <extractionType>Pattern</extractionType>
+            <label>Telefono personalizado</label>
+        </mlSlotClasses>
+        <mlSlotClasses>
+            <dataType>Text</dataType>
+            <developerName>texto_personalizado</developerName>
+            <extractionType>Value</extractionType>
+            <label>texto personalizado</label>
+        </mlSlotClasses>
+        <name>ALMEX_BOT</name>
+    </botMlDomain>
+    <botSource>None</botSource>
+    <botUser>21569@almidones.com.mx</botUser>
+    <contextVariables>
+        <contextVariableMappings>
+            <SObjectType>MessagingEndUser</SObjectType>
+            <fieldName>MessagingEndUser.ContactId</fieldName>
+            <messageType>EmbeddedMessaging</messageType>
+        </contextVariableMappings>
+        <dataType>Id</dataType>
+        <description>This variable may also be referred to as MessagingEndUser ContactId</description>
+        <developerName>ContactId</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Id. de Contacto</label>
+    </contextVariables>
+    <contextVariables>
+        <contextVariableMappings>
+            <SObjectType>MessagingSession</SObjectType>
+            <fieldName>MessagingSession.MessagingEndUserId</fieldName>
+            <messageType>EmbeddedMessaging</messageType>
+        </contextVariableMappings>
+        <dataType>Id</dataType>
+        <description>This variable may also be referred to as MessagingEndUser Id</description>
+        <developerName>EndUserId</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Id. de Usuario final</label>
+    </contextVariables>
+    <contextVariables>
+        <dataType>Id</dataType>
+        <developerName>Id</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Id</label>
+    </contextVariables>
+    <contextVariables>
+        <contextVariableMappings>
+            <SObjectType>MessagingSession</SObjectType>
+            <fieldName>MessagingSession.Id</fieldName>
+            <messageType>EmbeddedMessaging</messageType>
+        </contextVariableMappings>
+        <contextVariableMappings>
+            <SObjectType>MessagingSession</SObjectType>
+            <fieldName>MessagingSession.Id</fieldName>
+            <messageType>WhatsApp</messageType>
+        </contextVariableMappings>
+        <dataType>Id</dataType>
+        <description>This variable may also be referred to as MessagingSession Id</description>
+        <developerName>RoutableId</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Id. enrutable</label>
+    </contextVariables>
+    <defaultOutboundFlow>Enrutar_de_bot_a_cola</defaultOutboundFlow>
+    <description>Un bot desde cero.</description>
+    <label>ALMEX-BOT</label>
+    <logPrivateConversationData>true</logPrivateConversationData>
+    <richContentEnabled>true</richContentEnabled>
+    <sessionTimeout>0</sessionTimeout>
+    <type>Bot</type>
+</Bot>

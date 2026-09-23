@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Acuerdos_que_vencen_en_15_dias</fullName>
+    <columns>Owner</columns>
+    <columns>Name</columns>
+    <columns>Account</columns>
+    <columns>Status</columns>
+    <columns>StartDate</columns>
+    <columns>EndDate</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>D_as_para_finalizar__c</field>
+        <operation>lessThan</operation>
+        <value>15</value>
+    </filters>
+    <filters>
+        <field>Status</field>
+        <operation>equals</operation>
+        <value>Activado</value>
+    </filters>
+    <label>Acuerdos que vencen en 15 días</label>
+</ListView>

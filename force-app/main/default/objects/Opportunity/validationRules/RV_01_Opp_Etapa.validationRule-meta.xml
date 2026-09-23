@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RV_01_Opp_Etapa</fullName>
+    <active>false</active>
+    <errorConditionFormula>SyncedQuote.Bandera_aprobado__c</errorConditionFormula>
+    <errorMessage>No se puede cambiar la etapa de la oportunidad cuando esta ha sido aprobada.</errorMessage>
+</ValidationRule>

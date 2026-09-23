@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RV_05_Estado</fullName>
+    <active>true</active>
+    <errorConditionFormula>ISPICKVAL(PRIORVALUE(Status), &quot;Prospecto Validado&quot;) &amp;&amp;
+NOT(
+    OR(
+        $Profile.Name = &quot;Datos maestros&quot;,
+        $Profile.Name = &quot;Equipo de crédito&quot;,
+								$Profile.Name = &quot;Administrador del sistema&quot;
+    )
+)</errorConditionFormula>
+    <errorMessage>Solo los perfiles &quot;Datos Maestros&quot; y &quot;Crédito y Cobranza&quot; pueden modificar el estado después de &quot;Prospecto Validado&quot;</errorMessage>
+</ValidationRule>

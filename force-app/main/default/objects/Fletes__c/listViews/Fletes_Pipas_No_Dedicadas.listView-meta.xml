@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Fletes_Pipas_No_Dedicadas</fullName>
+    <booleanFilter>1 OR 2</booleanFilter>
+    <columns>NAME</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Medio_de_transporte__c</field>
+        <operation>equals</operation>
+        <value>PIPA_NO_DEDICADA</value>
+    </filters>
+    <filters>
+        <field>Medio_de_transporte__c</field>
+        <operation>equals</operation>
+        <value>PIPA_3EJES ALCOHOL</value>
+    </filters>
+    <label>Fletes-Pipas No Dedicadas</label>
+</ListView>

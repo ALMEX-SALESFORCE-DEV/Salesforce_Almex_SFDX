@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>Balance de contrato</fullName>
+        <default>false</default>
+        <label>Balance de contrato</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Falla en PPRs</fullName>
+        <default>false</default>
+        <label>Falla en PPRs</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Falla en la calidad del producto</fullName>
+        <default>false</default>
+        <label>Falla en la calidad del producto</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Cotización</fullName>
+        <default>false</default>
+        <label>Cotización</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Documentación de pedido</fullName>
+        <default>false</default>
+        <label>Documentación de pedido</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Envío de documentos de calidad</fullName>
+        <default>false</default>
+        <label>Envío de documentos de calidad</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Inocuidad de pedido</fullName>
+        <default>false</default>
+        <label>Inocuidad de pedido</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Otro</fullName>
+        <default>false</default>
+        <label>Otro</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Pedido no encontrado</fullName>
+        <default>false</default>
+        <label>Pedido no encontrado</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Problema con entrega de pedido</fullName>
+        <default>false</default>
+        <label>Problema con entrega de pedido</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Queja</fullName>
+        <default>false</default>
+        <label>Queja</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Sin acceso a cuenta</fullName>
+        <default>false</default>
+        <label>Sin acceso a cuenta</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Centro de lavado</fullName>
+        <default>false</default>
+        <label>Centro de lavado</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Planeación</fullName>
+        <default>false</default>
+        <label>Planeación</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Producción</fullName>
+        <default>false</default>
+        <label>Producción</label>
+    </standardValue>
+    <standardValue>
+        <fullName>SAC</fullName>
+        <default>false</default>
+        <label>SAC</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Calidad</fullName>
+        <default>false</default>
+        <label>Calidad</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Distribución</fullName>
+        <default>false</default>
+        <label>Distribución</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ETs</fullName>
+        <default>false</default>
+        <label>ETs</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Falla de inocuidad alimentaría</fullName>
+        <default>false</default>
+        <label>Falla de inocuidad alimentaría</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Falla en el servicio</fullName>
+        <default>false</default>
+        <label>Falla en el servicio</label>
+    </standardValue>
+</StandardValueSet>

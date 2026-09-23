@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pedido__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <label>Pedido</label>
+    <referenceTo>Pedido_general__c</referenceTo>
+    <relationshipLabel>Líneas de pedidos</relationshipLabel>
+    <relationshipName>Lineas_de_pedidos</relationshipName>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Lookup</type>
+</CustomField>

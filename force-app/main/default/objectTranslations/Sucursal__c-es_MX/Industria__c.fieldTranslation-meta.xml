@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label><!-- Industria --></label>
+    <name>Industria__c</name>
+    <picklistValues>
+        <masterLabel>AGROINDUSTRIA</masterLabel>
+        <translation><!-- AGROINDUSTRIA --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>ALIMENTOS</masterLabel>
+        <translation><!-- ALIMENTOS --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>ALMEX</masterLabel>
+        <translation><!-- ALMEX --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>AUTOSERVICIOS</masterLabel>
+        <translation><!-- AUTOSERVICIOS --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>CERVECERÍA</masterLabel>
+        <translation><!-- CERVECERÍA --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>CONFITERÍA</masterLabel>
+        <translation><!-- CONFITERÍA --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>CORRUGADOR</masterLabel>
+        <translation><!-- CORRUGADOR --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>DESTILADOS</masterLabel>
+        <translation><!-- DESTILADOS --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>DETALLISTA</masterLabel>
+        <translation><!-- DETALLISTA --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>DISTRIBUIDORES</masterLabel>
+        <translation><!-- DISTRIBUIDORES --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>EMBOTELLADOR</masterLabel>
+        <translation><!-- EMBOTELLADOR --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>FARMACÉUTICA / QUÍMICA</masterLabel>
+        <translation><!-- FARMACÉUTICA / QUÍMICA --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>FORRAJES</masterLabel>
+        <translation><!-- FORRAJES --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>GOBIERNO</masterLabel>
+        <translation><!-- GOBIERNO --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>GRANEL</masterLabel>
+        <translation><!-- GRANEL --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>INDUSTRIAL</masterLabel>
+        <translation><!-- INDUSTRIAL --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>INTERCOMPANIA</masterLabel>
+        <translation><!-- INTERCOMPANIA --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>LÁCTEOS</masterLabel>
+        <translation><!-- LÁCTEOS --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>MAYORISTA</masterLabel>
+        <translation><!-- MAYORISTA --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>OTROS</masterLabel>
+        <translation><!-- OTROS --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>PANIFICACIÓN</masterLabel>
+        <translation><!-- PANIFICACIÓN --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>TRANSPORTE</masterLabel>
+        <translation><!-- TRANSPORTE --></translation>
+    </picklistValues>
+</CustomFieldTranslation>

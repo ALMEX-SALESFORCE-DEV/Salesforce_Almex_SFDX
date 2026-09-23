@@ -1,0 +1,287 @@
+* {
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+	color: black;
+}
+
+input,
+p {
+	height: 34px;
+}
+
+.h-34px {
+	height: 34px !important;
+}
+
+.cell {
+	height: 30px;
+	display: grid;
+	align-items: center;
+}
+
+.sub-title {
+	font-size: 12pt;
+	font-weight: bold;
+	text-align: center;
+	justify-self: center;
+}
+
+p {
+	padding: 4px;
+	display: flex;
+	align-items: center;
+}
+
+input {
+	border: 1px dotted gray;
+	border-radius: 4px;
+	padding: 4px 8px;
+}
+
+main {
+	background-color: white;
+	padding: 16px;
+}
+
+button {
+	width: 100%;
+	background-color: #0669fe;
+	color: white;
+	font-weight: 500;
+	border: none;
+	padding: 0.6em 0.8em;
+	border-radius: 4px;
+}
+
+button.red-text {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: transparent;
+	color: red;
+	transition: all 450ms linear;
+}
+
+button.red-text:hover {
+	height: 30px;
+	background-color: #ff00000c;
+	transition: all 250ms linear;
+}
+
+/* link */
+.link-container h1 {
+	font-weight: bold;
+	font-size: 14pt;
+	margin: 0;
+}
+
+.link-container p {
+	font-size: 12pt;
+}
+
+.link {
+	color: #0669fe;
+	text-decoration: underline;
+}
+
+/* Shorts */
+.bg-gray {
+	background-color: #e7e7e7;
+	border: none;
+}
+
+.p-8 {
+	padding: 8px;
+}
+
+.red-bold {
+	color: red;
+	font-weight: bold;
+}
+
+.text-center {
+	text-align: center;
+	justify-content: center;
+}
+
+.form-plants-container {
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+	gap: 4px;
+}
+
+.table {
+	display: flex;
+	overflow: auto;
+	gap: 8px;
+}
+
+.table::-webkit-scrollbar {
+	height: 5px;
+}
+
+.table::-webkit-scrollbar-track {
+	background: #ffffff;
+}
+
+.table::-webkit-scrollbar-thumb {
+	background: #0669fe;
+}
+
+.table::-webkit-scrollbar-thumb:hover {
+	background: #0669fe75;
+}
+
+.quoter-column {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.table .quoter-column {
+	padding: 0 4px;
+}
+
+.new-product-container {
+	display: grid;
+	grid-template-columns: auto auto;
+	gap: 8px;
+}
+
+/* HEADERS */
+header {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: 16px;
+	margin-bottom: 1em;
+}
+
+.header-inputs input,
+.header-inputs label {
+	height: 25px;
+}
+
+.header-inputs label {
+	display: flex;
+	align-items: center;
+}
+
+.calendar-header {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.user-data-section {
+	display: grid;
+	grid-template-rows: 1fr auto;
+}
+
+.grid-1-auto {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+}
+
+.client-section {
+	display: flex;
+	flex-direction: column;
+	background-color: #8080801a;
+	padding: 4px;
+	border-radius: 8px;
+	margin-bottom: 12px;
+}
+
+.size-date-section {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 8px;
+}
+
+.configs-section {
+	width: 350px;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+/* @media (max-width: 900px) {
+  header {
+    grid-template-columns: 1fr;
+  }
+} */
+
+/* QUOTER PROPS SECTION */
+.section-with-label {
+	display: grid;
+	grid-template-columns: auto 1fr 100px;
+	gap: 4px;
+}
+
+.section-with-label h2 {
+	text-align: center;
+	align-self: center;
+	background-color: #f2f2f2;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 4px;
+	font-weight: bold;
+	font-size: 9pt;
+	border-radius: 4px;
+	color: black;
+	width: 100px;
+	border: 1px dotted gray;
+}
+
+.title-gray {
+	background-color: #f2f2f2;
+	padding: 4px 2px;
+	font-weight: bold;
+}
+
+.transparent {
+	background-color: transparent !important;
+	border: none !important;
+}
+
+/* Product Table */
+.product-input-group {
+	display: flex;
+	flex-direction: column;
+	/* margin-top: 1px; */
+}
+
+.product-input-group input {
+	border: 1px dotted #80808096;
+	text-align: right;
+}
+
+.product-input-group .title-gray {
+	height: 30px;
+}
+
+.product-input-group .single {
+	height: 32px;
+}
+
+/* TOTALES */
+.totals-column {
+	/* background-color: #0066ff15; */
+	border-radius: 4px;
+}
+
+.totals-column h2 {
+	color: #0066ff;
+}
+
+.totals-column input {
+	border-color: #0066ff;
+	color: #0066ff;
+	font-weight: bold;
+}
+
+lightning-record-picker {
+	height: 35px;
+}

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label><!-- Documento --></label>
+    <name>Documento__c</name>
+    <picklistValues>
+        <masterLabel>Certificado_de_calidad</masterLabel>
+        <translation><!-- Certificado_de_calidad --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Factura</masterLabel>
+        <translation><!-- Factura --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Orden_de_embarque</masterLabel>
+        <translation><!-- Orden_de_embarque --></translation>
+    </picklistValues>
+</CustomFieldTranslation>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Certificado_de_calidad</fullName>
+    <active>true</active>
+    <label>Certificado de calidad</label>
+    <picklistValues>
+        <picklist>Documento__c</picklist>
+        <values>
+            <fullName>Certificado_de_calidad</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Factura</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Orden_de_embarque</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

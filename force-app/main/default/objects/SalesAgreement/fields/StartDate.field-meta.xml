@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>StartDate</fullName>
+    <inlineHelpText>Updating the start date when the number of existing schedules and products is large can cause a delay in saving the agreement terms.</inlineHelpText>
+    <trackFeedHistory>true</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+</CustomField>

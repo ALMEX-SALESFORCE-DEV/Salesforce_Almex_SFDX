@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <encodingKey>UTF-8</encodingKey>
+    <name>Plantilla cuenta credito</name>
+    <style>none</style>
+    <subject>Solicitud de credito</subject>
+    <textOnly>Un cliente dentro de salesforce esta solicitando crédito, Por favor revisa en el siguiente link el registro {!Account.Link}</textOnly>
+    <type>custom</type>
+    <uiType>Aloha</uiType>
+</EmailTemplate>

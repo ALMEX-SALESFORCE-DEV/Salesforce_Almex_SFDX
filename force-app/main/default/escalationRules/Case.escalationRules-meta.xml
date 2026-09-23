@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EscalationRules xmlns="http://soap.sforce.com/2006/04/metadata">
+    <escalationRule>
+        <fullName>Escalación-ALMEX</fullName>
+        <active>true</active>
+        <ruleEntry>
+            <businessHours>ALMEX</businessHours>
+            <businessHoursSource>Static</businessHoursSource>
+            <criteriaItems>
+                <field>Case.Status</field>
+                <operation>equals</operation>
+                <value>Nuevo</value>
+            </criteriaItems>
+            <criteriaItems>
+                <field>Case.Priority</field>
+                <operation>equals</operation>
+                <value>Media 🟡​</value>
+            </criteriaItems>
+            <disableEscalationWhenModified>true</disableEscalationWhenModified>
+            <escalationAction>
+                <assignedTo>avelina.arredondo@almidones.com.mx</assignedTo>
+                <assignedToTemplate>unfiled$public/SUPPORTCaseescalationnotificationSAMPLE</assignedToTemplate>
+                <assignedToType>User</assignedToType>
+                <minutesToEscalation>180</minutesToEscalation>
+                <notifyCaseOwner>false</notifyCaseOwner>
+            </escalationAction>
+            <escalationStartTime>CaseCreation</escalationStartTime>
+        </ruleEntry>
+    </escalationRule>
+</EscalationRules>

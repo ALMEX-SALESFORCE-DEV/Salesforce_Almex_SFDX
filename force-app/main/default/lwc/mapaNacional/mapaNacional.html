@@ -1,0 +1,234 @@
+<template>
+    <div class="dashboard">
+
+        <!-- ==================== TOP CARDS ==================== -->
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <lightning-icon icon-name="utility:apps" size="small" alternative-text="Productos monitoreados">
+                    </lightning-icon>
+                </div>
+
+                <div class="stat-content">
+                    <span class="stat-title">Productos Monitoreados</span>
+                    <span class="stat-value">{monitoredProducts}</span>
+                </div>
+            </div>
+
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <lightning-icon icon-name="utility:world" size="small" alternative-text="Estados analizados">
+                    </lightning-icon>
+                </div>
+
+                <div class="stat-content">
+                    <span class="stat-title">Estados Analizados</span>
+                    <span class="stat-value">{analyzedStates}</span>
+                </div>
+            </div>
+
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <lightning-icon icon-name="utility:money" size="small" alternative-text="Precio promedio">
+                    </lightning-icon>
+                </div>
+
+                <div class="stat-content">
+                    <span class="stat-title">Precio Promedio</span>
+                    <span class="stat-value">${averagePrice}</span>
+                </div>
+            </div>
+
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <lightning-icon icon-name="utility:warning" size="small" alternative-text="Estados sin información">
+                    </lightning-icon>
+                </div>
+
+                <div class="stat-content">
+                    <span class="stat-title">Estados sin información</span>
+                    <span class="stat-value">{outOfRangeStates}</span>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- ==================== FILTERS ==================== -->
+        <div class="filters">
+
+            <div class="view-toggle">
+                <button class="toggle-button active">
+                    Estados
+                </button>
+            </div>
+
+            <div class="product-filter">
+                <label for="product">Producto</label>
+
+                <select id="product" class="product-select" value={selectedProduct} onchange={handleProductChange}>
+                    <option value="Azucar">Azúcar</option>
+                    <option value="Almidon">Almidón</option>
+                </select>
+            </div>
+
+        </div>
+
+
+        <!-- ==================== TABSET PRINCIPAL ==================== -->
+        <lightning-tabset variant="scoped">
+
+            <!-- ==================== TAB: MAPA Y RESÚMENES ==================== -->
+            <lightning-tab label="Mapa y tablas" value="mapa">
+
+                <div class="main-grid">
+
+                    <!-- ==================== MAPA ==================== -->
+                    <section class="panel map-panel">
+
+                        <div class="panel-title">
+                            Mapa de Competitividad
+                        </div>
+
+                        <div class="map-content">
+
+                            <div class="map-container" lwc:dom="manual">
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <section class="panel summary-panel">
+
+                        <div class="summary-header">
+
+                            <div class="panel-title">
+                                Resumen Estatal
+                            </div>
+
+                            <lightning-combobox
+                                class="provider-filter"
+                                name="providerFilter"
+                                label="Proveedor"
+                                variant="label-hidden"
+                                value={selectedProvider}
+                                options={providerOptions}
+                                onchange={handleProviderChange}>
+                            </lightning-combobox>
+
+                            <div class="download-actions">
+                                <lightning-button
+                                    label="Descargar Excel"
+                                    icon-name="utility:download"
+                                    onclick={handleDownloadExcel}
+                                    disabled={isDownloading}>
+                                </lightning-button>
+                            </div>
+
+                        </div>
+
+                        <!-- RESUMEN ESTATAL -->
+                        <div
+                            class="table-wrapper summary-state-table datatable-scroll"
+                            ondblclick={handleStateTableDoubleClick}>
+
+                            <lightning-datatable
+                                key-field="id"
+                                data={summaryTableData}
+                                columns={summaryTableColumns}
+                                selected-rows={selectedStateRowIds}
+                                onrowselection={handleStateSelection}>
+                            </lightning-datatable>
+
+                        </div>
+
+                        <div class="panel-title">
+                            Desglose por ciudad
+                        </div>
+
+                        <!-- RESUMEN CIUDADES -->
+                        <div
+                            class="table-wrapper summary-city-table datatable-scroll"
+                            ondblclick={handleCityTableDoubleClick}>
+
+                            <lightning-datatable
+                                key-field="id"
+                                data={cityTableData}
+                                columns={cityTableColumns}
+                                hide-checkbox-column>
+                            </lightning-datatable>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+            </lightning-tab>
+
+
+            <!-- ==================== TAB: GRÁFICAS ==================== -->
+
+            <lightning-tab label="Gráficas" value="graficas" onactive={handleChartsTabActive}>
+
+                <section class="panel charts-panel">
+
+                    <div class="chart-filter">
+                        <lightning-combobox name="year" label="Año" value={selectedYear} options={yearOptions}
+                            onchange={handleYearChange}>
+                        </lightning-combobox>
+                    </div>
+
+                    <div class="chart-filter">
+                        <lightning-combobox name="month" label="Mes" value={selectedMonth} options={monthOptions}
+                            onchange={handleMonthChange}>
+                        </lightning-combobox>
+                    </div>
+
+                    <div class="chart-wrapper">
+
+                        <div class="trend-chart" lwc:dom="manual">
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </lightning-tab>
+
+        </lightning-tabset>
+    </div>
+    <template if:true={isTableExpanded}>
+
+        <div class="table-modal-backdrop" onclick={closeExpandedTable}>
+        </div>
+        <div class="table-expanded" role="dialog" aria-modal="true">
+            <button class="close-expanded-table" onclick={closeExpandedTable} title="Cerrar">
+
+                <lightning-icon icon-name="utility:close" size="small" alternative-text="Cerrar">
+                </lightning-icon>
+
+            </button>
+
+            <div class="table-expanded-content">
+
+                <template if:true={isStateTableExpanded}>
+                    <lightning-datatable key-field="id" data={summaryTableData} columns={summaryTableColumns}
+                        column-widths-mode="auto" hide-checkbox-column>
+                    </lightning-datatable>
+                </template>
+
+                <template if:true={isCityTableExpanded}>
+                    <lightning-datatable key-field="id" data={cityTableData} columns={cityTableColumns}
+                        column-widths-mode="auto" hide-checkbox-column>
+                    </lightning-datatable>
+                </template>
+            </div>
+        </div>
+    </template>
+</template>

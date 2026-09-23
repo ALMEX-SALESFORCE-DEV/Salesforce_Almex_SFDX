@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Nombre_concatenado__c</fullName>
+    <externalId>false</externalId>
+    <formula>Account.Name &amp; &quot; - &quot; &amp; Name &amp; &quot; - &quot; &amp; TEXT(CreatedDate)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Nombre de oportunidad</label>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

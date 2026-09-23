@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Volumen_total__c</fullName>
+    <label>Volumen total</label>
+    <summarizedField>SalesAgreementProduct.TotalPlannedQuantityValue</summarizedField>
+    <summaryFilterItems>
+        <field>SalesAgreementProduct.TotalPlannedQuantity</field>
+        <operation>greaterThan</operation>
+        <value>1</value>
+    </summaryFilterItems>
+    <summaryForeignKey>SalesAgreementProduct.SalesAgreementId</summaryForeignKey>
+    <summaryOperation>sum</summaryOperation>
+    <trackHistory>false</trackHistory>
+    <type>Summary</type>
+</CustomField>

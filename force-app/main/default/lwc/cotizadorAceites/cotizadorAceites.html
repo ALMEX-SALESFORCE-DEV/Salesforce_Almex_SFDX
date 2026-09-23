@@ -1,0 +1,599 @@
+<template>
+	<main class="main" if:false={link}>
+		<header>
+			<section class="user-data-section">
+				<div>
+					<div class="client-section">
+						<template lwc:if={opportunity.data}>
+							<p><b>Customer Name: {opportunity.data.Account.Name}</b></p>
+							<p><b>Customer Number:</b></p>
+						</template>
+					</div>
+					<div class="size-date-section">
+						<div if:true={opportunity.data}>
+							<div>v{opportunity.data.Quote_Version__c}</div>
+							<div if:true={isUpdate}>Update: {isUpdate}</div>
+							<div if:true={priceAverages}>Precio Dólar: {priceAverages.Fx__c}</div>
+							<div class="sub-title">
+								<p><b>Operating:&nbsp;</b> {totals.marginBruteNetSales}%</p>
+							</div>
+						</div>
+						<div class="calendar-header">
+							<div class="grid-1-auto">
+								<label for="agreement_starting_date">Agreement - Starting date</label>
+								<input
+									value={headerPeriods.startDate}
+									type="date"
+									placeholder="Agreement - Starting date"
+									id="agrement_starting_date"
+									lwc:ref="agreementStartDate"
+									onchange={onChangeAgreementDate}
+									name="agreementStartDate"
+								/>
+							</div>
+							<div class="grid-1-auto">
+								<label for="agreement_expiring_date">Agreement - Expiring date</label>
+								<input
+									value={headerPeriods.endDate}
+									type="date"
+									placeholder="Agreement - Expiring date"
+									id="agreement_expiring_date"
+									lwc:ref="agreementEndDate"
+									onchange={onChangeAgreementDate}
+									name="agreementEndDate"
+								/>
+							</div>
+							<div class="grid-1-auto">
+								<label for="calendar_year_period">Calendar Year Period</label>
+								<input
+									type="text"
+									id="calendar_year_period"
+									value={headerPeriods.calendarYearPeriod}
+									readonly
+								/>
+							</div>
+							<div class="grid-1-auto">
+								<label for="period">Period</label>
+								<input type="text" id="period" value={headerPeriods.calendarPeriod} readonly />
+							</div>
+						</div>
+					</div>
+				</div>
+				<div>
+					<lightning-textarea
+						name="comments"
+						label="Comments / Considerations:"
+						lwc:ref="comments"
+					></lightning-textarea>
+				</div>
+			</section>
+			<form class="configs-section" lwc:ref="config-form">
+				<div class="grid-1-auto header-inputs">
+					<label for="quoation-date">Quotation Date</label>
+					<input
+						id="quoation-date"
+						type="date"
+						placeholder="Quotation Date"
+						lwc:ref="quoationDate"
+						value={quoationDate}
+						readonly
+					/>
+				</div>
+				<div class="grid-1-auto header-inputs">
+					<label for="incremental_credit_days">Moneda</label>
+					<select name="currency" id="currency" lwc:ref="currency" onchange={onChangeCurrency}>
+						<option value="usd">USD</option>
+						<option value="mxn">MXN</option>
+					</select>
+				</div>
+				<div class="grid-1-auto header-inputs">
+					<label for="unit-measure">Invoicing Unit of Measure</label>
+					<select name="unit-measure" id="unit-measure" onchange={onChangeUnitMeasure} lwc:ref="unitMeasure">
+						<option value="mt">Metric Tons</option>
+						<option value="kg">Kilograms</option>
+						<option value="litro">Litro</option>
+						<option value="pza">Pza</option>
+					</select>
+				</div>
+				<div class="grid-1-auto header-inputs">
+					<label for="invoice-selling-price">Terms - Invoicing Selling Price</label>
+					<select
+						name="invoice-selling-price"
+						id="invoice-selling-price"
+						onchange={onChangeInvoiceSellingPrice}
+						lwc:ref="invoiceSellingPrice"
+					>
+						<option value="customer-plant">Customer plant</option>
+						<option value="almex-plant">Almex Plant</option>
+					</select>
+				</div>
+				<!-- <div class="grid-1-auto header-inputs">
+					<label>Payment Terms</label>
+					<template if:true={opportunity.data}>
+						<input
+							type="text"
+							placeholder="Payment Terms"
+							value={opportunity.data.Account.Plazo_de_Credito__c}
+							readonly
+						/>
+					</template>
+				</div> -->
+				<div class="grid-1-auto header-inputs">
+					<label for="incremental-cost">Incremental Costs</label>
+					<select
+						name="unit-measure"
+						id="incremental-cost"
+						lwc:ref="incrementalCostSelect"
+						onchange={onChangeHeaderSelect}
+					>
+						<option value="no">No</option>
+						<option value="yes">Yes</option>
+					</select>
+				</div>
+				<!-- <div class="grid-1-auto header-inputs">
+					<label for="additional_finantial_cost">Additional Financial Costs</label>
+					<input id="additional_finantial_cost" value={isAdditionalFinantialCost} readonly />
+				</div> -->
+				<!-- <div class="grid-1-auto header-inputs">
+					<label for="incremental_credit_days">Incremental Credit Days</label>
+					<input
+						id="incremental_credit_days"
+						name="incremental-credit-days"
+						lwc:ref="incrementalCreditDays"
+						value={incrementalCreditDays}
+						readonly
+					/>
+				</div> -->
+				<div>
+					<button onclick={showResult} type="button" disabled={isLoading}>Guardar cotización</button>
+				</div>
+			</form>
+		</header>
+		<form class="form-plants-container" lwc:ref="productsForm">
+			<div class="quoter-column">
+				<div class="cell"></div>
+				<div class="generals-container section-with-label">
+					<h2>GENERALES</h2>
+					<div>
+						<p class="red-bold">Precio AS - Pricing - Precio Facturado</p>
+						<p><b>Volume</b></p>
+						<!-- <p>Unidad de medida</p> -->
+						<p>Producto</p>
+						<!-- <p>Codigo del producto</p> -->
+						<p>Almacén de Recibo Promer</p>
+						<p>Customer Site Name</p>
+						<p>Customer Site Number</p>
+					</div>
+					<div>
+						<p class="red-bold">{amountType}</p>
+						<p><b>{volume}</b></p>
+						<p></p>
+						<!-- <p></p> -->
+						<!-- <p></p> -->
+						<p></p>
+						<p></p>
+						<p></p>
+					</div>
+				</div>
+				<div class="sales-price-container section-with-label">
+					<h2>P VENTA</h2>
+					<p><b>Precio Meta (Entregado con Cliente)</b></p>
+					<p><b>{amountType}</b></p>
+				</div>
+				<div class="logistic-container section-with-label">
+					<h2>LOGISTICA</h2>
+					<div>
+						<p>Movimiento</p>
+						<p>Transportation Method</p>
+						<p>Tons</p>
+						<p>Costo Total Flete</p>
+						<p>Flete de Salida a Cliente (OUTBOUND)</p>
+						<!-- <p>Shipping Costs per Lot Size</p>
+						<p>Exchange Rate MXN per USD</p>
+						<p>Shipping Costs per Lot Size</p>
+						<p>Flete de Salida a Cliente (OUTBOUND)</p> -->
+					</div>
+					<div>
+						<p></p>
+						<p></p>
+						<p>Per Lot Size</p>
+						<p>{currentMetricLabel}</p>
+						<p>{amountType}</p>
+						<!-- <p>MXN/Lot Size</p>
+						<p>T Cambio</p>
+						<p>USD/Lot Size</p>
+						<p>{amountType}</p> -->
+					</div>
+				</div>
+				<div class="net-price-container section-with-label">
+					<h2>P NETO</h2>
+					<p><b>Precio entregado en Planta Promer (Venta Neta)</b></p>
+					<p><b>{amountType}</b></p>
+				</div>
+				<div class="total-price-container section-with-label">
+					<h2>COSTO VENTA TOTAL</h2>
+					<div>
+						<p class="title-gray">01 - Costos del Producto</p>
+						<p>Costo Producto</p>
+						<p>Costo Producto LT</p>
+						<!--Railroad-->
+						<p>Flete de Entrada (INBOUD)</p>
+						<!-- <p>Costos Operativos (Import Expenses -Almidon)</p> -->
+						<p>Importación</p>
+						<p><b>Total Costo Construido</b></p>
+						<p>Merma</p>
+						<p>Costo de la merma</p>
+						<p><b>Total Costo de Producto</b></p>
+						<p></p>
+						<p class="title-gray">02 - Costos Operativos</p>
+						<p>Costos Operativos (Almacenaje)</p>
+						<p>Costos Operativos (Otros)</p>
+						<p><b>Total Costos Operativos</b></p>
+						<p></p>
+						<p><b>Costo Total de Venta</b></p>
+					</div>
+					<div>
+						<p></p>
+						<p>{amountType}</p>
+						<p>{amountType}</p>
+						<p>{amountType}</p>
+						<p>{amountType}</p>
+						<p>{amountType}</p>
+						<p class="text-center">%</p>
+						<p>{amountType}</p>
+						<p><b>{amountType}</b></p>
+						<p></p>
+						<p></p>
+						<p>{amountType}</p>
+						<p>{amountType}</p>
+						<p><b>{amountType}</b></p>
+						<p></p>
+						<p>{amountType}</p>
+					</div>
+				</div>
+				<!-- <div class="margins-container section-with-label">
+					<h2 class="transparent"></h2>
+					<div>
+						<p><b>Margen Bruto</b></p>
+						<p class="title-gray"><b>% Margen Bruto sobre Ventas netas</b></p>
+						<p>Gastos de Overhead</p>
+						<p><b>Margen antes de Impuestos</b></p>
+						<p><b>% Margen Neto sobre Ventas netas</b></p>
+						<p>PTU</p>
+						<p>ISR - Impuesto sobre la Renta</p>
+						<p><b>Margen Neto</b></p>
+					</div>
+					<div>
+						<p>{amountType}</p>
+						<p></p>
+						<p>{amountType}</p>
+						<p><b>{amountType}</b></p>
+						<p></p>
+						<p>{amountType}</p>
+						<p>{amountType}</p>
+						<p>{amountType}</p>
+					</div>
+				</div> -->
+				<h2 class="title-gray" style="font-size: 11pt"><b>Incrementables al Precio de Venta (Facturado)</b></h2>
+				<div class="extras-container section-with-label">
+					<h2 class="transparent"></h2>
+					<p><b>Precio Meta (Entregado con Cliente)</b></p>
+					<p><b>{amountType}</b></p>
+				</div>
+				<div class="extras-container section-with-label">
+					<h2>EXTRAS</h2>
+					<div>
+						<template if:true={selects.incrementalCost}>
+							<p class="title-gray">Incremental Costs</p>
+							<p>Incremental Costs (portal sites, certifications, descuentos)</p>
+						</template>
+						<p><b>{exwLabel} + Incrementals</b></p>
+						<!-- <template if:true={showFinancialInputs}>
+						</template> -->
+						<p>Otros Costos</p>
+						<p><b>{exwLabel} + Financial Costs</b></p>
+					</div>
+					<div>
+						<template if:true={selects.incrementalCost}>
+							<p></p>
+							<p>{amountType}</p>
+						</template>
+						<p>{amountType}</p>
+						<template if:true={showFinancialInputs}>
+							<p>{amountType}</p>
+						</template>
+						<p>{amountType}</p>
+					</div>
+				</div>
+			</div>
+			<div class="table">
+				<template for:each={items} for:item="i">
+					<div class="quoter-column" key={i.id} aria-id={i.id}>
+						<div class="cell">
+							<button type="button" class="red-text" data-id={i.id} onclick={onRemoveProduct}>
+								Borrar
+							</button>
+						</div>
+						<div class="product-input-group">
+							<input value={i.billedPrice} type="text" class="bg-gray" readonly />
+							<!-- PRECIO FACTURADO -->
+							<input oninput={onChangeInput} name="volume" type="number" value={i.volume} step="1" />
+							<!-- <input class="bg-gray" value={i.unidadDeMedidaC} type="text" readonly /> -->
+							<lightning-record-picker
+								class={i.id}
+								label="Producto"
+								placeholder="Nombre del producto"
+								object-api-name="Product2"
+								onchange={onChangeRecordPicker}
+								variant="label-hidden"
+								value={i.productId}
+								data-type="product"
+								disabled="true"
+							>
+							</lightning-record-picker>
+							<!-- <input class="bg-gray" value={i.productDescription} type="text" readonly /> -->
+							<lightning-record-picker
+								class={i.id}
+								label="Planta"
+								placeholder="Almacén ALMEX"
+								object-api-name="Planta__c"
+								onchange={onChangeRecordPicker}
+								variant="label-hidden"
+								data-type="storage"
+								value={i.storage}
+							></lightning-record-picker>
+							<template lwc:if={opportunity.data}>
+								<lightning-record-picker
+									class={i.id}
+									label="Sucursal Destino"
+									placeholder="Sucursal Destino"
+									object-api-name="Sucursal__c"
+									onchange={onChangeRecordPicker}
+									variant="label-hidden"
+									value={i.customerSiteName}
+									data-type="customer-site"
+									filter={filter}
+								></lightning-record-picker>
+							</template>
+							<input class="bg-gray" value={i.customerSiteId} type="text" readonly />
+						</div>
+						<div class="product-input-group">
+							<input
+								oninput={onChangeInput}
+								value={i.almexPriceWarehouse}
+								name="almexPriceWarehouse"
+								class="single"
+								type="text"
+							/>
+						</div>
+						<div class="product-input-group">
+							<!-- Movimiento -->
+							<lightning-combobox
+								class={i.id}
+								variant="label-hidden"
+								options={movimientoOptions}
+								onchange={onChangeMovement}
+								data-column={i.id}
+								value={i.movement}
+								required="true"
+							></lightning-combobox>
+							<lightning-combobox
+								class={i.id}
+								variant="label-hidden"
+								options={transportType}
+								onchange={onChangeSelect}
+								data-column={i.id}
+								value={i.transportation}
+								disabled={i.transporActive}
+							></lightning-combobox>
+							<input oninput={onChangeInput} name="tons" type="number" value={i.tons} step="1" />
+							<input class="bg-gray" value={i.convertionPrice} type="text" readonly />
+							<!-- input - flete de salida a client -->
+							<input class="bg-gray" value={i.deliveryCost} type="text" readonly />
+							<!-- <input
+								type="number"
+								value={i.shippingCostsPerLotSize}
+								name="shippingCostsPerLotSize"
+								oninput={onChangeInput}
+							/>
+							<input type="number" value={i.referenceCurrency} readonly />
+							<input class="bg-gray" type="text" value={i.shippingCostsPerLotSizeF} readonly /> -->
+							<!-- flete de sailda -->
+							<!-- <input class="bg-gray" value={i.fleteDeSalidaAClienteOutbound} type="text" readonly /> -->
+						</div>
+						<div class="product-input-group">
+							<input class="bg-gray" value={i.labTransferPrice} type="text" readonly />
+						</div>
+						<div class="product-input-group">
+							<p></p>
+							<input class="bg-gray" type="text" value={i.productCostF} readonly />
+							<input class="bg-gray" type="text" value={i.productCostLtFView} readonly />
+							<input
+								oninput={onChangeInput}
+								name="railroadCost"
+								type="number"
+								step="1"
+								value={i.railroadCost}
+							/>
+							<!-- <input
+								oninput={onChangeInput}
+								name="importExpensesAlmidon"
+								type="number"
+								step="1"
+								value={i.importExpensesAlmidon}
+							/> -->
+							<input
+								oninput={onChangeInput}
+								name="transferImportExpPacking"
+								type="number"
+								step="1"
+								value={i.transferImportExpPacking}
+							/>
+							<input class="bg-gray" type="text" value={i.totalBuildingCost} readonly />
+							<input
+								oninput={onChangeInput}
+								name="profitMarginPercentage"
+								type="number"
+								step="1"
+								value={i.profitMarginPercentage}
+							/>
+							<!-- costo de a merma -->
+							<input class="bg-gray" type="text" value={i.profitMargin} readonly />
+							<input
+								oninput={onChangeInput}
+								name="totalProductCost"
+								type="number"
+								value={i.totalProductCost}
+							/>
+							<p></p>
+							<p></p>
+							<input
+								oninput={onChangeInput}
+								name="clientPortals"
+								type="number"
+								step="1"
+								value={i.clientPortals}
+							/>
+							<input
+								oninput={onChangeInput}
+								name="storageDry"
+								type="number"
+								step="1"
+								value={i.storageDry}
+							/>
+							<input class="bg-gray" type="text" value={i.totalOperativeCost} readonly />
+							<p></p>
+							<input class="bg-gray" type="text" value={i.totalSalesCost} readonly />
+						</div>
+						<!-- <div class="product-input-group">
+							<input type="text" value={i.marginBrute} readonly />
+							<input type="text" value={i.marginBruteNetSales} readonly />
+							<input type="text" value={i.overhead} readonly />
+							<input type="text" value={i.marginBeforeTaxes} readonly />
+							<input type="text" value={i.netMarginAboutNetSales} readonly />
+							<input type="text" value={i.ptuView} readonly />
+							<input type="text" value={i.isr} readonly />
+							<input type="text" value={i.netMargin} readonly />
+						</div> -->
+						<div class="product-input-group">
+							<p class="title-gray h-34px"></p>
+						</div>
+						<div class="product-input-group">
+							<input class="bg-gray" value={i.almexPriceWarehouse} type="text" readonly />
+						</div>
+						<div class="product-input-group">
+							<template if:true={selects.incrementalCost}>
+								<p class="title-gray h-34px"></p>
+								<input
+									oninput={onChangeInput}
+									value={i.incrementalCostCalc}
+									name="incrementalCostCalc"
+									type="text"
+								/>
+							</template>
+							<input class="bg-gray" value={i.exwIncrementals} type="text" readonly />
+							<template if:true={showFinancialInputs}>
+								<input
+									oninput={onChangeInput}
+									value={i.finantialCost}
+									name="finantialCost"
+									type="text"
+								/>
+							</template>
+							<input class="bg-gray" value={i.exwFinancialCost} type="text" readonly />
+						</div>
+					</div>
+				</template>
+			</div>
+			<!-- TOTALES -->
+			<div class="new-product-container">
+				<div class="quoter-column totals-column">
+					<div class="cell">
+						<h2 class="sub-title">Totales</h2>
+					</div>
+					<div class="product-input-group">
+						<input value={totals.pricing} type="text" readonly />
+						<input value={totals.volume} type="text" readonly />
+						<p></p>
+						<input value={totals.products} type="text" readonly />
+						<p></p>
+						<p></p>
+						<input value={totals.customerSites} type="text" readonly />
+					</div>
+					<div class="product-input-group">
+						<input value={totals.warehousePrice} type="text" readonly />
+					</div>
+					<div class="product-input-group">
+						<p></p>
+						<p></p>
+						<p></p>
+						<p></p>
+						<input value={totals.flete} type="text" readonly />
+					</div>
+					<div class="product-input-group">
+						<input value={totals.labTransfer} type="text" readonly />
+					</div>
+					<div class="product-input-group">
+						<p></p>
+						<input value={totals.productCostF} type="text" readonly />
+						<input value={totals.productCostLtF} type="text" readonly />
+						<input value={totals.railroad} type="text" readonly />
+						<!-- <input value={totals.operativeAlmidon} type="text" readonly /> -->
+						<input value={totals.operativePacking} type="text" readonly />
+						<input value={totals.totalBuildCost} type="text" readonly />
+						<input value={totals.profitMarginPercentage} type="text" readonly />
+						<input value={totals.profitMargin} type="text" readonly />
+						<input value={totals.totalProductCost} type="text" readonly />
+						<p></p>
+						<p></p>
+						<input value={totals.clientPortals} type="text" readonly />
+						<input value={totals.dryStorage} type="text" readonly />
+						<input value={totals.totalOperativeCost} type="text" readonly />
+						<p></p>
+						<input value={totals.totalSalesCost} type="text" readonly />
+					</div>
+					<!-- <div class="product-input-group">
+						<input type="text" value={totals.marginBrute} readonly />
+						<input type="text" value={totals.marginBruteNetSales} readonly />
+						<input type="text" value={totals.overhead} readonly />
+						<input type="text" value={totals.marginBeforeTaxes} readonly />
+						<input type="text" value={totals.netMarginBeforeSales} readonly />
+						<input type="text" value={totals.ptu} readonly />
+						<input type="text" value={totals.isr} readonly />
+						<input type="text" value={totals.netMargin} readonly />
+					</div> -->
+					<div class="product-input-group">
+						<p class="title-gray"></p>
+					</div>
+					<div class="product-input-group">
+						<input value={totals.warehousePrice} type="text" readonly />
+					</div>
+					<div class="product-input-group">
+						<template if:true={selects.incrementalCost}>
+							<p class="title-gray"></p>
+							<input value={totals.incrementalCostRebate} type="text" readonly />
+						</template>
+						<input value={totals.exwIncrementals} type="text" readonly />
+						<template if:true={showFinancialInputs}>
+							<input value={totals.finantialCost} type="text" readonly />
+						</template>
+						<input value={totals.exwFinantialCost} type="text" readonly />
+					</div>
+				</div>
+				<div>
+					<div class="cell"></div>
+					<button style="margin-top: 8px" onclick={addNewColumn} type="button">Agregar Sucursal</button>
+				</div>
+			</div>
+		</form>
+	</main>
+	<main class="main" if:true={link}>
+		<section class="link-container">
+			<h1>Operación exitosa</h1>
+			<p>
+				Puedes consultar la nueva cotización en el siguiente enlace:&nbsp;<a href={link} class="link">{link}</a>
+			</p>
+			<button onclick={finishProcess}>Finalizar</button>
+		</section>
+	</main>
+</template>

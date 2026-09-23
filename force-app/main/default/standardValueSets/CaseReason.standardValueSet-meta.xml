@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>Cotización</fullName>
+        <default>false</default>
+        <label>Cotización</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Estatus de pedido</fullName>
+        <default>false</default>
+        <label>Estatus de pedido</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>NAP</fullName>
+        <default>false</default>
+        <label>NAP</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>OTIF</fullName>
+        <default>false</default>
+        <label>OTIF</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Otro</fullName>
+        <default>false</default>
+        <label>Otro</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Pedido</fullName>
+        <default>false</default>
+        <label>Pedido</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Productos</fullName>
+        <default>false</default>
+        <label>Productos</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Reclamación</fullName>
+        <default>false</default>
+        <label>Reclamación</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Perfect Order</fullName>
+        <default>false</default>
+        <label>Perfect Order</label>
+        <cssExposed>true</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>SLA</fullName>
+        <default>false</default>
+        <label>SLA</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Solicitud de muestra</fullName>
+        <default>false</default>
+        <label>Solicitud de muestra</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+    <standardValue>
+        <fullName>Solicitud documental</fullName>
+        <default>false</default>
+        <label>Solicitud documental</label>
+        <cssExposed>false</cssExposed>
+    </standardValue>
+</StandardValueSet>

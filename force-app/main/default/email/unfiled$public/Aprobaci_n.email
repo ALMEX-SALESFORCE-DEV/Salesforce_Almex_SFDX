@@ -1,0 +1,1 @@
+El usuario: {!Quote.OwnerFirstName} {!Quote.OwnerLastName} esta solicitando una aprobación, da clic aquí: {!ApprovalRequest.Internal_URL}

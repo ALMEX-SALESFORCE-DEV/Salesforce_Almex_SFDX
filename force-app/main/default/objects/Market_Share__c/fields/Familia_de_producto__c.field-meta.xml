@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Familia_de_producto__c</fullName>
+    <label>Familia de producto</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Aceite</fullName>
+                <default>false</default>
+                <label>Aceite</label>
+            </value>
+            <value>
+                <fullName>Alcohol</fullName>
+                <default>false</default>
+                <label>Alcohol</label>
+            </value>
+            <value>
+                <fullName>Almidón</fullName>
+                <default>false</default>
+                <label>Almidón</label>
+            </value>
+            <value>
+                <fullName>Dextrosa</fullName>
+                <default>false</default>
+                <label>Dextrosa</label>
+            </value>
+            <value>
+                <fullName>Fructosa 42</fullName>
+                <default>false</default>
+                <label>Fructosa 42</label>
+            </value>
+            <value>
+                <fullName>Fructosa 55</fullName>
+                <default>false</default>
+                <label>Fructosa 55</label>
+            </value>
+            <value>
+                <fullName>Glucosa</fullName>
+                <default>false</default>
+                <label>Glucosa</label>
+            </value>
+            <value>
+                <fullName>Glucosa 43/44</fullName>
+                <default>false</default>
+                <label>Glucosa 43/44</label>
+            </value>
+            <value>
+                <fullName>Glucosa 63</fullName>
+                <default>false</default>
+                <label>Glucosa 63</label>
+            </value>
+            <value>
+                <fullName>Gluten de maíz</fullName>
+                <default>false</default>
+                <label>Gluten de maíz</label>
+            </value>
+            <value>
+                <fullName>Krystar</fullName>
+                <default>false</default>
+                <label>Krystar</label>
+            </value>
+            <value>
+                <fullName>Maltosa</fullName>
+                <default>false</default>
+                <label>Maltosa</label>
+            </value>
+            <value>
+                <fullName>Pasta de germen</fullName>
+                <default>false</default>
+                <label>Pasta de germen</label>
+            </value>
+            <value>
+                <fullName>Salvado de maíz</fullName>
+                <default>false</default>
+                <label>Salvado de maíz</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

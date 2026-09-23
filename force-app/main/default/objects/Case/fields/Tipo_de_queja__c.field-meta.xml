@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Tipo_de_queja__c</fullName>
+    <label>Tipo</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Reason</controllingField>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Balance de contrato</fullName>
+                <default>false</default>
+                <label>Balance de contrato</label>
+            </value>
+            <value>
+                <fullName>Centro de lavado</fullName>
+                <default>false</default>
+                <label>Centro de lavado</label>
+            </value>
+            <value>
+                <fullName>Cotización</fullName>
+                <default>false</default>
+                <label>Cotización</label>
+            </value>
+            <value>
+                <fullName>Distribución</fullName>
+                <default>false</default>
+                <label>Distribución</label>
+            </value>
+            <value>
+                <fullName>Documentación de pedido</fullName>
+                <default>false</default>
+                <label>Documentación de pedido</label>
+            </value>
+            <value>
+                <fullName>Envío de documentos de calidad</fullName>
+                <default>false</default>
+                <label>Envío de documentos de calidad</label>
+            </value>
+            <value>
+                <fullName>ETs</fullName>
+                <default>false</default>
+                <label>ETs</label>
+            </value>
+            <value>
+                <fullName>Falla de inocuidad alimentaría</fullName>
+                <default>false</default>
+                <label>Falla de inocuidad alimentaría</label>
+            </value>
+            <value>
+                <fullName>Falla en el servicio</fullName>
+                <default>false</default>
+                <label>Falla en el servicio</label>
+            </value>
+            <value>
+                <fullName>Falla en la calidad del producto</fullName>
+                <default>false</default>
+                <label>Falla en la calidad del producto</label>
+            </value>
+            <value>
+                <fullName>Falla en PPRs</fullName>
+                <default>false</default>
+                <label>Falla en PPRs</label>
+            </value>
+            <value>
+                <fullName>Otro</fullName>
+                <default>false</default>
+                <label>Otro</label>
+            </value>
+            <value>
+                <fullName>Pedido no encontrado</fullName>
+                <default>false</default>
+                <label>Pedido no encontrado</label>
+            </value>
+            <value>
+                <fullName>Planeación</fullName>
+                <default>false</default>
+                <label>Planeación</label>
+            </value>
+            <value>
+                <fullName>Problema con entrega de pedido</fullName>
+                <default>false</default>
+                <label>Problema con entrega de pedido</label>
+            </value>
+            <value>
+                <fullName>Producción</fullName>
+                <default>false</default>
+                <label>Producción</label>
+            </value>
+            <value>
+                <fullName>Queja</fullName>
+                <default>false</default>
+                <label>Queja</label>
+            </value>
+            <value>
+                <fullName>SAC</fullName>
+                <default>false</default>
+                <label>SAC</label>
+            </value>
+            <value>
+                <fullName>Sin acceso a cuenta</fullName>
+                <default>false</default>
+                <label>Sin acceso a cuenta</label>
+            </value>
+            <value>
+                <fullName>Omisión de factura</fullName>
+                <default>false</default>
+                <label>Omisión de factura</label>
+            </value>
+            <value>
+                <fullName>Omisión de OC</fullName>
+                <default>false</default>
+                <label>Omisión de OC</label>
+            </value>
+            <value>
+                <fullName>Omisión de COA</fullName>
+                <default>false</default>
+                <label>Omisión de COA</label>
+            </value>
+            <value>
+                <fullName>Omisión muestra retención</fullName>
+                <default>false</default>
+                <label>Omisión muestra retención</label>
+            </value>
+            <value>
+                <fullName>Omisión EPP/Kit seguridad</fullName>
+                <default>false</default>
+                <label>Omisión EPP/Kit seguridad</label>
+            </value>
+            <value>
+                <fullName>BPMs</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>BPMs</label>
+            </value>
+            <value>
+                <fullName>Calidad</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Calidad</label>
+            </value>
+            <value>
+                <fullName>Certificado de calidad</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Certificado de calidad</label>
+            </value>
+            <value>
+                <fullName>Devolución</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Devolución</label>
+            </value>
+            <value>
+                <fullName>Documentación</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Documentación</label>
+            </value>
+            <value>
+                <fullName>Factura</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Factura</label>
+            </value>
+            <value>
+                <fullName>Inocuidad</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Inocuidad</label>
+            </value>
+            <value>
+                <fullName>Inocuidad de pedido</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Inocuidad de pedido</label>
+            </value>
+            <value>
+                <fullName>Omisión de entrega</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Omisión de entrega</label>
+            </value>
+            <value>
+                <fullName>Orden de embarque</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Orden de embarque</label>
+            </value>
+            <value>
+                <fullName>Problemas con transporte</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Problemas con transporte</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Cotización</controllingFieldValue>
+            <valueName>Cotización</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>NAP</controllingFieldValue>
+            <controllingFieldValue>Reclamación</controllingFieldValue>
+            <valueName>Falla de inocuidad alimentaría</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>NAP</controllingFieldValue>
+            <controllingFieldValue>Reclamación</controllingFieldValue>
+            <controllingFieldValue>Estatus de pedido</controllingFieldValue>
+            <controllingFieldValue>Pedido</controllingFieldValue>
+            <valueName>Falla en el servicio</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>NAP</controllingFieldValue>
+            <controllingFieldValue>Reclamación</controllingFieldValue>
+            <controllingFieldValue>OTIF</controllingFieldValue>
+            <valueName>Falla en la calidad del producto</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>NAP</controllingFieldValue>
+            <controllingFieldValue>Reclamación</controllingFieldValue>
+            <valueName>Falla en PPRs</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Estatus de pedido</controllingFieldValue>
+            <controllingFieldValue>Pedido</controllingFieldValue>
+            <valueName>Documentación de pedido</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Estatus de pedido</controllingFieldValue>
+            <controllingFieldValue>Pedido</controllingFieldValue>
+            <valueName>Pedido no encontrado</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Estatus de pedido</controllingFieldValue>
+            <controllingFieldValue>Pedido</controllingFieldValue>
+            <valueName>Problema con entrega de pedido</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Otro</controllingFieldValue>
+            <valueName>Balance de contrato</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Otro</controllingFieldValue>
+            <controllingFieldValue>Productos</controllingFieldValue>
+            <valueName>Envío de documentos de calidad</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Otro</controllingFieldValue>
+            <valueName>Queja</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Otro</controllingFieldValue>
+            <valueName>Sin acceso a cuenta</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Pedido</controllingFieldValue>
+            <controllingFieldValue>Perfect Order</controllingFieldValue>
+            <valueName>Otro</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>OTIF</controllingFieldValue>
+            <valueName>Centro de lavado</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>OTIF</controllingFieldValue>
+            <valueName>Distribución</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>OTIF</controllingFieldValue>
+            <valueName>ETs</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>OTIF</controllingFieldValue>
+            <valueName>Planeación</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>OTIF</controllingFieldValue>
+            <valueName>Producción</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>OTIF</controllingFieldValue>
+            <valueName>SAC</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Perfect Order</controllingFieldValue>
+            <valueName>Omisión de OC</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Perfect Order</controllingFieldValue>
+            <valueName>Omisión de COA</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Perfect Order</controllingFieldValue>
+            <valueName>Omisión muestra retención</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Perfect Order</controllingFieldValue>
+            <valueName>Omisión EPP/Kit seguridad</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

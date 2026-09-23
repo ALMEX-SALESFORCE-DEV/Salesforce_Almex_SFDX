@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EclairGeoData xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <content xsi:nil="true"/>
+    <maps>
+        <mapLabel>Nuevo mapa</mapLabel>
+        <mapName>map_1752708058096</mapName>
+        <projection>Equirectangular</projection>
+    </maps>
+    <masterLabel>mexico_updated</masterLabel>
+</EclairGeoData>

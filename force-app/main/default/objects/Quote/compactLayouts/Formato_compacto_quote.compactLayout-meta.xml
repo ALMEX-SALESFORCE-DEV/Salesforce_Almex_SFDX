@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Formato_compacto_quote</fullName>
+    <fields>Name</fields>
+    <fields>ExpirationDate</fields>
+    <fields>OpportunityId</fields>
+    <fields>AccountId</fields>
+    <fields>Precio_facturado_total__c</fields>
+    <fields>RecordTypeId</fields>
+    <label>Formato compacto quote</label>
+</CompactLayout>

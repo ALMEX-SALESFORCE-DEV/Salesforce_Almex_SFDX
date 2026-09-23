@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>BU_ALMEX</fullName>
+        <default>true</default>
+        <label>ALMEX</label>
+    </customValue>
+    <customValue>
+        <fullName>BU_PROMER</fullName>
+        <default>false</default>
+        <label>PROMER</label>
+    </customValue>
+    <masterLabel>Unidades de Negocio</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

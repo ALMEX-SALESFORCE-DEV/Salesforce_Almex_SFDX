@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>Elemento dañado</fullName>
+        <default>false</default>
+        <label>Elemento dañado</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Elemento o pieza que falta</fullName>
+        <default>true</default>
+        <label>Elemento o pieza que falta</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Elemento erróneo</fullName>
+        <default>false</default>
+        <label>Elemento erróneo</label>
+    </standardValue>
+    <standardValue>
+        <fullName>Garantía caducada</fullName>
+        <default>false</default>
+        <label>Garantía caducada</label>
+    </standardValue>
+</StandardValueSet>

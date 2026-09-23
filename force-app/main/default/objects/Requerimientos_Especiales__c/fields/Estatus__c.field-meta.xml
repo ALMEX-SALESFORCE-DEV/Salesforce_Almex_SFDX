@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Estatus__c</fullName>
+    <label>Estatus</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>BORRADOR</fullName>
+                <default>true</default>
+                <label>BORRADOR</label>
+            </value>
+            <value>
+                <fullName>INACTIVO</fullName>
+                <default>false</default>
+                <label>INACTIVO</label>
+            </value>
+            <value>
+                <fullName>ACTIVO</fullName>
+                <default>false</default>
+                <label>ACTIVO</label>
+            </value>
+            <value>
+                <fullName>RECHAZADO</fullName>
+                <default>false</default>
+                <label>RECHAZADO</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

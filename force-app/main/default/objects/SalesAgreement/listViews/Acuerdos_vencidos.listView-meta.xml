@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Acuerdos_vencidos</fullName>
+    <columns>Owner</columns>
+    <columns>Name</columns>
+    <columns>Pricebook</columns>
+    <columns>Account</columns>
+    <columns>Status</columns>
+    <columns>StartDate</columns>
+    <columns>EndDate</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Status</field>
+        <operation>equals</operation>
+        <value>Vencido</value>
+    </filters>
+    <label>Acuerdos vencidos</label>
+</ListView>

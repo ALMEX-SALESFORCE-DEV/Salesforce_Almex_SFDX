@@ -1,0 +1,23 @@
+<template>
+	<template if:true={isImportados}>
+		<c-cotizador-importados
+			current-quote={quote}
+			record-id={quote.data.OpportunityId}
+			is-update={isUpdate}
+		></c-cotizador-importados>
+	</template>
+	<template if:true={isOil}>
+		<c-cotizador-aceites
+			current-quote={quote}
+			record-id={quote.data.OpportunityId}
+			is-update={isUpdate}
+		></c-cotizador-aceites>
+	</template>
+	<template if:true={isManufacturados}>
+		<c-cotizador-manufacturados
+			current-quote={quote}
+			record-id={quote.data.OpportunityId}
+			is-update={isUpdate}
+		></c-cotizador-manufacturados>
+	</template>
+</template>

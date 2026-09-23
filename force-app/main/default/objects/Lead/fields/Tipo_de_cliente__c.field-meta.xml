@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Tipo_de_cliente__c</fullName>
+    <label>Tipo de cliente</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>NACIONAL</fullName>
+                <default>false</default>
+                <label>NACIONAL</label>
+            </value>
+            <value>
+                <fullName>EXTRANJERO</fullName>
+                <default>false</default>
+                <label>EXTRANJERO</label>
+            </value>
+            <value>
+                <fullName>INTERCOMPAÑIA NACIONAL</fullName>
+                <default>false</default>
+                <label>INTERCOMPAÑIA NACIONAL</label>
+            </value>
+            <value>
+                <fullName>INTERCOMPAÑIA EXTRANJERO</fullName>
+                <default>false</default>
+                <label>INTERCOMPAÑIA EXTRANJERO</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

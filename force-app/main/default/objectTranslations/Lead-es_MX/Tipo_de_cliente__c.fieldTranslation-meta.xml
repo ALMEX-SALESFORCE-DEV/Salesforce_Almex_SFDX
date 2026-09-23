@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label><!-- Tipo de cliente --></label>
+    <name>Tipo_de_cliente__c</name>
+    <picklistValues>
+        <masterLabel>EXTRANJERO</masterLabel>
+        <translation><!-- EXTRANJERO --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>INTERCOMPAÑIA EXTRANJERO</masterLabel>
+        <translation><!-- INTERCOMPAÑIA EXTRANJERO --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>INTERCOMPAÑIA NACIONAL</masterLabel>
+        <translation><!-- INTERCOMPAÑIA NACIONAL --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>NACIONAL</masterLabel>
+        <translation><!-- NACIONAL --></translation>
+    </picklistValues>
+</CustomFieldTranslation>

@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>N/A</fullName>
+        <default>false</default>
+        <label>N/A</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON DE MAIZ PNC</fullName>
+        <default>false</default>
+        <label>ALMIDON DE MAIZ PNC</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON DE MAIZ BP 25 KG</fullName>
+        <default>false</default>
+        <label>ALMIDON DE MAIZ BP 25 KG</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON DE MAIZ GRANEL</fullName>
+        <default>false</default>
+        <label>ALMIDON DE MAIZ GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON DE MAIZ SS1T</fullName>
+        <default>false</default>
+        <label>ALMIDON DE MAIZ SS1T</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON DE MAIZ SS 500 KG</fullName>
+        <default>false</default>
+        <label>ALMIDON DE MAIZ SS 500 KG</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALTA FRUCTOSA 42 PNC</fullName>
+        <default>false</default>
+        <label>ALTA FRUCTOSA 42 PNC</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALTA FRUCTOSA 42 GRANEL</fullName>
+        <default>false</default>
+        <label>ALTA FRUCTOSA 42 GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALTA MALTOSA PNC</fullName>
+        <default>false</default>
+        <label>ALTA MALTOSA PNC</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALTA MALTOSA GRANEL</fullName>
+        <default>false</default>
+        <label>ALTA MALTOSA GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>DEXTROSA CIX PNC</fullName>
+        <default>false</default>
+        <label>DEXTROSA CIX PNC</label>
+    </standardValue>
+    <standardValue>
+        <fullName>DEXTROSA CIX GRANEL</fullName>
+        <default>false</default>
+        <label>DEXTROSA CIX GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>DEXTROSA SIX PNC</fullName>
+        <default>false</default>
+        <label>DEXTROSA SIX PNC</label>
+    </standardValue>
+    <standardValue>
+        <fullName>FRUCTOSA CRISTALINA BP</fullName>
+        <default>false</default>
+        <label>FRUCTOSA CRISTALINA BP</label>
+    </standardValue>
+    <standardValue>
+        <fullName>DEXTROSA SIX GRANEL</fullName>
+        <default>false</default>
+        <label>DEXTROSA SIX GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>GLUCOSA 23-28 DE GRANEL</fullName>
+        <default>false</default>
+        <label>GLUCOSA 23-28 DE GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>GLUCOSA 43 BE PNC</fullName>
+        <default>false</default>
+        <label>GLUCOSA 43 BE PNC</label>
+    </standardValue>
+    <standardValue>
+        <fullName>GLUCOSA 43 BE GRANEL</fullName>
+        <default>false</default>
+        <label>GLUCOSA 43 BE GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>GLUCOSA 44 BE PNC</fullName>
+        <default>false</default>
+        <label>GLUCOSA 44 BE PNC</label>
+    </standardValue>
+    <standardValue>
+        <fullName>GLUCOSA 44 BE GRANEL</fullName>
+        <default>false</default>
+        <label>GLUCOSA 44 BE GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>KOL GUARD 7467 R 22.68 KG</fullName>
+        <default>false</default>
+        <label>KOL GUARD 7467 R 22.68 KG</label>
+    </standardValue>
+    <standardValue>
+        <fullName>STAR DRI 100 MALTODEXTRIN BP</fullName>
+        <default>false</default>
+        <label>STAR DRI 100 MALTODEXTRIN BP</label>
+    </standardValue>
+    <standardValue>
+        <fullName>GLUTEN DE MAIZ SECO COPRODUCTO DE LA MOLIENDA MIN 60 % DE PROTEINA</fullName>
+        <default>false</default>
+        <label>GLUTEN DE MAIZ SECO COPRODUCTO DE LA MOLIENDA MIN 60 % DE PROTEINA</label>
+    </standardValue>
+    <standardValue>
+        <fullName>GERMEN DE MAIZ</fullName>
+        <default>false</default>
+        <label>GERMEN DE MAIZ</label>
+    </standardValue>
+    <standardValue>
+        <fullName>MAIZ QUEBRADO</fullName>
+        <default>false</default>
+        <label>MAIZ QUEBRADO</label>
+    </standardValue>
+    <standardValue>
+        <fullName>AGUA DE COCIMIENTO DL</fullName>
+        <default>false</default>
+        <label>AGUA DE COCIMIENTO DL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALTA FRUCTOSA 55 R|GRANEL</fullName>
+        <default>false</default>
+        <label>ALTA FRUCTOSA 55 R|GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALTA FRUCTOSA 42 M|GRANEL</fullName>
+        <default>false</default>
+        <label>ALTA FRUCTOSA 42 M|GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>DEXTROSA SIX M|GRANEL C</fullName>
+        <default>false</default>
+        <label>DEXTROSA SIX M|GRANEL C</label>
+    </standardValue>
+    <standardValue>
+        <fullName>GLUCOSA 43 BE M|GRANEL</fullName>
+        <default>false</default>
+        <label>GLUCOSA 43 BE M|GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>DEXTROSA SIX M|GRANEL</fullName>
+        <default>false</default>
+        <label>DEXTROSA SIX M|GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON DE MAIZ M|BP 25 KG C</fullName>
+        <default>false</default>
+        <label>ALMIDON DE MAIZ M|BP 25 KG C</label>
+    </standardValue>
+    <standardValue>
+        <fullName>GLUCOSA 43 BE M|GRANEL V</fullName>
+        <default>false</default>
+        <label>GLUCOSA 43 BE M|GRANEL V</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON DE MAIZ M|BP 25 KG</fullName>
+        <default>false</default>
+        <label>ALMIDON DE MAIZ M|BP 25 KG</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALTA MALTOSA M|GRANEL</fullName>
+        <default>false</default>
+        <label>ALTA MALTOSA M|GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>GLUCOSA 44 BE M|GRANEL</fullName>
+        <default>false</default>
+        <label>GLUCOSA 44 BE M|GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON DE MAIZ C106 R|SS1T</fullName>
+        <default>false</default>
+        <label>ALMIDON DE MAIZ C106 R|SS1T</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALCOHOL EITILICO 96 GNS R</fullName>
+        <default>false</default>
+        <label>ALCOHOL EITILICO 96 GNS R</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALTA FRUCTOSA 42 R|GRANEL</fullName>
+        <default>false</default>
+        <label>ALTA FRUCTOSA 42 R|GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON DE MAIZ M|GRANEL C</fullName>
+        <default>false</default>
+        <label>ALMIDON DE MAIZ M|GRANEL C</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON DE MAIZ M|SS1T K2</fullName>
+        <default>false</default>
+        <label>ALMIDON DE MAIZ M|SS1T K2</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ACEITE REFINADO|BIDON 20 L</fullName>
+        <default>false</default>
+        <label>ACEITE REFINADO|BIDON 20 L</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON DE MAIZ M|SS1T K3</fullName>
+        <default>false</default>
+        <label>ALMIDON DE MAIZ M|SS1T K3</label>
+    </standardValue>
+    <standardValue>
+        <fullName>GLUCOSA SWEETOSE R|GRANEL</fullName>
+        <default>false</default>
+        <label>GLUCOSA SWEETOSE R|GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON DE MAIZ C106 R|GRANEL</fullName>
+        <default>false</default>
+        <label>ALMIDON DE MAIZ C106 R|GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ACEITE REFINADO|CAJA 12 BOTELLA 800 ML</fullName>
+        <default>false</default>
+        <label>ACEITE REFINADO|CAJA 12 BOTELLA 800 ML</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ACEITE REFINADO|GRANEL</fullName>
+        <default>false</default>
+        <label>ACEITE REFINADO|GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON DE MAIZ C185 R|GRANEL</fullName>
+        <default>false</default>
+        <label>ALMIDON DE MAIZ C185 R|GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON DE MAIZ M|SS1T K1</fullName>
+        <default>false</default>
+        <label>ALMIDON DE MAIZ M|SS1T K1</label>
+    </standardValue>
+    <standardValue>
+        <fullName>AGUA DE COCIMIENTO CONCENTRADA</fullName>
+        <default>false</default>
+        <label>AGUA DE COCIMIENTO CONCENTRADA</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON DE MAIZ M|GRANEL</fullName>
+        <default>false</default>
+        <label>ALMIDON DE MAIZ M|GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>GLUCOSA 43 BE R|GRANEL</fullName>
+        <default>false</default>
+        <label>GLUCOSA 43 BE R|GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALTA MALTOSA R|GRANEL</fullName>
+        <default>false</default>
+        <label>ALTA MALTOSA R|GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>KRYSTAR 300 R|BP 22.68 KG</fullName>
+        <default>false</default>
+        <label>KRYSTAR 300 R|BP 22.68 KG</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON DE MAIZ C185 R|BP 25 KG</fullName>
+        <default>false</default>
+        <label>ALMIDON DE MAIZ C185 R|BP 25 KG</label>
+    </standardValue>
+    <standardValue>
+        <fullName>KRYSTAR LIQUID FRUCTOSE R|GRANEL</fullName>
+        <default>false</default>
+        <label>KRYSTAR LIQUID FRUCTOSE R|GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>PASTA DE GERMEN DE MAIZ RESIDUO DEL PROCESO DE EXTRACCION DE ACEITE</fullName>
+        <default>false</default>
+        <label>PASTA DE GERMEN DE MAIZ RESIDUO DEL PROCESO DE EXTRACCION DE ACEITE</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON DE MAIZ C106 RD|SS1T</fullName>
+        <default>false</default>
+        <label>ALMIDON DE MAIZ C106 RD|SS1T</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON DE MAIZ M|BP 25 KG K</fullName>
+        <default>false</default>
+        <label>ALMIDON DE MAIZ M|BP 25 KG K</label>
+    </standardValue>
+    <standardValue>
+        <fullName>BARREDURA NO APTO PARA CONSUMO HUMANO (EDULCORANTES R)</fullName>
+        <default>false</default>
+        <label>BARREDURA NO APTO PARA CONSUMO HUMANO (EDULCORANTES R)</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON DE MAIZ M|GRANEL K</fullName>
+        <default>false</default>
+        <label>ALMIDON DE MAIZ M|GRANEL K</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON MODIFICADO DE MAIZ C277 R|BP 22.68 KG</fullName>
+        <default>false</default>
+        <label>ALMIDON MODIFICADO DE MAIZ C277 R|BP 22.68 KG</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON DE MAIZ M|SS 500 KG</fullName>
+        <default>false</default>
+        <label>ALMIDON DE MAIZ M|SS 500 KG</label>
+    </standardValue>
+    <standardValue>
+        <fullName>BARREDURA NO APTO PARA CONSUMO HUMANO (ALMIDONES M)</fullName>
+        <default>false</default>
+        <label>BARREDURA NO APTO PARA CONSUMO HUMANO (ALMIDONES M)</label>
+    </standardValue>
+    <standardValue>
+        <fullName>CLINTOSE DEXTROSE A R|BP 22.68 KG</fullName>
+        <default>false</default>
+        <label>CLINTOSE DEXTROSE A R|BP 22.68 KG</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ACEITE REFINADO|TOTE</fullName>
+        <default>false</default>
+        <label>ACEITE REFINADO|TOTE</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON MODIFICADO DE MAIZ C430 R|GRANEL</fullName>
+        <default>false</default>
+        <label>ALMIDON MODIFICADO DE MAIZ C430 R|GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALCOHOL ETILICO 95 SDA 40B R</fullName>
+        <default>false</default>
+        <label>ALCOHOL ETILICO 95 SDA 40B R</label>
+    </standardValue>
+    <standardValue>
+        <fullName>SALVADO DE MAIZ HUMEDO PRODUCTO NO CONFORME</fullName>
+        <default>false</default>
+        <label>SALVADO DE MAIZ HUMEDO PRODUCTO NO CONFORME</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON DE MAIZ MM|SS1T</fullName>
+        <default>false</default>
+        <label>ALMIDON DE MAIZ MM|SS1T</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON DE MAIZ MM|BP 25 KG</fullName>
+        <default>false</default>
+        <label>ALMIDON DE MAIZ MM|BP 25 KG</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALTA FRUCTOSA 55 R PNC</fullName>
+        <default>false</default>
+        <label>ALTA FRUCTOSA 55 R PNC</label>
+    </standardValue>
+    <standardValue>
+        <fullName>BARREDURA NO APTO PARA CONSUMO HUMANO (COPRODUCTOS)</fullName>
+        <default>false</default>
+        <label>BARREDURA NO APTO PARA CONSUMO HUMANO (COPRODUCTOS)</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON DE MAIZ PEARL R|GRANEL</fullName>
+        <default>false</default>
+        <label>ALMIDON DE MAIZ PEARL R|GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALTA FRUCTOSA 42 M PNC</fullName>
+        <default>false</default>
+        <label>ALTA FRUCTOSA 42 M PNC</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALTA FRUCTOSA 42 R PNC</fullName>
+        <default>false</default>
+        <label>ALTA FRUCTOSA 42 R PNC</label>
+    </standardValue>
+    <standardValue>
+        <fullName>COMPOSTA</fullName>
+        <default>false</default>
+        <label>COMPOSTA</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON DE MAIZ C185 R|SS1T</fullName>
+        <default>false</default>
+        <label>ALMIDON DE MAIZ C185 R|SS1T</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ALMIDON DE MAIZ PEARL R|SS1T</fullName>
+        <default>false</default>
+        <label>ALMIDON DE MAIZ PEARL R|SS1T</label>
+    </standardValue>
+    <standardValue>
+        <fullName>BARREDURA NO APTO PARA CONSUMO HUMANO (ESPECIALIDADES)</fullName>
+        <default>false</default>
+        <label>BARREDURA NO APTO PARA CONSUMO HUMANO (ESPECIALIDADES)</label>
+    </standardValue>
+    <standardValue>
+        <fullName>KRYSTAR 300 SPK01 R|BP 25 KG</fullName>
+        <default>false</default>
+        <label>KRYSTAR 300 SPK01 R|BP 25 KG</label>
+    </standardValue>
+    <standardValue>
+        <fullName>DEXTROSA CIX M|GRANEL</fullName>
+        <default>false</default>
+        <label>DEXTROSA CIX M|GRANEL</label>
+    </standardValue>
+    <standardValue>
+        <fullName>ANCHOR LR R|BP 22.68 KG</fullName>
+        <default>false</default>
+        <label>ANCHOR LR R|BP 22.68 KG</label>
+    </standardValue>
+    <standardValue>
+        <fullName>SALVADO DE MAIZ SECO MIN 18 % DE PROTEINA MIN 60 DE GRANULOMETRIA Y HUMEDAD MAXIMA DE 12</fullName>
+        <default>false</default>
+        <label>SALVADO DE MAIZ SECO MIN 18 % DE PROTEINA MIN 60 DE GRANULOMETRIA Y HUMEDAD MAXIMA DE 12</label>
+    </standardValue>
+</StandardValueSet>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Forma_de_pago__c</fullName>
+    <label>Forma de pago</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Efectivo (01)</fullName>
+                <default>false</default>
+                <label>Efectivo (01)</label>
+            </value>
+            <value>
+                <fullName>Cheque nominativo (02)</fullName>
+                <default>false</default>
+                <label>Cheque nominativo (02)</label>
+            </value>
+            <value>
+                <fullName>Transferencia electrónica de fondos (03)</fullName>
+                <default>false</default>
+                <label>Transferencia electrónica de fondos (03)</label>
+            </value>
+            <value>
+                <fullName>Dación en pago (12)</fullName>
+                <default>false</default>
+                <label>Dación en pago (12)</label>
+            </value>
+            <value>
+                <fullName>Pago por subrogación (13)</fullName>
+                <default>false</default>
+                <label>Pago por subrogación (13)</label>
+            </value>
+            <value>
+                <fullName>Pago por consignación (14)</fullName>
+                <default>false</default>
+                <label>Pago por consignación (14)</label>
+            </value>
+            <value>
+                <fullName>Condonación (15)</fullName>
+                <default>false</default>
+                <label>Condonación (15)</label>
+            </value>
+            <value>
+                <fullName>Compensación (17)</fullName>
+                <default>false</default>
+                <label>Compensación (17)</label>
+            </value>
+            <value>
+                <fullName>Aplicación de anticipos (30)</fullName>
+                <default>false</default>
+                <label>Aplicación de anticipos (30)</label>
+            </value>
+            <value>
+                <fullName>Intermediario pagos (31)</fullName>
+                <default>false</default>
+                <label>Intermediario pagos (31)</label>
+            </value>
+            <value>
+                <fullName>Por definir (99)</fullName>
+                <default>false</default>
+                <label>Por definir (99)</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

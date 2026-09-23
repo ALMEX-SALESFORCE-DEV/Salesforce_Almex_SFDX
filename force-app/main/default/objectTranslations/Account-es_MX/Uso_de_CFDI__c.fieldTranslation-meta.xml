@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label><!-- Uso de CFDI --></label>
+    <name>Uso_de_CFDI__c</name>
+    <picklistValues>
+        <masterLabel>Adquisicion de mercancias (G01)</masterLabel>
+        <translation><!-- Adquisicion de mercancias (G01) --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Comunicaciones satelitales (I07)</masterLabel>
+        <translation><!-- Comunicaciones satelitales (I07) --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Comunicaciones telefónicas (I06)</masterLabel>
+        <translation><!-- Comunicaciones telefónicas (I06) --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Construcciones (I01)</masterLabel>
+        <translation><!-- Construcciones (I01) --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Dados, troqueles, moldes, matrices y herramental (I05)</masterLabel>
+        <translation><!-- Dados, troqueles, moldes, matrices y herramental (I05) --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Devoluciones, descuentos o bonificaciones (G02)</masterLabel>
+        <translation><!-- Devoluciones, descuentos o bonificaciones (G02) --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Donativos (D04)</masterLabel>
+        <translation><!-- Donativos (D04) --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Equipo de computo y accesorios (I04)</masterLabel>
+        <translation><!-- Equipo de computo y accesorios (I04) --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Equipo de transporte (I03)</masterLabel>
+        <translation><!-- Equipo de transporte (I03) --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Gastos en general (G03)</masterLabel>
+        <translation><!-- Gastos en general (G03) --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Intereses reales efectivamente pagados por créditos hipotecarios (casa habitación) (D05)</masterLabel>
+        <translation><!-- Intereses reales efectivamente pagados por créditos hipotecarios (casa habitación) (D05) --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Mobiliario y equipo de oficina por inversiones (I02)</masterLabel>
+        <translation><!-- Mobiliario y equipo de oficina por inversiones (I02) --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Otra maquinaria y equipo (I08)</masterLabel>
+        <translation><!-- Otra maquinaria y equipo (I08) --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Por definir (P01)</masterLabel>
+        <translation><!-- Por definir (P01) --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Sin efectos fiscales (S01)</masterLabel>
+        <translation><!-- Sin efectos fiscales (S01) --></translation>
+    </picklistValues>
+</CustomFieldTranslation>

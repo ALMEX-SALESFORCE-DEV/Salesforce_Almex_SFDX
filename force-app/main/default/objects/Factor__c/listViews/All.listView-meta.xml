@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All</fullName>
+    <columns>NAME</columns>
+    <columns>fecha_anio__c</columns>
+    <columns>Familia_de_maiz__c</columns>
+    <columns>CogsUsdFijo__c</columns>
+    <columns>CogsUsdFormulaFijo__c</columns>
+    <columns>CogsUsdVariableFijo__c</columns>
+    <columns>netCornFijo__c</columns>
+    <columns>CornUsage__c</columns>
+    <columns>FactorA__c</columns>
+    <columns>FactorB__c</columns>
+    <filterScope>Everything</filterScope>
+    <label>Todos</label>
+</ListView>
