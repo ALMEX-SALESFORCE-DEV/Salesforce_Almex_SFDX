@@ -38,3 +38,67 @@ jobs:
       - name: Prettier (informativo)
         run: npm run prettier:verify
         continue-on-error: true
+
+  validate-deploy:
+    name: Validar deploy del delta (dry-run)
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # historia completa para calcular el delta
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      # Sin secret no se puede validar contra la org: avisa y no bloquea.
+      - name: Verificar credenciales
+        id: guard
+        run: |
+          if [ -z "${{ secrets.SF_AUTH_URL_SANDBOX }}" ]; then
+            echo "::warning::SF_AUTH_URL_SANDBOX no configurado; se omite la validacion de deploy."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Instalar Salesforce CLI
+        if: steps.guard.outputs.ready == 'true'
+        run: |
+          curl -fsSL https://developer.salesforce.com/media/salesforce-cli/sf/channels/stable/sf-linux-x64.tar.xz | tar xJ -C "$HOME"
+          echo "$HOME/sf/bin" >> "$GITHUB_PATH"
+
+      - name: Instalar plugin sfdx-git-delta
+        if: steps.guard.outputs.ready == 'true'
+        run: echo y | sf plugins install sfdx-git-delta
+
+      - name: Autenticar Sandbox (SFDX Auth URL)
+        if: steps.guard.outputs.ready == 'true'
+        run: |
+          printf '%s' "${{ secrets.SF_AUTH_URL_SANDBOX }}" > "$RUNNER_TEMP/sfauth"
+          sf org login sfdx-url --sfdx-url-file "$RUNNER_TEMP/sfauth" --alias sandbox --set-default
+          rm -f "$RUNNER_TEMP/sfauth"
+
+      - name: Calcular delta del PR (base -> head)
+        if: steps.guard.outputs.ready == 'true'
+        run: |
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.event.pull_request.head.sha }}"
+          echo "Delta desde $BASE hasta $HEAD"
+          rm -rf delta && mkdir delta
+          sf sgd source delta --from "$BASE" --to "$HEAD" --output-dir delta --generate-delta
+          echo "----- package.xml a validar -----"
+          cat delta/package/package.xml
+
+      - name: Validar deploy (check-only, NO aplica cambios)
+        if: steps.guard.outputs.ready == 'true'
+        run: |
+          HAS_TYPES=$(grep -c "<types>" delta/package/package.xml || true)
+          if [ "$HAS_TYPES" -gt 0 ]; then
+            echo "Validando delta contra sandbox (dry-run)..."
+            sf project deploy start -x delta/package/package.xml -o sandbox --dry-run --ignore-conflicts
+          else
+            echo "Sin metadata en el delta; nada que validar."
+          fi
