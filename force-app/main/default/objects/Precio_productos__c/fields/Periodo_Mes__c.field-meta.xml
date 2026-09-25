@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Periodo_Mes__c</fullName>
-    <description>Mes numérico, del 1 al 12, al que corresponde el mapeo de mercado.</description>
     <externalId>false</externalId>
-    <label>Periodo mes</label>
+    <label>Periodo Mes</label>
     <precision>2</precision>
     <required>false</required>
     <scale>0</scale>
-    <trackTrending>false</trackTrending>
     <type>Number</type>
     <unique>false</unique>
 </CustomField>

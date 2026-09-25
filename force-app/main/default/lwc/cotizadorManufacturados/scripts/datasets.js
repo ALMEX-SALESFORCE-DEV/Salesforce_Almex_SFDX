@@ -43,7 +43,8 @@ export const resultL = [
 		option: "D",
 		marginLabel: "Price",
 		customerDeliv: { name: "customerDeliv", value: 0, read: true },
-		exwUsd: { name: "exwUsd", value: 0, read: false },
+		// exwUsd de D deriva del total ponderado de LAB Almex (no editable).
+		exwUsd: { name: "exwUsd", value: 0, read: true },
 		exwMxn: { name: "exwMxn", value: 0, read: true },
 		totalMargin: { name: "totalMargin", value: 0, read: true },
 		totalMarginUsdMt: { name: "totalMarginUsdMt", value: 0, read: true },
@@ -61,7 +62,11 @@ export const resultR = ({ sgaUsd = 0, coproductRecov = 0 }) => {
 			sgaUsd: { read: true, value: sgaUsd, name: "sgaUsd" },
 			sgaMxn: { read: true, value: 0, name: "sgaMxn" },
 			flete: { read: true, value: 0, name: "flete" },
-			coproductRecov: { read: true, value: coproductRecov, name: "coproductRecov" },
+			coproductRecov: {
+				read: true,
+				value: coproductRecov,
+				name: "coproductRecov"
+			},
 			aditionalCost: { read: false, value: 0, name: "aditionalCost" }
 		},
 		{
@@ -73,7 +78,11 @@ export const resultR = ({ sgaUsd = 0, coproductRecov = 0 }) => {
 			sgaUsd: { read: true, value: sgaUsd, name: "sgaUsd" },
 			sgaMxn: { read: true, value: 0, name: "sgaMxn" },
 			flete: { read: true, value: 0, name: "flete" },
-			coproductRecov: { read: true, value: coproductRecov, name: "coproductRecov" },
+			coproductRecov: {
+				read: true,
+				value: coproductRecov,
+				name: "coproductRecov"
+			},
 			aditionalCost: { read: false, value: 0, name: "aditionalCost" }
 		},
 		{
@@ -85,7 +94,11 @@ export const resultR = ({ sgaUsd = 0, coproductRecov = 0 }) => {
 			sgaUsd: { read: true, value: sgaUsd, name: "sgaUsd" },
 			sgaMxn: { read: true, value: 0, name: "sgaMxn" },
 			flete: { read: true, value: 0, name: "flete" },
-			coproductRecov: { read: true, value: coproductRecov, name: "coproductRecov" },
+			coproductRecov: {
+				read: true,
+				value: coproductRecov,
+				name: "coproductRecov"
+			},
 			aditionalCost: { read: false, value: 0, name: "aditionalCost" }
 		},
 		{
@@ -97,7 +110,11 @@ export const resultR = ({ sgaUsd = 0, coproductRecov = 0 }) => {
 			sgaUsd: { read: true, value: sgaUsd, name: "sgaUsd" },
 			sgaMxn: { read: true, value: 0, name: "sgaMxn" },
 			flete: { read: true, value: 0, name: "flete" },
-			coproductRecov: { read: true, value: coproductRecov, name: "coproductRecov" },
+			coproductRecov: {
+				read: true,
+				value: coproductRecov,
+				name: "coproductRecov"
+			},
 			aditionalCost: { read: false, value: 0, name: "aditionalCost" }
 		}
 	];
@@ -107,16 +124,28 @@ export const breakdownHeaders = [
 	{ id: generateUniqueId(), value: "Corn Price USD/Bushel", class: "row" },
 	{ id: generateUniqueId(), value: "Exchange Rate", class: "row" },
 	{ id: generateUniqueId(), value: "Month", class: "row" },
-	{ id: generateUniqueId(), value: "Selling Price LAB Almex USD/MT", class: "row bold" },
+	{
+		id: generateUniqueId(),
+		value: "Selling Price LAB Almex USD/MT",
+		class: "row bold"
+	},
 	{ id: generateUniqueId(), value: "Net Corn Cost USD", class: "row bold" },
 	{ id: generateUniqueId(), value: "COGS USD Variable", class: "row bold" },
 	// { id: generateUniqueId(), value: "Net Corn Cost USD", class: "row bg-lorange" },
 	// { id: generateUniqueId(), value: "Net Corn Cost USD", class: "row bg-lorange" },
 	// { id: generateUniqueId(), value: "COGS USD Variable", class: "row bg-lorange" },
 	// { id: generateUniqueId(), value: "COGS USD Variable", class: "row bg-lorange" },
-	{ id: generateUniqueId(), value: "Variable Margin", class: "row bg-gray bold" },
+	{
+		id: generateUniqueId(),
+		value: "Variable Margin",
+		class: "row bg-gray bold"
+	},
 	{ id: generateUniqueId(), value: "COGS USD Fixed", class: "row" },
-	{ id: generateUniqueId(), value: "Direct Margin USD", class: "row bg-gray bold" },
+	{
+		id: generateUniqueId(),
+		value: "Direct Margin USD",
+		class: "row bg-gray bold"
+	},
 	{ id: generateUniqueId(), value: "%", class: "row" },
 	{ id: generateUniqueId(), value: "SG&A USD", class: "row bg-lorange" },
 	{ id: generateUniqueId(), value: "PBIT USD", class: "row bg-gray bold" },

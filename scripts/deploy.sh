@@ -1,0 +1,1 @@
+sf project deploy start --manifest .\manifest\ALMEX_MapData_package.xml --target-org ALMEX-Sandbox
