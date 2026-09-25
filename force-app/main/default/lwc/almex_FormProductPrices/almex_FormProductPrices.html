@@ -1,0 +1,491 @@
+<template>
+    <div class="page-shell">
+        <header class="hero">
+            <div class="hero__identity">
+                <span class="hero__icon" aria-hidden="true">
+                    <lightning-icon icon-name="utility:edit" size="small" variant="inverse"></lightning-icon>
+                </span>
+                <div>
+                    <div class="title-line">
+                        <h1>Registro de Mapeo de mercado</h1>
+                        <span class="status-pill"><span class="status-dot"></span>Nuevo registro</span>
+                    </div>
+                    <p>Captura información para el análisis y seguimiento del mercado.</p>
+                </div>
+            </div>
+
+            <aside class="summary" aria-label="Resumen del registro">
+                <h2>Resumen del registro</h2>
+                <div class="summary__grid">
+                    <div>
+                        <span>Producto</span>
+                        <strong>{productSummary}</strong>
+                    </div>
+                    <div>
+                        <span>Periodo</span>
+                        <strong>{periodSummary}</strong>
+                    </div>
+                    <div>
+                        <span>Unidad</span>
+                        <strong>{unitSummary}</strong>
+                    </div>
+                </div>
+            </aside>
+        </header>
+
+        <template lwc:if={locationError}>
+            <div class="alert" role="alert">
+                <lightning-icon icon-name="utility:warning" size="x-small"></lightning-icon>
+                <span>{locationError}</span>
+            </div>
+        </template>
+
+        <form onsubmit={handleSubmit} novalidate>
+            <section class="form-card form-card--product" aria-labelledby="product-section-title">
+                <div class="section-heading">
+                    <span class="section-number">1</span>
+                    <div>
+                        <h2 id="product-section-title">Producto y periodo</h2>
+                        <p>Selecciona el producto, subproducto y periodo de referencia.</p>
+                    </div>
+                </div>
+
+                <div class={productGridClass}>
+                    <lightning-combobox
+                        name="productName"
+                        label="Tipo de producto"
+                        value={form.productName}
+                        options={productOptions}
+                        placeholder="Selecciona un producto"
+                        onchange={handleProductChange}
+                        required>
+                    </lightning-combobox>
+
+                    <template lwc:if={showSubproduct}>
+                        <div class="field-with-help">
+                            <lightning-combobox
+                                name="subproductType"
+                                label="Subproducto"
+                                value={form.subproductType}
+                                options={subproductOptions}
+                                placeholder="Selecciona un subproducto"
+                                onchange={handleSubproductChange}
+                                required>
+                            </lightning-combobox>
+                            <p class="field-help">
+                                <lightning-icon icon-name="utility:info" size="xx-small"></lightning-icon>
+                                <span>El subproducto se actualiza según el tipo de producto seleccionado.</span>
+                            </p>
+                        </div>
+                    </template>
+
+                    <template lwc:if={showShipmentSize}>
+                        <lightning-combobox
+                            name="shipmentSize"
+                            label="Tamaño de embarque"
+                            value={form.shipmentSize}
+                            options={shipmentSizeOptions}
+                            placeholder="Selecciona un tamaño"
+                            onchange={handleFieldChange}
+                            required>
+                        </lightning-combobox>
+                    </template>
+
+                    <lightning-combobox
+                        name="periodYear"
+                        label="Año"
+                        value={form.periodYear}
+                        options={yearOptions}
+                        onchange={handleFieldChange}
+                        required>
+                    </lightning-combobox>
+
+                    <lightning-combobox
+                        name="periodMonth"
+                        label="Mes"
+                        value={form.periodMonth}
+                        options={monthOptions}
+                        onchange={handleFieldChange}
+                        required>
+                    </lightning-combobox>
+                </div>
+
+            </section>
+
+            <section class="form-card form-card--commercial" aria-labelledby="commercial-section-title">
+                <div class="section-heading">
+                    <span class="section-number">2</span>
+                    <div>
+                        <h2 id="commercial-section-title">Información comercial</h2>
+                        <p>Datos del cliente o razón social.</p>
+                    </div>
+                </div>
+
+                <div class="party-mode" role="group" aria-label="Tipo de registro comercial">
+                    <button
+                        type="button"
+                        class={clientModeClass}
+                        data-mode="client"
+                        onclick={handlePartyModeChange}
+                        aria-pressed={isClientMode}>
+                        <lightning-icon icon-name="standard:account" size="x-small"></lightning-icon>
+                        <span>Cliente</span>
+                    </button>
+                    <button
+                        type="button"
+                        class={prospectModeClass}
+                        data-mode="prospect"
+                        onclick={handlePartyModeChange}
+                        aria-pressed={isProspectMode}>
+                        <lightning-icon icon-name="standard:lead" size="x-small"></lightning-icon>
+                        <span>Prospecto</span>
+                    </button>
+                </div>
+
+                <template lwc:if={isClientMode}>
+                    <div class="account-lookup">
+                        <lightning-input
+                            type="search"
+                            label="Cliente"
+                            value={accountSearch}
+                            placeholder="Escribe el cliente..."
+                            onchange={handleAccountSearch}
+                            onfocus={handleAccountFocus}
+                            onblur={handleAccountBlur}
+                            autocomplete="off">
+                        </lightning-input>
+                        <template lwc:if={isSearchingAccounts}>
+                            <lightning-spinner
+                                class="account-lookup__spinner"
+                                alternative-text="Buscando clientes"
+                                size="x-small">
+                            </lightning-spinner>
+                        </template>
+                        <template lwc:if={showAccountSuggestions}>
+                            <div class="account-lookup__menu" role="listbox" aria-label="Clientes encontrados">
+                                <template for:each={accountSuggestions} for:item="account">
+                                    <button
+                                        key={account.accountId}
+                                        type="button"
+                                        class="account-lookup__option"
+                                        data-id={account.accountId}
+                                        onmousedown={handleLookupOptionMouseDown}
+                                        onclick={selectAccount}
+                                        role="option">
+                                        <lightning-icon icon-name="standard:account" size="small"></lightning-icon>
+                                        <span class="account-lookup__copy">
+                                            <strong>{account.name}</strong>
+                                            <small>{account.subtitle}</small>
+                                        </span>
+                                    </button>
+                                </template>
+                            </div>
+                        </template>
+                        <template lwc:if={accountSearchMessage}>
+                            <p class="account-lookup__message">{accountSearchMessage}</p>
+                        </template>
+                    </div>
+                </template>
+
+                <template lwc:if={isClientMode}>
+                    <div class="field-grid field-grid--commercial">
+                        <lightning-input
+                            data-field="commercialName"
+                            label="Nombre comercial / Razón social"
+                            value={form.commercialName}
+                            onchange={handleTextChange}
+                            read-only
+                            maxlength="255"
+                            required>
+                        </lightning-input>
+
+                        <lightning-input
+                            data-field="state"
+                            label="Estado"
+                            value={form.state}
+                            onchange={handleTextChange}
+                            maxlength="255"
+                            required>
+                        </lightning-input>
+
+                        <lightning-input
+                            data-field="municipality"
+                            label="Municipio"
+                            value={form.municipality}
+                            onchange={handleTextChange}
+                            maxlength="255"
+                            required>
+                        </lightning-input>
+
+                        <lightning-input
+                            data-field="city"
+                            label="Ciudad"
+                            value={form.city}
+                            onchange={handleTextChange}
+                            maxlength="255"
+                            required>
+                        </lightning-input>
+                    </div>
+                </template>
+
+                <template lwc:if={isProspectMode}>
+                    <div class="field-grid field-grid--commercial">
+                        <lightning-input
+                            data-field="commercialName"
+                            label="Nombre comercial / Razón social"
+                            value={form.commercialName}
+                            onchange={handleTextChange}
+                            maxlength="255"
+                            required>
+                        </lightning-input>
+
+                        <div class="lookup">
+                            <lightning-input
+                                data-location="state"
+                                type="search"
+                                label="Estado"
+                                value={clientStateSearch}
+                                placeholder="Escribe para buscar"
+                                onchange={handleClientStateSearch}
+                                onfocus={handleClientStateFocus}
+                                onblur={handleLookupBlur}
+                                autocomplete="off"
+                                disabled={isLocationDisabled}
+                                required>
+                            </lightning-input>
+                            <template lwc:if={showClientStateResults}>
+                                <div class="lookup__menu" role="listbox" aria-label="Estados disponibles">
+                                    <template for:each={clientStateMatches} for:item="option">
+                                        <button
+                                            key={option.value}
+                                            type="button"
+                                            class="lookup__option"
+                                            data-value={option.value}
+                                            onmousedown={handleLookupOptionMouseDown}
+                                            onclick={selectClientState}
+                                            role="option">
+                                            {option.label}
+                                        </button>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+
+                        <div class="lookup">
+                            <lightning-input
+                                data-location="municipality"
+                                type="search"
+                                label="Municipio"
+                                value={municipalitySearch}
+                                placeholder="Busca un municipio o ciudad"
+                                onchange={handleMunicipalitySearch}
+                                onfocus={handleMunicipalityFocus}
+                                onblur={handleLookupBlur}
+                                autocomplete="off"
+                                disabled={isMunicipalityDisabled}
+                                required>
+                            </lightning-input>
+                            <template lwc:if={showMunicipalityResults}>
+                                <div class="lookup__menu" role="listbox" aria-label="Municipios y ciudades disponibles">
+                                    <template for:each={municipalityMatches} for:item="option">
+                                        <button
+                                            key={option.id}
+                                            type="button"
+                                            class="lookup__option"
+                                            data-municipality={option.municipality}
+                                            data-city={option.city}
+                                            onmousedown={handleLookupOptionMouseDown}
+                                            onclick={selectMunicipality}
+                                            role="option">
+                                            {option.label}
+                                        </button>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+
+                        <lightning-input
+                            data-field="city"
+                            label="Ciudad"
+                            value={form.city}
+                            read-only
+                            required>
+                        </lightning-input>
+                    </div>
+                </template>
+            </section>
+
+            <section class="form-card form-card--price" aria-labelledby="price-section-title">
+                <div class="section-heading">
+                    <span class="section-number">3</span>
+                    <div>
+                        <h2 id="price-section-title">Precio y consumo</h2>
+                        <p>Registra el consumo estimado y el precio comercial.</p>
+                    </div>
+                </div>
+
+                <div class="field-grid field-grid--three">
+                    <lightning-input
+                        data-field="monthlyConsumption"
+                        type="number"
+                        label="Consumo mensual (Ton)"
+                        value={form.monthlyConsumption}
+                        onchange={handleTextChange}
+                        min="0"
+                        step="0.01"
+                        required>
+                    </lightning-input>
+
+                    <lightning-input
+                        data-field="price"
+                        type="number"
+                        label="Precio"
+                        value={form.price}
+                        onchange={handleTextChange}
+                        min="0"
+                        step="0.01"
+                        required>
+                    </lightning-input>
+
+                    <lightning-combobox
+                        name="unit"
+                        label="Unidad"
+                        value={form.unit}
+                        options={unitOptions}
+                        placeholder="Selecciona una unidad"
+                        onchange={handleFieldChange}
+                        required>
+                    </lightning-combobox>
+
+                </div>
+            </section>
+
+            <section class="form-card form-card--supplier" aria-labelledby="supplier-section-title">
+                <div class="section-heading">
+                    <span class="section-number">4</span>
+                    <div>
+                        <h2 id="supplier-section-title">Proveedor y origen</h2>
+                        <p>Información del proveedor y lugar de fabricación.</p>
+                    </div>
+                </div>
+
+                <div class={supplierGridClass}>
+                    <div class="native-field">
+                        <label class="native-field__label" for="supplier-select">
+                            <span aria-hidden="true">*</span> Proveedor
+                        </label>
+                        <select
+                            id="supplier-select"
+                            class="native-select"
+                            name="supplier"
+                            value={form.supplier}
+                            onchange={handleSupplierChange}
+                            disabled={isSupplierDisabled}
+                            required>
+                            <option value="">Selecciona un proveedor</option>
+                            <template for:each={supplierOptions} for:item="option">
+                                <option key={option.value} value={option.value}>{option.label}</option>
+                            </template>
+                        </select>
+                    </div>
+
+                    <template lwc:if={showOtherSupplierInput}>
+                        <lightning-input
+                            data-field="otherSupplier"
+                            label="Nombre del proveedor"
+                            value={form.otherSupplier}
+                            placeholder="Escribe el nombre del proveedor"
+                            onchange={handleTextChange}
+                            maxlength="255"
+                            required>
+                        </lightning-input>
+                    </template>
+
+                    <template lwc:if={showFactoryLocationFields}>
+                        <div class="lookup">
+                            <lightning-input
+                                data-location="factoryState"
+                                type="search"
+                                label="Lugar de fabricación (Estado)"
+                                value={factoryStateSearch}
+                                placeholder="Escribe para buscar"
+                                onchange={handleFactoryStateSearch}
+                                onfocus={handleFactoryStateFocus}
+                                onblur={handleLookupBlur}
+                                autocomplete="off"
+                                disabled={isLocationDisabled}
+                                required>
+                            </lightning-input>
+                            <template lwc:if={showFactoryStateResults}>
+                                <div class="lookup__menu" role="listbox" aria-label="Estados de fabricación disponibles">
+                                    <template for:each={factoryStateMatches} for:item="option">
+                                        <button
+                                            key={option.value}
+                                            type="button"
+                                            class="lookup__option"
+                                            data-value={option.value}
+                                            onmousedown={handleLookupOptionMouseDown}
+                                            onclick={selectFactoryState}
+                                            role="option">
+                                            {option.label}
+                                        </button>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <template lwc:if={showFactoryLocationFields}>
+                        <div class="lookup">
+                            <lightning-input
+                                data-location="factoryCity"
+                                type="search"
+                                label="Lugar de fabricación (Ciudad)"
+                                value={factoryCitySearch}
+                                placeholder="Escribe para filtrar"
+                                onchange={handleFactoryCitySearch}
+                                onfocus={handleFactoryCityFocus}
+                                onblur={handleLookupBlur}
+                                autocomplete="off"
+                                disabled={isFactoryCityDisabled}
+                                required>
+                            </lightning-input>
+                            <template lwc:if={showFactoryCityResults}>
+                                <div class="lookup__menu" role="listbox" aria-label="Ciudades de fabricación disponibles">
+                                    <template for:each={factoryCityMatches} for:item="option">
+                                        <button
+                                            key={option.value}
+                                            type="button"
+                                            class="lookup__option"
+                                            data-value={option.value}
+                                            onmousedown={handleLookupOptionMouseDown}
+                                            onclick={selectFactoryCity}
+                                            role="option">
+                                            {option.label}
+                                        </button>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+            </section>
+
+            <footer class="form-footer">
+                <p><span aria-hidden="true">*</span> Campos obligatorios</p>
+                <div class="actions">
+                    <lightning-button
+                        type="submit"
+                        variant="brand"
+                        label="Confirmar"
+                        disabled={isSaving}>
+                    </lightning-button>
+                </div>
+            </footer>
+        </form>
+
+        <template lwc:if={isSaving}>
+            <lightning-spinner alternative-text="Registrando mapeo" size="small"></lightning-spinner>
+        </template>
+    </div>
+</template>

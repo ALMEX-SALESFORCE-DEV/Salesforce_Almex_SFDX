@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>ALMEX_FormPricesController</members>
+        <members>ALMEX_FormPricesControllerTest</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>Precio_productos__c.Periodo_Anio__c</members>
+        <members>Precio_productos__c.Periodo_Mes__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>ALMEX_FormPrices</members>
+        <name>CustomTab</name>
+    </types>
+    <types>
+        <members>almex_FormProductPrices</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <types>
+        <members>ALMEX_FormPrices_Access</members>
+        <name>PermissionSet</name>
+    </types>
+    <types>
+        <members>ALMEX_MexicoLocations</members>
+        <name>StaticResource</name>
+    </types>
+    <version>67.0</version>
+</Package>
