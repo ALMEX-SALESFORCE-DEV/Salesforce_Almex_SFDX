@@ -1,50 +1,85 @@
 <template>
     <div class="dashboard">
 
+        <template lwc:if={dataLoadError}>
+            <div class="slds-notify slds-notify_alert slds-alert_error slds-m-bottom_small" role="alert">
+                <span class="slds-assistive-text">Error</span>
+                <lightning-icon
+                    icon-name="utility:error"
+                    alternative-text="Error"
+                    size="x-small"
+                    variant="inverse"
+                    class="slds-m-right_x-small">
+                </lightning-icon>
+                <h2>No fue posible cargar los precios: {dataLoadError}</h2>
+            </div>
+        </template>
+
         <!-- ==================== TOP CARDS ==================== -->
         <div class="stats-grid">
 
-            <div class="stat-card">
-                <div class="stat-icon">
+            <div class="stat-card stat-card-products">
+                <div class="stat-icon stat-icon-products">
                     <lightning-icon icon-name="utility:apps" size="small" alternative-text="Productos monitoreados">
                     </lightning-icon>
                 </div>
 
                 <div class="stat-content">
-                    <span class="stat-title">Productos Monitoreados - Testeo</span>
+                    <span class="stat-title">Productos Monitoreados</span>
                     <span class="stat-value">{monitoredProducts}</span>
                 </div>
             </div>
 
 
-            <div class="stat-card">
-                <div class="stat-icon">
+            <div class="stat-card stat-card-states">
+                <div class="stat-icon stat-icon-states">
                     <lightning-icon icon-name="utility:world" size="small" alternative-text="Estados analizados">
                     </lightning-icon>
                 </div>
 
                 <div class="stat-content">
-                    <span class="stat-title">Estados Analizados</span>
+                    <div class="stat-title-row">
+                        <span class="stat-title">Estados Analizados</span>
+                        <template lwc:if={hasActiveProviderSelection}>
+                            <span class="provider-context-separator">—</span>
+                            <template for:each={selectedProviderBadges} for:item="provider">
+                                <span key={provider.name} class="provider-context-badge" style={provider.style}>
+                                    ({provider.name})
+                                </span>
+                            </template>
+                        </template>
+                    </div>
                     <span class="stat-value">{analyzedStates}</span>
                 </div>
             </div>
 
 
-            <div class="stat-card">
-                <div class="stat-icon">
+            <div class="stat-card stat-card-price">
+                <div class="stat-icon stat-icon-price">
                     <lightning-icon icon-name="utility:money" size="small" alternative-text="Precio promedio">
                     </lightning-icon>
                 </div>
 
                 <div class="stat-content">
-                    <span class="stat-title">Precio Promedio</span>
-                    <span class="stat-value">${averagePrice}</span>
+                    <div class="stat-title-row">
+                        <span class="stat-title">Precio Promedio</span>
+                        <template lwc:if={hasActiveProviderSelection}>
+                            <span class="provider-context-separator">—</span>
+                            <template for:each={selectedProviderBadges} for:item="provider">
+                                <span key={provider.name} class="provider-context-badge" style={provider.style}>
+                                    ({provider.name})
+                                </span>
+                            </template>
+                        </template>
+                    </div>
+                    <span class="stat-value">{averagePriceDisplay}</span>
+                    <span class="stat-meta">{currentPriceUnitLabel}</span>
                 </div>
             </div>
 
 
-            <div class="stat-card">
-                <div class="stat-icon">
+            <div class="stat-card stat-card-alert">
+                <div class="stat-icon stat-icon-alert">
                     <lightning-icon icon-name="utility:warning" size="small" alternative-text="Estados sin información">
                     </lightning-icon>
                 </div>
@@ -61,10 +96,12 @@
         <!-- ==================== FILTERS ==================== -->
         <div class="filters">
 
-            <div class="view-toggle">
-                <button class="toggle-button active">
+            <div class="filter-context">
+                <span class="filter-caption">Vista actual</span>
+                <span class="scope-pill">
+                    <lightning-icon icon-name="utility:world" size="xx-small" alternative-text="Estados"></lightning-icon>
                     Estados
-                </button>
+                </span>
             </div>
 
             <div class="product-filter">
@@ -73,14 +110,46 @@
                 <select id="product" class="product-select" value={selectedProduct} onchange={handleProductChange}>
                     <option value="Azucar">Azúcar</option>
                     <option value="Almidon">Almidón</option>
+                    <option value="Glucosa 44">Glucosa 44</option>
+                    <option value="Fructosa 42">Fructosa 42</option>
+                    <option value="Glucosa 43">Glucosa 43</option>
+                    <option value="Dextrosa liquida">Dextrosa líquida</option>
                 </select>
+            </div>
+
+            <div class="currency-filter">
+                <span id="currency-label" class="filter-caption">Moneda</span>
+
+                <div class="currency-switch" role="group" aria-labelledby="currency-label">
+                    <button
+                        type="button"
+                        class={mxnCurrencyButtonClass}
+                        data-currency="MXN"
+                        aria-pressed={isMxnSelected}
+                        onclick={handleCurrencyChange}>
+                        MXN
+                    </button>
+                    <button
+                        type="button"
+                        class={usdCurrencyButtonClass}
+                        data-currency="USD"
+                        aria-pressed={isUsdSelected}
+                        onclick={handleCurrencyChange}>
+                        USD
+                    </button>
+                </div>
+            </div>
+
+            <div class="filter-summary" aria-live="polite">
+                <span>Visualizando precios en</span>
+                <strong>{currentPriceUnitLabel}</strong>
             </div>
 
         </div>
 
 
         <!-- ==================== TABSET PRINCIPAL ==================== -->
-        <lightning-tabset variant="scoped">
+        <lightning-tabset class="workspace-tabs" variant="scoped">
 
             <!-- ==================== TAB: MAPA Y RESÚMENES ==================== -->
             <lightning-tab label="Mapa y tablas" value="mapa">
@@ -90,8 +159,14 @@
                     <!-- ==================== MAPA ==================== -->
                     <section class="panel map-panel">
 
-                        <div class="panel-title">
-                            Mapa de Competitividad
+                        <div class="panel-heading">
+                            <div>
+                                <div class="panel-title">Mapa de Competitividad</div>
+                                <div class="panel-subtitle">Proveedor líder por consumo mensual en cada estado</div>
+                            </div>
+                            <div class="panel-badges">
+                                <span class="currency-chip">{currentPriceUnitLabel}</span>
+                            </div>
                         </div>
 
                         <div class="map-content">
@@ -107,21 +182,25 @@
 
                         <div class="summary-header">
 
-                            <div class="panel-title">
-                                Resumen Estatal
+                            <div class="panel-heading-copy">
+                                <div class="heading-title-row">
+                                    <div class="panel-title">Resumen Estatal</div>
+                                    <span class="count-badge">{summaryRowCount} estados</span>
+                                </div>
+                                <div class="panel-subtitle">Comparativo comercial por entidad federativa · {summaryContextLabel}</div>
                             </div>
 
-                            <lightning-combobox
-                                class="provider-filter"
-                                name="providerFilter"
-                                label="Proveedor"
-                                variant="label-hidden"
-                                value={selectedProvider}
-                                options={providerOptions}
-                                onchange={handleProviderChange}>
-                            </lightning-combobox>
+                            <div class="summary-actions">
+                                <lightning-combobox
+                                    class="provider-filter"
+                                    name="providerFilter"
+                                    label="Proveedor"
+                                    variant="label-hidden"
+                                    value={selectedProvider}
+                                    options={providerOptions}
+                                    onchange={handleProviderChange}>
+                                </lightning-combobox>
 
-                            <div class="download-actions">
                                 <lightning-button
                                     label="Descargar Excel"
                                     icon-name="utility:download"
@@ -142,13 +221,21 @@
                                 data={summaryTableData}
                                 columns={summaryTableColumns}
                                 selected-rows={selectedStateRowIds}
+                                column-widths-mode="fixed"
+                                wrap-text-max-lines="2"
                                 onrowselection={handleStateSelection}>
                             </lightning-datatable>
 
                         </div>
 
-                        <div class="panel-title">
-                            Desglose por ciudad
+                        <div class="section-heading">
+                            <div>
+                                <div class="heading-title-row">
+                                    <div class="panel-title">Desglose por ciudad</div>
+                                    <span class="count-badge">{cityRowCount} registros</span>
+                                </div>
+                                <div class="panel-subtitle">Detalle de clientes, proveedores y precios registrados</div>
+                            </div>
                         </div>
 
                         <!-- RESUMEN CIUDADES -->
@@ -160,6 +247,8 @@
                                 key-field="id"
                                 data={cityTableData}
                                 columns={cityTableColumns}
+                                column-widths-mode="fixed"
+                                wrap-text-max-lines="2"
                                 hide-checkbox-column>
                             </lightning-datatable>
 
@@ -178,16 +267,20 @@
 
                 <section class="panel charts-panel">
 
-                    <div class="chart-filter">
-                        <lightning-combobox name="year" label="Año" value={selectedYear} options={yearOptions}
-                            onchange={handleYearChange}>
-                        </lightning-combobox>
-                    </div>
+                    <div class="charts-header">
+                        <div>
+                            <div class="panel-title">Tendencia de precios</div>
+                            <div class="panel-subtitle">Evolución mensual según el periodo comercial registrado · {currentPriceUnitLabel}</div>
+                        </div>
 
-                    <div class="chart-filter">
-                        <lightning-combobox name="month" label="Mes" value={selectedMonth} options={monthOptions}
-                            onchange={handleMonthChange}>
-                        </lightning-combobox>
+                        <div class="chart-filters">
+                            <div class="chart-filter">
+                                <lightning-combobox name="year" label="Año" value={selectedYear} options={yearOptions}
+                                    onchange={handleYearChange}>
+                                </lightning-combobox>
+                            </div>
+
+                        </div>
                     </div>
 
                     <div class="chart-wrapper">
@@ -218,14 +311,16 @@
             <div class="table-expanded-content">
 
                 <template if:true={isStateTableExpanded}>
-                    <lightning-datatable key-field="id" data={summaryTableData} columns={summaryTableColumns}
-                        column-widths-mode="auto" hide-checkbox-column>
+                    <lightning-datatable class="expanded-state-datatable" key-field="id" data={summaryTableData}
+                        columns={summaryTableColumns} column-widths-mode="fixed" wrap-text-max-lines="2"
+                        hide-checkbox-column>
                     </lightning-datatable>
                 </template>
 
                 <template if:true={isCityTableExpanded}>
-                    <lightning-datatable key-field="id" data={cityTableData} columns={cityTableColumns}
-                        column-widths-mode="auto" hide-checkbox-column>
+                    <lightning-datatable class="expanded-city-datatable" key-field="id" data={cityTableData}
+                        columns={cityTableColumns} column-widths-mode="fixed" wrap-text-max-lines="2"
+                        hide-checkbox-column>
                     </lightning-datatable>
                 </template>
             </div>
