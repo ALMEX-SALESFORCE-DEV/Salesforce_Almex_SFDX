@@ -9,8 +9,8 @@ import modal from "@salesforce/resourceUrl/custom_modal";
 import { loadStyle } from "lightning/platformResourceLoader";
 import { getRecord } from "lightning/uiRecordApi";
 import USER_ID from "@salesforce/user/Id";
-import { getPicklistValues } from "lightning/uiObjectInfoApi";
 import PROFILE_NAME from "@salesforce/schema/User.Profile.Name";
+import USER_ROLE_NAME from "@salesforce/schema/User.UserRole.Name";
 import DateUtils from "./scripts/DateUtils.js";
 import BreakdownClass from "./classes/BreakdownClass.js";
 import CustomerSite from "./classes/CustomerSiteClass.js";
@@ -23,11 +23,19 @@ import {
 	globalVolume,
 	referenceDates
 } from "./scripts/datasets.js";
-import { round, averages, truncate, sumObject, ObjectValidator, newObj, sumProductDivide } from "./scripts/utils.js";
+import {
+	round,
+	averages,
+	truncate,
+	sumObject,
+	ObjectValidator,
+	newObj,
+	sumProductDivide
+} from "./scripts/utils.js";
+import { getFieldVisibility, isFullAccess } from "./scripts/profileAccess.js";
 import createManufacturedQuote from "@salesforce/apex/ETC_QuoterImportadosController.createManufacturedQuote";
 import createManufacturedQuoteItem from "@salesforce/apex/ETC_QuoterImportadosController.createManufacturedQuoteItem";
 import getClientSiteById from "@salesforce/apex/ETC_QuoterImportadosController.getClientSiteById";
-import TRANSPORTATIONS from "@salesforce/schema/Fletes__c.Medio_de_transporte__c";
 import getFleteByParams from "@salesforce/apex/ETC_QuoterImportadosController.getFleteByParams";
 
 export default class CotizadorManufacturados extends LightningElement {
@@ -41,7 +49,10 @@ export default class CotizadorManufacturados extends LightningElement {
 		init: DateUtils.generateDate(),
 		end: DateUtils.addDays(DateUtils.generateDate(), 1)
 	};
-	@track rangeDates = DateUtils.getDateRangeDetails(this.agreementDate.init, this.agreementDate.end);
+	@track rangeDates = DateUtils.getDateRangeDetails(
+		this.agreementDate.init,
+		this.agreementDate.end
+	);
 	@track currency = "usd";
 	@track opp = null;
 	@track leftResults = newObj(resultL);
@@ -67,6 +78,7 @@ export default class CotizadorManufacturados extends LightningElement {
 	@track filter = { criteria: [] };
 	@track loaded = false;
 	@track currentUserProfile = false;
+	@track currentUserRole = null;
 	@track transportType = [];
 	@track canSave = true;
 	listaOracle = null;
@@ -85,14 +97,17 @@ export default class CotizadorManufacturados extends LightningElement {
 
 			//generate picklist
 			if (data.Producto__r.Medio_de_transporte__c) {
-				this.transportType = data.Producto__r.Medio_de_transporte__c.split(";").map((v) => ({
+				this.transportType = data.Producto__r.Medio_de_transporte__c.split(
+					";"
+				).map((v) => ({
 					label: v,
 					value: v
 				}));
 			} else {
 				this.showToast({
 					title: "No se encontraron medios de transporte",
-					message: "Este producto no tiene medio de transporte, por favor valide su informacion",
+					message:
+						"Este producto no tiene medio de transporte, por favor valide su informacion",
 					variant: "warning"
 				});
 			}
@@ -115,10 +130,17 @@ export default class CotizadorManufacturados extends LightningElement {
 		}
 	}
 
-	@wire(getRecord, { recordId: USER_ID, fields: [PROFILE_NAME] })
+	@wire(getRecord, {
+		recordId: USER_ID,
+		fields: [PROFILE_NAME, USER_ROLE_NAME]
+	})
 	userDetails(result) {
 		if (result.data) {
-			this.currentUserProfile = result.data.fields.Profile.value.fields.Name.value;
+			this.currentUserProfile =
+				result.data.fields.Profile.value.fields.Name.value;
+			// UserRole puede ser null (usuarios sin rol asignado).
+			const userRole = result.data.fields.UserRole.value;
+			this.currentUserRole = userRole ? userRole.fields.Name.value : null;
 		}
 	}
 
@@ -157,7 +179,10 @@ export default class CotizadorManufacturados extends LightningElement {
 			this.agreementDate.init = data.Fecha_de_inicio__c;
 			this.agreementDate.end = data.ExpirationDate;
 			this.comments = data.Description;
-			this.rangeDates = DateUtils.getDateRangeDetails(this.agreementDate.init, this.agreementDate.end);
+			this.rangeDates = DateUtils.getDateRangeDetails(
+				this.agreementDate.init,
+				this.agreementDate.end
+			);
 			this.marketReference.cornUsage = data.Corn_Usage__c;
 			this.marketReference.inflation = data.Inflation__c;
 			this.referenceDate = {
@@ -170,15 +195,22 @@ export default class CotizadorManufacturados extends LightningElement {
 			this.globalVolume.bookedMtons = data.Booked_Volume_Mtons__c;
 			this.globalVolume.pointsNumebr = data.Delivery_Points_Number__c;
 			this.invoiceSellingPrice = data.Planta__c;
-			this.refs.invoiceSellingPrice.value = data.Planta__c;
+			// refs pueden no existir si su seccion esta oculta por perfil.
+			if (this.refs.invoiceSellingPrice) {
+				this.refs.invoiceSellingPrice.value = data.Planta__c;
+			}
 
 			// Set current values
 			if (data.leftDataset__c) {
 				const leftBackup = JSON.parse(data.leftDataset__c);
 				if (leftBackup) {
 					this.leftResults = leftBackup.dataset;
-					this.currentLeftPrice = this.leftResults.find((e) => e.key === leftBackup.current.key);
-					this.refs.leftSelect.value = leftBackup.current.option;
+					this.currentLeftPrice = this.leftResults.find(
+						(e) => e.key === leftBackup.current.key
+					);
+					if (this.refs.leftSelect) {
+						this.refs.leftSelect.value = leftBackup.current.option;
+					}
 				}
 			}
 
@@ -191,15 +223,21 @@ export default class CotizadorManufacturados extends LightningElement {
 				});
 				if (rightBackup) {
 					this.rightResults = rightBackup.dataset;
-					this.currentRightPrice = this.rightResults.find((e) => e.key === rightBackup.current.key);
-					this.refs.rightSelect.value = rightBackup.current.option;
+					this.currentRightPrice = this.rightResults.find(
+						(e) => e.key === rightBackup.current.key
+					);
+					if (this.refs.rightSelect) {
+						this.refs.rightSelect.value = rightBackup.current.option;
+					}
 				}
 			}
 
 			// breakdowns
 			// await this.loadSupplies();
 			if (data.marketReferenceMetadata__c) {
-				const marketReferenceProps = JSON.parse(data.marketReferenceMetadata__c);
+				const marketReferenceProps = JSON.parse(
+					data.marketReferenceMetadata__c
+				);
 				this.marketAverages = marketReferenceProps.marketAverages;
 				this.supplies = marketReferenceProps.supplie;
 				this.breakdownClasses = marketReferenceProps.breakdowns.map((b) => {
@@ -230,7 +268,8 @@ export default class CotizadorManufacturados extends LightningElement {
 				customerSites.volume = Volumen__c;
 				customerSites.mxpMt = Freight_MXN__c;
 				customerSites.monthVolume = Month_Volume__c;
-				customerSites.freightCost = qli.freightCost__c || Freight_MXN__c * Month_Volume__c;
+				customerSites.freightCost =
+					qli.freightCost__c || Freight_MXN__c * Month_Volume__c;
 				customerSites.plantId = qli.Almacen_de_Recibo_Almex__c;
 				customerSites.transportation = qli.Transportation_Method__c;
 				customerSites.freightAddition = qli.Ajuste_a_Flete__c;
@@ -250,7 +289,10 @@ export default class CotizadorManufacturados extends LightningElement {
 			init: DateUtils.generateDate(),
 			end: DateUtils.addDays(DateUtils.generateDate(), 1)
 		};
-		this.rangeDates = DateUtils.getDateRangeDetails(this.agreementDate.init, this.agreementDate.end);
+		this.rangeDates = DateUtils.getDateRangeDetails(
+			this.agreementDate.init,
+			this.agreementDate.end
+		);
 		this.currency = "usd";
 		this.leftResults = newObj(resultL);
 		this.currentLeftPrice = null;
@@ -277,10 +319,10 @@ export default class CotizadorManufacturados extends LightningElement {
 
 	get quotationOptions() {
 		return [
-			{ label: "Definitiva", value: "-" },
+			/*{ label: "Definitiva", value: "-" },
 			{ label: "A", value: "A" },
 			{ label: "B", value: "B" },
-			{ label: "C", value: "C" },
+			{ label: "C", value: "C" },*/
 			{ label: "D", value: "D" }
 		];
 	}
@@ -293,13 +335,76 @@ export default class CotizadorManufacturados extends LightningElement {
 	}
 
 	get canEditCorn() {
-		const validUsers = ["Gerente comercial", "Ejecutivo de ventas", "Administrador del Sistema"];
+		const validUsers = [
+			"Gerente comercial",
+			"Ejecutivo de ventas",
+			"Administrador del Sistema"
+		];
 		return validUsers.includes(this.currentUserProfile);
 	}
 
 	get canEditBasis() {
 		const validUsers = ["Gerente comercial", "Administrador del Sistema"];
 		return validUsers.includes(this.currentUserProfile);
+	}
+
+	// Mapa de visibilidad granular por campo/columna. El HTML consume
+	// `fieldVisibility.<clave>` en un lwc:if. La politica (que campos se ocultan
+	// y a quien) vive en scripts/profileAccess.js.
+	get fieldVisibility() {
+		return getFieldVisibility(this.currentUserProfile, this.currentUserRole);
+	}
+
+	// Acceso total = ve/elige todos los escenarios (A/B/C/D). Vista reducida solo
+	// ve la columna D y no tiene selectores "Definitiva" visibles.
+	get isFullAccess() {
+		return isFullAccess(this.currentUserProfile, this.currentUserRole);
+	}
+
+	// Vista reducida = NO esta en la lista de acceso total. Usado para bloquear
+	// edicion (readonly) de campos que solo los perfiles permitidos pueden editar,
+	// p.ej. Corn (col Market References).
+	get isReducedView() {
+		return !this.isFullAccess;
+	}
+
+	// La columna "Definitiva" (selects izq/der) esta oculta para TODOS los perfiles;
+	// A/B/C estan deprecados y el unico escenario es D. Forzamos D por defecto para
+	// que currentLeftPrice/currentRightPrice nunca queden en null (lo que bloqueaba
+	// "Agregar Sucursal" y Guardar). Se re-apunta a la D del arreglo vigente en cada
+	// recomputo para no quedar con referencias viejas.
+	ensureDefinitiveDefault() {
+		const leftD = this.leftResults?.find((e) => e.option === "D");
+		if (leftD) {
+			this.currentLeftPrice = leftD;
+		}
+		const rightD = this.rightResults?.find((e) => e.option === "D");
+		if (rightD) {
+			this.currentRightPrice = rightD;
+		}
+	}
+
+	// A/B/C deprecados: TODAS las vistas muestran solo la columna D en Scenarios
+	// (izquierda de margen y derecha de costos). El filtro es solo de presentacion;
+	// los calculos siguen usando this.leftResults / this.rightResults completos.
+	get leftResultsDisplay() {
+		return this.leftResults.filter((i) => i.option === "D");
+	}
+
+	get rightResultsDisplay() {
+		return this.rightResults.filter((i) => i.option === "D");
+	}
+
+	// Additional Cost % se muestra en la columna izquierda, pero su dato vive en
+	// rightResults (escenario D). Getters puente para el input relocado.
+	get additionalCostValue() {
+		const d = this.rightResults?.find((r) => r.option === "D");
+		return d ? d.aditionalCost.value : 0;
+	}
+
+	get additionalCostReadonly() {
+		const d = this.rightResults?.find((r) => r.option === "D");
+		return d ? d.aditionalCost.read : true;
 	}
 
 	// click
@@ -339,7 +444,9 @@ export default class CotizadorManufacturados extends LightningElement {
 
 			// Une los porcentages del market reference para convertirlo en un string
 
-			const copyMarketReference = JSON.parse(JSON.stringify(this.marketAverages));
+			const copyMarketReference = JSON.parse(
+				JSON.stringify(this.marketAverages)
+			);
 			delete copyMarketReference.realValues;
 			const textMarketReference = Object.keys(copyMarketReference)
 				.map((i) => `${i.replaceAll("__c", "")}: ${copyMarketReference[i]}`)
@@ -427,7 +534,9 @@ export default class CotizadorManufacturados extends LightningElement {
 			composed: true
 		});
 		this.dispatchEvent(new RefreshEvent({ bubbles: true, composed: true }));
-		this.dispatchEvent(new CloseActionScreenEvent({ bubbles: true, composed: true }));
+		this.dispatchEvent(
+			new CloseActionScreenEvent({ bubbles: true, composed: true })
+		);
 		window.location.reload();
 	}
 
@@ -463,7 +572,8 @@ export default class CotizadorManufacturados extends LightningElement {
 			if (!newSite) {
 				this.showToast({
 					title: "Datos incompletos",
-					message: "Por favor revisa tu información, aún te faltan datos por llenar",
+					message:
+						"Por favor revisa tu información, aún te faltan datos por llenar",
 					variant: "error"
 				});
 			} else {
@@ -479,6 +589,7 @@ export default class CotizadorManufacturados extends LightningElement {
 	// inputs
 	async onChangeSupplies(evt) {
 		try {
+			// eslint-disable-next-line @lwc/lwc/no-api-reassignments
 			this.isUpdate = true;
 			const { value, name, dataset } = evt.target;
 
@@ -522,7 +633,9 @@ export default class CotizadorManufacturados extends LightningElement {
 				return e;
 			});
 		} else {
-			const updatedSummaries = this.summaries.map((s) => this.loadCustomerPrice(s.id));
+			const updatedSummaries = this.summaries.map((s) =>
+				this.loadCustomerPrice(s.id)
+			);
 			await Promise.allSettled(updatedSummaries);
 		}
 		this.validateCheck();
@@ -568,6 +681,8 @@ export default class CotizadorManufacturados extends LightningElement {
 					break;
 				case "endDate":
 					this.agreementDate.end = evt.target.value;
+					break;
+				default:
 					break;
 			}
 
@@ -630,6 +745,7 @@ export default class CotizadorManufacturados extends LightningElement {
 
 	// Si algunos de los valores de quotation se actualiza este metodo actualizara todos los valores
 	// dentro de la clase para que se actualicen en la tabla de brekdown
+	//TODO: Review
 	updateBreakdownClasses() {
 		const quotes = {
 			sgaUsd: this.opp.sgaUst__c || 0,
@@ -645,6 +761,7 @@ export default class CotizadorManufacturados extends LightningElement {
 	}
 
 	// Actualiza los valores de la tabla de breakdowns a un formato json para que pueda ser leido correctamente
+	//TODO: Review
 	loadBreakdowns() {
 		this.breakdowns = this.breakdownClasses.map((s) => s.toJson());
 		// console.log("===========+++++++++++++++++++++++++++++===========");
@@ -660,13 +777,16 @@ export default class CotizadorManufacturados extends LightningElement {
 	onChangeSelect(evt) {
 		const { name } = evt.target;
 		if (name === "leftPriceSelect") {
-			const currentSelected = this.leftResults.find((e) => e.option === evt.target.value);
+			const currentSelected = this.leftResults.find(
+				(e) => e.option === evt.target.value
+			);
 			this.currentLeftPrice = currentSelected;
 		} else if (name === "rightPriceSelect") {
-			const currentSelected = this.rightResults.find((e) => e.option === evt.target.value);
+			const currentSelected = this.rightResults.find(
+				(e) => e.option === evt.target.value
+			);
 			this.currentRightPrice = currentSelected;
 		} else {
-			const name = evt.target.name;
 			const value = evt.detail.value;
 			this[name] = value;
 		}
@@ -679,7 +799,7 @@ export default class CotizadorManufacturados extends LightningElement {
 
 	onChangeQuotation(evt) {
 		try {
-			if (!Boolean(this.marketReference.cornUsage)) {
+			if (!this.marketReference.cornUsage) {
 				this.showToast({
 					message:
 						"Es importante que ingrese el valor de uso de maíz (Corn Usage) para que los cálculos se realizan correctamente",
@@ -690,21 +810,35 @@ export default class CotizadorManufacturados extends LightningElement {
 			const { value, name } = evt.target;
 			const id = evt.target.parentElement.dataset.id;
 			if (id.includes("right")) {
-				this.rightResults = setValueInQuotation(this.rightResults, name, value, id);
+				this.rightResults = setValueInQuotation(
+					this.rightResults,
+					name,
+					value,
+					id
+				);
 				if (["flete", "coproductRecov"].includes(name)) {
 					this.rightResults = replicateValue(this.rightResults, name, value);
 				}
 				this.loadRighResult();
 				this.loadLeftResult();
 				if (this.currentRightPrice) {
-					this.currentRightPrice = this.rightResults.find((e) => e.key === this.currentRightPrice.key);
+					this.currentRightPrice = this.rightResults.find(
+						(e) => e.key === this.currentRightPrice.key
+					);
 				}
 			} else if (id.includes("left")) {
-				this.leftResults = setValueInQuotation(this.leftResults, name, value, id);
+				this.leftResults = setValueInQuotation(
+					this.leftResults,
+					name,
+					value,
+					id
+				);
 				this.loadRighResult();
 				this.loadLeftResult();
 				if (this.currentLeftPrice) {
-					this.currentLeftPrice = this.leftResults.find((e) => e.key === this.currentLeftPrice.key);
+					this.currentLeftPrice = this.leftResults.find(
+						(e) => e.key === this.currentLeftPrice.key
+					);
 				}
 			}
 			this.loadInitSummary();
@@ -719,16 +853,45 @@ export default class CotizadorManufacturados extends LightningElement {
 		evt.target.select();
 	}
 
+	// Additional Cost % (input relocado a la columna izquierda). Afecta a todos los
+	// escenarios de rightResults (como flete/coproduct) y recalcula todo.
+	onChangeAdditionalCost(evt) {
+		try {
+			const { value } = evt.target;
+			this.rightResults = replicateValue(
+				this.rightResults,
+				"aditionalCost",
+				value
+			);
+			this.loadRighResult();
+			this.loadLeftResult();
+			if (this.currentRightPrice) {
+				this.currentRightPrice = this.rightResults.find(
+					(e) => e.key === this.currentRightPrice.key
+				);
+			}
+			this.loadInitSummary();
+			this.updateBreakdownClasses();
+			this.validateCheck();
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
 	async onChangeSite(evt) {
 		try {
 			let id = "";
 			try {
 				id = evt.target.dataset.id;
-			} catch (error) {}
+			} catch {
+				// dataset.id puede no existir en el target
+			}
 			const pickerName = evt.target.name;
 
 			if (pickerName === "customerSiteId") {
-				const siteAlreadySelected = this.summaries.findIndex((i) => i.customerSiteId === evt.detail.recordId);
+				const siteAlreadySelected = this.summaries.findIndex(
+					(i) => i.customerSiteId === evt.detail.recordId
+				);
 				// console.log(this.summaries);
 				// console.log(siteAlreadySelected);
 				if (siteAlreadySelected > -1) {
@@ -784,20 +947,28 @@ export default class CotizadorManufacturados extends LightningElement {
 	}
 
 	// loads
+	//TODO: Review
 	loadRighResult() {
-		this.rightResults = calculateRightQuote(this.rightResults, this.averages, this.marketAverages);
+		this.rightResults = calculateRightQuote(
+			this.rightResults,
+			this.averages,
+			this.marketAverages
+		);
 	}
 
+	//TODO: Review
 	loadLeftResult() {
 		this.leftResults = calculateLeftQuote(
 			this.leftResults,
 			this.rightResults,
 			this.marketAverages,
-			this.marketReference
+			this.marketReference,
+			this.totalSummaries?.labAlmex
 		);
 	}
 
 	loadInitSummary() {
+		this.ensureDefinitiveDefault();
 		const initSummary = this.getInitSummary();
 		this.summaries = this.summaries.map((s) => {
 			s.update(initSummary);
@@ -807,6 +978,7 @@ export default class CotizadorManufacturados extends LightningElement {
 	}
 
 	// generate summary
+	//TODO: Review
 	getInitSummary() {
 		try {
 			if (!this.currentLeftPrice || !this.currentRightPrice) {
@@ -818,7 +990,7 @@ export default class CotizadorManufacturados extends LightningElement {
 				margin: this.currentLeftPrice.totalMarginUsdMt.value,
 				fxAverage: this.marketAverages.Fx__c
 			};
-		} catch (error) {
+		} catch {
 			return false;
 		}
 	}
@@ -831,11 +1003,11 @@ export default class CotizadorManufacturados extends LightningElement {
 			const cloneGlobalVolume = { ...this.globalVolume };
 			cloneGlobalVolume.bookedMtons = Number(cloneGlobalVolume.bookedMtons);
 			cloneGlobalVolume.pointsNumebr = Number(cloneGlobalVolume.pointsNumebr);
-			const volumeAreEquals = ObjectValidator.areValuesEqual(cloneGlobalVolume, this.totalSummaries, [
-				"pointsNumebr=customerSiteId",
-				"bookedMtons=volume"
-			]);
-			const rResult = this.rightResults.find((rr) => rr.option === "A");
+			const volumeAreEquals = ObjectValidator.areValuesEqual(
+				cloneGlobalVolume,
+				this.totalSummaries,
+				["pointsNumebr=customerSiteId", "bookedMtons=volume"]
+			);
 			if (allDatesFilled && volumeAreEquals) {
 				checked = true;
 				// if (this.invoiceSellingPrice === "almex-plant") {
@@ -844,7 +1016,7 @@ export default class CotizadorManufacturados extends LightningElement {
 				// 	if (String(rResult.flete.value) !== "0") checked = true;
 				// }
 			}
-		} catch (error) {
+		} catch {
 			// console.log(error);
 			checked = false;
 		}
@@ -855,8 +1027,11 @@ export default class CotizadorManufacturados extends LightningElement {
 	}
 
 	// methods
+	//TODO: Review
 	async loadCustomerPrice(id) {
-		const { transportation, plantId, customerSiteId } = this.summaries.find((e) => e.id === id);
+		const { transportation, plantId, customerSiteId } = this.summaries.find(
+			(e) => e.id === id
+		);
 		if ([transportation, plantId, customerSiteId].every(Boolean)) {
 			try {
 				const customerSiteRecord = await getClientSiteById({
@@ -896,7 +1071,8 @@ export default class CotizadorManufacturados extends LightningElement {
 								 * luego poder calcular el precio por mes del flete
 								 */
 								const convertionPrice =
-									Number(flete.Costo_de_flete__c) * Number(this.marketAverages.Fx__c);
+									Number(flete.Costo_de_flete__c) *
+									Number(this.marketAverages.Fx__c);
 								e.freightCost = convertionPrice;
 								// Calculo del precio del dolar en pesos / cantidad de meses ingresada
 								e.mxpMt = convertionPrice / Number(e.monthVolume);
@@ -912,7 +1088,7 @@ export default class CotizadorManufacturados extends LightningElement {
 						return e;
 					});
 				}
-			} catch (error) {
+			} catch {
 				this.showToast({
 					title: "Flete no encontrado",
 					message:
@@ -927,17 +1103,55 @@ export default class CotizadorManufacturados extends LightningElement {
 		}
 	}
 
+	//TODO: Review
+	// Total ponderado de LAB Almex; se usa como fuente de exwUsd del escenario D
+	// (ver calculateLeftQuote / loadLeftResult).
 	loadTotalSummary() {
 		this.totalSummaries = sumObject(this.summaries);
-		const result = sumProductDivide(this.summaries, ["monthVolume", "finalFreight", "monthVolume"]);
+		// Totalizador = promedio ponderado por volumen de Lab Client (col12,
+		// editable), truncado a 2 decimales.
+		// Excel: =TRUNCAR( SUMAPRODUCTO(F79:F98, L79:L98) / F100 , 2)
+		//   F = volume (col04 mt/year), L = labClient (col12), F100 = Σ volume.
+		// labClient es getter: sumProductDivide lo lee por acceso directo. El
+		// resultado se guarda en labAlmex (fuente de exwUsd/escenario D vía
+		// loadLeftResult) y en labClient (celda de total col12).
+		if (this.totalSummaries) {
+			// Total LAB Almex (col08) = SUMAPRODUCTO(volume, labAlmex)/Σvolume  (col I).
+			this.totalSummaries.labAlmex = truncate(
+				sumProductDivide(this.summaries, ["volume", "labAlmex", "volume"]),
+				2,
+				2
+			);
+			// Total Lab Client (col12) = SUMAPRODUCTO(volume, labClient)/Σvolume  (col L).
+			this.totalSummaries.labClient = truncate(
+				sumProductDivide(this.summaries, ["volume", "labClient", "volume"]),
+				2,
+				2
+			);
+			// Total Freight usd/mt (col09.2) = SUMAPRODUCTO(volume, usdMt)/Σvolume.
+			this.totalSummaries.usdMt = truncate(
+				sumProductDivide(this.summaries, ["volume", "usdMt", "volume"]),
+				2,
+				2
+			);
+		}
+		const result = sumProductDivide(this.summaries, [
+			"monthVolume",
+			"finalFreight",
+			"monthVolume"
+		]);
 		const isNotAlmexPlant = this.invoiceSellingPrice !== "almex-plant";
 		this.rightResults = this.rightResults.map((rr) => {
 			rr.flete.value = isNotAlmexPlant ? truncate(result, 3) : 0;
 			return rr;
 		});
 		if (this.currentRightPrice) {
-			this.currentRightPrice = this.rightResults.find((e) => e.key === this.currentRightPrice.key);
+			this.currentRightPrice = this.rightResults.find(
+				(e) => e.key === this.currentRightPrice.key
+			);
 		}
+		// Vista reducida: re-apunta el precio definitivo a la D del arreglo nuevo.
+		this.ensureDefinitiveDefault();
 		this.updateBreakdownClasses();
 		this.loadLeftResult();
 		this.validateCheck();
@@ -973,10 +1187,12 @@ function parseToNumber(obj, exclude = []) {
 	return result;
 }
 
-function calculateLeftQuote(items, right, market, reference) {
+//TODO: Review
+function calculateLeftQuote(items, right, market, reference, labAlmexTotal) {
 	const customerDeliv = "ABCD";
 	const exwAlmexUsd = "AB";
 	const exwAlmexUsdC = "C";
+	const exwFromLabAlmex = "D";
 	const exwAlmexMxn = "ABCD";
 	const totalMargin = "ABD";
 	const totalMarginMt = "CD";
@@ -987,53 +1203,94 @@ function calculateLeftQuote(items, right, market, reference) {
 		if (exwAlmexUsd.includes(i.option)) {
 			i.exwUsd = {
 				...i.exwUsd,
-				value: truncate(Number(rightItem.totalCost.value) + Number(i.totalMarginUsdMt.value), 2)
+				value: truncate(
+					Number(rightItem.totalCost.value) + Number(i.totalMarginUsdMt.value),
+					2
+				)
 			};
 		}
 		if (exwAlmexUsdC.includes(i.option)) {
-			const totalMargin = Number(i.totalMargin.value) !== 0 ? Number(i.totalMargin.value) / 100 : 0;
+			const totalMarginRatio =
+				Number(i.totalMargin.value) !== 0
+					? Number(i.totalMargin.value) / 100
+					: 0;
 			i.exwUsd = {
 				...i.exwUsd,
-				value: truncate(Number(rightItem.totalCost.value) / (1 - totalMargin), 2)
+				value: truncate(
+					Number(rightItem.totalCost.value) / (1 - totalMarginRatio),
+					2
+				)
 			};
+		}
+		// D: exwUsd = total ponderado de LAB Almex (summary-table). Se setea antes
+		// que exwMxn/customerDeliv/margenes para que esos deriven del nuevo valor.
+		if (
+			exwFromLabAlmex.includes(i.option) &&
+			labAlmexTotal !== null &&
+			labAlmexTotal !== undefined &&
+			labAlmexTotal !== ""
+		) {
+			i.exwUsd = { ...i.exwUsd, value: labAlmexTotal };
 		}
 		if (exwAlmexMxn.includes(i.option)) {
 			i.exwMxn = {
 				...i.exwMxn,
-				value: truncate(Number(i.exwUsd.value) * Number(market.realValues.Fx__c), 2)
+				value: truncate(
+					Number(i.exwUsd.value) * Number(market.realValues.Fx__c),
+					2
+				)
 			};
 		}
 		if (customerDeliv.includes(i.option)) {
 			i.customerDeliv = {
 				...i.customerDeliv,
-				value: truncate(Number(i.exwUsd.value) + Number(rightItem.flete.value), 2)
+				value: truncate(
+					Number(i.exwUsd.value) + Number(rightItem.flete.value),
+					2
+				)
 			};
 		}
 		if (totalMarginMt.includes(i.option)) {
 			i.totalMarginUsdMt = {
 				...i.totalMarginUsdMt,
-				value: (+Number(i.exwUsd.value) - Number(rightItem.totalCost.value)).toFixed(2)
+				value: (
+					+Number(i.exwUsd.value) - Number(rightItem.totalCost.value)
+				).toFixed(2)
 			};
 		}
 		if (totalMargin.includes(i.option)) {
+			// Guarda division por cero: si exwUsd es 0, el margen % seria ±Infinity
+			// y rompe el input type=number ("value -Infinity cannot be parsed").
+			const exw = Number(i.exwUsd.value);
 			i.totalMargin = {
 				...i.totalMargin,
-				value: round((Number(i.totalMarginUsdMt.value) / Number(i.exwUsd.value)) * 100, 1)
+				value:
+					exw === 0
+						? 0
+						: round((Number(i.totalMarginUsdMt.value) / exw) * 100, 1)
 			};
 		}
 		if (totalMarginDs.includes(i.option)) {
 			i.totalMarginUsdDs = {
 				...i.totalMarginUsdDs,
-				value: round(Number(i.totalMarginUsdMt.value) / Number(reference.cornUsage), 3)
+				value: round(
+					Number(i.totalMarginUsdMt.value) / Number(reference.cornUsage),
+					3
+				)
 			};
 		}
 		return i;
 	});
 }
 
+//TODO: Review
 function calculateRightQuote(items, average, market) {
 	const avg = parseToNumber(average, ["month"]);
-	const totalCostUsd = avg.netCornCostUsdGlobal + avg.cogsUsdGlobal + avg.cogsFixedUSD + avg.sgaExpensesUSD;
+	const totalCostUsd =
+		avg.netCornCostUsdGlobal +
+		avg.cogsUsdGlobal +
+		avg.cogsFixedUSD +
+		avg.sgaExpensesUSD;
 	console.log({ avg });
 	return items.map((r) => {
 		r.totalCost = {
@@ -1052,6 +1309,7 @@ function calculateRightQuote(items, average, market) {
 	});
 }
 
+//TODO: Review
 function marketAverages(e) {
 	const result = averages(e);
 	return {
@@ -1063,6 +1321,7 @@ function marketAverages(e) {
 	};
 }
 
+//TODO: Review
 function breakdownAverages(e) {
 	const result = averages(e);
 	return {

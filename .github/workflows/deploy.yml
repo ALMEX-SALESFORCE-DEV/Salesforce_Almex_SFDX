@@ -1,10 +1,9 @@
 name: Deploy
 
-# Solo despliega el bundle cotizadorManufacturados (flag -d). NUNCA toca otros
-# componentes de la org.
-#   - Push a dev            => deploy automatico a Sandbox.
-#   - Ejecucion manual      => deploy a Produccion (desde la rama main, con
-#                              confirmacion escribiendo "DEPLOY").
+# Sandbox: en cada push a dev despliega SOLO lo modificado en ese push
+#          (delta calculado con sfdx-git-delta). No toca lo que no cambio.
+# Prod:    ejecucion manual (workflow_dispatch) escribiendo "DEPLOY".
+#          Sigue desplegando solo el bundle cotizadorManufacturados.
 on:
   push:
     branches: [dev]
@@ -20,11 +19,13 @@ env:
 
 jobs:
   sandbox:
-    name: Deploy a Sandbox
+    name: Deploy delta a Sandbox
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # historia completa: sfdx-git-delta necesita el commit anterior
 
       - uses: actions/setup-node@v4
         with:
@@ -56,6 +57,10 @@ jobs:
           curl -fsSL https://developer.salesforce.com/media/salesforce-cli/sf/channels/stable/sf-linux-x64.tar.xz | tar xJ -C "$HOME"
           echo "$HOME/sf/bin" >> "$GITHUB_PATH"
 
+      - name: Instalar plugin sfdx-git-delta
+        if: steps.guard.outputs.ready == 'true'
+        run: echo y | sf plugins install sfdx-git-delta
+
       - name: Autenticar Sandbox (SFDX Auth URL)
         if: steps.guard.outputs.ready == 'true'
         run: |
@@ -63,9 +68,44 @@ jobs:
           sf org login sfdx-url --sfdx-url-file "$RUNNER_TEMP/sfauth" --alias sandbox --set-default
           rm -f "$RUNNER_TEMP/sfauth"
 
-      - name: Deploy (solo cotizadorManufacturados)
+      - name: Calcular delta (solo lo modificado)
         if: steps.guard.outputs.ready == 'true'
-        run: sf project deploy start -d "$DEPLOY_PATH" -o sandbox
+        run: |
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.sha }}"
+          # Primer push de la rama: 'before' viene en ceros -> usar el commit padre.
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            BEFORE=$(git rev-parse "$AFTER^" 2>/dev/null || echo "$AFTER")
+          fi
+          echo "Delta desde $BEFORE hasta $AFTER"
+          rm -rf delta && mkdir delta
+          sf sgd source delta --from "$BEFORE" --to "$AFTER" --output-dir delta --generate-delta
+          echo "----- package.xml (a desplegar) -----"
+          cat delta/package/package.xml
+          echo "----- destructiveChanges.xml (a borrar) -----"
+          cat delta/destructiveChanges/destructiveChanges.xml
+
+      - name: Desplegar delta a Sandbox
+        if: steps.guard.outputs.ready == 'true'
+        run: |
+          HAS_TYPES=$(grep -c "<types>" delta/package/package.xml || true)
+          HAS_DESTRUCT=$(grep -c "<types>" delta/destructiveChanges/destructiveChanges.xml || true)
+          if [ "$HAS_TYPES" -gt 0 ] && [ "$HAS_DESTRUCT" -gt 0 ]; then
+            echo "Desplegando cambios + borrados..."
+            sf project deploy start -x delta/package/package.xml \
+              --post-destructive-changes delta/destructiveChanges/destructiveChanges.xml \
+              -o sandbox --ignore-conflicts
+          elif [ "$HAS_TYPES" -gt 0 ]; then
+            echo "Desplegando cambios..."
+            sf project deploy start -x delta/package/package.xml -o sandbox --ignore-conflicts
+          elif [ "$HAS_DESTRUCT" -gt 0 ]; then
+            echo "Solo borrados..."
+            sf project deploy start -x delta/package/package.xml \
+              --post-destructive-changes delta/destructiveChanges/destructiveChanges.xml \
+              -o sandbox --ignore-conflicts
+          else
+            echo "Sin metadata desplegable en este push. Nada que hacer."
+          fi
 
   prod:
     name: Deploy a Produccion (manual)
