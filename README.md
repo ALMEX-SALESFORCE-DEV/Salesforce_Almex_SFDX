@@ -19,9 +19,6 @@ son reglas operativas estrictas subordinadas a esa normativa. Empieza por
 | Página | Contenido |
 |--------|-----------|
 | [0. Gobernanza](docs/00-gobernanza.md) | Normativa de TI que rige este repo |
-
-| Página | Contenido |
-|--------|-----------|
 | [1. Setup del entorno](docs/01-setup.md) | Instalar CLI, clonar repo, autenticar orgs |
 | [2. Git Flow y ramas](docs/02-gitflow.md) | Cómo trabajar en `dev`, PRs a `main`, protección |
 | [3. CI/CD](docs/03-cicd.md) | Workflows de GitHub Actions, secrets, despliegues |
