@@ -1,5 +1,7 @@
 [← Volver a la Wiki](../README.md)
 
+> **Gobernanza:** este repo opera bajo la normativa de TI (vault). Ver [Gobernanza](00-gobernanza.md). Ante discrepancia, manda el vault.
+
 # 3. CI/CD (GitHub Actions)
 
 Dos workflows en [`.github/workflows/`](../.github/workflows).

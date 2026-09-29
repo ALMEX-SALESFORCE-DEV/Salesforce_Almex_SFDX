@@ -6,7 +6,19 @@ Repositorio de código fuente (SFDX) de la org **Almidones Mexicanos (ALMEX)**. 
 
 ---
 
+## Gobernanza
+
+Este repositorio se rige por la **normativa de TI (vault)**. La wiki de `docs/`
+son reglas operativas estrictas subordinadas a esa normativa. Empieza por
+[Gobernanza](docs/00-gobernanza.md).
+
+---
+
 ## 📚 Índice de la Wiki
+
+| Página | Contenido |
+|--------|-----------|
+| [0. Gobernanza](docs/00-gobernanza.md) | Normativa de TI que rige este repo |
 
 | Página | Contenido |
 |--------|-----------|
