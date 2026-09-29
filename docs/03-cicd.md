@@ -59,5 +59,23 @@ Ver detalle en [Troubleshooting](06-troubleshooting.md):
 1. **Falta `package-lock.json`** → `npm ci` falla. Ejecuta `npm install` y commitea el lockfile.
 2. **No hay tests Jest** → `test:unit` falla ("No tests found"). Escribe tests o usa `sfdx-lwc-jest -- --passWithNoTests` temporalmente.
 
+## Conformidad con el estándar (obligatoria)
+
+Estas reglas del estándar de TI son **obligatorias** para este repo. Lo que hoy no
+se cumple está declarado como **brecha con fecha objetivo** — no es práctica aceptada.
+Detalle y dueño en [Gobernanza](00-gobernanza.md); versión autoritativa en `GUI-DEV-002`.
+
+| Regla (STD-DEV-003 §3 / STD-DEV-004) | Estado | Objetivo | Fecha |
+|---|---|---|---|
+| Lint (ESLint/Prettier) **bloqueante** en archivos cambiados | ⚠️ informativo | Bloqueante en el diff | 2026-10-24 |
+| **PMD (Apex)** bloqueante en seguridad (CRUD/FLS, sharing, inyección SOQL) | ✗ ausente | Añadir al CI | 2026-10-31 |
+| **Pruebas Apex + cobertura ≥ 75%** en el PR `release`→`main` | ⚠️ solo al deploy | Gate en el PR | 2026-11-14 |
+| **Jest (LWC)** con tests reales | ⚠️ `--passWithNoTests` | ≥1 test por bundle activo | 2026-10-10 |
+| `package-lock.json` presente (CI `npm ci`) | ✗ falta | Commitear lockfile | 2026-10-03 |
+| Deploy por **delta del release** (`sfdx-git-delta`) | ⚠️ un bundle fijo | Delta del release | 2026-11-28 |
+
+> **Regla de sincronía:** todo cambio a `.github/workflows/` **debe** actualizar
+> esta tabla y la de `GUI-DEV-002` (ítem del checklist del PR).
+
 ---
 [Siguiente: Estructura y orgs →](04-estructura.md)
