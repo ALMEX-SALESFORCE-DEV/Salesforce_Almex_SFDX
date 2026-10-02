@@ -45,6 +45,7 @@ export class PlantProduct {
 	customerSiteState = "";
 	convertionPrice = 0;
 	realConvertionPrice = 0;
+	priceComplement = 0;
 
 	constructor({ id, unitMeasure, haveIncrementalCost, productId = "", product }) {
 		this.#id = `product_${id}`;
@@ -84,6 +85,7 @@ export class PlantProduct {
 		this.incrementalCost = qli.Incremental_Costs_Rebate_Porcentage__c;
 		this.productCostInput = qli.Total_Costo_de_Producto__c;
 		this.movement = qli.Movimiento__c;
+		this.priceComplement = qli.Complemento_de_precio__c ? qli.Complemento_de_precio__c : 0;
 		if (qli.Moneda__c) {
 			this.currentCurrency = qli.Moneda__c.toLowerCase();
 		}
@@ -161,7 +163,7 @@ export class PlantProduct {
 		}
 		incremental += Number(this.finantialCost);
 		const total = Number(this.almexPriceWarehouse) + incremental;
-		return truncate(total, 3, 4);
+		return truncate(total + Number(this.priceComplement), 3, 4);
 	}
 
 	// get almexPriceWarehouse() {
@@ -362,7 +364,8 @@ export class PlantProduct {
 			deliveryCost: this.deliveryCost,
 			systemDeliveryCost: this.systemDeliveryCost,
 			productCostF: this.productCostF,
-			convertionPrice: this.convertionPrice
+			convertionPrice: this.convertionPrice,
+			priceComplement: this.priceComplement
 		};
 	}
 

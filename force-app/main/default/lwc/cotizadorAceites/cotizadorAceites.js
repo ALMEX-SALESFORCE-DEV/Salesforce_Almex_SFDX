@@ -565,6 +565,10 @@ export default class CotizadorAceites extends LightningElement {
 		window.location.reload();
 	}
 
+	onInputWheel(evt) {
+		evt.preventDefault();
+	}
+
 	onChangeInput(evt) {
 		try {
 			const { name, value } = evt.target;
@@ -738,6 +742,7 @@ export default class CotizadorAceites extends LightningElement {
 			...this.totals,
 			pricing: roundAndAddZeros(sumProductDivide(this.items, ["billedPrice", "volume", "volume"]), decimals),
 			volume: this.items.reduce((acc, c) => acc + Number(c.volume), 0),
+			priceComplement: this.items.reduce((acc, c) => acc + Number(c.priceComplement), 0),
 			products: this.items.reduce((acc, c) => {
 				return c.productId ? acc + 1 : acc;
 			}, 0),

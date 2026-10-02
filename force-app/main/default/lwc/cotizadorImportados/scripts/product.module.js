@@ -25,6 +25,7 @@ export class PlantProduct {
 	clientPortals = 0;
 	storageDry = 0;
 	incrementalCost = 0;
+	priceComplement = 0;
 	finantialCostRate = 0;
 	productCostInput = 0;
 	movement = "";
@@ -87,6 +88,7 @@ export class PlantProduct {
 		this.movement = qli.Movimiento__c;
 		this.currentCurrency = qli.Moneda__c.toLowerCase();
 		this.convertionCurrency = qli.Precio_dolar__c;
+		this.priceComplement = qli.Complemento_de_precio__c ? qli.Complemento_de_precio__c : 0;
 		if (qli.Densidad_Merk_20C__c) {
 			this.densidadMark20C = qli.Densidad_Merk_20C__c;
 		}
@@ -152,7 +154,7 @@ export class PlantProduct {
 			incremental += Number(this.finantialCost);
 		}
 		const total = Number(this.almexPriceWarehouse) + incremental;
-		return truncate(total, 3, 4);
+		return truncate(total + Number(this.priceComplement), 3, 4);
 	}
 
 	get almexPriceWarehouse() {
@@ -429,7 +431,8 @@ export class PlantProduct {
 			volumenLtGalon: this.volumenLtGalon,
 			transferStationCost: this.transferStationCost,
 			literProductCost: this.literProductCost,
-			literOutput: this.literOutput
+			literOutput: this.literOutput,
+			priceComplement: this.priceComplement
 		};
 	}
 }
