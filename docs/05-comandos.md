@@ -1,5 +1,7 @@
 [← Volver a la Wiki](../README.md)
 
+> **Gobernanza:** este repo opera bajo la normativa de TI (vault). Ver [Gobernanza](00-gobernanza.md). Ante discrepancia, manda el vault.
+
 # 5. Recetario de comandos
 
 > Añade `-o cpsandbox` o `-o ALMEX-Production` para elegir la org. Sin el flag usa la org por defecto (`sf config get target-org`).

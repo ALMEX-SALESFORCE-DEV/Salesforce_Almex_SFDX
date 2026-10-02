@@ -1,5 +1,7 @@
 [← Volver a la Wiki](../README.md)
 
+> **Gobernanza:** este repo opera bajo la normativa de TI (vault). Ver [Gobernanza](00-gobernanza.md). Ante discrepancia, manda el vault.
+
 # 6. Troubleshooting
 
 ## `npm ci` falla: "can only install with an existing package-lock.json"
