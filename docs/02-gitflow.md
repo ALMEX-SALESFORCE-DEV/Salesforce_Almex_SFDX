@@ -1,5 +1,7 @@
 [← Volver a la Wiki](../README.md)
 
+> **Gobernanza:** este repo opera bajo la normativa de TI (vault). Ver [Gobernanza](00-gobernanza.md). Ante discrepancia, manda el vault.
+
 # 2. Git Flow y ramas
 
 Este flujo sigue el estándar interno de TI (modelo de ramas por release, cadencia

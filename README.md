@@ -6,16 +6,26 @@ Repositorio de código fuente (SFDX) de la org **Almidones Mexicanos (ALMEX)**. 
 
 ---
 
+## Gobernanza
+
+Este repositorio se rige por la **normativa de TI (vault)**. La wiki de `docs/`
+son reglas operativas estrictas subordinadas a esa normativa. Empieza por
+[Gobernanza](docs/00-gobernanza.md).
+
+---
+
 ## 📚 Índice de la Wiki
 
 | Página | Contenido |
 |--------|-----------|
+| [0. Gobernanza](docs/00-gobernanza.md) | Normativa de TI que rige este repo |
 | [1. Setup del entorno](docs/01-setup.md) | Instalar CLI, clonar repo, autenticar orgs |
 | [2. Git Flow y ramas](docs/02-gitflow.md) | Cómo trabajar en `dev`, PRs a `main`, protección |
 | [3. CI/CD](docs/03-cicd.md) | Workflows de GitHub Actions, secrets, despliegues |
 | [4. Estructura y orgs](docs/04-estructura.md) | Metadata, componentes LWC, orgs disponibles |
 | [5. Recetario de comandos](docs/05-comandos.md) | Comandos `sf` de uso diario |
 | [6. Troubleshooting](docs/06-troubleshooting.md) | Errores comunes y cómo resolverlos |
+| [7. Sincronizar main desde PROD](docs/07-sync-prod-a-main.md) | Reconciliar drift de prod al repo (flujo inverso, seguro) |
 
 ---
 
