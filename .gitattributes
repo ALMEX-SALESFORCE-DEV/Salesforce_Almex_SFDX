@@ -1,0 +1,33 @@
+# Normaliza saltos de linea: el repo guarda SIEMPRE LF.
+# Mata el ruido CRLF<->LF que genera `sf project retrieve` en Windows.
+
+# Por defecto, autodetecta texto y normaliza a LF al commitear.
+* text=auto eol=lf
+
+# Metadata y codigo Salesforce -> LF forzado
+*.cls          text eol=lf
+*.trigger      text eol=lf
+*.js           text eol=lf
+*.ts           text eol=lf
+*.html         text eol=lf
+*.css          text eol=lf
+*.xml          text eol=lf
+*.json         text eol=lf
+*.md           text eol=lf
+*.yml          text eol=lf
+*.yaml         text eol=lf
+*.sh           text eol=lf
+*.cmp          text eol=lf
+*.page         text eol=lf
+*.app          text eol=lf
+
+# Binarios: Git no los toca
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.gif       binary
+*.ico       binary
+*.pdf       binary
+*.zip       binary
+*.jar       binary
+*.resource  binary
