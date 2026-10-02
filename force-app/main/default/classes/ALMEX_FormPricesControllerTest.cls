@@ -12,6 +12,16 @@ private class ALMEX_FormPricesControllerTest {
             BillingState = 'JAL',
             BillingCity = 'GUADALAJARA'
         );
+        insert new Account(
+            Name = 'CLIENTE PRUEBA SONORA',
+            BillingState = 'SON',
+            BillingCity = 'HEROICA NOGALES'
+        );
+        insert new Account(
+            Name = 'CLIENTE PRUEBA QUERETARO',
+            BillingState = 'QRO',
+            BillingCity = 'QUERETARO'
+        );
         insert new List<Precio_productos__c>{
             buildRecord('Azucar', 'Estandar', 'MXN/Kg'),
             buildRecord('Azucar', 'Refinada', 'MXN/Kg'),
@@ -52,6 +62,21 @@ private class ALMEX_FormPricesControllerTest {
 
         System.assertEquals(1, suggestions.size());
         System.assertEquals('Jalisco', suggestions[0].state);
+    }
+
+    @IsTest
+    static void normalizesSonoraAndQueretaroStateCodes() {
+        Test.startTest();
+        List<ALMEX_FormPricesController.AccountSuggestion> sonoraSuggestions =
+            ALMEX_FormPricesController.searchAccounts('CLIENTE PRUEBA SONORA');
+        List<ALMEX_FormPricesController.AccountSuggestion> queretaroSuggestions =
+            ALMEX_FormPricesController.searchAccounts('CLIENTE PRUEBA QUERETARO');
+        Test.stopTest();
+
+        System.assertEquals(1, sonoraSuggestions.size());
+        System.assertEquals('Sonora', sonoraSuggestions[0].state);
+        System.assertEquals(1, queretaroSuggestions.size());
+        System.assertEquals('Querétaro', queretaroSuggestions[0].state);
     }
 
     @IsTest
