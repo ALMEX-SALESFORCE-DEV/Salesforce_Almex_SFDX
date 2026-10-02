@@ -33,6 +33,7 @@ fecha objetivo. La versión autoritativa vive en `GUI-DEV-002` del vault.
 | Apex tests + cobertura ≥75% | ⚠️ solo al deploy | Gate en PR `release`→`main` | 2026-11-14 |
 | Alcance del deploy | ⚠️ un bundle | Delta del release (`sfdx-git-delta`) | 2026-11-28 |
 | Separación DEV/TEST | ⚠️ una sandbox | Excepción DEV+TEST registrada | Vigente |
+| Flujo inverso `prod → main` | ⚠️ reconciliación de drift | Solo vía [método 07](07-sync-prod-a-main.md): rama + PR a `main` (no despliega) | Vigente |
 
 ## Dueño y sincronía
 

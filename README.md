@@ -25,6 +25,7 @@ son reglas operativas estrictas subordinadas a esa normativa. Empieza por
 | [4. Estructura y orgs](docs/04-estructura.md) | Metadata, componentes LWC, orgs disponibles |
 | [5. Recetario de comandos](docs/05-comandos.md) | Comandos `sf` de uso diario |
 | [6. Troubleshooting](docs/06-troubleshooting.md) | Errores comunes y cómo resolverlos |
+| [7. Sincronizar main desde PROD](docs/07-sync-prod-a-main.md) | Reconciliar drift de prod al repo (flujo inverso, seguro) |
 
 ---
 
