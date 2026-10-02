@@ -825,6 +825,7 @@ export default class CotizadorImportados extends NavigationMixin(LightningElemen
 			...this.totals,
 			pricing: roundAndAddZeros(sumProductDivide(this.items, ["billedPrice", "volume", "volume"]), decimals),
 			volume: this.items.reduce((acc, c) => acc + Number(c.volume), 0),
+			priceComplement: this.items.reduce((acc, c) => acc + Number(c.priceComplement), 0),
 			products: this.items.reduce((acc, c) => {
 				return c.productId ? acc + 1 : acc;
 			}, 0),
@@ -1026,6 +1027,10 @@ export default class CotizadorImportados extends NavigationMixin(LightningElemen
 			});
 		}
 		return system;
+	}
+
+	onInputWheel(evt) {
+		evt.preventDefault();
 	}
 
 	// gets
