@@ -6,7 +6,7 @@ import searchAccounts from '@salesforce/apex/ALMEX_FormPricesController.searchAc
 
 const MAX_LOOKUP_RESULTS = 10;
 const CATALOG_ROOT = 'catalogmx/data/inegi';
-const LIQUID_SUGAR_VALUE = 'Azucar liquida';
+const LIQUID_SUGAR_VALUE = 'Azúcar líquida';
 const OTHER_SUPPLIER_VALUE = '__OTHER__';
 const NOT_APPLICABLE_SUPPLIER_VALUE = 'N/A';
 const CLIENT_MODE = 'client';
@@ -19,25 +19,27 @@ const LEGACY_STATE_NAMES = {
 };
 
 const PRODUCT_OPTIONS = [
-    { label: 'Almidón', value: 'Almidon' },
-    { label: 'Azúcar', value: 'Azucar' },
-    { label: 'Glucosa 44', value: 'Glucosa 44' },
-    { label: 'Fructuosa 42', value: 'Fructuosa 42' },
+    { label: 'Almidón', value: 'Almidón' },
+    { label: 'Azúcar', value: 'Azúcar' },
     { label: 'Glucosa 43', value: 'Glucosa 43' },
-    { label: 'Dextrosa líquida', value: 'Dextrosa liquida' }
+    { label: 'Glucosa 44', value: 'Glucosa 44' },
+    { label: 'Glucosa 63', value: 'Glucosa 63' },
+    { label: 'Glucosa alta en maltosa', value: 'Glucosa alta en maltosa' },
+    { label: 'Fructosa 42', value: 'Fructosa 42' },
+    { label: 'Fructosa 55', value: 'Fructosa 55' },
+    { label: 'Fructosa cristalina 99', value: 'Fructosa cristalina 99' },
+    { label: 'Dextrosa líquida', value: 'Dextrosa líquida' },
+    { label: 'Dextrosa monohidratada', value: 'Dextrosa monohidratada' },
+    { label: 'KRYSTAR líquido', value: 'KRYSTAR líquido' }
 ];
 
 const SUBPRODUCTS = {
-    Almidon: [{ label: 'Genérico', value: 'Generico' }],
-    Azucar: [
-        { label: 'Estándar', value: 'Estandar' },
+    Almidón: [{ label: 'Genérico', value: 'Genérico' }],
+    Azúcar: [
+        { label: 'Estándar', value: 'Estándar' },
         { label: 'Refinada', value: 'Refinada' },
-        { label: 'Azúcar líquida', value: 'Azucar liquida' }
-    ],
-    'Glucosa 44': [{ label: 'Genérico', value: 'Generico' }],
-    'Fructuosa 42': [{ label: 'Genérico', value: 'Generico' }],
-    'Glucosa 43': [{ label: 'Genérico', value: 'Generico' }],
-    'Dextrosa liquida': [{ label: 'Genérico', value: 'Generico' }]
+        { label: 'Azúcar líquida', value: 'Azúcar líquida' }
+    ]
 };
 
 const CORN_DERIVATIVE_SUPPLIERS = [
@@ -50,8 +52,8 @@ const CORN_DERIVATIVE_SUPPLIERS = [
 ];
 
 const SUPPLIERS = {
-    Almidon: CORN_DERIVATIVE_SUPPLIERS,
-    Azucar: [
+    Almidón: CORN_DERIVATIVE_SUPPLIERS,
+    Azúcar: [
         'Zucarmex',
         'Beta San Miguel',
         'PIASA',
@@ -59,10 +61,16 @@ const SUPPLIERS = {
         'Grupo Porres',
         'Ingenio La Gloria'
     ],
-    'Glucosa 44': CORN_DERIVATIVE_SUPPLIERS,
-    'Fructuosa 42': CORN_DERIVATIVE_SUPPLIERS,
     'Glucosa 43': CORN_DERIVATIVE_SUPPLIERS,
-    'Dextrosa liquida': CORN_DERIVATIVE_SUPPLIERS
+    'Glucosa 44': CORN_DERIVATIVE_SUPPLIERS,
+    'Glucosa 63': CORN_DERIVATIVE_SUPPLIERS,
+    'Glucosa alta en maltosa': CORN_DERIVATIVE_SUPPLIERS,
+    'Fructosa 42': CORN_DERIVATIVE_SUPPLIERS,
+    'Fructosa 55': CORN_DERIVATIVE_SUPPLIERS,
+    'Fructosa cristalina 99': CORN_DERIVATIVE_SUPPLIERS,
+    'Dextrosa líquida': CORN_DERIVATIVE_SUPPLIERS,
+    'Dextrosa monohidratada': CORN_DERIVATIVE_SUPPLIERS,
+    'KRYSTAR líquido': CORN_DERIVATIVE_SUPPLIERS
 };
 
 const UNIT_OPTIONS = [
@@ -232,7 +240,7 @@ export default class AlmexFormPrices extends LightningElement {
     }
 
     get showSubproduct() {
-        return ['Almidon', 'Azucar'].includes(this.form.productName);
+        return ['Almidón', 'Azúcar'].includes(this.form.productName);
     }
 
     get isClientMode() {
@@ -260,8 +268,10 @@ export default class AlmexFormPrices extends LightningElement {
         return (
             this.normalize(this.form.subproductType) === this.normalize(LIQUID_SUGAR_VALUE) ||
             normalizedProduct.startsWith('glucosa') ||
+            normalizedProduct.startsWith('fructosa') ||
             normalizedProduct.startsWith('fructuosa') ||
-            normalizedProduct === this.normalize('Dextrosa liquida')
+            normalizedProduct.startsWith('dextrosa') ||
+            normalizedProduct.startsWith('krystar')
         );
     }
 
