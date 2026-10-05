@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomFieldTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label><!-- sub familia almidon --></label>
+    <name>sub_familia_almidon__c</name>
+    <picklistValues>
+        <masterLabel>Almidones 25kg</masterLabel>
+        <translation><!-- Almidones 25kg --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Almidones Granel</masterLabel>
+        <translation><!-- Almidones Granel --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Almidones MM</masterLabel>
+        <translation><!-- Almidones MM --></translation>
+    </picklistValues>
+    <picklistValues>
+        <masterLabel>Almidones SS</masterLabel>
+        <translation><!-- Almidones SS --></translation>
+    </picklistValues>
+</CustomFieldTranslation>

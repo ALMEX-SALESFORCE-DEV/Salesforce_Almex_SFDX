@@ -21,36 +21,21 @@
 						<div class="calendar-header">
 							<div class="grid-1-auto">
 								<label for="agreement_starting_date">Agreement - Starting date</label>
-								<input
-									value={headerPeriods.startDate}
-									type="date"
-									placeholder="Agreement - Starting date"
-									id="agrement_starting_date"
-									lwc:ref="agreementStartDate"
-									onchange={onChangeAgreementDate}
-									name="agreementStartDate"
-								/>
+								<input value={headerPeriods.startDate} type="date"
+									placeholder="Agreement - Starting date" id="agrement_starting_date"
+									lwc:ref="agreementStartDate" onchange={onChangeAgreementDate}
+									name="agreementStartDate" />
 							</div>
 							<div class="grid-1-auto">
 								<label for="agreement_expiring_date">Agreement - Expiring date</label>
-								<input
-									value={headerPeriods.endDate}
-									type="date"
-									placeholder="Agreement - Expiring date"
-									id="agreement_expiring_date"
-									lwc:ref="agreementEndDate"
-									onchange={onChangeAgreementDate}
-									name="agreementEndDate"
-								/>
+								<input value={headerPeriods.endDate} type="date" placeholder="Agreement - Expiring date"
+									id="agreement_expiring_date" lwc:ref="agreementEndDate"
+									onchange={onChangeAgreementDate} name="agreementEndDate" />
 							</div>
 							<div class="grid-1-auto">
 								<label for="calendar_year_period">Calendar Year Period</label>
-								<input
-									type="text"
-									id="calendar_year_period"
-									value={headerPeriods.calendarYearPeriod}
-									readonly
-								/>
+								<input type="text" id="calendar_year_period" value={headerPeriods.calendarYearPeriod}
+									readonly />
 							</div>
 							<div class="grid-1-auto">
 								<label for="period">Period</label>
@@ -60,24 +45,15 @@
 					</div>
 				</div>
 				<div>
-					<lightning-textarea
-						name="comments"
-						label="Comments / Considerations:"
-						lwc:ref="comments"
-					></lightning-textarea>
+					<lightning-textarea name="comments" label="Comments / Considerations:"
+						lwc:ref="comments"></lightning-textarea>
 				</div>
 			</section>
 			<form class="configs-section" lwc:ref="config-form">
 				<div class="grid-1-auto header-inputs">
 					<label for="quoation-date">Quotation Date</label>
-					<input
-						id="quoation-date"
-						type="date"
-						placeholder="Quotation Date"
-						lwc:ref="quoationDate"
-						value={quoationDate}
-						readonly
-					/>
+					<input id="quoation-date" type="date" placeholder="Quotation Date" lwc:ref="quoationDate"
+						value={quoationDate} readonly />
 				</div>
 				<div class="grid-1-auto header-inputs">
 					<label for="incremental_credit_days">Moneda</label>
@@ -97,12 +73,8 @@
 				</div>
 				<div class="grid-1-auto header-inputs">
 					<label for="invoice-selling-price">Terms - Invoicing Selling Price</label>
-					<select
-						name="invoice-selling-price"
-						id="invoice-selling-price"
-						onchange={onChangeInvoiceSellingPrice}
-						lwc:ref="invoiceSellingPrice"
-					>
+					<select name="invoice-selling-price" id="invoice-selling-price"
+						onchange={onChangeInvoiceSellingPrice} lwc:ref="invoiceSellingPrice">
 						<option value="customer-plant">Customer plant</option>
 						<option value="almex-plant">Almex Plant</option>
 					</select>
@@ -120,12 +92,8 @@
 				</div> -->
 				<div class="grid-1-auto header-inputs">
 					<label for="incremental-cost">Incremental Costs</label>
-					<select
-						name="unit-measure"
-						id="incremental-cost"
-						lwc:ref="incrementalCostSelect"
-						onchange={onChangeHeaderSelect}
-					>
+					<select name="unit-measure" id="incremental-cost" lwc:ref="incrementalCostSelect"
+						onchange={onChangeHeaderSelect}>
 						<option value="no">No</option>
 						<option value="yes">Yes</option>
 					</select>
@@ -224,6 +192,7 @@
 						<p>Merma</p>
 						<p>Costo de la merma</p>
 						<p><b>Total Costo de Producto</b></p>
+						<p><b>Complemento de Precio</b></p>
 						<p></p>
 						<p class="title-gray">02 - Costos Operativos</p>
 						<p>Costos Operativos (Almacenaje)</p>
@@ -317,86 +286,49 @@
 						<div class="product-input-group">
 							<input value={i.billedPrice} type="text" class="bg-gray" readonly />
 							<!-- PRECIO FACTURADO -->
-							<input oninput={onChangeInput} name="volume" type="number" value={i.volume} step="1" />
+							<input oninput={onChangeInput} name="volume" type="number" onmousewheel={onInputWheel}
+								value={i.volume} step="1" />
 							<!-- <input class="bg-gray" value={i.unidadDeMedidaC} type="text" readonly /> -->
-							<lightning-record-picker
-								class={i.id}
-								label="Producto"
-								placeholder="Nombre del producto"
-								object-api-name="Product2"
-								onchange={onChangeRecordPicker}
-								variant="label-hidden"
-								value={i.productId}
-								data-type="product"
-								disabled="true"
-							>
+							<lightning-record-picker class={i.id} label="Producto" placeholder="Nombre del producto"
+								object-api-name="Product2" onchange={onChangeRecordPicker} variant="label-hidden"
+								value={i.productId} data-type="product" disabled="true">
 							</lightning-record-picker>
 							<!-- <input class="bg-gray" value={i.productDescription} type="text" readonly /> -->
-							<lightning-record-picker
-								class={i.id}
-								label="Planta"
-								placeholder="Almacén ALMEX"
-								object-api-name="Planta__c"
-								onchange={onChangeRecordPicker}
-								variant="label-hidden"
-								data-type="storage"
-								value={i.storage}
-							></lightning-record-picker>
+							<lightning-record-picker class={i.id} label="Planta" placeholder="Almacén ALMEX"
+								object-api-name="Planta__c" onchange={onChangeRecordPicker} variant="label-hidden"
+								data-type="storage" value={i.storage}></lightning-record-picker>
 							<template lwc:if={opportunity.data}>
-								<lightning-record-picker
-									class={i.id}
-									label="Sucursal Destino"
-									placeholder="Sucursal Destino"
-									object-api-name="Sucursal__c"
-									onchange={onChangeRecordPicker}
-									variant="label-hidden"
-									value={i.customerSiteName}
-									data-type="customer-site"
-									filter={filter}
-								></lightning-record-picker>
+								<lightning-record-picker class={i.id} label="Sucursal Destino"
+									placeholder="Sucursal Destino" object-api-name="Sucursal__c"
+									onchange={onChangeRecordPicker} variant="label-hidden" value={i.customerSiteName}
+									data-type="customer-site" filter={filter}></lightning-record-picker>
 							</template>
 							<input class="bg-gray" value={i.customerSiteId} type="text" readonly />
 						</div>
 						<div class="product-input-group">
-							<input
-								oninput={onChangeInput}
-								value={i.almexPriceWarehouse}
-								name="almexPriceWarehouse"
-								class="single"
-								type="text"
-							/>
+							<input oninput={onChangeInput} value={i.almexPriceWarehouse} name="almexPriceWarehouse"
+								class="single" type="text" />
 						</div>
 						<div class="product-input-group">
 							<!-- Movimiento -->
-							<lightning-combobox
-								class={i.id}
-								variant="label-hidden"
-								options={movimientoOptions}
-								onchange={onChangeMovement}
-								data-column={i.id}
-								value={i.movement}
-								required="true"
-							></lightning-combobox>
-							<lightning-combobox
-								class={i.id}
-								variant="label-hidden"
-								options={transportType}
-								onchange={onChangeSelect}
-								data-column={i.id}
-								value={i.transportation}
-								disabled={i.transporActive}
-							></lightning-combobox>
-							<input oninput={onChangeInput} name="tons" type="number" value={i.tons} step="1" />
+							<lightning-combobox class={i.id} variant="label-hidden" options={movimientoOptions}
+								onchange={onChangeMovement} data-column={i.id} value={i.movement}
+								required="true"></lightning-combobox>
+							<lightning-combobox class={i.id} variant="label-hidden" options={transportType}
+								onchange={onChangeSelect} data-column={i.id} value={i.transportation}
+								disabled={i.transporActive}></lightning-combobox>
+							<input oninput={onChangeInput} name="tons" type="number" onmousewheel={onInputWheel}
+								value={i.tons} step="1" />
 							<input class="bg-gray" value={i.convertionPrice} type="text" readonly />
 							<!-- input - flete de salida a client -->
 							<input class="bg-gray" value={i.deliveryCost} type="text" readonly />
 							<!-- <input
-								type="number"
+								type="number" onmousewheel={onInputWheel}
 								value={i.shippingCostsPerLotSize}
 								name="shippingCostsPerLotSize"
 								oninput={onChangeInput}
 							/>
-							<input type="number" value={i.referenceCurrency} readonly />
+							<input type="number" onmousewheel={onInputWheel} value={i.referenceCurrency} readonly />
 							<input class="bg-gray" type="text" value={i.shippingCostsPerLotSizeF} readonly /> -->
 							<!-- flete de sailda -->
 							<!-- <input class="bg-gray" value={i.fleteDeSalidaAClienteOutbound} type="text" readonly /> -->
@@ -408,59 +340,33 @@
 							<p></p>
 							<input class="bg-gray" type="text" value={i.productCostF} readonly />
 							<input class="bg-gray" type="text" value={i.productCostLtFView} readonly />
-							<input
-								oninput={onChangeInput}
-								name="railroadCost"
-								type="number"
-								step="1"
-								value={i.railroadCost}
-							/>
+							<input oninput={onChangeInput} name="railroadCost" type="number" onmousewheel={onInputWheel}
+								step="1" value={i.railroadCost} />
 							<!-- <input
 								oninput={onChangeInput}
 								name="importExpensesAlmidon"
-								type="number"
+								type="number" onmousewheel={onInputWheel}
 								step="1"
 								value={i.importExpensesAlmidon}
 							/> -->
-							<input
-								oninput={onChangeInput}
-								name="transferImportExpPacking"
-								type="number"
-								step="1"
-								value={i.transferImportExpPacking}
-							/>
+							<input oninput={onChangeInput} name="transferImportExpPacking" type="number"
+								onmousewheel={onInputWheel} step="1" value={i.transferImportExpPacking} />
 							<input class="bg-gray" type="text" value={i.totalBuildingCost} readonly />
-							<input
-								oninput={onChangeInput}
-								name="profitMarginPercentage"
-								type="number"
-								step="1"
-								value={i.profitMarginPercentage}
-							/>
+							<input oninput={onChangeInput} name="profitMarginPercentage" type="number"
+								onmousewheel={onInputWheel} step="1" value={i.profitMarginPercentage} />
 							<!-- costo de a merma -->
 							<input class="bg-gray" type="text" value={i.profitMargin} readonly />
-							<input
-								oninput={onChangeInput}
-								name="totalProductCost"
-								type="number"
-								value={i.totalProductCost}
-							/>
+							<input oninput={onChangeInput} name="totalProductCost" type="number"
+								onmousewheel={onInputWheel} value={i.totalProductCost} />
+							<!-- Complemento_de_precio__c -->
+							<input oninput={onChangeInput} type="number" placeholder="Complemento de precio"
+								onmousewheel={onInputWheel} name="priceComplement" value={i.priceComplement}>
 							<p></p>
 							<p></p>
-							<input
-								oninput={onChangeInput}
-								name="clientPortals"
-								type="number"
-								step="1"
-								value={i.clientPortals}
-							/>
-							<input
-								oninput={onChangeInput}
-								name="storageDry"
-								type="number"
-								step="1"
-								value={i.storageDry}
-							/>
+							<input oninput={onChangeInput} name="clientPortals" type="number"
+								onmousewheel={onInputWheel} step="1" value={i.clientPortals} />
+							<input oninput={onChangeInput} name="storageDry" type="number" onmousewheel={onInputWheel}
+								step="1" value={i.storageDry} />
 							<input class="bg-gray" type="text" value={i.totalOperativeCost} readonly />
 							<p></p>
 							<input class="bg-gray" type="text" value={i.totalSalesCost} readonly />
@@ -484,21 +390,13 @@
 						<div class="product-input-group">
 							<template if:true={selects.incrementalCost}>
 								<p class="title-gray h-34px"></p>
-								<input
-									oninput={onChangeInput}
-									value={i.incrementalCostCalc}
-									name="incrementalCostCalc"
-									type="text"
-								/>
+								<input oninput={onChangeInput} value={i.incrementalCostCalc} name="incrementalCostCalc"
+									type="text" />
 							</template>
 							<input class="bg-gray" value={i.exwIncrementals} type="text" readonly />
 							<template if:true={showFinancialInputs}>
-								<input
-									oninput={onChangeInput}
-									value={i.finantialCost}
-									name="finantialCost"
-									type="text"
-								/>
+								<input oninput={onChangeInput} value={i.finantialCost} name="finantialCost"
+									type="text" />
 							</template>
 							<input class="bg-gray" value={i.exwFinancialCost} type="text" readonly />
 						</div>
@@ -544,6 +442,7 @@
 						<input value={totals.profitMarginPercentage} type="text" readonly />
 						<input value={totals.profitMargin} type="text" readonly />
 						<input value={totals.totalProductCost} type="text" readonly />
+						<input value={totals.priceComplement} type="text" readonly />
 						<p></p>
 						<p></p>
 						<input value={totals.clientPortals} type="text" readonly />

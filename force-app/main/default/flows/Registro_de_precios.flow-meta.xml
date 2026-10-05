@@ -423,6 +423,7 @@
     <description>MXN_KG -&gt; MXN_Kg FUJS</description>
     <environments>Default</environments>
     <interviewLabel>Registro de precios {!$Flow.CurrentDateTime}</interviewLabel>
+    <isAdditionalPermissionRequiredToRun>true</isAdditionalPermissionRequiredToRun>
     <label>Registro de precios comercial</label>
     <processMetadataValues>
         <name>BuilderType</name>
@@ -968,7 +969,7 @@
             <targetReference>Registro_mapeo_de_mercado</targetReference>
         </connector>
     </start>
-    <status>Active</status>
+    <status>Obsolete</status>
     <variables>
         <name>Registroguardadocorrectamente</name>
         <dataType>String</dataType>
