@@ -6,8 +6,7 @@
         <name>ApexClass</name>
     </types>
     <types>
-        <members>Precio_productos__c.Periodo_Anio__c</members>
-        <members>Precio_productos__c.Periodo_Mes__c</members>
+        <members>Precio_productos__c.Tipo_consumo_toneladas__c</members>
         <name>CustomField</name>
     </types>
     <types>
@@ -17,10 +16,6 @@
     <types>
         <members>almex_FormProductPrices</members>
         <name>LightningComponentBundle</name>
-    </types>
-    <types>
-        <members>ALMEX_FormPrices_Access</members>
-        <name>PermissionSet</name>
     </types>
     <types>
         <members>ALMEX_MexicoLocations</members>

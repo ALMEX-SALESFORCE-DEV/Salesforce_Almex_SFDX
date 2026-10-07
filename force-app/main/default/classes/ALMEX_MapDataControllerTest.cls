@@ -12,12 +12,13 @@ private class ALMEX_MapDataControllerTest {
             Nombre_comercial__c = 'Cliente de prueba',
             Tipo_subproducto__c = 'Azucar',
             Consumo_mensual__c = 10,
+            Tipo_consumo_toneladas__c = 'A',
             Precio_producto__c = 25,
             Periodo_Anio__c = 2026,
             Periodo_Mes__c = 9,
             Unidad__c = 'MXN_Kg'
         );
-        insert testPrice;
+        insert as system testPrice;
 
         Test.startTest();
         List<Precio_productos__c> result = ALMEX_MapDataController.getPrices();
@@ -33,6 +34,7 @@ private class ALMEX_MapDataControllerTest {
         System.assertEquals(2026, result[0].Periodo_Anio__c);
         System.assertEquals(9, result[0].Periodo_Mes__c);
         System.assertEquals(25, result[0].Precio_producto__c);
+        System.assertEquals('A', result[0].Tipo_consumo_toneladas__c);
     }
 
     @IsTest

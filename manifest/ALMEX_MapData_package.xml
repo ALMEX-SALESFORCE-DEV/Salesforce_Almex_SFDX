@@ -10,8 +10,7 @@
         <name>LightningComponentBundle</name>
     </types>
     <types>
-        <members>Precio_productos__c.Periodo_Anio__c</members>
-        <members>Precio_productos__c.Periodo_Mes__c</members>
+        <members>Precio_productos__c.Tipo_consumo_toneladas__c</members>
         <name>CustomField</name>
     </types>
     <types>
