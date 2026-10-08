@@ -48,6 +48,7 @@ public with sharing class ALMEX_FormPricesController {
         @AuraEnabled public String municipality { get; set; }
         @AuraEnabled public String city { get; set; }
         @AuraEnabled public Decimal monthlyConsumption { get; set; }
+        @AuraEnabled public String consumptionType { get; set; }
         @AuraEnabled public Decimal price { get; set; }
         @AuraEnabled public String unit { get; set; }
         @AuraEnabled public String shipmentSize { get; set; }
@@ -63,8 +64,8 @@ public with sharing class ALMEX_FormPricesController {
         @AuraEnabled public String message { get; set; }
     }
 
-    public class AccountSuggestion {
-        @AuraEnabled public Id accountId { get; set; }
+    public class BranchSuggestion {
+        @AuraEnabled public Id branchId { get; set; }
         @AuraEnabled public String name { get; set; }
         @AuraEnabled public String state { get; set; }
         @AuraEnabled public String municipality { get; set; }
@@ -135,41 +136,43 @@ public with sharing class ALMEX_FormPricesController {
     }
 
     @AuraEnabled(cacheable=true)
-    public static List<AccountSuggestion> searchAccounts(String searchTerm) {
+    public static List<BranchSuggestion> searchBranches(String searchTerm) {
         String normalizedTerm = String.isBlank(searchTerm)
             ? ''
             : searchTerm.trim().replace('%', '').replace('_', '');
         if (normalizedTerm.length() < 2) {
-            return new List<AccountSuggestion>();
+            return new List<BranchSuggestion>();
         }
-        if (!Account.SObjectType.getDescribe().isAccessible()) {
-            throw new AuraHandledException('No tienes permisos para consultar clientes.');
+        if (!Sucursal__c.SObjectType.getDescribe().isAccessible()) {
+            throw new AuraHandledException('No tienes permisos para consultar sucursales.');
         }
 
         String searchPattern = '%' + normalizedTerm + '%';
-        List<Account> matchingAccounts = [
-            SELECT Id, Name, BillingState, BillingCity
-            FROM Account
+        List<Sucursal__c> matchingBranches = [
+            SELECT Id, Name, Estado__c, Ciudad__c
+            FROM Sucursal__c
             WHERE Name LIKE :searchPattern
             ORDER BY Name
             LIMIT 8
         ];
         SObjectAccessDecision accessDecision = Security.stripInaccessible(
             AccessType.READABLE,
-            matchingAccounts
+            matchingBranches
         );
 
-        List<AccountSuggestion> suggestions = new List<AccountSuggestion>();
+        List<BranchSuggestion> suggestions = new List<BranchSuggestion>();
         for (SObject safeRecord : accessDecision.getRecords()) {
-            Account accountRecord = (Account) safeRecord;
-            AccountSuggestion suggestion = new AccountSuggestion();
-            suggestion.accountId = accountRecord.Id;
-            suggestion.name = accountRecord.Name;
-            suggestion.state = normalizeMexicanState(accountRecord.BillingState);
-            suggestion.municipality = accountRecord.BillingCity;
-            suggestion.city = accountRecord.BillingCity;
+            Sucursal__c branchRecord = (Sucursal__c) safeRecord;
+            BranchSuggestion suggestion = new BranchSuggestion();
+            suggestion.branchId = branchRecord.Id;
+            suggestion.name = branchRecord.Name;
+            suggestion.state = normalizeMexicanState(branchRecord.Estado__c);
+            // Sucursal no tiene municipio independiente; el LWC lo resuelve
+            // con el catálogo de localidades y permite completar datos faltantes.
+            suggestion.municipality = null;
+            suggestion.city = branchRecord.Ciudad__c;
             suggestion.subtitle = joinNonBlank(
-                new List<String>{ accountRecord.BillingCity, suggestion.state },
+                new List<String>{ branchRecord.Ciudad__c, suggestion.state },
                 ' · '
             );
             suggestions.add(suggestion);
@@ -184,6 +187,9 @@ public with sharing class ALMEX_FormPricesController {
         if (!Precio_productos__c.SObjectType.getDescribe().isCreateable()) {
             throw new AuraHandledException('No tienes permisos para registrar precios de producto.');
         }
+        if (!Precio_productos__c.Tipo_consumo_toneladas__c.getDescribe().isCreateable()) {
+            throw new AuraHandledException('No tienes permisos para registrar el tipo de consumo.');
+        }
 
         Precio_productos__c record = new Precio_productos__c(
             Name = buildRecordName(input),
@@ -194,6 +200,8 @@ public with sharing class ALMEX_FormPricesController {
             Municipio__c = input.municipality.trim(),
             Ciudad__c = input.city.trim(),
             Consumo_mensual__c = input.monthlyConsumption,
+            Tipo_consumo_toneladas__c = String.isBlank(input.consumptionType)
+                ? 'M' : input.consumptionType.trim().toUpperCase(),
             Precio_producto__c = input.price,
             Unidad__c = input.unit.trim(),
             Tama_o_embarque__c = clean(input.shipmentSize),
@@ -211,6 +219,21 @@ public with sharing class ALMEX_FormPricesController {
             AccessType.CREATABLE,
             new List<Precio_productos__c>{ record }
         );
+        // No confirmar un registro si Salesforce descartó datos capturados por FLS.
+        Set<String> removedFields = accessDecision.getRemovedFields().get('Precio_productos__c');
+        List<String> suppliedFieldsWithoutAccess = new List<String>();
+        if (removedFields != null) {
+            for (String fieldName : removedFields) {
+                if (record.get(fieldName) != null) {
+                    suppliedFieldsWithoutAccess.add(fieldName);
+                }
+            }
+        }
+        if (!suppliedFieldsWithoutAccess.isEmpty()) {
+            suppliedFieldsWithoutAccess.sort();
+            throw new AuraHandledException('No tienes permisos para registrar estos campos: ' +
+                String.join(suppliedFieldsWithoutAccess, ', '));
+        }
         Precio_productos__c safeRecord = (Precio_productos__c) accessDecision.getRecords()[0];
 
         try {
@@ -225,7 +248,7 @@ public with sharing class ALMEX_FormPricesController {
         response.periodPersisted = periodPersisted;
         response.message = periodPersisted
             ? 'Precio registrado correctamente.'
-            : 'Precio registrado. El periodo no se guardó porque el objeto aún no tiene los campos de año y mes.';
+            : 'Precio registrado, pero el periodo no se guardó: faltan los campos de año/mes o permisos para editarlos.';
         return response;
     }
 
@@ -243,10 +266,39 @@ public with sharing class ALMEX_FormPricesController {
         requireText(input.supplier, 'Proveedor');
         if (!isSupplierNotApplicable(input.supplier)) {
             requireText(input.factoryState, 'Lugar de fabricación (Estado)');
+            requireText(input.factoryCity, 'Lugar de fabricación (Ciudad)');
+        }
+
+        String productKey = normalizeProductKey(input.productName);
+        if (productKey == 'almidon' || productKey == 'azucar') {
+            requireText(input.subproductType, 'Subproducto');
+            Set<String> allowedSubproducts = productKey == 'almidon'
+                ? new Set<String>{ 'generico' }
+                : new Set<String>{ 'estandar', 'refinada', 'azucar liquida' };
+            if (!allowedSubproducts.contains(normalizeProductKey(input.subproductType))) {
+                throw new AuraHandledException('Selecciona un subproducto válido para el producto.');
+            }
+        }
+        Boolean needsShipment = productKey.startsWith('glucosa') ||
+            productKey.startsWith('fructosa') || productKey.startsWith('fructuosa') ||
+            (productKey.startsWith('dextrosa') && productKey.contains('liquida')) ||
+            productKey == 'dextrosa monohidratada' || productKey == 'krystar liquido' ||
+            (productKey == 'azucar' && normalizeProductKey(input.subproductType) == 'azucar liquida');
+        if (needsShipment) {
+            requireText(input.shipmentSize, 'Tamaño de embarque');
+            Set<String> allowedShipments = new Set<String>{ '10 Ton', '20 Ton', '30 Ton', '38 Ton', 'N/A' };
+            if (!allowedShipments.contains(input.shipmentSize.trim())) {
+                throw new AuraHandledException('Selecciona un tamaño de embarque válido.');
+            }
         }
 
         if (input.monthlyConsumption == null || input.monthlyConsumption < 0) {
-            throw new AuraHandledException('El consumo mensual debe ser un valor igual o mayor que cero.');
+            throw new AuraHandledException('El consumo debe ser un valor igual o mayor que cero.');
+        }
+        String consumptionType = String.isBlank(input.consumptionType)
+            ? 'M' : input.consumptionType.trim().toUpperCase();
+        if (consumptionType != 'M' && consumptionType != 'A') {
+            throw new AuraHandledException('Selecciona consumo mensual o anual.');
         }
         if (input.price == null || input.price < 0) {
             throw new AuraHandledException('El precio debe ser un valor igual o mayor que cero.');
@@ -263,6 +315,12 @@ public with sharing class ALMEX_FormPricesController {
         if (String.isBlank(value)) {
             throw new AuraHandledException('El campo "' + label + '" es obligatorio.');
         }
+    }
+
+    private static String normalizeProductKey(String value) {
+        return String.isBlank(value) ? '' : value.trim().toLowerCase()
+            .replace('á', 'a').replace('é', 'e').replace('í', 'i')
+            .replace('ó', 'o').replace('ú', 'u');
     }
 
     private static String clean(String value) {
@@ -374,7 +432,7 @@ public with sharing class ALMEX_FormPricesController {
             'TB', 'TAB', 'Tabasco'
         });
         addStateAliases(statesByAlias, 'Tamaulipas', new List<String>{
-            'TM', 'TAM', 'TAMS', 'Tamaulipas'
+            'TM', 'TAM', 'TAMS', 'TAMPS', 'Tamaulipas'
         });
         addStateAliases(statesByAlias, 'Tlaxcala', new List<String>{
             'TL', 'TLA', 'TLAX', 'TLX', 'Tlaxcala'

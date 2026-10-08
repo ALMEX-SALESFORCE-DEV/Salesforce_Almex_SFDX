@@ -2,7 +2,7 @@ import { LightningElement } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import MEXICO_LOCATIONS from '@salesforce/resourceUrl/ALMEX_MexicoLocations';
 import savePrice from '@salesforce/apex/ALMEX_FormPricesController.savePrice';
-import searchAccounts from '@salesforce/apex/ALMEX_FormPricesController.searchAccounts';
+import searchBranches from '@salesforce/apex/ALMEX_FormPricesController.searchBranches';
 
 const MAX_LOOKUP_RESULTS = 10;
 const CATALOG_ROOT = 'catalogmx/data/inegi';
@@ -11,35 +11,11 @@ const OTHER_SUPPLIER_VALUE = '__OTHER__';
 const NOT_APPLICABLE_SUPPLIER_VALUE = 'N/A';
 const CLIENT_MODE = 'client';
 const PROSPECT_MODE = 'prospect';
-const ACCOUNT_SEARCH_DELAY = 250;
+const BRANCH_SEARCH_DELAY = 250;
 const LEGACY_STATE_NAMES = {
     'Distrito Federal': 'Ciudad de México',
     México: 'Estado de México',
     'Querétaro de Arteaga': 'Querétaro'
-};
-
-const PRODUCT_OPTIONS = [
-    { label: 'Almidón', value: 'Almidón' },
-    { label: 'Azúcar', value: 'Azúcar' },
-    { label: 'Glucosa 43', value: 'Glucosa 43' },
-    { label: 'Glucosa 44', value: 'Glucosa 44' },
-    { label: 'Glucosa 63', value: 'Glucosa 63' },
-    { label: 'Glucosa alta en maltosa', value: 'Glucosa alta en maltosa' },
-    { label: 'Fructosa 42', value: 'Fructosa 42' },
-    { label: 'Fructosa 55', value: 'Fructosa 55' },
-    { label: 'Fructosa cristalina 99', value: 'Fructosa cristalina 99' },
-    { label: 'Dextrosa líquida', value: 'Dextrosa líquida' },
-    { label: 'Dextrosa monohidratada', value: 'Dextrosa monohidratada' },
-    { label: 'KRYSTAR líquido', value: 'KRYSTAR líquido' }
-];
-
-const SUBPRODUCTS = {
-    Almidón: [{ label: 'Genérico', value: 'Genérico' }],
-    Azúcar: [
-        { label: 'Estándar', value: 'Estándar' },
-        { label: 'Refinada', value: 'Refinada' },
-        { label: 'Azúcar líquida', value: 'Azúcar líquida' }
-    ]
 };
 
 const CORN_DERIVATIVE_SUPPLIERS = [
@@ -51,27 +27,53 @@ const CORN_DERIVATIVE_SUPPLIERS = [
     'Roquette México'
 ];
 
-const SUPPLIERS = {
-    Almidón: CORN_DERIVATIVE_SUPPLIERS,
-    Azúcar: [
+const SUGAR_SUPPLIERS = [
         'Zucarmex',
         'Beta San Miguel',
         'PIASA',
         'Grupo Azucarero México',
         'Grupo Porres',
         'Ingenio La Gloria'
-    ],
-    'Glucosa 43': CORN_DERIVATIVE_SUPPLIERS,
-    'Glucosa 44': CORN_DERIVATIVE_SUPPLIERS,
-    'Glucosa 63': CORN_DERIVATIVE_SUPPLIERS,
-    'Glucosa alta en maltosa': CORN_DERIVATIVE_SUPPLIERS,
-    'Fructosa 42': CORN_DERIVATIVE_SUPPLIERS,
-    'Fructosa 55': CORN_DERIVATIVE_SUPPLIERS,
-    'Fructosa cristalina 99': CORN_DERIVATIVE_SUPPLIERS,
-    'Dextrosa líquida': CORN_DERIVATIVE_SUPPLIERS,
-    'Dextrosa monohidratada': CORN_DERIVATIVE_SUPPLIERS,
-    'KRYSTAR líquido': CORN_DERIVATIVE_SUPPLIERS
-};
+];
+
+// Cada producto declara proveedores y campos dependientes en el mismo catálogo.
+// N/A y Otro se agregan siempre, sin depender de una segunda lista de productos.
+const PRODUCT_CATALOG = [
+    {
+        label: 'Almidón', value: 'Almidón', suppliers: CORN_DERIVATIVE_SUPPLIERS,
+        subproducts: [{ label: 'Genérico', value: 'Generico' }], requiresShipment: false
+    },
+    {
+        label: 'Azúcar', value: 'Azúcar', suppliers: SUGAR_SUPPLIERS,
+        subproducts: [
+            { label: 'Estándar', value: 'Estandar' },
+            { label: 'Refinada', value: 'Refinada' },
+            { label: 'Azúcar líquida', value: LIQUID_SUGAR_VALUE }
+        ], requiresShipment: false
+    },
+    ...['Glucosa 43', 'Glucosa 44', 'Glucosa 63', 'Glucosa alta en maltosa', 'Fructosa 42', 'Fructosa 55']
+        .map(value => ({ label: value, value, suppliers: CORN_DERIVATIVE_SUPPLIERS, requiresShipment: true })),
+    {
+        label: 'Fructosa cristalina 99', value: 'Fructosa cristalina 99',
+        suppliers: ['ALMEX', 'Tate & Lyle México'], requiresShipment: true
+    },
+    {
+        label: 'Dextrosa líquida', value: 'Dextrosa líquida',
+        suppliers: CORN_DERIVATIVE_SUPPLIERS, requiresShipment: true
+    },
+    {
+        label: 'Dextrosa monohidratada', value: 'Dextrosa monohidratada',
+        suppliers: ['ALMEX', 'Cargill México', 'Ingredion México', 'Roquette México'], requiresShipment: true
+    },
+    {
+        label: 'KRYSTAR líquido', value: 'KRYSTAR líquido',
+        suppliers: ['ALMEX', 'Tate & Lyle México'], requiresShipment: true
+    },
+    {
+        label: 'Dextrosa 95% líquida', value: 'Dextrosa 95% líquida',
+        suppliers: CORN_DERIVATIVE_SUPPLIERS, requiresShipment: true
+    }
+];
 
 const UNIT_OPTIONS = [
 
@@ -82,7 +84,7 @@ const UNIT_OPTIONS = [
     { label: 'MXN 50 kg/bulto', value: 'MXN_50KG_BULTO' },
 ];
 
-const SHIPMENT_SIZE_OPTIONS = ['10 Ton', '20 Ton', '30 Ton', 'N/A'].map((value) => ({
+const SHIPMENT_SIZE_OPTIONS = ['10 Ton', '20 Ton', '30 Ton', '38 Ton', 'N/A'].map((value) => ({
     label: value,
     value
 }));
@@ -114,6 +116,7 @@ function emptyForm() {
         municipality: '',
         city: '',
         monthlyConsumption: '',
+        consumptionType: 'M',
         price: '',
         unit: '',
         shipmentSize: '',
@@ -130,15 +133,15 @@ export default class AlmexFormPrices extends LightningElement {
     locationError;
     isSaving = false;
     partyMode = CLIENT_MODE;
-    accountSearch = '';
-    accountSuggestions = [];
-    accountSearchMessage = '';
-    isSearchingAccounts = false;
-    showAccountSuggestions = false;
-    selectedAccountId;
-    accountSearchTimer;
-    accountBlurTimer;
-    accountSearchRequest = 0;
+    branchSearch = '';
+    branchSuggestions = [];
+    branchSearchMessage = '';
+    isSearchingBranches = false;
+    showBranchSuggestions = false;
+    selectedBranchId;
+    branchSearchTimer;
+    branchBlurTimer;
+    branchSearchRequest = 0;
     lookupBlurTimer;
 
     clientStateSearch = '';
@@ -161,9 +164,18 @@ export default class AlmexFormPrices extends LightningElement {
         this.loadLocations();
     }
 
+    renderedCallback() {
+        // Al reemplazar las opciones, el navegador puede seleccionar la primera
+        // aunque el modelo esté vacío. Sincronizar la propiedad, no el atributo.
+        const supplier = this.template.querySelector('select[name="supplier"]');
+        if (supplier && supplier.value !== this.form.supplier) {
+            supplier.value = this.form.supplier;
+        }
+    }
+
     disconnectedCallback() {
-        clearTimeout(this.accountSearchTimer);
-        clearTimeout(this.accountBlurTimer);
+        clearTimeout(this.branchSearchTimer);
+        clearTimeout(this.branchBlurTimer);
         clearTimeout(this.lookupBlurTimer);
     }
 
@@ -189,6 +201,17 @@ export default class AlmexFormPrices extends LightningElement {
                 factoryState: LEGACY_STATE_NAMES[this.form.factoryState] || this.form.factoryState
             };
             this.syncLocationSearches();
+            // La búsqueda puede terminar antes de que el catálogo esté listo.
+            if (this.selectedBranchId && !this.form.municipality) {
+                this.form = {
+                    ...this.form,
+                    municipality: this.resolveBranchMunicipality(this.form.state, this.form.city)
+                };
+                this.syncLocationSearches();
+                if (this.form.state && this.form.city && this.form.municipality) {
+                    this.branchSearchMessage = '';
+                }
+            }
         } catch {
             this.locationError =
                 'No se pudo cargar el catálogo de ubicaciones. Actualiza la página o contacta al administrador.';
@@ -196,18 +219,24 @@ export default class AlmexFormPrices extends LightningElement {
     }
 
     get productOptions() {
-        return PRODUCT_OPTIONS;
+        return PRODUCT_CATALOG.map(({ label, value }) => ({ label, value }));
+    }
+
+    get selectedProductConfig() {
+        return PRODUCT_CATALOG.find(product =>
+            this.normalize(product.value) === this.normalize(this.form.productName)
+        );
     }
 
     get subproductOptions() {
-        return SUBPRODUCTS[this.form.productName] || [];
+        return this.selectedProductConfig?.subproducts || [];
     }
 
     get supplierOptions() {
-        const supplierNames = SUPPLIERS[this.form.productName] || [];
-        if (supplierNames.length === 0) {
+        if (!this.form.productName) {
             return [];
         }
+        const supplierNames = this.selectedProductConfig?.suppliers || [];
         const suppliers = supplierNames.map((value) => ({
             label: value,
             value
@@ -231,6 +260,18 @@ export default class AlmexFormPrices extends LightningElement {
         return MONTH_OPTIONS;
     }
 
+    get consumptionTypeOptions() {
+        return [
+            { label: 'Mensual', value: 'M' },
+            { label: 'Anual', value: 'A' }
+        ];
+    }
+
+    get consumptionLabel() {
+        return this.form.consumptionType === 'A'
+            ? 'Consumo anual (Ton)' : 'Consumo mensual (Ton)';
+    }
+
     get yearOptions() {
         const currentYear = new Date().getFullYear();
         return Array.from({ length: 11 }, (_, index) => {
@@ -240,7 +281,7 @@ export default class AlmexFormPrices extends LightningElement {
     }
 
     get showSubproduct() {
-        return ['Almidón', 'Azúcar'].includes(this.form.productName);
+        return this.subproductOptions.length > 0;
     }
 
     get isClientMode() {
@@ -264,15 +305,14 @@ export default class AlmexFormPrices extends LightningElement {
     }
 
     get showShipmentSize() {
-        const normalizedProduct = this.normalize(this.form.productName);
-        return (
-            this.normalize(this.form.subproductType) === this.normalize(LIQUID_SUGAR_VALUE) ||
-            normalizedProduct.startsWith('glucosa') ||
-            normalizedProduct.startsWith('fructosa') ||
-            normalizedProduct.startsWith('fructuosa') ||
-            normalizedProduct.startsWith('dextrosa') ||
-            normalizedProduct.startsWith('krystar')
-        );
+        return Boolean(this.selectedProductConfig?.requiresShipment) ||
+            this.normalize(this.form.subproductType) === this.normalize(LIQUID_SUGAR_VALUE);
+    }
+
+    get priceDisplay() {
+        const [integer, decimals] = String(this.form.price).split('.');
+        const groupedInteger = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        return decimals === undefined ? groupedInteger : `${groupedInteger}.${decimals}`;
     }
 
     get productGridClass() {
@@ -328,7 +368,7 @@ export default class AlmexFormPrices extends LightningElement {
     }
 
     get productSummary() {
-        const product = this.findLabel(PRODUCT_OPTIONS, this.form.productName);
+        const product = this.selectedProductConfig?.label;
         const subproduct = this.findLabel(this.subproductOptions, this.form.subproductType);
         return [product, subproduct].filter(Boolean).join(' · ') || 'Sin seleccionar';
     }
@@ -351,8 +391,11 @@ export default class AlmexFormPrices extends LightningElement {
             subproductType: '',
             shipmentSize: '',
             supplier: '',
-            otherSupplier: ''
+            otherSupplier: '',
+            factoryState: '',
+            factoryCity: ''
         };
+        this.clearFactoryLocation();
     }
 
     handleSubproductChange(event) {
@@ -367,33 +410,102 @@ export default class AlmexFormPrices extends LightningElement {
     }
 
     handleFieldChange(event) {
-        const { name, value } = event.target;
+        const { name } = event.target;
+        const value = event.detail?.value ?? event.target.value;
         this.form = { ...this.form, [name]: value };
     }
 
     handleSupplierChange(event) {
-        const supplier = event.target.value;
-        const isNotApplicable = supplier === NOT_APPLICABLE_SUPPLIER_VALUE;
+        const supplier = event.detail?.value ?? event.target.value;
+        if (supplier === this.form.supplier) {
+            return;
+        }
         this.form = {
             ...this.form,
             supplier,
-            otherSupplier: supplier === OTHER_SUPPLIER_VALUE ? this.form.otherSupplier : '',
-            factoryState: isNotApplicable ? '' : this.form.factoryState,
-            factoryCity: isNotApplicable ? '' : this.form.factoryCity
+            otherSupplier: '',
+            factoryState: '',
+            factoryCity: ''
         };
-        if (isNotApplicable) {
-            this.factoryStateSearch = '';
-            this.factoryCitySearch = '';
-            this.factoryStateMatches = [];
-            this.factoryCityMatches = [];
-            this.showFactoryStateResults = false;
-            this.showFactoryCityResults = false;
-        }
+        this.clearFactoryLocation();
+    }
+
+    clearFactoryLocation() {
+        this.factoryStateSearch = '';
+        this.factoryCitySearch = '';
+        this.factoryStateMatches = [];
+        this.factoryCityMatches = [];
+        this.showFactoryStateResults = false;
+        this.showFactoryCityResults = false;
+        this.clearLocationValidity('factoryState', '');
+        this.clearLocationValidity('factoryCity', '');
     }
 
     handleTextChange(event) {
         const field = event.target.dataset.field;
         this.form = { ...this.form, [field]: event.target.value };
+    }
+
+    handlePriceInput(event) {
+        const control = event.target;
+        const typedValue = control.value;
+        const rawValue = typedValue.replace(/,/g, '');
+        if ((event.data && /[^0-9.]/.test(event.data)) || !/^\d*(?:\.\d*)?$/.test(rawValue)) {
+            control.value = this.priceDisplay;
+            return;
+        }
+
+        // Cuenta solo caracteres del importe para conservar el cursor al añadir comas.
+        const rawCursor = typedValue.slice(0, control.selectionStart ?? typedValue.length)
+            .replace(/,/g, '').length;
+        this.form = { ...this.form, price: rawValue };
+        const formattedValue = this.priceDisplay;
+        control.value = formattedValue;
+        let cursor = 0;
+        let rawCharacters = 0;
+        while (cursor < formattedValue.length && rawCharacters < rawCursor) {
+            if (formattedValue[cursor] !== ',') {
+                rawCharacters += 1;
+            }
+            cursor += 1;
+        }
+        if (formattedValue[cursor] === ',') {
+            cursor += 1;
+        }
+        control.setSelectionRange(cursor, cursor);
+    }
+
+    handlePriceKeyDown(event) {
+        if (event.ctrlKey || event.metaKey || event.altKey) {
+            return;
+        }
+        const control = event.target;
+        const { selectionStart: start, selectionEnd: end } = control;
+        const unselectedValue = control.value.slice(0, start) + control.value.slice(end);
+        if (event.key.length === 1 && (!/[0-9.]/.test(event.key)
+            || (event.key === '.' && unselectedValue.includes('.')))) {
+            event.preventDefault();
+        } else if (start === end && event.key === 'Backspace' && control.value[start - 1] === ',') {
+            control.setSelectionRange(start - 1, start - 1);
+        } else if (start === end && event.key === 'Delete' && control.value[start] === ',') {
+            control.setSelectionRange(start + 1, start + 1);
+        }
+    }
+
+    handlePricePaste(event) {
+        const pastedValue = event.clipboardData?.getData('text') || '';
+        const control = event.target;
+        const candidate = (control.value.slice(0, control.selectionStart) + pastedValue
+            + control.value.slice(control.selectionEnd)).replace(/,/g, '');
+        if (!/^\d*(?:\.\d*)?$/.test(pastedValue) || !/^\d*(?:\.\d*)?$/.test(candidate)) {
+            event.preventDefault();
+        }
+    }
+
+    handlePriceBlur() {
+        if (this.form.price.endsWith('.')) {
+            this.form = { ...this.form, price: this.form.price.slice(0, -1) };
+        }
     }
 
     handlePartyModeChange(event) {
@@ -403,14 +515,15 @@ export default class AlmexFormPrices extends LightningElement {
         }
 
         this.partyMode = partyMode;
-        clearTimeout(this.accountSearchTimer);
-        this.accountSearchRequest += 1;
-        this.accountSearch = '';
-        this.accountSuggestions = [];
-        this.accountSearchMessage = '';
-        this.isSearchingAccounts = false;
-        this.showAccountSuggestions = false;
-        this.selectedAccountId = undefined;
+        clearTimeout(this.branchSearchTimer);
+        clearTimeout(this.branchBlurTimer);
+        this.branchSearchRequest += 1;
+        this.branchSearch = '';
+        this.branchSuggestions = [];
+        this.branchSearchMessage = '';
+        this.isSearchingBranches = false;
+        this.showBranchSuggestions = false;
+        this.selectedBranchId = undefined;
         this.form = {
             ...this.form,
             commercialName: '',
@@ -422,13 +535,13 @@ export default class AlmexFormPrices extends LightningElement {
         this.closeLookups();
     }
 
-    handleAccountSearch(event) {
+    handleBranchSearch(event) {
         const searchTerm = event.target.value;
         const trimmedTerm = searchTerm.trim();
-        this.accountSearch = searchTerm;
-        this.selectedAccountId = undefined;
-        this.accountSuggestions = [];
-        this.showAccountSuggestions = false;
+        this.branchSearch = searchTerm;
+        this.selectedBranchId = undefined;
+        this.branchSuggestions = [];
+        this.showBranchSuggestions = false;
         this.form = {
             ...this.form,
             commercialName: '',
@@ -436,83 +549,109 @@ export default class AlmexFormPrices extends LightningElement {
             municipality: '',
             city: ''
         };
-        clearTimeout(this.accountSearchTimer);
+        clearTimeout(this.branchSearchTimer);
 
         if (trimmedTerm.length < 2) {
-            this.accountSearchRequest += 1;
-            this.isSearchingAccounts = false;
-            this.accountSearchMessage = trimmedTerm
+            this.branchSearchRequest += 1;
+            this.isSearchingBranches = false;
+            this.branchSearchMessage = trimmedTerm
                 ? 'Escribe al menos 2 caracteres.'
                 : '';
             return;
         }
 
-        const requestId = ++this.accountSearchRequest;
-        this.accountSearchMessage = '';
+        const requestId = ++this.branchSearchRequest;
+        this.branchSearchMessage = '';
         // Debounce intencional; el temporizador se cancela al cambiar la búsqueda o desmontar el LWC.
         // eslint-disable-next-line @lwc/lwc/no-async-operation
-        this.accountSearchTimer = setTimeout(
-            () => this.loadAccountSuggestions(trimmedTerm, requestId),
-            ACCOUNT_SEARCH_DELAY
+        this.branchSearchTimer = setTimeout(
+            () => this.loadBranchSuggestions(trimmedTerm, requestId),
+            BRANCH_SEARCH_DELAY
         );
     }
 
-    async loadAccountSuggestions(searchTerm, requestId) {
-        this.isSearchingAccounts = true;
+    async loadBranchSuggestions(searchTerm, requestId) {
+        this.isSearchingBranches = true;
         try {
-            const results = await searchAccounts({ searchTerm });
-            if (requestId !== this.accountSearchRequest) {
+            const results = await searchBranches({ searchTerm });
+            if (requestId !== this.branchSearchRequest) {
                 return;
             }
-            this.accountSuggestions = results;
-            this.showAccountSuggestions = results.length > 0;
-            this.accountSearchMessage = results.length ? '' : 'No se encontraron clientes.';
+            this.branchSuggestions = results || [];
+            this.showBranchSuggestions = this.branchSuggestions.length > 0;
+            this.branchSearchMessage = this.branchSuggestions.length ? '' : 'No se encontraron sucursales.';
         } catch (error) {
-            if (requestId === this.accountSearchRequest) {
-                this.accountSuggestions = [];
-                this.showAccountSuggestions = false;
-                this.accountSearchMessage = this.getErrorMessage(error);
+            if (requestId === this.branchSearchRequest) {
+                this.branchSuggestions = [];
+                this.showBranchSuggestions = false;
+                this.branchSearchMessage = this.getErrorMessage(error);
             }
         } finally {
-            if (requestId === this.accountSearchRequest) {
-                this.isSearchingAccounts = false;
+            if (requestId === this.branchSearchRequest) {
+                this.isSearchingBranches = false;
             }
         }
     }
 
-    handleAccountFocus() {
-        clearTimeout(this.accountBlurTimer);
-        this.showAccountSuggestions = this.accountSuggestions.length > 0;
+    handleBranchFocus() {
+        clearTimeout(this.branchBlurTimer);
+        this.showBranchSuggestions = this.branchSuggestions.length > 0;
     }
 
-    handleAccountBlur() {
-        clearTimeout(this.accountBlurTimer);
+    handleBranchBlur() {
+        clearTimeout(this.branchBlurTimer);
         // Conserva la lista durante el clic y se cancela si el componente se desmonta.
         // eslint-disable-next-line @lwc/lwc/no-async-operation
-        this.accountBlurTimer = window.setTimeout(() => {
-            this.showAccountSuggestions = false;
+        this.branchBlurTimer = window.setTimeout(() => {
+            this.showBranchSuggestions = false;
         }, 150);
     }
 
-    selectAccount(event) {
-        const accountId = event.currentTarget.dataset.id;
-        const account = this.accountSuggestions.find((item) => item.accountId === accountId);
-        if (!account) {
+    selectBranch(event) {
+        const branchId = event.currentTarget.dataset.id;
+        const branch = this.branchSuggestions.find((item) => item.branchId === branchId);
+        if (!branch) {
             return;
         }
 
-        this.selectedAccountId = account.accountId;
-        this.accountSearch = account.name;
-        this.showAccountSuggestions = false;
-        this.accountSearchMessage =
-            account.state && account.city ? '' : 'Completa los datos de ubicación faltantes.';
+        clearTimeout(this.branchSearchTimer);
+        clearTimeout(this.branchBlurTimer);
+        this.branchSearchRequest += 1;
+        this.isSearchingBranches = false;
+        this.selectedBranchId = branch.branchId;
+        this.branchSearch = branch.name;
+        this.showBranchSuggestions = false;
+        const municipality = this.resolveBranchMunicipality(branch.state, branch.city);
+        this.branchSearchMessage = branch.state && branch.city && municipality
+            ? '' : 'Completa los datos de ubicación faltantes.';
         this.form = {
             ...this.form,
-            commercialName: account.name,
-            state: account.state || '',
-            municipality: account.municipality || '',
-            city: account.city || ''
+            commercialName: branch.name,
+            state: branch.state || '',
+            municipality,
+            city: branch.city || ''
         };
+        this.syncLocationSearches();
+    }
+
+    resolveBranchMunicipality(state, city) {
+        const matches = this.getPlaces(state).filter(
+            place => this.normalize(place.city) === this.normalize(city || '')
+        );
+        const municipalities = [...new Set(matches.map(place => place.municipality))];
+        if (municipalities.length === 1) {
+            return municipalities[0];
+        }
+        // La ciudad también puede venir escrita como nombre de municipio.
+        const normalizedCity = this.normalize(city || '');
+        const municipalityMatches = [...new Set(this.getPlaces(state)
+            .filter(place => normalizedCity && (
+                this.normalize(place.municipality) === normalizedCity
+                || this.normalize(place.municipality).startsWith(normalizedCity + ' ')
+            ))
+            .map(place => place.municipality))];
+        return municipalities.length === 0 && municipalityMatches.length === 1
+            ? municipalityMatches[0] : '';
     }
 
     handleClientStateFocus() {
@@ -729,7 +868,7 @@ export default class AlmexFormPrices extends LightningElement {
     }
 
     normalize(value = '') {
-        return value
+        return String(value || '')
             .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '')
             .toLocaleLowerCase('es-MX')
@@ -741,33 +880,40 @@ export default class AlmexFormPrices extends LightningElement {
         this.showMunicipalityResults = except === 'municipality' && this.showMunicipalityResults;
         this.showFactoryStateResults = except === 'factoryState' && this.showFactoryStateResults;
         this.showFactoryCityResults = except === 'factoryCity' && this.showFactoryCityResults;
-        this.showAccountSuggestions = false;
+        this.showBranchSuggestions = false;
     }
 
     async handleSubmit(event) {
         event.preventDefault();
+        if (this.isSaving) {
+            return;
+        }
         this.closeLookups();
-        this.validateLocationSelections();
+        const valuesAreValid = this.validateFormValues();
+        const locationsAreValid = this.validateLocationSelections();
 
-        if (this.isClientMode && !this.selectedAccountId) {
+        if (this.isClientMode && !this.selectedBranchId) {
             this.showToast(
-                'Selecciona un cliente',
-                'Busca y elige un cliente de las sugerencias antes de registrar el mapeo.',
+                'Selecciona una sucursal',
+                'Busca y elige una sucursal de las sugerencias antes de registrar el mapeo.',
                 'error'
             );
             return;
         }
 
         const controls = [
-            ...this.template.querySelectorAll('lightning-input, lightning-combobox, select')
+            ...this.template.querySelectorAll('lightning-input, lightning-combobox, select, input')
         ];
         const isValid = controls.reduce((valid, control) => {
             control.reportValidity();
-            return valid && control.checkValidity();
+            const controlIsValid = control.checkValidity();
+            return valid && controlIsValid;
         }, true);
 
-        if (!isValid) {
-            this.showToast('Revisa el formulario', 'Completa todos los campos obligatorios.', 'error');
+        if (!isValid || !valuesAreValid || !locationsAreValid) {
+            this.showToast('Revisa el formulario',
+                this.locationError && (this.isProspectMode || !this.isSupplierNotApplicable)
+                    ? this.locationError : 'Completa todos los campos obligatorios con valores válidos.', 'error');
             return;
         }
 
@@ -786,9 +932,14 @@ export default class AlmexFormPrices extends LightningElement {
             const response = await savePrice({
                 input: requestInput
             });
+            if (!response?.success) {
+                throw new Error(response?.message || 'Salesforce no confirmó el registro.');
+            }
             this.showToast(
                 'Registro guardado',
-                'La información se guardó correctamente.',
+                response.message || (response.periodPersisted
+                    ? 'La información se guardó correctamente.'
+                    : 'El registro se guardó, pero no se pudo guardar el periodo. Revisa los campos de año y mes y sus permisos.'),
                 response.periodPersisted ? 'success' : 'warning'
             );
             this.resetForm();
@@ -800,17 +951,51 @@ export default class AlmexFormPrices extends LightningElement {
     }
 
     resetForm() {
+        this.template.querySelectorAll('lightning-input, lightning-combobox, select, input')
+            .forEach(control => control.setCustomValidity(''));
         this.form = emptyForm();
-        clearTimeout(this.accountSearchTimer);
-        this.accountSearchRequest += 1;
-        this.accountSearch = '';
-        this.accountSuggestions = [];
-        this.accountSearchMessage = '';
-        this.isSearchingAccounts = false;
-        this.showAccountSuggestions = false;
-        this.selectedAccountId = undefined;
+        clearTimeout(this.branchSearchTimer);
+        clearTimeout(this.branchBlurTimer);
+        this.branchSearchRequest += 1;
+        this.branchSearch = '';
+        this.branchSuggestions = [];
+        this.branchSearchMessage = '';
+        this.isSearchingBranches = false;
+        this.showBranchSuggestions = false;
+        this.selectedBranchId = undefined;
         this.syncLocationSearches();
         this.closeLookups();
+    }
+
+    validateFormValues() {
+        // Valida también el modelo: no convertir campos vacíos a cero ni aceptar
+        // opciones que ya no pertenezcan al producto después de cambiarlo.
+        const includes = (options, value) => options.some(option => option.value === value);
+        const validations = {
+            productName: Boolean(this.selectedProductConfig),
+            subproductType: !this.showSubproduct || includes(this.subproductOptions, this.form.subproductType),
+            shipmentSize: !this.showShipmentSize || includes(SHIPMENT_SIZE_OPTIONS, this.form.shipmentSize),
+            periodYear: includes(this.yearOptions, this.form.periodYear),
+            periodMonth: includes(MONTH_OPTIONS, this.form.periodMonth),
+            consumptionType: includes(this.consumptionTypeOptions, this.form.consumptionType),
+            unit: includes(UNIT_OPTIONS, this.form.unit),
+            supplier: includes(this.supplierOptions, this.form.supplier),
+            price: /^\d*(?:\.\d{1,2})?$/.test(this.form.price) &&
+                /\d/.test(this.form.price) && Number.isFinite(Number(this.form.price)),
+            monthlyConsumption: String(this.form.monthlyConsumption).trim() !== '' &&
+                Number.isFinite(Number(this.form.monthlyConsumption)) && Number(this.form.monthlyConsumption) >= 0
+        };
+        ['commercialName', 'state', 'municipality', 'city', 'otherSupplier'].forEach(field => {
+            validations[field] = field === 'otherSupplier' && !this.showOtherSupplierInput
+                ? true : Boolean(String(this.form[field] || '').trim());
+        });
+        this.template.querySelectorAll('lightning-input, lightning-combobox, select, input').forEach(control => {
+            const field = control.dataset.field || control.name;
+            if (Object.hasOwn(validations, field)) {
+                control.setCustomValidity(validations[field] ? '' : 'Completa este campo con un valor válido.');
+            }
+        });
+        return Object.values(validations).every(Boolean);
     }
 
     syncLocationSearches() {
@@ -855,6 +1040,8 @@ export default class AlmexFormPrices extends LightningElement {
                 control.setCustomValidity(validation.valid ? '' : validation.message);
             }
         });
+        return (this.isClientMode || (validations.state.valid && validations.municipality.valid)) &&
+            (this.isSupplierNotApplicable || (validations.factoryState.valid && validations.factoryCity.valid));
     }
 
     clearLocationValidity(field, value) {

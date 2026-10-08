@@ -40,6 +40,7 @@ private class ALMEX_MapDataControllerTest {
                 Nombre_comercial__c = 'Cliente de prueba',
                 Tipo_subproducto__c = 'Estándar',
                 Consumo_mensual__c = 10,
+                Tipo_consumo_toneladas__c = 'A',
                 Precio_producto__c = 25,
                 Periodo_Anio__c = 2026,
                 Periodo_Mes__c = 9,
@@ -58,6 +59,7 @@ private class ALMEX_MapDataControllerTest {
             System.assertEquals(2026, result[0].Periodo_Anio__c);
             System.assertEquals(9, result[0].Periodo_Mes__c);
             System.assertEquals(25, result[0].Precio_producto__c);
+            System.assertEquals('A', result[0].Tipo_consumo_toneladas__c);
         }
     }
 

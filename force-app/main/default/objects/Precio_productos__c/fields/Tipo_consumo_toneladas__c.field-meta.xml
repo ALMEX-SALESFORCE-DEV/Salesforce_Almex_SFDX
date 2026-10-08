@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Tipo_consumo_toneladas__c</fullName>
+    <description>Periodicidad del consumo registrado: M mensual, A anual. Los registros históricos sin valor se consideran mensuales.</description>
+    <externalId>false</externalId>
+    <label>Tipo de consumo toneladas</label>
+    <length>1</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

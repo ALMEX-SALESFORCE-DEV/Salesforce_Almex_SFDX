@@ -120,6 +120,7 @@
                     <option value="Dextrosa líquida">Dextrosa líquida</option>
                     <option value="Dextrosa monohidratada">Dextrosa monohidratada</option>
                     <option value="KRYSTAR líquido">KRYSTAR líquido</option>
+                    <option value="Dextrosa 95% líquida">Dextrosa 95% líquida</option>
                 </select>
             </div>
 
@@ -146,7 +147,20 @@
                 </div>
             </div>
 
+            <div class="currency-filter">
+                <span id="consumption-label" class="filter-caption">Consumo</span>
+                <div class="currency-switch" role="group" aria-labelledby="consumption-label">
+                    <button type="button" class={monthlyConsumptionButtonClass}
+                        data-consumption-type="M" aria-pressed={isMonthlyConsumption}
+                        onclick={handleConsumptionTypeChange}>Mensual</button>
+                    <button type="button" class={annualConsumptionButtonClass}
+                        data-consumption-type="A" aria-pressed={isAnnualConsumption}
+                        onclick={handleConsumptionTypeChange}>Anual</button>
+                </div>
+            </div>
+
             <div class="filter-summary" aria-live="polite">
+                <span>Consumo {consumptionPeriodLabel} ·</span>
                 <span>Visualizando precios en</span>
                 <strong>{currentPriceUnitLabel}</strong>
             </div>
@@ -168,7 +182,7 @@
                         <div class="panel-heading">
                             <div>
                                 <div class="panel-title">Mapa de Competitividad</div>
-                                <div class="panel-subtitle">Proveedor líder por consumo mensual en cada estado</div>
+                                <div class="panel-subtitle">{mapSubtitle}</div>
                             </div>
                             <div class="panel-badges">
                                 <span class="currency-chip">{currentPriceUnitLabel}</span>

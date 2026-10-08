@@ -9,6 +9,7 @@ public with sharing class ALMEX_MapDataController {
             'Id',
             'Ciudad__c',
             'Consumo_mensual__c',
+            'Tipo_consumo_toneladas__c',
             'Estado__c',
             'Municipio__c',
             'Nombre_comercial__c',
