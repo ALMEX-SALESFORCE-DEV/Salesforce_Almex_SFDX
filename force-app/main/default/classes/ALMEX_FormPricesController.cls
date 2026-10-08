@@ -8,46 +8,8 @@ public with sharing class ALMEX_FormPricesController {
     private static final String PERIOD_YEAR_FIELD = 'Periodo_Anio__c';
     private static final String PERIOD_MONTH_FIELD = 'Periodo_Mes__c';
     private static final String NOT_APPLICABLE_SUPPLIER = 'N/A';
-    private static final Map<String, String> MEXICAN_STATES_BY_CODE =
-        new Map<String, String>{
-            'AG' => 'Aguascalientes',
-            'BC' => 'Baja California',
-            'BS' => 'Baja California Sur',
-            'CH' => 'Chihuahua',
-            'CL' => 'Colima',
-            'CM' => 'Campeche',
-            'COAH' => 'Coahuila',
-            'CO' => 'Coahuila',
-            'CS' => 'Chiapas',
-            'DF' => 'Ciudad de México',
-            'DG' => 'Durango',
-            'GR' => 'Guerrero',
-            'GT' => 'Guanajuato',
-            'HG' => 'Hidalgo',
-            'JA' => 'Jalisco',
-            'JAL' => 'Jalisco',
-            'ME' => 'Estado de México',
-            'MI' => 'Michoacán',
-            'CDMX' => 'Ciudad de México',
-            'MO' => 'Morelos',
-            'NA' => 'Nayarit',
-            'NL' => 'Nuevo León',
-            'OA' => 'Oaxaca',
-            'PB' => 'Puebla',
-            'QE' => 'Querétaro',
-            'QRO' => 'Quintana Roo',
-            'QR' => 'Quintana Roo',
-            'SI' => 'Sinaloa',
-            'SIN' => 'Sinaloa',
-            'SL' => 'San Luis Potosí',
-            'SO' => 'Sonora',
-            'TB' => 'Tabasco',
-            'TL' => 'Tlaxcala',
-            'TM' => 'Tamaulipas',
-            'VE' => 'Veracruz',
-            'YU' => 'Yucatán',
-            'ZA' => 'Zacatecas'
-        };
+    private static final Map<String, String> MEXICAN_STATES_BY_ALIAS =
+        buildMexicanStatesByAlias();
 
     public class FormOptions {
         @AuraEnabled public List<ProductOption> products { get; set; }
@@ -324,20 +286,130 @@ public with sharing class ALMEX_FormPricesController {
             return null;
         }
         String normalized = stateName.trim();
-        String stateByCode = MEXICAN_STATES_BY_CODE.get(normalized.toUpperCase());
-        if (stateByCode != null) {
-            return stateByCode;
+        String canonicalState = MEXICAN_STATES_BY_ALIAS.get(normalizeStateAlias(normalized));
+        return canonicalState == null ? normalized : canonicalState;
+    }
+
+    private static Map<String, String> buildMexicanStatesByAlias() {
+        Map<String, String> statesByAlias = new Map<String, String>();
+        addStateAliases(statesByAlias, 'Aguascalientes', new List<String>{
+            'AG', 'AGS', 'AGU', 'Aguascalientes'
+        });
+        addStateAliases(statesByAlias, 'Baja California', new List<String>{
+            'BC', 'BCN', 'Baja California'
+        });
+        addStateAliases(statesByAlias, 'Baja California Sur', new List<String>{
+            'BS', 'BCS', 'Baja California Sur'
+        });
+        addStateAliases(statesByAlias, 'Campeche', new List<String>{
+            'CM', 'CAM', 'CAMP', 'Campeche'
+        });
+        addStateAliases(statesByAlias, 'Coahuila', new List<String>{
+            'CO', 'COA', 'COAH', 'Coahuila', 'Coahuila de Zaragoza'
+        });
+        addStateAliases(statesByAlias, 'Colima', new List<String>{
+            'CL', 'COL', 'Colima'
+        });
+        addStateAliases(statesByAlias, 'Chiapas', new List<String>{
+            'CS', 'CHP', 'CHS', 'CHIS', 'Chiapas'
+        });
+        addStateAliases(statesByAlias, 'Chihuahua', new List<String>{
+            'CH', 'CHH', 'CHIH', 'Chihuahua'
+        });
+        addStateAliases(statesByAlias, 'Ciudad de México', new List<String>{
+            'DF', 'DIF', 'CDMX', 'CMX', 'Distrito Federal', 'Ciudad de México'
+        });
+        addStateAliases(statesByAlias, 'Durango', new List<String>{
+            'DG', 'DGO', 'DUR', 'Durango'
+        });
+        addStateAliases(statesByAlias, 'Guanajuato', new List<String>{
+            'GT', 'GTO', 'GUA', 'Guanajuato'
+        });
+        addStateAliases(statesByAlias, 'Guerrero', new List<String>{
+            'GR', 'GRO', 'Guerrero'
+        });
+        addStateAliases(statesByAlias, 'Hidalgo', new List<String>{
+            'HG', 'HGO', 'HID', 'Hidalgo'
+        });
+        addStateAliases(statesByAlias, 'Jalisco', new List<String>{
+            'JA', 'JAL', 'Jalisco'
+        });
+        addStateAliases(statesByAlias, 'Estado de México', new List<String>{
+            'ME', 'MEX', 'EDOMEX', 'Edo. de Méx.', 'México', 'Estado de México'
+        });
+        addStateAliases(statesByAlias, 'Michoacán', new List<String>{
+            'MI', 'MIC', 'MICH', 'MCH', 'Michoacán', 'Michoacán de Ocampo'
+        });
+        addStateAliases(statesByAlias, 'Morelos', new List<String>{
+            'MO', 'MOR', 'Morelos'
+        });
+        addStateAliases(statesByAlias, 'Nayarit', new List<String>{
+            'NA', 'NAY', 'Nayarit'
+        });
+        addStateAliases(statesByAlias, 'Nuevo León', new List<String>{
+            'NL', 'NLE', 'Nuevo León'
+        });
+        addStateAliases(statesByAlias, 'Oaxaca', new List<String>{
+            'OA', 'OAX', 'Oaxaca'
+        });
+        addStateAliases(statesByAlias, 'Puebla', new List<String>{
+            'PB', 'PUE', 'Puebla'
+        });
+        addStateAliases(statesByAlias, 'Querétaro', new List<String>{
+            'QE', 'QRO', 'QUE', 'Querétaro', 'Querétaro de Arteaga'
+        });
+        addStateAliases(statesByAlias, 'Quintana Roo', new List<String>{
+            'QR', 'QROO', 'ROO', 'QTR', 'Quintana Roo'
+        });
+        addStateAliases(statesByAlias, 'San Luis Potosí', new List<String>{
+            'SL', 'SLP', 'San Luis Potosí'
+        });
+        addStateAliases(statesByAlias, 'Sinaloa', new List<String>{
+            'SI', 'SIN', 'Sinaloa'
+        });
+        addStateAliases(statesByAlias, 'Sonora', new List<String>{
+            'SO', 'SON', 'Sonora'
+        });
+        addStateAliases(statesByAlias, 'Tabasco', new List<String>{
+            'TB', 'TAB', 'Tabasco'
+        });
+        addStateAliases(statesByAlias, 'Tamaulipas', new List<String>{
+            'TM', 'TAM', 'TAMS', 'Tamaulipas'
+        });
+        addStateAliases(statesByAlias, 'Tlaxcala', new List<String>{
+            'TL', 'TLA', 'TLAX', 'TLX', 'Tlaxcala'
+        });
+        addStateAliases(statesByAlias, 'Veracruz', new List<String>{
+            'VE', 'VER', 'Veracruz', 'Veracruz de Ignacio de la Llave'
+        });
+        addStateAliases(statesByAlias, 'Yucatán', new List<String>{
+            'YU', 'YUC', 'Yucatán'
+        });
+        addStateAliases(statesByAlias, 'Zacatecas', new List<String>{
+            'ZA', 'ZAC', 'Zacatecas'
+        });
+        return statesByAlias;
+    }
+
+    private static void addStateAliases(
+        Map<String, String> statesByAlias,
+        String canonicalState,
+        List<String> aliases
+    ) {
+        for (String stateAlias : aliases) {
+            statesByAlias.put(normalizeStateAlias(stateAlias), canonicalState);
         }
-        if (normalized.equalsIgnoreCase('Distrito Federal')) {
-            return 'Ciudad de México';
-        }
-        if (normalized.equalsIgnoreCase('México')) {
-            return 'Estado de México';
-        }
-        if (normalized.equalsIgnoreCase('Querétaro de Arteaga')) {
-            return 'Querétaro';
-        }
-        return normalized;
+    }
+
+    private static String normalizeStateAlias(String stateAlias) {
+        return stateAlias.trim().toUpperCase()
+            .replace('Á', 'A')
+            .replace('É', 'E')
+            .replace('Í', 'I')
+            .replace('Ó', 'O')
+            .replace('Ú', 'U')
+            .replace('Ü', 'U')
+            .replaceAll('[^A-Z0-9]', '');
     }
 
     private static String joinNonBlank(List<String> values, String separator) {
