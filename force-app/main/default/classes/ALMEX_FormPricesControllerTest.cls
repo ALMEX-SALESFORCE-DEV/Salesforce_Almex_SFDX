@@ -144,7 +144,7 @@ private class ALMEX_FormPricesControllerTest {
         ALMEX_FormPricesController.PriceInput input = validInput();
         input.consumptionType = 'A';
         input.monthlyConsumption = 1200;
-        input.productName = 'Dextrosa 95% liquida';
+        input.productName = 'Dextrosa 95% líquida';
         input.shipmentSize = '20 Ton';
 
         Test.startTest();
@@ -159,7 +159,7 @@ private class ALMEX_FormPricesControllerTest {
         ];
         System.assertEquals('A', saved.Tipo_consumo_toneladas__c);
         System.assertEquals(1200, saved.Consumo_mensual__c);
-        System.assertEquals('Dextrosa 95% liquida', saved.Nombre_producto__c);
+        System.assertEquals('Dextrosa 95% líquida', saved.Nombre_producto__c);
         System.assertEquals('20 Ton', saved.Tama_o_embarque__c);
     }
 
@@ -183,8 +183,8 @@ private class ALMEX_FormPricesControllerTest {
         List<String> products = new List<String>{
             'Glucosa 43', 'Glucosa 44', 'Glucosa 63', 'Glucosa Alta Maltosa',
             'Fructosa 42', 'Fructosa 55', 'Fructosa cristalina 99',
-            'Dextrosa líquida', 'Dextrosa monohidratada', 'KRYSTAR líquido',
-            'Dextrosa 95% liquida', 'Azúcar'
+            'Dextrosa monohidratada', 'KRYSTAR líquido',
+            'Dextrosa 95% líquida', 'Azúcar'
         };
         Test.startTest();
         for (String product : products) {

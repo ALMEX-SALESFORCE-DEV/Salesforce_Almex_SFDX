@@ -58,10 +58,6 @@ const PRODUCT_CATALOG = [
         suppliers: ['ALMEX', 'Tate & Lyle México'], requiresShipment: true
     },
     {
-        label: 'Dextrosa líquida', value: 'Dextrosa líquida',
-        suppliers: CORN_DERIVATIVE_SUPPLIERS, requiresShipment: true
-    },
-    {
         label: 'Dextrosa monohidratada', value: 'Dextrosa monohidratada',
         suppliers: ['ALMEX', 'Cargill México', 'Ingredion México', 'Roquette México'], requiresShipment: true
     },
