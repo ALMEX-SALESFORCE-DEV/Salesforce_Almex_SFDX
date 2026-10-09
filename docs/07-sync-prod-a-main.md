@@ -37,6 +37,8 @@ deploy a prod es **manual** (`workflow_dispatch` + escribir `DEPLOY`). Por tanto
 | `.gitattributes` con `eol=lf` | Mata el ruido CRLF↔LF del retrieve en Windows. Ver [Troubleshooting](06-troubleshooting.md). |
 | Auth a prod | `sf org display -o ALMEX-Production` debe responder. |
 | Working tree limpio | `git status` sin cambios pendientes antes de empezar. |
+| Heap de Node elevado | `$env:NODE_OPTIONS = "--max-old-space-size=8192"` ANTES del retrieve. Sin esto, un manifiesto grande revienta con `JavaScript heap out of memory` (cap default ~4GB). Usa `12288` si tienes 16GB+ RAM. |
+| CLI pinneada | Verifica versión con `sf version`. El comportamiento del retrieve cambia entre versiones (ruido/orden). Actualiza antes de empezar con `sf update` y deja constancia de la versión usada en el PR. |
 
 ## Procedimiento
 
@@ -60,16 +62,101 @@ sf project generate manifest --from-org ALMEX-Production --name package --output
 
 > Revisa el diff de `package.xml`: tipos nuevos = metadata que prod tiene y el repo no.
 
-### 3. Retrieve completo por manifiesto
+> ⚠️ **El `--from-org` mete ListViews estándar que NO se pueden retrieve.** El org
+> las lista pero el Metadata API no las entrega (son system-managed: `AllOpenCases`
+> default, `CalculationMatrix.Org_PCM_Decision_Table`, `BatchJob.All_Batch_Jobs`,
+> etc.). En el retrieve salen como warning `Entity of type 'ListView' named '...'
+> cannot be found` — **benigno, exit 0, no es fallo**. Si molestan en el log, borra
+> esos `<members>` del `package.xml`; pero OJO: el próximo `--from-org` los re-mete.
+
+### 3. Retrieve dividido por sub-manifiestos (`scripts/sync-prod-retrieve.ps1`)
 
 PROD **no tiene source tracking**, así que el retrieve va SIEMPRE con `--manifest`
-(nunca `retrieve start` pelón — falla con `noSourceTracking`):
+(nunca `retrieve start` pelón — falla con `noSourceTracking`).
 
-```bash
-sf project retrieve start --manifest manifest/package.xml -o ALMEX-Production
+> ⚠️ **No bajes el `package.xml` completo de un jalón.** En esta org es grande
+> (~135 tipos; `CustomField` solo trae ~560 miembros, `CustomObject` ~395). Un
+> retrieve único dispara **dos** modos de falla en Windows:
+>
+> 1. **OOM** — carga toda la metadata en memoria para convertirla a source format y
+>    revienta el heap de Node (`FATAL ERROR: ... JavaScript heap out of memory`),
+>    aunque el server diga `Succeeded` (el crash es en la conversión local).
+> 2. **Race de file handles** — al convertir cientos de objetos a la vez, Windows
+>    tira `Component conversion failed: UNKNOWN: unknown error, open ...object-meta.xml`
+>    (archivo distinto cada corrida = no es un archivo malo, es la concurrencia).
+
+**El script resuelve ambos.** Parte `package.xml` en sub-manifiestos:
+
+- Tipos pesados (`CustomField`, `CustomObject`, `Layout`, `Flow`,
+  `LightningComponentBundle`, `PermissionSet`, `ExperienceBundle`) → sus **miembros**
+  se parten en sub-lotes de `-HeavyMemberChunk` (default 25) → pocos archivos por
+  retrieve → mata el race de handles.
+- El resto → grupos de `-ChunkSize` tipos (default 10).
+- Cada lote corre con heap elevado, **reintenta** `-Retries` veces ante lock/timeout,
+  trata `Nothing retrieved` como *skip* (no fallo), y arregla el encoding UTF-8 de la
+  consola (sin esto, los `─ ✔` de sf salen como `ÔöÇ`).
+
+```powershell
+./scripts/sync-prod-retrieve.ps1 -HeapMB 12288 -ChunkSize 6 -HeavyMemberChunk 25 -Retries 2 -Org ALMEX-Production
+# todos los flags tienen default; ./scripts/sync-prod-retrieve.ps1 a secas también corre.
 ```
 
+| Flag | Default | Para qué |
+|------|---------|----------|
+| `-Org` | `ALMEX-Production` | Alias del org. |
+| `-HeapMB` | `8192` | Heap de Node en MB. Sube a `12288` con 16GB+ RAM. |
+| `-ChunkSize` | `10` | Tipos ligeros por lote. |
+| `-HeavyMemberChunk` | `25` | Miembros por sub-lote de un tipo pesado. Baja a `10` si sigue el `UNKNOWN: open`. |
+| `-Retries` | `2` | Reintentos por lote ante lock/timeout (backoff 5s). |
+| `-PauseIndexer` | off | Detiene `WSearch` durante el retrieve (requiere shell admin). Ver nota de abajo. |
+
+**Lectura del log / consola** (`retrieve-log.txt`):
+
+| Marca | Significa | Acción |
+|-------|-----------|--------|
+| (sin marca, exit 0) | Lote OK | nada |
+| `SKIP nothing-retrieved` | Esos members no viven en el org (ej. `ExperienceBundle` vacío) | nada, es normal |
+| `reintento N/2` | Lock/timeout transitorio, reintentando | nada, se auto-cura |
+| `Warnings ... cannot be found` | ListViews estándar/system que el org lista pero no entrega (ver paso 2) | nada, es benigno (exit 0) |
+| `FALLO exit=N` | Lote falló tras los reintentos | re-correr ese chunk (abajo) |
+
+Sub-manifiestos en `manifest/split/chunk-NN.xml`. Si al final hay `FALLO`, el script
+lista los lotes; re-corre solo esos:
+
+```powershell
+sf project retrieve start --manifest manifest/split/chunk-NN.xml -o ALMEX-Production
+```
+
+> **Si el `UNKNOWN: open` persiste** aun con `-HeavyMemberChunk 10`: el culpable
+> casi siempre es el **indexer de Windows (`WSearch`)**, que mapea en memoria los
+> `.xml` bajo `Documents` y choca con la reescritura de sf (`ERROR_USER_MAPPED_FILE`).
+> Golpea más a objetos estándar que ya existen en disco (`AssociatedLocation`,
+> `CalculationMatrix`). Soluciones, de barata a robusta:
+>
+> ```powershell
+> # A) Excluir el repo del indexado (permanente, sin admin):
+> #    Sin \* al final: aplica a la carpeta + /S recursivo. El \* tira un warning
+> #    inofensivo al toparse con .git (oculto), pero igual excluye el resto.
+> attrib +I "C:\Users\...\Salesforce_Almex_SFDX" /S /D
+>
+> # B) Pausar el indexer solo durante el retrieve (shell admin):
+> ./scripts/sync-prod-retrieve.ps1 -PauseIndexer   # para/reinicia WSearch solo
+>
+> # C) Lo más robusto: mover el repo FUERA de Documents (ej. C:\dev\), esquiva
+> #    indexer + OneDrive + DLP de una vez.
+> ```
+>
+> Secundario: un AV de terceros o el watcher del IDE sobre `force-app` dan el mismo
+> error. Cierra el explorador del IDE mientras corre; si hay AV corporativo, pide a
+> TI excluir la ruta del repo.
+
 ### 4. Separar ruido EOL de cambios reales
+
+> 🧹 **Antes de pelear el ruido, córtalo de raíz con `.forceignore`.** Los tipos que
+> reordenan en cada retrieve (`Profile`, `StandardValueSet`, `AppMenu`,
+> `InstalledPackage`) no deberían ni bajar. Agrégalos a `.forceignore` **una vez** y
+> el retrieve los salta — menos memoria, menos diffs basura que descartar a mano.
+> El retrieve dividido (paso 3) respeta `.forceignore` igual que el completo.
 
 ```powershell
 # Total de archivos modificados
@@ -133,6 +220,10 @@ git push origin dev
 | Tema | Recomendación |
 |------|---------------|
 | **EOL** | `.gitattributes` con `eol=lf` ANTES del retrieve. Sin esto, 100% ruido. |
+| **OOM (heap)** | Manifiesto grande de un jalón = `JavaScript heap out of memory`. Sube heap (`NODE_OPTIONS`) **y** parte el retrieve (paso 3). |
+| **`UNKNOWN: open` (Windows)** | Causa #1: el indexer `WSearch` mapea los `.xml` bajo `Documents` y choca con sf (`ERROR_USER_MAPPED_FILE`). Fix: `attrib +I <repo> /S /D`, o `-PauseIndexer`, o mover el repo fuera de `Documents`. Baja `-HeavyMemberChunk` y cierra el IDE si persiste. |
+| **Encoding de consola** | sf emite UTF-8 (`─ ✔`); PS 5.1 lo pinta como `ÔöÇ`. El script fuerza `[Console]::OutputEncoding = UTF8`. |
+| **`Nothing retrieved`** | Es warning, no fallo (members que no viven en el org). El script lo marca `SKIP`. |
 | **Metadata ruidosa** | Profiles, `StandardValueSet`, `AppMenu`, `InstalledPackage` reordenan siempre. Considera `.forceignore`. |
 | **Manifiesto viejo** | Regenera con `--from-org`; un `package.xml` viejo no captura tipos nuevos de prod. |
 | **Secretos** | El retrieve no trae credenciales, pero revisa NamedCredentials/ConnectedApps antes de commitear. |
