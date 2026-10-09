@@ -81,12 +81,19 @@ jobs:
           sf org login sfdx-url --sfdx-url-file "$RUNNER_TEMP/sfauth" --alias sandbox --set-default
           rm -f "$RUNNER_TEMP/sfauth"
 
-      - name: Calcular delta del PR (base -> head)
+      - name: Calcular delta del PR (merge-base -> head)
         if: steps.guard.outputs.ready == 'true'
         run: |
-          BASE="${{ github.event.pull_request.base.sha }}"
+          BASE_REF="${{ github.event.pull_request.base.sha }}"
           HEAD="${{ github.event.pull_request.head.sha }}"
-          echo "Delta desde $BASE hasta $HEAD"
+          # sgd hace `git diff FROM TO` (dos puntos = compara arboles directos).
+          # Si la rama se corto de un base desactualizado respecto al target
+          # (p.ej. rama desde main cuando dev ya avanzo), el diff de dos puntos
+          # arrastra TODO el drift base-vs-head y mete falsos positivos en el
+          # dry-run. Usamos el merge-base para que el delta sea SOLO lo que el PR
+          # introduce, igual que el diff de GitHub (tres puntos).
+          BASE=$(git merge-base "$BASE_REF" "$HEAD")
+          echo "Delta desde merge-base $BASE hasta $HEAD"
           rm -rf delta && mkdir delta
           sf sgd source delta --from "$BASE" --to "$HEAD" --output-dir delta --generate-delta
           echo "----- package.xml a validar -----"
