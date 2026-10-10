@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AccountPlanObjMeasCalcDef xmlns="http://soap.sforce.com/2006/04/metadata">
+    <conditions>
+        <fieldName>StageName</fieldName>
+        <operation>Equals</operation>
+        <value>Closed Won</value>
+    </conditions>
+    <description>Defina los objetivos de ingresos por ventas. El valor del objetivo actual es la suma de los campos importe de sus oportunidades seleccionadas que se encuentran en la etapa &quot;Cerrado ganada&quot;.</description>
+    <developerName>Objetivos_de_ingresos_de_oportunidad</developerName>
+    <masterLabel>Objetivos de ingresos de oportunidad</masterLabel>
+    <rollupType>Sum</rollupType>
+    <status>Active</status>
+    <targetField>Amount</targetField>
+    <targetObject>Opportunity</targetObject>
+</AccountPlanObjMeasCalcDef>

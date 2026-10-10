@@ -133,15 +133,19 @@
         <customTabListAdditionalFields>Product2</customTabListAdditionalFields>
         <customTabListAdditionalFields>Location</customTabListAdditionalFields>
         <customTabListAdditionalFields>QuantityOnHand</customTabListAdditionalFields>
+        <customTabListAdditionalFields>QuantityAvailable</customTabListAdditionalFields>
         <lookupDialogsAdditionalFields>Product2</lookupDialogsAdditionalFields>
         <lookupDialogsAdditionalFields>Location</lookupDialogsAdditionalFields>
         <lookupDialogsAdditionalFields>QuantityOnHand</lookupDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields>QuantityAvailable</lookupDialogsAdditionalFields>
         <lookupPhoneDialogsAdditionalFields>Product2</lookupPhoneDialogsAdditionalFields>
         <lookupPhoneDialogsAdditionalFields>Location</lookupPhoneDialogsAdditionalFields>
         <lookupPhoneDialogsAdditionalFields>QuantityOnHand</lookupPhoneDialogsAdditionalFields>
+        <lookupPhoneDialogsAdditionalFields>QuantityAvailable</lookupPhoneDialogsAdditionalFields>
         <searchResultsAdditionalFields>Product2</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>Location</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>QuantityOnHand</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>QuantityAvailable</searchResultsAdditionalFields>
     </searchLayouts>
     <sharingModel>Private</sharingModel>
 </CustomObject>

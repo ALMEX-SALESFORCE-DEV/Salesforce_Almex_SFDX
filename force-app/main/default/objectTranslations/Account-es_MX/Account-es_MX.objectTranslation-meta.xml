@@ -23,6 +23,10 @@
             <section>Market Share</section>
         </sections>
     </layouts>
+    <quickActions>
+        <label><!-- Child Account --></label>
+        <name>Child_Account</name>
+    </quickActions>
     <validationRules>
         <errorMessage><!-- El campo RFC debe contener exactamente 13 caracteres. --></errorMessage>
         <name>RV_01_RFC</name>

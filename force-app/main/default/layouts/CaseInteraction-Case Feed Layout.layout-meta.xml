@@ -90,10 +90,6 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Description</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
                 <field>SuppliedEmail</field>
             </layoutItems>
             <layoutItems>
@@ -137,7 +133,6 @@
         <fields>ContactEmail</fields>
         <fields>Origin</fields>
         <fields>Subject</fields>
-        <fields>Description</fields>
         <fields>SuppliedEmail</fields>
     </miniLayout>
     <relatedObjects>ContactId</relatedObjects>

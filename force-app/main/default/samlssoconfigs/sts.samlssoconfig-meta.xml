@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SamlSsoConfig xmlns="http://soap.sforce.com/2006/04/metadata">
+    <identityLocation>SubjectNameId</identityLocation>
+    <identityMapping>FederationId</identityMapping>
+    <issuer>https://sts.windows.net/8a651ad8-ecfc-4f12-a811-92b711c57cc5/</issuer>
+    <loginUrl>https://login.microsoftonline.com/8a651ad8-ecfc-4f12-a811-92b711c57cc5/saml2</loginUrl>
+    <name>Almidones Mexicanos</name>
+    <oauthTokenEndpoint>https://force-app-5145.my.salesforce.com/services/oauth2/token</oauthTokenEndpoint>
+    <redirectBinding>true</redirectBinding>
+    <requestSignatureMethod>1</requestSignatureMethod>
+    <requestSigningCertId>0P1V5000000093J</requestSigningCertId>
+    <salesforceLoginUrl>https://force-app-5145.my.salesforce.com</salesforceLoginUrl>
+    <samlEntityId>https://sts.windows.net/8a651ad8-ecfc-4f12-a811-92b711c57cc5/</samlEntityId>
+    <samlVersion>SAML2_0</samlVersion>
+    <singleLogoutBinding>RedirectBinding</singleLogoutBinding>
+    <singleLogoutUrl>https://login.microsoftonline.com/8a651ad8-ecfc-4f12-a811-92b711c57cc5/saml2</singleLogoutUrl>
+    <useConfigRequestMethod>false</useConfigRequestMethod>
+    <useSameDigestAlgoForSigning>true</useSameDigestAlgoForSigning>
+    <userProvisioning>false</userProvisioning>
+    <validationCert>MIIC8DCCAdigAwIBAgIQfHyE3EJOvrNOdidfugrocTANBgkqhkiG9w0BAQsFADA0MTIwMAYDVQQDEylNaWNyb3NvZnQgQXp1cmUgRmVkZXJhdGVkIFNTTyBDZXJ0aWZpY2F0ZTAeFw0yNTA2MzAxOTQxMjdaFw0yODA2MzAxOTQxMjZaMDQxMjAwBgNVBAMTKU1pY3Jvc29mdCBBenVyZSBGZWRlcmF0ZWQgU1NPIENlcnRpZmljYXRlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqaJ1w9qnDKbqYq6iP/8z92J2x37q3PpUv00gkl07lDjq6HFOJoPymR3w6d++qy/2q/ggyq+b41/qFJpKsFvUnV3xv0Y47j1PYilODrYylSDm8V3YagdsmUP1vHGSZqFqvWwEfnCncN3TFhN/8SiURy+r+B4edNPaNRnWnsF+dHVg+laC5At5xaNmNleSNYIzz6Hn9mFc3OqYHkvcqq/PLRmexHU9IYzLIER7R7DvUN0z2VQRDPVIjBp7kSX9RC+8CwBe+1vnakzyA20cOpMXA2VxLE30gWqEAl1hCtY83ki+z43bGZSttgK6NUVNFS7JwhxQrw9dE14xrLW94PVsCQIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQCFGN/Jv7YJg+VMwi02GOuO67LrMSSruqiZxOwJY7L6kM81J+x0Oh+xj3HQouB/QLMrF4OQXF1Yq520spOP46jxrjRCFrzPS0NGpxYky+Oc5KcE/7km/EOZ6b11ScMu0tx1ucwnrFhy9LMDep1VeiZVLefrO6UmhHIVx58A0uOZOXz59AWe5RfjoBXC2tSgytzm3z2eQu/E+gTXbHvmMhHOEBtrfBvfRPiIXh4WPfoysLJG0Kqe+M1lzgnCGioihtRcJ/uen1T1r4iiU/wC2WqzTkN4mlPigWlPHe0vgnc8BiHeSd3iSekkyf55HzuIS7iARThBbgdrNuQoVkPmszgv</validationCert>
+</SamlSsoConfig>

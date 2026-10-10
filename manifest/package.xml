@@ -5,12 +5,24 @@
         <name>AccountForecastSettings</name>
     </types>
     <types>
+        <members>Crecimiento_de_renovaciones_de_oportunidad</members>
+        <members>Objetivos_de_ingresos_de_oportunidad</members>
+        <name>AccountPlanObjMeasCalcDef</name>
+    </types>
+    <types>
+        <members>Objetivos_de_ingresos_de_oportunidad_ae165132_c0ce_11f1_859b_4534cc4cf4ae</members>
+        <members>Plantilla_predeterminada_ade55618_c0ce_11f1_859b_1d815583c8db</members>
+        <name>ActionPlanTemplate</name>
+    </types>
+    <types>
         <members>Default</members>
         <members>Default_Opportunity</members>
         <members>Ruta_de_acuerdo_de_suministro</members>
         <name>AnimationRule</name>
     </types>
     <types>
+        <members>ALMEX_FormPricesController</members>
+        <members>ALMEX_FormPricesControllerTest</members>
         <members>ALMEX_MapDataController</members>
         <members>ALMEX_MapDataControllerTest</members>
         <members>ChangePasswordController</members>
@@ -115,6 +127,29 @@
         <members>ISE_IDV</members>
         <members>PtyRelaGrp</members>
         <name>ApplicationSubtypeDefinition</name>
+    </types>
+    <types>
+        <members>Lead.Aprobaci_n_prospecto_Primer_aprobaci_n</members>
+        <members>Lead.prospecto_Aprobaci_n_v2</members>
+        <members>Quote.Aprobacion_Actualizado</members>
+        <members>Quote.Aprobacion_Coproducto</members>
+        <members>Quote.Aprobacion_KAM_2026</members>
+        <members>Quote.Proceso_de_aprobacion_cotizacion</members>
+        <members>Requerimientos_Especiales__c.Activar_requerimiento</members>
+        <members>Requerimientos_Especiales__c.Inactivar_requerimiento</members>
+        <members>SalesAgreement.Aprobaci_n_AS_Oracle_2026_v2</members>
+        <members>SalesAgreement.Aprobacion_KAM_AS_2026</members>
+        <members>SalesAgreement.Proceso_de_aprobaci_n_del_acuerdo</members>
+        <name>ApprovalProcess</name>
+    </types>
+    <types>
+        <members>Case.Asignación de casos por tipo</members>
+        <name>AssignmentRule</name>
+    </types>
+    <types>
+        <members>Case</members>
+        <members>Lead</members>
+        <name>AssignmentRules</name>
     </types>
     <types>
         <members>Capacitaci_n</members>
@@ -285,6 +320,7 @@
         <members>Sales_Operations</members>
         <members>Success_Manager</members>
         <members>standard__AllTabSet</members>
+        <members>standard__AlmDevops</members>
         <members>standard__AppLauncher</members>
         <members>standard__Approvals</members>
         <members>standard__Chatter</members>
@@ -389,6 +425,7 @@
         <members>Factor__c.fecha_anio__c</members>
         <members>Factor__c.netCornFijo__c</members>
         <members>Factor__c.sgaUst__c</members>
+        <members>Factor__c.sub_familia_almidon__c</members>
         <members>Fletes__c.Activo__c</members>
         <members>Fletes__c.Ciudad_de_destino__c</members>
         <members>Fletes__c.Costo_de_flete__c</members>
@@ -541,6 +578,8 @@
         <members>Precio_productos__c.Municipio__c</members>
         <members>Precio_productos__c.Nombre_comercial__c</members>
         <members>Precio_productos__c.Nombre_producto__c</members>
+        <members>Precio_productos__c.Periodo_Anio__c</members>
+        <members>Precio_productos__c.Periodo_Mes__c</members>
         <members>Precio_productos__c.Precio_producto__c</members>
         <members>Precio_productos__c.Proveedor__c</members>
         <members>Precio_productos__c.Tama_o_embarque__c</members>
@@ -593,6 +632,7 @@
         <members>Product2.Uso_del_Maiz__c</members>
         <members>Product2.Visible__c</members>
         <members>Product2.Volumen_Lt_Galon__c</members>
+        <members>Product2.sub_familia_almidon__c</members>
         <members>Programaciones__c.Bandera_Revisi_n__c</members>
         <members>Programaciones__c.Cantidad_de_programaci_n__c</members>
         <members>Programaciones__c.Cuenta__c</members>
@@ -611,6 +651,7 @@
         <members>Quote.Booked_Volume_Mtons__c</members>
         <members>Quote.Check_Completo__c</members>
         <members>Quote.Codigo_Cotizador__c</members>
+        <members>Quote.Complemento_de_precio__c</members>
         <members>Quote.Coproduct_Recov__c</members>
         <members>Quote.Corn_Freight_to_Almex__c</members>
         <members>Quote.Corn_Usage__c</members>
@@ -710,6 +751,7 @@
         <members>Quote.Utilizar_trigger__c</members>
         <members>Quote.Version__c</members>
         <members>Quote.Volumen_total__c</members>
+        <members>Quote.date_factor__c</members>
         <members>Quote.id_cuenta__c</members>
         <members>Quote.isOilFlag__c</members>
         <members>Quote.leftDataset__c</members>
@@ -900,6 +942,10 @@
         <members>AccountForecast</members>
         <members>AccountForecastAdjustment</members>
         <members>AccountForecastPeriodMetric</members>
+        <members>AccountPlan</members>
+        <members>AccountPlanObjMeasRela</members>
+        <members>AccountPlanObjective</members>
+        <members>AccountPlanObjectiveMeasure</members>
         <members>AccountProductForecast</members>
         <members>AccountProductPeriodForecast</members>
         <members>AccountTeamMember</members>
@@ -986,8 +1032,34 @@
         <members>CostBook</members>
         <members>CostBookEntry</members>
         <members>DevopsActivityLog</members>
+        <members>DevopsEnvDeployment</members>
+        <members>DevopsEnvDeploymentMbr</members>
         <members>DevopsEnvironment</members>
+        <members>DevopsPipeline</members>
+        <members>DevopsPipelineEnvironment</members>
+        <members>DevopsPipelineStage</members>
+        <members>DevopsPipelineStageTrigger</members>
+        <members>DevopsPipelineTestProvider</members>
+        <members>DevopsPipelnStgProm</members>
+        <members>DevopsPipelnStgPromWkItem</members>
+        <members>DevopsProject</members>
+        <members>DevopsProjectEnvironment</members>
+        <members>DevopsProjectPipeline</members>
+        <members>DevopsQualityGate</members>
+        <members>DevopsQualityGateResult</members>
+        <members>DevopsQualityGateRule</members>
+        <members>DevopsQualityGateRuleResult</members>
         <members>DevopsRequestInfo</members>
+        <members>DevopsTest</members>
+        <members>DevopsTestExecution</members>
+        <members>DevopsTestProviderSyncLog</members>
+        <members>DevopsTestSuite</members>
+        <members>DevopsTestSuiteExecution</members>
+        <members>DevopsTestSuiteGroupExec</members>
+        <members>DevopsTestSuiteStage</members>
+        <members>DevopsTestSuiteTest</members>
+        <members>DevopsWkItmTstSteGrpExec</members>
+        <members>DocChkItemValidatedTarget</members>
         <members>DocumentChecklistItem</members>
         <members>DocumentDecisionRequirement</members>
         <members>Documento__c</members>
@@ -1015,6 +1087,7 @@
         <members>FeedItem</members>
         <members>Fletes__c</members>
         <members>FlowOrchestrationInstance</members>
+        <members>FlowOrchestrationInstanceLink</members>
         <members>FlowOrchestrationLog</members>
         <members>FlowOrchestrationStageInstance</members>
         <members>FlowOrchestrationStepInstance</members>
@@ -1059,6 +1132,7 @@
         <members>Market_reference_breakdown__c</members>
         <members>MessagingEndUser</members>
         <members>MessagingSession</members>
+        <members>MessagingSessionClient</members>
         <members>MfgPgmCpntFrcstFactOpptySchd</members>
         <members>MfgProgramCpntFrcstFact</members>
         <members>MfgProgramForecastFact</members>
@@ -1088,6 +1162,8 @@
         <members>OrderItem</members>
         <members>OrgMetricScanResult</members>
         <members>OrgMetricScanSummary</members>
+        <members>OutboundEngagementTemplate</members>
+        <members>OutboundEngmtContentRsrc</members>
         <members>PartnerRole</members>
         <members>PayGroup</members>
         <members>PayPeriod</members>
@@ -1159,6 +1235,7 @@
         <members>RelationshipGraphView</members>
         <members>ReportHierarchyObjectField</members>
         <members>Requerimientos_Especiales__c</members>
+        <members>RequestsForAccessSIQ</members>
         <members>ReturnOrder</members>
         <members>ReturnOrderLineItem</members>
         <members>RevenueAsyncOperation</members>
@@ -1179,6 +1256,7 @@
         <members>ServiceContract</members>
         <members>ServiceCrew</members>
         <members>ServiceCrewMember</members>
+        <members>ServiceRequestRelatedRecord</members>
         <members>ServiceResource</members>
         <members>SetupDataSynchronization</members>
         <members>SfdcPartnerSbscrOffer</members>
@@ -1193,6 +1271,9 @@
         <members>SocialPersona</members>
         <members>SocialPost</members>
         <members>Solution</members>
+        <members>SourceCodeRepoProvider</members>
+        <members>SourceCodeRepository</members>
+        <members>SourceCodeRepositoryBranch</members>
         <members>StreamActivityAccess</members>
         <members>StreamingChannel</members>
         <members>Sucursal__c</members>
@@ -1224,12 +1305,18 @@
         <members>VideoCall</members>
         <members>VideoCallParticipant</members>
         <members>VideoCallRecording</members>
+        <members>VideoCallRecordingStructure</members>
+        <members>VideoCallTranscript</members>
         <members>Visit</members>
         <members>VisitedParty</members>
         <members>Visitor</members>
         <members>VoiceCall</members>
+        <members>VoiceCallRecordingStructure</members>
         <members>WorkBadge</members>
         <members>WorkBadgeDefinition</members>
+        <members>WorkItem</members>
+        <members>WorkItemComponent</members>
+        <members>WorkItemComponentList</members>
         <members>WorkOrder</members>
         <members>WorkOrderLineItem</members>
         <members>WorkPlan</members>
@@ -1275,6 +1362,7 @@
         <name>CustomSite</name>
     </types>
     <types>
+        <members>ALMEX_FormPrices</members>
         <members>Documento__c</members>
         <members>Factor__c</members>
         <members>Fletes__c</members>
@@ -1285,7 +1373,6 @@
         <members>Planta__c</members>
         <members>Precio_productos__c</members>
         <members>Programaciones__c</members>
-        <members>Registro_de_precios_comercial</members>
         <members>Requerimientos_Especiales__c</members>
         <members>Sucursal__c</members>
         <members>Suministro__c</members>
@@ -1797,6 +1884,7 @@
         <members>Medio_de_transporte</members>
         <members>Moneda</members>
         <members>Unidades_de_Negocio</members>
+        <members>sub_familia_almidon</members>
         <name>GlobalValueSet</name>
     </types>
     <types>
@@ -1852,6 +1940,9 @@
         <members>Account-Account Layout</members>
         <members>AccountBrand-Formato de Marca de cuenta</members>
         <members>AccountContactRelation-Account Contact Relationship Layout</members>
+        <members>AccountPlan-Formato Plan de cuenta</members>
+        <members>AccountPlanObjective-Formato Objetivo de plan de cuenta</members>
+        <members>AccountPlanObjectiveMeasure-Formato Medida de objetivo de plan de cuenta</members>
         <members>AccountTeamMember-Formato Miembro del equipo de cuentas</members>
         <members>ActionPlan-Formato Plan de acción</members>
         <members>ActionPlanItemDependency-Formato Dependencia de elemento de plan de acción</members>
@@ -1962,6 +2053,7 @@
         <members>ProductItem-Formato Artículo de producto</members>
         <members>ProductRequest-Product Request Layout</members>
         <members>ProductRequestLineItem-Product Request Line Item Layout</members>
+        <members>ProductTransfer-%5F%5FMISSING LABEL%5F%5F PropertyFile - val ProductTransfer not found in section StandardLayouts</members>
         <members>ProfileSkill-Skill Layout</members>
         <members>ProfileSkillEndorsement-Endorsement Layout</members>
         <members>ProfileSkillUser-Skill User Layout</members>
@@ -1987,6 +2079,7 @@
         <members>Scorecard-Scorecard Layout</members>
         <members>ScorecardAssociation-Scorecard Association Layout</members>
         <members>ScorecardMetric-Scorecard Metric Layout</members>
+        <members>SerializedProduct-%5F%5FMISSING LABEL%5F%5F PropertyFile - val SerializedProduct not found in section StandardLayouts</members>
         <members>ServiceContract-Formato del contrato de servicio</members>
         <members>ServiceResource-Formato Recurso de servicio</members>
         <members>Shipment-Formato Envío</members>
@@ -2027,6 +2120,7 @@
         <name>LeadConvertSettings</name>
     </types>
     <types>
+        <members>almex_FormProductPrices</members>
         <members>cotizadorAceites</members>
         <members>cotizadorImportados</members>
         <members>cotizadorManufacturados</members>
@@ -2067,19 +2161,14 @@
         <members>AssessmentTaskDefinition.All_AssessmentTaskDefinition</members>
         <members>AssessmentTaskOrder.All_AssessmentTaskOrder</members>
         <members>Asset.AllAssets</members>
+        <members>AssociatedLocation.All_AssociatedLocations</members>
+        <members>AssociatedLocation.My_AssociatedLocations</members>
         <members>AttrPicklistExcludedValue.All_AttrPicklistExcludedValues</members>
         <members>AttributeCategory.All_AttributeCategorys</members>
         <members>AttributeCategoryAttribute.All_AttributeCategoryAttributes</members>
         <members>AttributeDefinition.All_AttributeDefinitions</members>
         <members>AttributePicklist.All_AttributePicklists</members>
         <members>AttributePicklistValue.All_AttributePicklistValues</members>
-        <members>BatchJob.All_Batch_Jobs</members>
-        <members>BatchJobPart.All_Tasks</members>
-        <members>BatchJobPart.All_Tasks_Calc</members>
-        <members>BatchJobPartFailedRecord.All_Failed_Records</members>
-        <members>BusinessMilestone.All_BusinessMilestones</members>
-        <members>CalculationMatrix.Org_PCM_Decision_Table</members>
-        <members>CalculationProcedure.All_CalculationProcedures</members>
         <members>Campaign.AllActiveCampaigns</members>
         <members>Campaign.MyActiveCampaigns</members>
         <members>Campaign.Org_Campaign_Hierarchy</members>
@@ -2092,7 +2181,6 @@
         <members>Case.MyCases</members>
         <members>Case.MyOpenCases</members>
         <members>Case.Service_Case_Case</members>
-        <members>ChangeRequest.AllChangeRequestsDefault</members>
         <members>CodeSetRelationship.All_CodeSetRelationships</members>
         <members>CodeSetRelationship.My_CodeSetRelationships</members>
         <members>CollaborationGroup.All_ChatterGroups</members>
@@ -2111,7 +2199,13 @@
         <members>CostCenter.All_CostCenters</members>
         <members>DealerProdtSearchableField.All_DealerProdtSearchableFields</members>
         <members>DealerProdtSearchableField.My_DealerProdtSearchableFields</members>
+        <members>DevopsActivityLog.All_DevopsActivityLog_List_View</members>
+        <members>DevopsPipeline.All_DevopsPipeline_List_View</members>
+        <members>DevopsPipelineStage.All_DevopsPipelineStage_List_View</members>
+        <members>DevopsProject.All_DevopsProject_List_View</members>
+        <members>DevopsProjectPipeline.All_DevopsProjectPipeline_List_View</members>
         <members>DifferentialShift.All_DifferentialShifts</members>
+        <members>DocChkItemValidatedTarget.All_DocChkItemValidatedTargets</members>
         <members>DocumentChecklistItem.All_DocumentChecklistItems</members>
         <members>Documento__c.All</members>
         <members>Employee.AllEmployees</members>
@@ -2131,6 +2225,10 @@
         <members>Event.TodaysAgenda</members>
         <members>ExpressionSet.All_ExpressionSets</members>
         <members>ExpressionSet.All_ITServiceManagement</members>
+        <members>ExpressionSet.All_PricingCalculationSchemas</members>
+        <members>ExpressionSet.All_PricingKeyTypes</members>
+        <members>ExpressionSet.All_PricingSearchStrategies</members>
+        <members>ExpressionSet.All_PricingSpecifications</members>
         <members>Factor__c.All</members>
         <members>Fletes__c.All</members>
         <members>Fletes__c.Fletes_Pipas_No_Dedicadas</members>
@@ -2144,12 +2242,16 @@
         <members>Idea.Ideas_Last_7_Days</members>
         <members>Incident.AllIncidentsDefault</members>
         <members>InternalOrganizationUnit.AllInternalOrganizationUnits</members>
+        <members>InternalOrganizationUnit.All_InternalOrganizationUnits</members>
+        <members>InternalOrganizationUnit.My_InternalOrganizationUnits</members>
         <members>JobExpenseType.All_JobExpenseTypes</members>
         <members>LaborUnion.All_LaborUnions</members>
         <members>Lead.AllOpenLeads</members>
         <members>Lead.My_Leads</members>
         <members>Lead.Prospecto_chatbot_Lead</members>
         <members>Lead.TodaysLeads</members>
+        <members>Location.All_Locations</members>
+        <members>Location.My_Locations</members>
         <members>LocationTrustMeasure.AllLocationTrustMeasures</members>
         <members>ManufacturingProgram.All_ManufacturingPrograms</members>
         <members>ManufacturingProgram.My_ManufacturingPrograms</members>
@@ -2175,6 +2277,8 @@
         <members>Order.AllActivatedOrders</members>
         <members>Order.AllDraftOrders</members>
         <members>Order.AllOrders</members>
+        <members>OutboundEngagementTemplate.All_OutboundEngagementTemplates</members>
+        <members>OutboundEngmtContentRsrc.All_OutboundEngmtContentRsrcs</members>
         <members>OvertimeApprover.All_OvertimeApprovers</members>
         <members>OvertimeType.All_OvertimeTypes</members>
         <members>PayGrade.All_PayGrade</members>
@@ -2199,6 +2303,8 @@
         <members>ProductCategory.All_ProductCategorys</members>
         <members>ProductCategory.Org_ProductCategory_Hierarchy</members>
         <members>ProductCategoryDisqual.All_ProductCategoryDisquals</members>
+        <members>ProductCategoryProduct.All_ProductCategoryProducts</members>
+        <members>ProductCategoryProduct.My_ProductCategoryProducts</members>
         <members>ProductCategoryQualification.All_ProductCategoryQualifications</members>
         <members>ProductClassification.All_ProductClassifications</members>
         <members>ProductClassificationAttr.All_ProductClassificationAttrs</members>
@@ -2210,6 +2316,7 @@
         <members>ProductFaultCode.My_ProductFaultCodes</members>
         <members>ProductInvSearchableField.All_ProductInvSearchableFields</members>
         <members>ProductItem.All_ProductItems</members>
+        <members>ProductItem.My_ProductItems</members>
         <members>ProductLaborCode.All_ProductLaborCodes</members>
         <members>ProductLaborCode.My_ProductLaborCodes</members>
         <members>ProductQualification.All_ProductQualifications</members>
@@ -2218,6 +2325,8 @@
         <members>ProductRelatedMaterial.My_ProductRelatedMaterials</members>
         <members>ProductRelationshipType.AllProductRelationshipTypes</members>
         <members>ProductSellingModel.All_ProductSellingModels</members>
+        <members>ProductTransfer.All_ProductTransfers</members>
+        <members>ProductTransfer.My_ProductTransfers</members>
         <members>Programaciones__c.All</members>
         <members>Programaciones__c.Programaciones_sin_revisar</members>
         <members>Quote.All</members>
@@ -2240,6 +2349,7 @@
         <members>Scorecard.AllScorecards</members>
         <members>Scorecard.MyScorecards</members>
         <members>SerializedProduct.All_SerializedProducts</members>
+        <members>SerializedProduct.My_SerializedProducts</members>
         <members>ServiceContract.All_ServiceContracts</members>
         <members>ServiceResourceCostRule.All_ServiceResourceCostRules</members>
         <members>ServiceResourceLeaveBalance.All_ServiceResourceLeaveBalances</members>
@@ -2262,6 +2372,8 @@
         <members>TimeSheetEntryItem.All_TimeSheetEntryItems</members>
         <members>TimeSheetValidationError.All_TimeSheetValidationErrors</members>
         <members>TimeSheetWageTypeSummary.All_TimeSheetWageTypeSummaries</members>
+        <members>UnitOfMeasure.All_UnitOfMeasures</members>
+        <members>UnitOfMeasure.My_UnitOfMeasures</members>
         <members>User.ActiveUsers</members>
         <members>User.AdminUsers</members>
         <members>User.AllUsers</members>
@@ -2269,9 +2381,13 @@
         <members>Vehicle.My_Vehicles</members>
         <members>VehicleDefinition.All_VehicleDefinitions</members>
         <members>VehicleDefinition.My_VehicleDefinitions</members>
+        <members>VideoCall.ECIAllVideo_26iKue34</members>
         <members>Visit.All_Visit</members>
         <members>VisitedParty.All_VisitedParty</members>
         <members>Visitor.All_Visitor</members>
+        <members>VoiceCall.ECIAllVoice_26iKue34</members>
+        <members>WorkItem.All_WorkItem_List_View</members>
+        <members>WorkItem.ItemsToApprove</members>
         <members>WorkOrder.All_WorkOrders</members>
         <members>WorkOrder.My_WorkOrders</members>
         <name>ListView</name>
@@ -2303,6 +2419,7 @@
     <types>
         <members>Account</members>
         <members>Address</members>
+        <members>CaseParticipant</members>
         <members>Contact</members>
         <members>Lead</members>
         <name>MatchingRules</name>
@@ -2362,6 +2479,7 @@
         <name>PathAssistant</name>
     </types>
     <types>
+        <members>ALMEX_FormPrices_Access</members>
         <members>Actualizar_Propietarios</members>
         <members>Colaboraci_n</members>
         <members>Contactos_de_facturacion</members>
@@ -2389,6 +2507,8 @@
     <types>
         <members>Conjuntos_de_permisos_Manufacturing</members>
         <members>force__Benefit_Management_Caseworker</members>
+        <members>force__Program_Management_Administrator</members>
+        <members>force__Program_Management_User</members>
         <members>force__SalesWorkspacePSG</members>
         <members>force__ScaleCenterUsers</members>
         <members>force__Social_Program_Management_Caseworker</members>
@@ -2404,12 +2524,222 @@
         <members>ActivityEngagementVirtualChannel_ListEmailChangeEvent</members>
         <members>ActivityEngagementVirtualChannel_ListEmailSentResultChangeEvent</members>
         <members>ActivityEngagementVirtualChannel_TaskChangeEvent</members>
+        <members>ConversationIntelligenceVirtualChannel_VoiceCallChangeEvent</members>
+        <members>ConversationIntelligenceVirtualChannel_VoiceCallRecordingChangeEvent</members>
         <name>PlatformEventChannelMember</name>
     </types>
     <types>
         <members>Mensajeria</members>
         <members>default_presence_config</members>
         <name>PresenceUserConfig</name>
+    </types>
+    <types>
+        <members>ALMEX-CLIENTES Perfil</members>
+        <members>Admin</members>
+        <members>Analista Comercial</members>
+        <members>Analista de Calidad</members>
+        <members>Analytics Cloud Integration User</members>
+        <members>Analytics Cloud Security User</members>
+        <members>Anypoint Integration</members>
+        <members>CPQ Integration User</members>
+        <members>Chatter External User</members>
+        <members>Chatter Free User</members>
+        <members>Chatter Moderator User</members>
+        <members>Clientes Prueba Perfil</members>
+        <members>ContractManager</members>
+        <members>Contraloría</members>
+        <members>Coordinador y Ejecutivo de Servicio a Clientes</members>
+        <members>Customer Community User</members>
+        <members>Datos maestros</members>
+        <members>ESW_ChatWebALMEX_1750830639468 Perfil</members>
+        <members>ESW_Chat_web_prueba_1732048030881 Perfil</members>
+        <members>Ejecutivo de ventas</members>
+        <members>End User</members>
+        <members>Equipo de crédito</members>
+        <members>Equipo directivo</members>
+        <members>Executive Sponsor</members>
+        <members>Gerencia y Dirección Comercial</members>
+        <members>Gerencia y Dirección Comercial demo</members>
+        <members>Gerente de Crédito y Cobranza</members>
+        <members>Gerente de Servicio a Clientes</members>
+        <members>Guest License User</members>
+        <members>Identity User</members>
+        <members>MarketingProfile</members>
+        <members>Minimum Access - API Only Integrations</members>
+        <members>Minimum Access - Salesforce</members>
+        <members>Planeacion y contratos</members>
+        <members>Read Only</members>
+        <members>Sales Insights Integration User</members>
+        <members>Salesforce API Only System Integrations</members>
+        <members>Servicio al cliente</members>
+        <members>SolutionManager</members>
+        <members>Standard</members>
+        <members>Supervisor de servicio</members>
+        <members>Supervisor y Ejecutivo Comercial</members>
+        <members>Usuario de comunidades</members>
+        <members>portal de clientes ALMEX Perfil</members>
+        <name>Profile</name>
+    </types>
+    <types>
+        <members>Agente_de_Servicio_profilePasswordPolicy1750442147544</members>
+        <members>Analista_Comercial_profilePasswordPolicy1751316919285</members>
+        <members>Analista_de_Calidad_profilePasswordPolicy1763485423852</members>
+        <members>Contralor_a_profilePasswordPolicy1751485396155</members>
+        <members>Datos_maestros_profilePasswordPolicy1750442169273</members>
+        <members>Ejecutivo_de_ventas_profilePasswordPolicy1750442208882</members>
+        <members>End_User_profilePasswordPolicy1565960334764</members>
+        <members>Equipo_de_cr_dito_profilePasswordPolicy1750442564839</members>
+        <members>Equipo_directivo_profilePasswordPolicy1750442591980</members>
+        <members>Executive_Sponsor_profilePasswordPolicy1565800039594</members>
+        <members>Gerencia_y_Direcci_n_Comercial_demo_profilePasswordPolicy1788360368742</members>
+        <members>Gerencia_y_Direcci_n_Comercial_profilePasswordPolicy1751484659185</members>
+        <members>Gerente_comercial_profilePasswordPolicy1750442629818</members>
+        <members>Gerente_de_Cr_dito_y_Cobranza_profilePasswordPolicy1751484989005</members>
+        <members>Gerente_de_Servicio_a_Clientes_profilePasswordPolicy1751322466952</members>
+        <members>PT1_profilePasswordPolicy1487029411628</members>
+        <members>PT2_profilePasswordPolicy1539989544652</members>
+        <members>Planeaci_n_y_contratos_profilePasswordPolicy1750442671446</members>
+        <members>Planeacion_y_contratos_profilePasswordPolicy1753466665839</members>
+        <members>Servicio_al_cliente_profilePasswordPolicy1750442701465</members>
+        <members>Supervisor_de_servicio_profilePasswordPolicy1750442825693</members>
+        <members>Supervisor_y_Ejecutivo_Comercial_profilePasswordPolicy1751474972341</members>
+        <members>Usuario_de_comunidades_profilePasswordPolicy1752707351938</members>
+        <name>ProfilePasswordPolicy</name>
+    </types>
+    <types>
+        <members>Contralor_a_profileSessionSetting1751485396302</members>
+        <members>Gerencia_y_Direcci_n_Comercial_profileSessionSetting1751484659310</members>
+        <members>Gerente_de_Cr_dito_y_Cobranza_profileSessionSetting1751484989180</members>
+        <members>Gerente_de_Servicio_a_Clientes_profileSessionSetting1751322467103</members>
+        <members>PT1_profileSessionSetting1487029411398</members>
+        <members>PT2_profileSessionSetting1539989544703</members>
+        <members>Planeacion_y_contratos_profileSessionSetting1753466665971</members>
+        <members>Supervisor_y_Ejecutivo_Comercial_profileSessionSetting1751474972497</members>
+        <members>Usuario_de_comunidades_profileSessionSetting1752707352052</members>
+        <members>null_profileSessionSetting1565800039616</members>
+        <members>null_profileSessionSetting1565960334781</members>
+        <members>null_profileSessionSetting1750442147583</members>
+        <members>null_profileSessionSetting1750442169297</members>
+        <members>null_profileSessionSetting1750442208916</members>
+        <members>null_profileSessionSetting1750442564869</members>
+        <members>null_profileSessionSetting1750442592007</members>
+        <members>null_profileSessionSetting1750442629846</members>
+        <members>null_profileSessionSetting1750442671478</members>
+        <members>null_profileSessionSetting1750442701500</members>
+        <members>null_profileSessionSetting1750442825722</members>
+        <members>null_profileSessionSetting1751316919318</members>
+        <members>null_profileSessionSetting1763485423896</members>
+        <members>null_profileSessionSetting1788360368790</members>
+        <name>ProfileSessionSetting</name>
+    </types>
+    <types>
+        <members>Caso_Cola_de_servicio</members>
+        <members>Caso_Email</members>
+        <members>Caso_cola_de_ventas</members>
+        <members>Mensajeria</members>
+        <members>Prospecto_chatbot</members>
+        <members>Reserva_de_mensajeria</members>
+        <members>Service_Case</members>
+        <name>Queue</name>
+    </types>
+    <types>
+        <members>Mensajeria</members>
+        <name>QueueRoutingConfig</name>
+    </types>
+    <types>
+        <members>Account.Child_Account</members>
+        <members>Campaign.Child_Campaign</members>
+        <members>Case.Cerrar_caso</members>
+        <members>Case.CloseCaseLightning</members>
+        <members>Case.NewChildCase</members>
+        <members>Case.SendEmail</members>
+        <members>CollaborationGroup.NewGroupMember</members>
+        <members>CollaborationGroup.NewGroupRecord</members>
+        <members>CrearProspecto</members>
+        <members>FeedItem.NewTaskFromFeedItem</members>
+        <members>Follow_Up</members>
+        <members>GuestCommunityCase</members>
+        <members>Lead.ActualizacionDeProspecto</members>
+        <members>LogACall</members>
+        <members>MessagingSession.ActualizarProspecto</members>
+        <members>NewAccount</members>
+        <members>NewCase</members>
+        <members>NewCommunityCase</members>
+        <members>NewContact</members>
+        <members>NewEvent</members>
+        <members>NewGroup</members>
+        <members>NewLead</members>
+        <members>NewOpportunity</members>
+        <members>NewTask</members>
+        <members>NuevaProgramacion</members>
+        <members>NuevoCasoComunidades</members>
+        <members>Opportunity.Nueva_Cotizacion</members>
+        <members>Quote.Actualizar</members>
+        <members>Quote.Actualizar_Fin_de_Vigencia_de_Lista</members>
+        <members>Quote.Convertir_personalizado</members>
+        <members>Quote.Correo_activaci_n_de_precios</members>
+        <members>Quote.SendEmail</members>
+        <members>Quote.Vincular_Lista_de_precios</members>
+        <members>SalesAgreement.Actualizar_Fin_de_Vigencia_de_Lista</members>
+        <members>SalesAgreement.PDF_Almex</members>
+        <members>SalesAgreement.PDF_Promer</members>
+        <members>SalesAgreement.Vincular_Lista_de_precios</members>
+        <members>SendEmail</members>
+        <members>Task.Defer</members>
+        <members>Task.Defer_0</members>
+        <members>Task.Defer_1</members>
+        <members>Task.Defer_10</members>
+        <members>Task.Defer_11</members>
+        <members>Task.Defer_2</members>
+        <members>Task.Defer_3</members>
+        <members>Task.Defer_4</members>
+        <members>Task.Defer_5</members>
+        <members>Task.Defer_6</members>
+        <members>Task.Defer_7</members>
+        <members>Task.Defer_8</members>
+        <members>Task.Defer_9</members>
+        <members>Task.EditDescription</members>
+        <members>Task.EditDescription_0</members>
+        <members>Task.EditDescription_1</members>
+        <members>Task.EditDescription_10</members>
+        <members>Task.EditDescription_11</members>
+        <members>Task.EditDescription_2</members>
+        <members>Task.EditDescription_3</members>
+        <members>Task.EditDescription_4</members>
+        <members>Task.EditDescription_5</members>
+        <members>Task.EditDescription_6</members>
+        <members>Task.EditDescription_7</members>
+        <members>Task.EditDescription_8</members>
+        <members>Task.EditDescription_9</members>
+        <members>Task.UpdatePriority</members>
+        <members>Task.UpdatePriority_0</members>
+        <members>Task.UpdatePriority_1</members>
+        <members>Task.UpdatePriority_10</members>
+        <members>Task.UpdatePriority_11</members>
+        <members>Task.UpdatePriority_2</members>
+        <members>Task.UpdatePriority_3</members>
+        <members>Task.UpdatePriority_4</members>
+        <members>Task.UpdatePriority_5</members>
+        <members>Task.UpdatePriority_6</members>
+        <members>Task.UpdatePriority_7</members>
+        <members>Task.UpdatePriority_8</members>
+        <members>Task.UpdatePriority_9</members>
+        <members>Task.UpdateStatus</members>
+        <members>Task.UpdateStatus_0</members>
+        <members>Task.UpdateStatus_1</members>
+        <members>Task.UpdateStatus_10</members>
+        <members>Task.UpdateStatus_11</members>
+        <members>Task.UpdateStatus_2</members>
+        <members>Task.UpdateStatus_3</members>
+        <members>Task.UpdateStatus_4</members>
+        <members>Task.UpdateStatus_5</members>
+        <members>Task.UpdateStatus_6</members>
+        <members>Task.UpdateStatus_7</members>
+        <members>Task.UpdateStatus_8</members>
+        <members>Task.UpdateStatus_9</members>
+        <members>casoOmnicanal</members>
+        <members>nuevoCasoOmnicanal</members>
+        <name>QuickAction</name>
     </types>
     <types>
         <members>Contact.Contacto_de_facturacion</members>
@@ -2425,6 +2755,796 @@
         <members>Quote.Cotizacion_Manufacturado</members>
         <members>Quote.Venta_Spot</members>
         <name>RecordType</name>
+    </types>
+    <types>
+        <members>https_whatsapp_provisioning_herokuapp_com</members>
+        <name>RedirectWhitelistUrl</name>
+    </types>
+    <types>
+        <members>oracleApi</members>
+        <members>oracleApiProduction</members>
+        <members>oracleOauth</members>
+        <name>RemoteSiteSetting</name>
+    </types>
+    <types>
+        <members>Actividades/</members>
+        <members>Actividades/Actividades_con_cotizacin_hDj</members>
+        <members>Actividades/Actividades_de_usuarios_en_Oportunidades_gn5</members>
+        <members>Actividades/Actividades_por_usuario_BNy</members>
+        <members>Actividades/Actividades_por_usuario_pIF</members>
+        <members>Actividades/Reporte_nuevo_Awu</members>
+        <members>ActivityReports/</members>
+        <members>ActivityReports/Accounts_with_Activities</members>
+        <members>ActivityReports/Actividades_MA_8Is</members>
+        <members>ActivityReports/Opportunities_with_Activities_this_Month</members>
+        <members>ActivityReports/Opptys_Report</members>
+        <members>ActivityReports/Sales_Rep_Activities</members>
+        <members>CRM_180925_Sample_Sales_Dashboards_Reports/</members>
+        <members>CRM_180925_Sample_Sales_Dashboards_Reports/CRM_180925_CallScript_Monthly_Metrics_Report</members>
+        <members>CRM_180925_Sample_Sales_Dashboards_Reports/CRM_180925_Complete_Sales_Candences_amp_Trackers_Report</members>
+        <members>CRM_180925_Sample_Sales_Dashboards_Reports/CRM_180925_Contacts_Engagement_grouped_by_account_Report</members>
+        <members>CRM_180925_Sample_Sales_Dashboards_Reports/CRM_180925_Contacts_with_Sales_Cadence_Trackers_Report</members>
+        <members>CRM_180925_Sample_Sales_Dashboards_Reports/CRM_180925_EmailTemplate_Monthly_Metrics_Report</members>
+        <members>CRM_180925_Sample_Sales_Dashboards_Reports/CRM_180925_Grouped_Users_Monthly_Report</members>
+        <members>CRM_180925_Sample_Sales_Dashboards_Reports/CRM_180925_Lead_Cadence_Tracker_Conversion_Report</members>
+        <members>CRM_180925_Sample_Sales_Dashboards_Reports/CRM_180925_Lead_Daily_Engagement_Report</members>
+        <members>CRM_180925_Sample_Sales_Dashboards_Reports/CRM_180925_Leads_Converted_by_Sales_Rep_Report</members>
+        <members>CRM_180925_Sample_Sales_Dashboards_Reports/CRM_180925_Leads_with_Sales_Cadence_Trackers_Report</members>
+        <members>CRM_180925_Sample_Sales_Dashboards_Reports/CRM_180925_Sales_Cadence_Steps_Monthly_Metrics_Report</members>
+        <members>CRM_180925_Sample_Sales_Dashboards_Reports/CRM_180925_User_Daily_Engagement_Report</members>
+        <members>CRM_180925_Sample_Sales_Reports/</members>
+        <members>CRM_180925_Sample_Sales_Reports/CRM_180925_Cadence_Completion_Report</members>
+        <members>CRM_180925_Sample_Sales_Reports/CRM_180925_Cadence_Engagement_Monthly_Metric_Report</members>
+        <members>CRM_180925_Sample_Sales_Reports/CRM_180925_Cadence_Engagement_Report</members>
+        <members>CRM_180925_Sample_Sales_Reports/CRM_180925_Call_Activity_Report</members>
+        <members>CRM_180925_Sample_Sales_Reports/CRM_180925_Call_Template_Report</members>
+        <members>CRM_180925_Sample_Sales_Reports/CRM_180925_Contact_Daily_Metric_Report</members>
+        <members>CRM_180925_Sample_Sales_Reports/CRM_180925_Contact_Monthly_Metric_Report</members>
+        <members>CRM_180925_Sample_Sales_Reports/CRM_180925_Email_Template_Report</members>
+        <members>CRM_180925_Sample_Sales_Reports/CRM_180925_Lead_Conversion_Report</members>
+        <members>CRM_180925_Sample_Sales_Reports/CRM_180925_Lead_Daily_Metric_Report</members>
+        <members>CRM_180925_Sample_Sales_Reports/CRM_180925_Lead_Monthly_Metric_Report</members>
+        <members>CRM_180925_Sample_Sales_Reports/CRM_180925_User_Daily_Metric_Report</members>
+        <members>CRM_180925_Sample_Sales_Reports/CRM_180925_User_Monthly_Metric_Report</members>
+        <members>CRM_180925_Sample_Sales_Reports/todos_los_pedidos_Lista_de_precios_uEn</members>
+        <members>CalidadRequerimientosespeciales/</members>
+        <members>CalidadRequerimientosespeciales/Requerimientos_especiales_nFm</members>
+        <members>Capacitacin_RyT_2026/</members>
+        <members>Contratos/</members>
+        <members>Contratos/Pedidos_con_lista_de_precios_estandar_ga2</members>
+        <members>Contratos/Pedidos_rbu</members>
+        <members>Contratos/Reporte_de_pedidos_urC</members>
+        <members>CromoReportes/</members>
+        <members>CromoReportes/Usuarios_perfiles_y_funciones_ZRc</members>
+        <members>DashboardReportsAdoption/</members>
+        <members>DashboardReportsAdoption/UsageActivitiesCompleted</members>
+        <members>EBotR_v6/</members>
+        <members>EBotR_v6/AllAndEngagedSessiLast30Days_v6</members>
+        <members>EBotR_v6/AllAndEngagedSessionsToday_v6</members>
+        <members>EBotR_v6/AllBotSessionsLast30Days_v6</members>
+        <members>EBotR_v6/AllBotSessionsToday_v6</members>
+        <members>EBotR_v6/AllEngagedSessionsLast7Days_v6</members>
+        <members>EBotR_v6/ArticleChosenLast30Days_v6</members>
+        <members>EBotR_v6/ArticleChosenToday_v6</members>
+        <members>EBotR_v6/ArticlePositiveFeeLast30Days_v6</members>
+        <members>EBotR_v6/ArticlePositiveFeedbackToday_v6</members>
+        <members>EBotR_v6/BooleanExtractedLast30Days_v6</members>
+        <members>EBotR_v6/BooleanExtractedToday_v6</members>
+        <members>EBotR_v6/BotTransferByDialoLast30Days_v6</members>
+        <members>EBotR_v6/BotTransferByDialogToday_v6</members>
+        <members>EBotR_v6/BotTransferFrequenLast30Days_v6</members>
+        <members>EBotR_v6/BotTransferFrequencyToday_v6</members>
+        <members>EBotR_v6/CompletedGoalSessiLast30Days_v6</members>
+        <members>EBotR_v6/CompletedGoalSessionToday_v6</members>
+        <members>EBotR_v6/CompletedGoalsByDiLast30Days_v6</members>
+        <members>EBotR_v6/CompletedGoalsByDialogToday_v6</members>
+        <members>EBotR_v6/CompletedGoalsByGoLast30Days_v6</members>
+        <members>EBotR_v6/CompletedGoalsByGoalToday_v6</members>
+        <members>EBotR_v6/ConfusionFrequencyLast30Days_v6</members>
+        <members>EBotR_v6/ConfusionFrequencyToday_v6</members>
+        <members>EBotR_v6/DialogCanceledLast30Days_v6</members>
+        <members>EBotR_v6/DialogCanceledToday_v6</members>
+        <members>EBotR_v6/DialogCompletedLast30Days_v6</members>
+        <members>EBotR_v6/DialogCompletedToday_v6</members>
+        <members>EBotR_v6/DialogEntryPointsLast30Days_v6</members>
+        <members>EBotR_v6/DialogEntryPointsToday_v6</members>
+        <members>EBotR_v6/DialogExceptionsLast30Days_v6</members>
+        <members>EBotR_v6/DialogExceptionsToday_v6</members>
+        <members>EBotR_v6/DialogFrequencyLast30Days_v6</members>
+        <members>EBotR_v6/DialogFrequencyToday_v6</members>
+        <members>EBotR_v6/DialogUsageLast7Days_v6</members>
+        <members>EBotR_v6/ELUEntityDetectedLast30Days_v6</members>
+        <members>EBotR_v6/ELUEntityDetectedToday_v6</members>
+        <members>EBotR_v6/ELUIntentCalledLast30Days_v6</members>
+        <members>EBotR_v6/ELUIntentCalledToday_v6</members>
+        <members>EBotR_v6/ELUIntentDetectedLast30Days_v6</members>
+        <members>EBotR_v6/ELUIntentDetectedToday_v6</members>
+        <members>EBotR_v6/ELUIntentLabelsLast30Days_v6</members>
+        <members>EBotR_v6/ELUIntentLabelsToday_v6</members>
+        <members>EBotR_v6/EngagedSessionsLengLast7Days_v6</members>
+        <members>EBotR_v6/EscalationLast30Days_v6</members>
+        <members>EBotR_v6/EscalationToday_v6</members>
+        <members>EBotR_v6/GoalAchievedLast30Days_v6</members>
+        <members>EBotR_v6/GoalAchievedToday_v6</members>
+        <members>EBotR_v6/NLPIntentCalledLast30Days_v6</members>
+        <members>EBotR_v6/NLPIntentCalledToday_v6</members>
+        <members>EBotR_v6/SessionsEndedLast30Days_v6</members>
+        <members>EBotR_v6/SessionsEndedToday_v6</members>
+        <members>Getting_Started_Business_Sponsor/</members>
+        <members>Getting_Started_Business_Sponsor/ES_Average_Deal_Size</members>
+        <members>Getting_Started_Business_Sponsor/ES_Closed_Lost_Opportunities_FYTD</members>
+        <members>Getting_Started_Business_Sponsor/ES_Closed_Won_By_FY_Month</members>
+        <members>Getting_Started_Business_Sponsor/ES_Closed_Won_By_FY_Quarter</members>
+        <members>Getting_Started_Business_Sponsor/ES_FYTD_Open_Opps_by_Acct</members>
+        <members>Getting_Started_Business_Sponsor/ES_FYTD_Won_Opps_by_Acct</members>
+        <members>Getting_Started_Business_Sponsor/ES_Open_Opportunities</members>
+        <members>Getting_Started_Business_Sponsor/ES_Open_Opportunities_in_the_Pipeline</members>
+        <members>Getting_Started_Business_Sponsor/ES_Total_Win_Ratio</members>
+        <members>Getting_Started_Company_KPI/</members>
+        <members>Getting_Started_Company_KPI/KPI_Average_Days_to_Close</members>
+        <members>Getting_Started_Company_KPI/KPI_Average_Deal_Size</members>
+        <members>Getting_Started_Company_KPI/KPI_Closed_Won_By_FY_Month</members>
+        <members>Getting_Started_Company_KPI/KPI_Closed_Won_By_FY_QT</members>
+        <members>Getting_Started_Company_KPI/KPI_Open_Opportunities_in_the_Pipeline</members>
+        <members>Getting_Started_Company_KPI/KPI_Total_Win_Ratio</members>
+        <members>Getting_Started_Company_KPI/KPI_Won_Plus_70_Probability</members>
+        <members>Getting_Started_Sales_Manager/</members>
+        <members>Getting_Started_Sales_Manager/Closed_Won_This_FY_by_Owner_6qB</members>
+        <members>Getting_Started_Sales_Manager/New_Activities_Leaderboard_9ZT</members>
+        <members>Getting_Started_Sales_Manager/New_Opptys_Leaderboard_p5H</members>
+        <members>Getting_Started_Sales_Manager/SM_Average_Days_to_Close</members>
+        <members>Getting_Started_Sales_Manager/SM_Average_Deal_Size_X58</members>
+        <members>Getting_Started_Sales_Manager/SM_Closed_Won_By_FYMonth_m1S</members>
+        <members>Getting_Started_Sales_Manager/SM_Closed_Won_This_M_by_Type_hUc</members>
+        <members>Getting_Started_Sales_Manager/SM_Closed_Won_This_Q_by_Type_h88</members>
+        <members>Getting_Started_Sales_Manager/SM_Open_Opportunities_in_the_Pipeline_9H9</members>
+        <members>Getting_Started_Sales_Manager/SM_Win_Ratio_Current_FY_JUg</members>
+        <members>Getting_Started_Sales_Representative/</members>
+        <members>Getting_Started_Sales_Representative/My_Top_Accounts_PHw</members>
+        <members>Getting_Started_Sales_Representative/SR_Clean_your_Room</members>
+        <members>Getting_Started_Sales_Representative/SR_Closed_Won_By_FYMonth_MdW</members>
+        <members>Getting_Started_Sales_Representative/SR_Closed_Won_MTD</members>
+        <members>Getting_Started_Sales_Representative/SR_Closed_Won_This_Q_by_Type_dCK</members>
+        <members>Getting_Started_Sales_Representative/SR_Neglected_Accounts</members>
+        <members>Getting_Started_Sales_Representative/SR_Open_Opportunities_in_the_Pipeline</members>
+        <members>Getting_Started_Sales_Representative/SR_Stuck_Opportunities_Report</members>
+        <members>Getting_Started_Sales_Representative/Top_Open_Opportunities_r6f</members>
+        <members>Pedidos/</members>
+        <members>Pedidos/Reporte_de_lineas_de_envio_CdD</members>
+        <members>Productos/</members>
+        <members>Productos/Reporte_de_productos_con_variables_vTp</members>
+        <members>Reportesusuarios/</members>
+        <members>Reportesusuarios/Contratos_ADS</members>
+        <members>Reportesusuarios/Sucursales_Propietarios_vendedores_2Pe</members>
+        <members>Sales_Marketing_Reports/</members>
+        <members>Sales_Marketing_Reports/Closed_Lost_by_Reason</members>
+        <members>Sales_Marketing_Reports/Closed_Won_80_This_Q_by_Owner</members>
+        <members>Sales_Marketing_Reports/Closed_Won_This_Q_by_Owner</members>
+        <members>Sales_Marketing_Reports/Closed_Won_This_Q_by_Type</members>
+        <members>Sales_Marketing_Reports/Closed_Won_by_Type</members>
+        <members>Sales_Marketing_Reports/Conversion_Rate</members>
+        <members>Sales_Marketing_Reports/Hot_Leads_w_o_Activity_96_Hours</members>
+        <members>Sales_Marketing_Reports/Leads_Converted_All_Time</members>
+        <members>Sales_Marketing_Reports/Leads_Converted_Current_FQ2</members>
+        <members>Sales_Marketing_Reports/Leads_Converted_by_FQ</members>
+        <members>Sales_Marketing_Reports/Leads_Created_Current_FQ</members>
+        <members>Sales_Marketing_Reports/Open_Oppties_This_Q</members>
+        <members>Sales_Marketing_Reports/Open_Oppties_This_Q_No_Acti_Last_96hrs</members>
+        <members>Sales_Marketing_Reports/Pipeline_Report_This_Q</members>
+        <members>Sales_Marketing_Reports/Win_Ratio</members>
+        <members>Sales_and_Marketing_Reports/</members>
+        <members>Sales_and_Marketing_Reports/Activities_by_Salesperson</members>
+        <members>Sales_and_Marketing_Reports/CampaignROIbyCampaignType</members>
+        <members>Sales_and_Marketing_Reports/CampaignsbyROI</members>
+        <members>Sales_and_Marketing_Reports/Closed_Deals_leader_board</members>
+        <members>Sales_and_Marketing_Reports/Closed_opportunity</members>
+        <members>Sales_and_Marketing_Reports/Leads_by_Industry</members>
+        <members>Sales_and_Marketing_Reports/LeadsbySource</members>
+        <members>Sales_and_Marketing_Reports/Marketing_Exec_Amount_per_Camp</members>
+        <members>Sales_and_Marketing_Reports/Marketing_Exec_Conversion_Rate</members>
+        <members>Sales_and_Marketing_Reports/Marketing_Exec_Converted_Amount</members>
+        <members>Sales_and_Marketing_Reports/Marketing_Exec_Converted_and_Won_Amount</members>
+        <members>Sales_and_Marketing_Reports/Marketing_Exec_Converted_by_Month</members>
+        <members>Sales_and_Marketing_Reports/Marketing_Exec_Lead_Trends_by_Status</members>
+        <members>Sales_and_Marketing_Reports/Marketing_Exec_Leads_Converted</members>
+        <members>Sales_and_Marketing_Reports/Marketing_Exec_Leads_by_Campaigns</members>
+        <members>Sales_and_Marketing_Reports/Marketing_Exec_of_Leads</members>
+        <members>Sales_and_Marketing_Reports/OpportunityProductPipeline</members>
+        <members>Sales_and_Marketing_Reports/SP_Current_Month_Open_Pipeline</members>
+        <members>Sales_and_Marketing_Reports/Sales_Exec</members>
+        <members>Sales_and_Marketing_Reports/Sales_Exec_Bookings_Trend</members>
+        <members>Sales_and_Marketing_Reports/Sales_Exec_Closed_Deals_QTD</members>
+        <members>Sales_and_Marketing_Reports/Sales_Exec_Lost_Deals</members>
+        <members>Sales_and_Marketing_Reports/Sales_Exec_Open_Deals</members>
+        <members>Sales_and_Marketing_Reports/Sales_Exec_Open_Pipeline</members>
+        <members>Sales_and_Marketing_Reports/Sales_Exec_Open_Pipeline_next_90_days</members>
+        <members>Sales_and_Marketing_Reports/Sales_Exec_Top_Closed_Deals</members>
+        <members>Sales_and_Marketing_Reports/Sales_Manager_Closed_Deals</members>
+        <members>Sales_and_Marketing_Reports/Sales_Manager_Open_Opportunities</members>
+        <members>Sales_and_Marketing_Reports/Sales_Manager_Open_Pipeline</members>
+        <members>Sales_and_Marketing_Reports/Sales_Manager_Pipeline_Next_90_days</members>
+        <members>Sales_and_Marketing_Reports/Sales_Person_Activities_Completed</members>
+        <members>Sales_and_Marketing_Reports/Sales_Person_Activity</members>
+        <members>Sales_and_Marketing_Reports/Sales_Person_MTD_Sales</members>
+        <members>Sales_and_Marketing_Reports/Sales_Person_Open_Pipeline_by_stage</members>
+        <members>Service_Dashboards_Reports/</members>
+        <members>Service_Dashboards_Reports/Age_of_Cases_Currently_Open_by_Type</members>
+        <members>Service_Dashboards_Reports/Aged_Cases_by_Account</members>
+        <members>Service_Dashboards_Reports/Aged_Cases_by_Agent</members>
+        <members>Service_Dashboards_Reports/Average_Case_Resolution_Time_1</members>
+        <members>Service_Dashboards_Reports/Average_Case_Resolution_Time_MTD</members>
+        <members>Service_Dashboards_Reports/Avg_Case_Resolution_Time_MTD_by_Agen</members>
+        <members>Service_Dashboards_Reports/Case_Resolution_Time_MTD_by_Origin</members>
+        <members>Service_Dashboards_Reports/Cases_Closed_MTD</members>
+        <members>Service_Dashboards_Reports/Cases_Closed_MTD_by_Agent</members>
+        <members>Service_Dashboards_Reports/Cases_Created_MTD</members>
+        <members>Service_Dashboards_Reports/Cases_Currently_Open</members>
+        <members>Service_Dashboards_Reports/Cases_Currently_Open_by_Account</members>
+        <members>Service_Dashboards_Reports/Cases_Currently_Open_by_Agent</members>
+        <members>Service_Dashboards_Reports/Cases_Currently_Open_by_Origin</members>
+        <members>Service_Dashboards_Reports/Cases_Currently_Open_by_Priority</members>
+        <members>Service_Dashboards_Reports/Cases_Currently_Open_by_Type</members>
+        <members>Service_Dashboards_Reports/Cases_by_Origin</members>
+        <members>Service_Dashboards_Reports/Cases_by_Origin_and_Open_Status</members>
+        <members>Service_Dashboards_Reports/Cases_by_Priority</members>
+        <members>Service_Dashboards_Reports/Cases_by_Type_and_Open_Status</members>
+        <members>Service_Dashboards_Reports/High_Priority_Open_Cases_by_Account</members>
+        <members>Service_Dashboards_Reports/Top_10_Cases_by_Age</members>
+        <members>Service_Dashboards_Reports/Trend_of_Case_Resolution_Time</members>
+        <members>Service_Dashboards_Reports/Trend_of_Cases_Closed</members>
+        <members>Service_Dashboards_Reports/Trend_of_Cases_Created</members>
+        <members>Servicio/</members>
+        <members>Servicio/Casos_por_propietario_agrupado_hoy_Lfe</members>
+        <members>Servicio/Casos_por_propietario_agrupado_por_tipo_znX</members>
+        <members>Usuariosdecomunidades/</members>
+        <members>Usuariosdecomunidades/Reporte_de_usuario_de_comunidades_iyn</members>
+        <members>unfiled$public/</members>
+        <members>unfiled$public/Acuerdos_Forecast_Venta_Vencidos_Cancel</members>
+        <members>unfiled$public/New_Acuerdos_por_programacion_Report</members>
+        <members>unfiled$public/Oportunidades_por_Ejecutivo_MA_5ks</members>
+        <members>unfiled$public/Opportunity_Amount_by_Stage_Sample</members>
+        <members>unfiled$public/SampleReportActiveUsers</members>
+        <members>unfiled$public/SampleReportCasesStatusbyRep</members>
+        <members>unfiled$public/SampleReportClosedSales</members>
+        <members>unfiled$public/SampleReportCompletedActivities</members>
+        <members>unfiled$public/SampleReportCustomReportsbyUser</members>
+        <members>unfiled$public/SampleReportDocumentLibrary</members>
+        <members>unfiled$public/SampleReportLastModifiedBy</members>
+        <members>unfiled$public/SampleReportLeadsbyLeadSource</members>
+        <members>unfiled$public/SampleReportLoginLeaderboard</members>
+        <members>unfiled$public/SampleReportLoginWallofShame</members>
+        <members>unfiled$public/SampleReportMonthtoDateTrending</members>
+        <members>unfiled$public/SampleReportOpenCasesByPriority</members>
+        <members>unfiled$public/SampleReportOpenDeals</members>
+        <members>unfiled$public/SampleReportPipelineByCloseMonth</members>
+        <members>unfiled$public/SampleReportPipelineHistory</members>
+        <members>unfiled$public/SampleReportSalesLeaderboard</members>
+        <members>unfiled$public/SampleReportSalesPipelinebyStage</members>
+        <members>unfiled$public/SampleReportSolutionsAdded</members>
+        <members>unfiled$public/SampleReportTopAccounts</members>
+        <members>unfiled$public/SampleReportUsersLoggedIn</members>
+        <members>unfiled$public/SampleReportofAccounts</members>
+        <members>unfiled$public/SampleReportofCases</members>
+        <members>unfiled$public/SampleReportofContacts</members>
+        <members>unfiled$public/SampleReportofDocuments</members>
+        <members>unfiled$public/SampleReportofLeads</members>
+        <members>unfiled$public/SampleReportofOpenTasks</members>
+        <members>unfiled$public/SampleReportofOpportunities</members>
+        <members>unfiled$public/SampleReportofReports</members>
+        <members>unfiled$public/SampleReportofSolutions</members>
+        <members>unfiled$public/SampleReportofTasksandActivities</members>
+        <members>unfiled$public/SampleReportsLeadsbyStatus</members>
+        <members>unfiled$public/Usuarios_de_Salesforce_tU2</members>
+        <members>unfiled$public/flow_orchestration_log_ootb_report_two_four_eight</members>
+        <members>unfiled$public/flow_orchestration_run_ootb_report_two_four_eight</members>
+        <members>unfiled$public/flow_orchestration_stage_run_ootb_report_two_four_eight</members>
+        <members>unfiled$public/flow_orchestration_step_run_ootb_report_two_four_eight</members>
+        <members>unfiled$public/flow_orchestration_work_item_ootb_report_two_four_eight</members>
+        <members>unfiled$public/flow_screen_prebuilt_report</members>
+        <name>Report</name>
+    </types>
+    <types>
+        <members>Accounts_with_Activities</members>
+        <members>Accounts_with_Contacts_with_Daily_Engagements</members>
+        <members>Actividades_con_cotizaciones</members>
+        <members>Acuerdos_de_suministros</members>
+        <members>Acuerdos_por_programacion</members>
+        <members>Bot_Metrics_Daily_v6</members>
+        <members>Bot_Metrics_Hourly_v6</members>
+        <members>Bot_Sessions_v6</members>
+        <members>Cadences_amp_Steps</members>
+        <members>Call_Script_Monthly_Engagement</members>
+        <members>Call_Template</members>
+        <members>Contacts_and_Sales_Cadence_Trackers</members>
+        <members>Contacts_with_Daily_Engagements</members>
+        <members>Contacts_with_Monthly_Engagements</members>
+        <members>Cotizaciones_con_o_sin_lineas</members>
+        <members>Email_Template</members>
+        <members>Email_Template_Monthly_Engagement</members>
+        <members>Forecasting_Items_with_Historical_Trending</members>
+        <members>Leads_With_or_Without_Sales_Cadence_Trackers</members>
+        <members>Leads_and_Sales_Cadence_Trackers</members>
+        <members>Leads_with_Daily_Engagements</members>
+        <members>Leads_with_Monthly_Engagements</members>
+        <members>Opportunities_with_Activities</members>
+        <members>Opportunities_with_Historical_Trending</members>
+        <members>Opptys</members>
+        <members>Pedidos_con_acuerdo</members>
+        <members>Programaciones_de_acuerdos_de_venta</members>
+        <members>Sales_Cadences_Steps_with_Monthly_Metrics</members>
+        <members>Sales_Cadences_amp_Trackers</members>
+        <members>Sales_Cadences_and_Trackers_Inner_join</members>
+        <members>User_Activities</members>
+        <members>Users_with_Daily_Metrics</members>
+        <members>Users_with_Monthly_Engagements</members>
+        <members>acuerdo_de_suministro</members>
+        <members>flow_orchestration_log_ootb_crt_two_four_eight</members>
+        <members>flow_orchestration_run_ootb_crt_two_four_eight</members>
+        <members>flow_orchestration_stage_run_ootb_crt_two_four_eight</members>
+        <members>flow_orchestration_step_run_ootb_crt_two_four_eight</members>
+        <members>flow_orchestration_work_item_ootb_crt_two_four_eight</members>
+        <members>screen_flows_prebuilt_crt</members>
+        <name>ReportType</name>
+    </types>
+    <types>
+        <members>Analista_de_administraci_n_de_contratos_precios</members>
+        <members>Contralor_a</members>
+        <members>Coordinador_de_Administraci_n_de_contratos</members>
+        <members>Coordinador_de_Servicio_a_Clientes</members>
+        <members>Datos_maestros</members>
+        <members>Ejecutivo_Comercial</members>
+        <members>Ejecutivo_de_Servicio_a_Clientes</members>
+        <members>Equipo_Directivo</members>
+        <members>Equipo_Directivo_demo</members>
+        <members>Especialista_de_soporte_de_aplicaciones</members>
+        <members>Finanzas</members>
+        <members>Gerente_comercial</members>
+        <members>Gerente_comercial_M_xico</members>
+        <members>Gerente_comercial_Mexico_demo</members>
+        <members>Gerente_de_Servicio_a_clientes</members>
+        <members>Gerente_de_Sistemas</members>
+        <members>Gerente_de_cr_dito</members>
+        <members>Planeaci_n_y_contratos</members>
+        <members>Planeador_de_la_demanda</members>
+        <members>Supervisor_Comercial</members>
+        <name>Role</name>
+    </types>
+    <types>
+        <members>SalesAgreementSettings</members>
+        <name>SalesAgreementSettings</name>
+    </types>
+    <types>
+        <members>sts</members>
+        <name>SamlSsoConfig</name>
+    </types>
+    <types>
+        <members>sfdc_livemessage</members>
+        <name>ServiceChannel</name>
+    </types>
+    <types>
+        <members>En_linea</members>
+        <members>Ocupado</members>
+        <name>ServicePresenceStatus</name>
+    </types>
+    <types>
+        <members>Account</members>
+        <members>AccountIntelligence</members>
+        <members>AccountPlan</members>
+        <members>Actions</members>
+        <members>Activities</members>
+        <members>Address</members>
+        <members>AdminSuccess</members>
+        <members>AgentforceForDevelopers</members>
+        <members>Ai4m</members>
+        <members>Analytics</members>
+        <members>Apex</members>
+        <members>AppAnalytics</members>
+        <members>AppExperience</members>
+        <members>AutomatedContacts</members>
+        <members>Blockchain</members>
+        <members>Bot</members>
+        <members>BusinessHours</members>
+        <members>Campaign</members>
+        <members>Case</members>
+        <members>Chatter</members>
+        <members>ChatterEmailsMD</members>
+        <members>ClaimMgmtFoundationEnabled</members>
+        <members>CodeBuilder</members>
+        <members>Commerce</members>
+        <members>Communities</members>
+        <members>Company</members>
+        <members>ConnectedApp</members>
+        <members>Content</members>
+        <members>Contract</members>
+        <members>ConversationalIntelligence</members>
+        <members>Currency</members>
+        <members>CustomAddressField</members>
+        <members>CustomerDataPlatform</members>
+        <members>CustomizablePropensityScoring</members>
+        <members>DataImportManagement</members>
+        <members>DataMask</members>
+        <members>Deployment</members>
+        <members>DevHub</members>
+        <members>DigitalWallet</members>
+        <members>Discovery</members>
+        <members>DocumentChecklist</members>
+        <members>DxGlobalTerms</members>
+        <members>DynamicForms</members>
+        <members>EAC</members>
+        <members>EinsteinAgent</members>
+        <members>EinsteinDealInsights</members>
+        <members>EinsteinDocumentCapture</members>
+        <members>EmailAdministration</members>
+        <members>EmailAuthorization</members>
+        <members>EmailIntegration</members>
+        <members>EmailTemplate</members>
+        <members>EmployeeFieldAccess</members>
+        <members>EmployeeUser</members>
+        <members>EncryptionKey</members>
+        <members>EnhancedNotes</members>
+        <members>EnterpriseApi</members>
+        <members>Entitlement</members>
+        <members>Essentials</members>
+        <members>Event</members>
+        <members>EvidenceMgmt</members>
+        <members>ExperienceBundle</members>
+        <members>ExternalClientApp</members>
+        <members>FileUploadAndDownloadSecurity</members>
+        <members>FilesConnect</members>
+        <members>Flow</members>
+        <members>Forecasting</members>
+        <members>ForecastingObjectList</members>
+        <members>Formula</members>
+        <members>GRCIntelligenceUdd</members>
+        <members>GenerativeCampaigns</members>
+        <members>GoogleApps</members>
+        <members>HerokuAppLink</members>
+        <members>HighVelocitySales</members>
+        <members>Ideas</members>
+        <members>IdentityProvider</members>
+        <members>IncidentMgmt</members>
+        <members>Industries</members>
+        <members>IndustriesContext</members>
+        <members>IndustriesEinsteinFeature</members>
+        <members>IndustriesEnergyUtilitiesMultiSite</members>
+        <members>IndustriesFieldService</members>
+        <members>IndustriesInsurance</members>
+        <members>IndustriesManufacturing</members>
+        <members>IndustriesMfgSampleManagement</members>
+        <members>IndustriesUnifiedInventory</members>
+        <members>InsuranceBrokerage</members>
+        <members>InterestTagging</members>
+        <members>InventoryAllocation</members>
+        <members>InventoryReplenishment</members>
+        <members>InvocableAction</members>
+        <members>KnowledgeGeneration</members>
+        <members>LaborCostOptimCrewMgmt</members>
+        <members>LaborCostOptimization</members>
+        <members>Language</members>
+        <members>LeadConfig</members>
+        <members>LightningExperience</members>
+        <members>LiveAgent</members>
+        <members>LiveMessage</members>
+        <members>MCETransformations</members>
+        <members>Macro</members>
+        <members>MailMerge</members>
+        <members>MapsAndLocation</members>
+        <members>Meetings</members>
+        <members>MfgServiceConsole</members>
+        <members>Mobile</members>
+        <members>MyDomain</members>
+        <members>Name</members>
+        <members>Notifications</members>
+        <members>OauthOidc</members>
+        <members>ObjectLinking</members>
+        <members>OmniChannel</members>
+        <members>OmniChannelPricing</members>
+        <members>OmniStudio</members>
+        <members>OnlineSales</members>
+        <members>Opportunity</members>
+        <members>OpportunityScore</members>
+        <members>Order</members>
+        <members>Org</members>
+        <members>Pardot</members>
+        <members>PardotEinstein</members>
+        <members>PartyDataModel</members>
+        <members>PathAssistant</members>
+        <members>PaymentsManagementEnabled</members>
+        <members>Picklist</members>
+        <members>PlatformEncryption</members>
+        <members>PlatformEvent</members>
+        <members>PlatformWebIde</members>
+        <members>Portals</members>
+        <members>PredictionBuilder</members>
+        <members>Privacy</members>
+        <members>PrmCore</members>
+        <members>Product</members>
+        <members>ProductCatalogManagement</members>
+        <members>ProductDiscovery</members>
+        <members>PurchaseOrderMgmt</members>
+        <members>QualityManagement</members>
+        <members>QuickText</members>
+        <members>Quote</members>
+        <members>RealTimeEvent</members>
+        <members>RecommendationBuilder</members>
+        <members>RecordPage</members>
+        <members>ReleaseMgmt</members>
+        <members>RetailExecution</members>
+        <members>RiskMgmt</members>
+        <members>Sandbox</members>
+        <members>SceGlobalModelOptOut</members>
+        <members>Schema</members>
+        <members>Search</members>
+        <members>Security</members>
+        <members>ServiceAIRecommendations</members>
+        <members>ServiceCloudVoice</members>
+        <members>ServiceIssueManagement</members>
+        <members>ServiceItsmChangeManagement</members>
+        <members>ServiceItsmIntelligenceUdd</members>
+        <members>ServiceProcess</members>
+        <members>ServiceSetupAssistant</members>
+        <members>Sharing</members>
+        <members>Site</members>
+        <members>SocialCustomerService</members>
+        <members>SourceTracking</members>
+        <members>Survey</members>
+        <members>SystemNotification</members>
+        <members>Territory2</members>
+        <members>Trailhead</members>
+        <members>TransactableMarketplacePrivateOffer</members>
+        <members>TrialOrg</members>
+        <members>UIBundle</members>
+        <members>UiWidget</members>
+        <members>UserEngagement</members>
+        <members>UserInterface</members>
+        <members>UserManagement</members>
+        <members>Voice</members>
+        <members>WarrantyLifecycleMgmt</members>
+        <members>WebToX</members>
+        <members>WorkDotCom</members>
+        <name>Settings</name>
+    </types>
+    <types>
+        <members>SalesAgreement.KAM</members>
+        <name>SharingCriteriaRule</name>
+    </types>
+    <types>
+        <members>Account</members>
+        <members>AccountBrand</members>
+        <members>AccountForecast</members>
+        <members>AccountPlan</members>
+        <members>ActionPlan</members>
+        <members>ActionPlanTemplate</members>
+        <members>ActivityRecurrence2</members>
+        <members>ActivityRecurrence2Exception</members>
+        <members>AdvAccountForecastFact</members>
+        <members>AdvAcctForecastFactAdj</members>
+        <members>AdvAcctForecastSetPartner</members>
+        <members>AdvAcctForecastSetUse</members>
+        <members>AgentWork</members>
+        <members>AiJobRun</members>
+        <members>AnalyticsUserAttrFuncTkn</members>
+        <members>ApprovalSubmission</members>
+        <members>AssessmentIndicatorDefinition</members>
+        <members>AssessmentTask</members>
+        <members>AssessmentTaskDefinition</members>
+        <members>Asset</members>
+        <members>AssistantInteraction</members>
+        <members>AssistantProgress</members>
+        <members>AssistantRecommendation</members>
+        <members>AsyncOperationTracker</members>
+        <members>AttrPicklistExcludedValue</members>
+        <members>AttributeCategory</members>
+        <members>AttributeCategoryAttribute</members>
+        <members>AttributeDefinition</members>
+        <members>AttributePicklist</members>
+        <members>AuditTrailFileExport</members>
+        <members>BatchJob</members>
+        <members>BusinessMilestone</members>
+        <members>CalculationMatrix</members>
+        <members>CalculationProcedure</members>
+        <members>CalendarModel</members>
+        <members>CalendarView</members>
+        <members>Campaign</members>
+        <members>Case</members>
+        <members>ChangeRequest</members>
+        <members>CodeSet</members>
+        <members>CodeSetBundle</members>
+        <members>ComponentResponseCache</members>
+        <members>Contact</members>
+        <members>ContactRequest</members>
+        <members>ContextDefinitionSync</members>
+        <members>ConvCoachingRecommendation</members>
+        <members>ConvEntryRelatedRecordCopy</members>
+        <members>ConversationApiLog</members>
+        <members>ConversationEntryCopy</members>
+        <members>CostBook</members>
+        <members>DevopsActivityLog</members>
+        <members>DevopsEnvironment</members>
+        <members>DevopsPipeline</members>
+        <members>DevopsPipelineStageTrigger</members>
+        <members>DevopsProject</members>
+        <members>DevopsQualityGate</members>
+        <members>DevopsRequestInfo</members>
+        <members>DevopsTest</members>
+        <members>DevopsTestExecution</members>
+        <members>DevopsTestProviderSyncLog</members>
+        <members>DevopsTestSuite</members>
+        <members>DevopsTestSuiteExecution</members>
+        <members>DevopsTestSuiteGroupExec</members>
+        <members>DevopsTestSuiteStage</members>
+        <members>DevopsWkItmTstSteGrpExec</members>
+        <members>DialerCallUsage</members>
+        <members>DocumentChecklistItem</members>
+        <members>DocumentDecisionRequirement</members>
+        <members>Documento__c</members>
+        <members>DynamicDataCapture</members>
+        <members>EnrollmentEligibilityCriteria</members>
+        <members>ExchangeUserMapping</members>
+        <members>ExpressionSet</members>
+        <members>ExternalEventMapping</members>
+        <members>Factor__c</members>
+        <members>Fletes__c</members>
+        <members>FlowInterview</members>
+        <members>FlowInterviewLog</members>
+        <members>FlowOrchestrationInstance</members>
+        <members>FlowOrchestrationInstanceLink</members>
+        <members>FlowOrchestrationStageInstance</members>
+        <members>FlowOrchestrationStepInstance</members>
+        <members>FlowOrchestrationWorkItem</members>
+        <members>FlowRecord</members>
+        <members>FlowTestResult</members>
+        <members>FlowVersionMilestone</members>
+        <members>GenericVisitTask</members>
+        <members>GenericVisitTaskContext</members>
+        <members>GeolocationBasedAction</members>
+        <members>Image</members>
+        <members>In_App_Checklist_Settings__c</members>
+        <members>Incident</members>
+        <members>IntegrationProviderDcsnRqmt</members>
+        <members>IntegrationProviderExecution</members>
+        <members>Lead</members>
+        <members>LearningItem</members>
+        <members>ListEmail</members>
+        <members>Location</members>
+        <members>LocationTrustMeasure</members>
+        <members>Macro</members>
+        <members>MacroUsage</members>
+        <members>ManufacturingProgram</members>
+        <members>Market_Share__c</members>
+        <members>Market_reference_breakdown__c</members>
+        <members>MessagingEndUser</members>
+        <members>MessagingSession</members>
+        <members>MfgProgramCpntFrcstFact</members>
+        <members>MfgProgramForecastFact</members>
+        <members>MfgProgramVariantFrcstFact</members>
+        <members>NetworkMemberChunk</members>
+        <members>NotifDeliveryUserPref</members>
+        <members>ObjectDataImport</members>
+        <members>OmniComponentErrorLog</members>
+        <members>OmniDataPack</members>
+        <members>OmniDataTransform</members>
+        <members>OmniESignatureTemplate</members>
+        <members>OmniGlobalAutoNumber</members>
+        <members>OmniProcess</members>
+        <members>OmniProcessTransientData</members>
+        <members>OmniScriptSavedSession</members>
+        <members>OmniUiCard</members>
+        <members>OperatingHours</members>
+        <members>Opportunity</members>
+        <members>Order</members>
+        <members>OutboundEngagementTemplate</members>
+        <members>OutboundEngmtContentRsrc</members>
+        <members>PayGroup</members>
+        <members>PayPeriod</members>
+        <members>Pedido_general__c</members>
+        <members>PendingServiceRouting</members>
+        <members>Planta__c</members>
+        <members>Precio_productos__c</members>
+        <members>Problem</members>
+        <members>ProcessException</members>
+        <members>Product2</members>
+        <members>ProductAttributeDefinition</members>
+        <members>ProductAvailabilityProjection</members>
+        <members>ProductCatalog</members>
+        <members>ProductCategoryDisqual</members>
+        <members>ProductCategoryQualification</members>
+        <members>ProductClassification</members>
+        <members>ProductClassificationAttr</members>
+        <members>ProductComponentGroup</members>
+        <members>ProductComponentGrpOverride</members>
+        <members>ProductConfigurationFlow</members>
+        <members>ProductDisqualification</members>
+        <members>ProductFulfillmentLocation</members>
+        <members>ProductItem</members>
+        <members>ProductQualification</members>
+        <members>ProductRelComponentOverride</members>
+        <members>ProductRelatedMaterial</members>
+        <members>ProductRequest</members>
+        <members>ProductTransfer</members>
+        <members>ProfileSkill</members>
+        <members>Programaciones__c</members>
+        <members>PromptAction</members>
+        <members>PromptError</members>
+        <members>QuickText</members>
+        <members>QuickTextUsage</members>
+        <members>ReceivedDocument</members>
+        <members>RecordActnSelItemExtrc</members>
+        <members>RecordAlert</members>
+        <members>RecordMergeHistory</members>
+        <members>RecurrenceSchedule</members>
+        <members>RelationshipGraphView</members>
+        <members>ReportResultBlob</members>
+        <members>Requerimientos_Especiales__c</members>
+        <members>RequestsForAccessSIQ</members>
+        <members>ReturnOrder</members>
+        <members>RevenueTransactionErrorLog</members>
+        <members>SalesAgreement</members>
+        <members>Scorecard</members>
+        <members>SearchRecentQuery</members>
+        <members>SerializedProduct</members>
+        <members>ServiceAppointment</members>
+        <members>ServiceContract</members>
+        <members>ServiceCrew</members>
+        <members>ServiceRequestRelatedRecord</members>
+        <members>ServiceResource</members>
+        <members>SetupDataSynchronization</members>
+        <members>SfdcPartnerSbscrOffer</members>
+        <members>SharingRecordCollection</members>
+        <members>Shipment</members>
+        <members>SiqUserBlacklist</members>
+        <members>SocialPersonaFieldBackup</members>
+        <members>SocialPost</members>
+        <members>SourceCodeRepoProvider</members>
+        <members>SourceCodeRepository</members>
+        <members>StagedInviteeEmail</members>
+        <members>StreamActivityAccess</members>
+        <members>StreamingChannel</members>
+        <members>Sucursal__c</members>
+        <members>Suministro__c</members>
+        <members>SupplierProduct</members>
+        <members>SvcProcProdCatgProdExtrc</members>
+        <members>TableauHostMapping</members>
+        <members>TenantConsumptionAlert</members>
+        <members>TodayGoal</members>
+        <members>UnitOfMeasure</members>
+        <members>UnstructuredStorageSpace</members>
+        <members>User</members>
+        <members>UserAppMenuCustomization</members>
+        <members>UserCapabilityPreference</members>
+        <members>UserDefinedLabel</members>
+        <members>UserDefinedLabelAssignment</members>
+        <members>UserDevopsPreference</members>
+        <members>UserEmailPreferredPerson</members>
+        <members>UserExternalCredential</members>
+        <members>UserLocalWebServerIdentity</members>
+        <members>UserPrioritizedRecord</members>
+        <members>UserProvisioningRequest</members>
+        <members>UserServicePresence</members>
+        <members>VideoCall</members>
+        <members>Visit</members>
+        <members>VoiceCall</members>
+        <members>WorkAccess</members>
+        <members>WorkBadgeDefinition</members>
+        <members>WorkItem</members>
+        <members>WorkOrder</members>
+        <members>WorkPlan</members>
+        <members>WorkPlanTemplate</members>
+        <members>WorkStepTemplate</members>
+        <members>WorkThanks</members>
+        <members>WorkType</members>
+        <members>WorkTypeGroup</members>
+        <members>WorkflowSLAAction</members>
+        <name>SharingRules</name>
+    </types>
+    <types>
+        <members>Permisos_portal</members>
+        <name>SharingSet</name>
+    </types>
+    <types>
+        <members>ALMEX_CLIENTES1</members>
+        <members>ESW_ChatWebALMEX_17508306394681</members>
+        <name>SiteDotCom</name>
     </types>
     <types>
         <members>AccountContactMultiRoles</members>
@@ -2488,6 +3608,147 @@
         <members>WorkOrderPriority</members>
         <members>WorkOrderStatus</members>
         <name>StandardValueSet</name>
+    </types>
+    <types>
+        <members>ALMEX_MexicoLocations</members>
+        <members>AlmexGif</members>
+        <members>Highmaps</members>
+        <members>MexicoStatesMap</members>
+        <members>SNA_nGjhp_sf_default_cdn_ALMEX_CLIENTES1</members>
+        <members>SNA_oaofL_sf_default_cdn_ESW_Chat_web_prueba_17320480308811</members>
+        <members>SNA_uCXBy_sf_default_cdn_ESW_ChatWebALMEX_17508306394681</members>
+        <members>SiteSamples</members>
+        <members>custom_modal</members>
+        <members>logosPDF</members>
+        <members>sheetjs</members>
+        <name>StaticResource</name>
+    </types>
+    <types>
+        <members>Benefit_Disbursements_Timeline</members>
+        <name>TimelineObjectDefinition</name>
+    </types>
+    <types>
+        <members>Account</members>
+        <members>AccountForecast</members>
+        <members>AccountForecastAdjustment</members>
+        <members>AccountForecastPeriodMetric</members>
+        <members>AccountProductForecast</members>
+        <members>AccountProductPeriodForecast</members>
+        <members>AdvAccountForecastFact</members>
+        <members>AdvAcctForecastFactAdj</members>
+        <members>AdvAcctForecastSetPartner</members>
+        <members>AdvAcctForecastSetUse</members>
+        <members>Asset</members>
+        <members>AssetAccountParticipant</members>
+        <members>AssetContactParticipant</members>
+        <members>AssociatedLocation</members>
+        <members>BusinessProfile</members>
+        <members>Campaign</members>
+        <members>Case</members>
+        <members>CaseParticipant</members>
+        <members>ChangeRequest</members>
+        <members>CodeSetRelationship</members>
+        <members>Contact</members>
+        <members>ContentDocument</members>
+        <members>Contract</members>
+        <members>Documento__c</members>
+        <members>DynamicDataCapture</members>
+        <members>Event</members>
+        <members>Factor__c</members>
+        <members>Fletes__c</members>
+        <members>Incident</members>
+        <members>Lead</members>
+        <members>ManufacturingProgram</members>
+        <members>Market_Share__c</members>
+        <members>Market_reference_breakdown__c</members>
+        <members>MfgPgmCpntFrcstFactOpptySchd</members>
+        <members>MfgProgramCpntFrcstFact</members>
+        <members>MfgProgramForecastFact</members>
+        <members>MfgProgramVariantFrcstFact</members>
+        <members>Opportunity</members>
+        <members>Order</members>
+        <members>PayGroup</members>
+        <members>PayPeriod</members>
+        <members>Pedido_general__c</members>
+        <members>Planta__c</members>
+        <members>Precio_productos__c</members>
+        <members>Problem</members>
+        <members>ProductConsumed</members>
+        <members>ProductFaultCode</members>
+        <members>ProductItem</members>
+        <members>ProductItemTransaction</members>
+        <members>ProductLaborCode</members>
+        <members>ProductRelatedMaterial</members>
+        <members>ProductRequest</members>
+        <members>ProductRequestLineItem</members>
+        <members>ProductRequired</members>
+        <members>ProductTransfer</members>
+        <members>Programaciones__c</members>
+        <members>Requerimientos_Especiales__c</members>
+        <members>ReturnOrder</members>
+        <members>ReturnOrderLineItem</members>
+        <members>SalesAgreement</members>
+        <members>SalesAgreementProdSchdAdj</members>
+        <members>SalesAgreementProduct</members>
+        <members>SalesAgreementProductSchedule</members>
+        <members>ServiceAppointment</members>
+        <members>ServiceCrew</members>
+        <members>ServiceCrewMember</members>
+        <members>ServiceResource</members>
+        <members>Shipment</members>
+        <members>Solution</members>
+        <members>Sucursal__c</members>
+        <members>Suministro__c</members>
+        <members>Task</members>
+        <members>Vehicle</members>
+        <members>VehicleDefinition</members>
+        <members>WorkOrder</members>
+        <members>WorkOrderLineItem</members>
+        <members>WorkPlan</members>
+        <members>WorkPlanTemplate</members>
+        <members>WorkPlanTemplateEntry</members>
+        <members>WorkStep</members>
+        <members>WorkStepTemplate</members>
+        <name>TopicsForObjects</name>
+    </types>
+    <types>
+        <members>ALMEX_Mapeo_de_mercado</members>
+        <members>Account_Record_Page_Three_Column</members>
+        <members>Acuerdo_de_suministro_P_gina_de_registro</members>
+        <members>Acuerdo_de_ventas_P_gina_de_registro</members>
+        <members>Caso_P_gina_de_registro</members>
+        <members>Contact_Record_Page_Three_Column</members>
+        <members>Contacto_P_gina_de_registro</members>
+        <members>Contacto_P_gina_de_registro1</members>
+        <members>Cotizaci_n_P_gina_de_registro</members>
+        <members>Cuenta_P_gina_de_registro</members>
+        <members>Cuenta_P_gina_de_registro1</members>
+        <members>Fletes_P_gina_de_registro</members>
+        <members>L_nea_de_pedido_P_gina_de_registro</members>
+        <members>Lead_Record_Page_Three_Column</members>
+        <members>Lista_de_precios_P_gina_de_registro</members>
+        <members>Market_Share_P_gina_de_registro</members>
+        <members>Oportunidad_P_gina_de_registro</members>
+        <members>Oportunidad_P_gina_de_registro1</members>
+        <members>Oportunidad_P_gina_de_registro_co_productos</members>
+        <members>Opportunity_Record_Page_Three_Column</members>
+        <members>Pagina_de_Cotizacion_co_producto</members>
+        <members>Partida_de_cotizaci_n_P_gina_de_registro</members>
+        <members>Pedido_P_gina_de_registro</members>
+        <members>Pedido_P_gina_de_registro1</members>
+        <members>Planta_P_gina_de_registro</members>
+        <members>Presupuesto_P_gina_de_registro</members>
+        <members>Producto_P_gina_de_registro</members>
+        <members>Producto_P_gina_de_registro1</members>
+        <members>Prospecto_P_gina_de_registro</members>
+        <members>Prospecto_P_gina_de_registro1</members>
+        <members>Registro_de_precios_comercial</members>
+        <members>Registros_precio_comercial</members>
+        <members>Requerimientos_Especiales_P_gina_de_registro</members>
+        <members>Sesi_n_de_Mensajer_a_P_gina_de_registro</members>
+        <members>Sesi_n_de_Mensajer_a_P_gina_de_registro2</members>
+        <members>Sucursal_P_gina_de_registro</members>
+        <name>UiViewDefinition</name>
     </types>
     <types>
         <members>ALMEX-CLIENTES.Customer_Members</members>
