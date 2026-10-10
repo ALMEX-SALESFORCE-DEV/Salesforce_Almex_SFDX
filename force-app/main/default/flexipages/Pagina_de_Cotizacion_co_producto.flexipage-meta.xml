@@ -266,6 +266,12 @@
                 <identifier>RecordAprobaci_n_por_KAM__cField</identifier>
             </fieldInstance>
         </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldItem>Record.date_factor__c</fieldItem>
+                <identifier>Recorddate_factor__cField</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-2de513a3-5ce6-4c2c-bab9-a284bfd65ad0</name>
         <type>Facet</type>
     </flexiPageRegions>

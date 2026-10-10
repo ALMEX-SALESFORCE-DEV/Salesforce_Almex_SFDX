@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TransactionGraceDay</fullName>
+    <inlineHelpText>Days after the end date during which late-arriving orders can still be applied to actuals, even though the agreement has expired. Reducing this value shortens that window.</inlineHelpText>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+</CustomField>

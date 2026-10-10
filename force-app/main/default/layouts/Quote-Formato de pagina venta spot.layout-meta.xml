@@ -188,6 +188,10 @@
                 <behavior>Readonly</behavior>
                 <field>Total_precio_entregado_con_cliente__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>date_factor__c</field>
+            </layoutItems>
         </layoutColumns>
         <style>OneColumn</style>
     </layoutSections>
