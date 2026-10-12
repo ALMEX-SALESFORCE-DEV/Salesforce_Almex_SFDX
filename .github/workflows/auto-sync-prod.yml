@@ -93,8 +93,15 @@ jobs:
       - name: Abrir o actualizar PR a main
         if: steps.diff.outputs.changed == 'true'
         env:
-          GH_TOKEN: ${{ github.token }}
+          # La org bloquea el GITHUB_TOKEN para crear PRs; se usa un PAT (GH_PAT).
+          # Si GH_PAT no esta configurado, el paso avisa y no truena: la rama queda
+          # actualizada y el PR se abre a mano.
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::warning::GH_PAT no configurado; se omite crear/actualizar el PR. La rama $SYNC_BRANCH quedo actualizada (abre el PR a mano)."
+            exit 0
+          fi
           EXISTING=$(gh pr list --head "$SYNC_BRANCH" --base main --state open --json number -q '.[0].number')
           if [ -n "$EXISTING" ]; then
             echo "PR #$EXISTING ya existe; el push lo actualizo."
