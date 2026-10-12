@@ -1,0 +1,112 @@
+name: Auto-Sync PROD -> main
+
+# Captura programada del estado de PROD en main (flujo inverso prod->repo, docs/07).
+# NO despliega: solo trae metadata y abre/actualiza un PR a main. El merge y la
+# verificacion de direccion (paso 5 de docs/07) siguen siendo manuales.
+on:
+  schedule:
+    - cron: "0 4 * * 6" # Sabado 04:00 UTC = Viernes 22:00 CST (Mexico, UTC-6)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: auto-sync-prod
+  cancel-in-progress: false
+
+env:
+  ORG: ALMEX-Production
+  SYNC_BRANCH: release/sync-prod-auto
+
+jobs:
+  sync:
+    name: Traer PROD y abrir/actualizar PR a main
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Verificar credenciales
+        run: |
+          if [ -z "${{ secrets.SF_AUTH_URL_PROD }}" ]; then
+            echo "::error::SF_AUTH_URL_PROD no configurado; no se puede sincronizar."
+            exit 1
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Instalar Salesforce CLI
+        run: |
+          curl -fsSL https://developer.salesforce.com/media/salesforce-cli/sf/channels/stable/sf-linux-x64.tar.xz | tar xJ -C "$HOME"
+          echo "$HOME/sf/bin" >> "$GITHUB_PATH"
+
+      - name: Autenticar Produccion (SFDX Auth URL)
+        run: |
+          printf '%s' "${{ secrets.SF_AUTH_URL_PROD }}" > "$RUNNER_TEMP/sfauth"
+          sf org login sfdx-url --sfdx-url-file "$RUNNER_TEMP/sfauth" --alias prod --set-default
+          rm -f "$RUNNER_TEMP/sfauth"
+
+      - name: Regenerar manifiesto desde PROD
+        run: sf project generate manifest --from-org prod --name package --output-dir manifest
+
+      - name: Retrieve de PROD (heap elevado)
+        env:
+          NODE_OPTIONS: "--max-old-space-size=14336"
+        run: sf project retrieve start --manifest manifest/package.xml -o prod --wait 60
+
+      - name: Podar ruido (profiles)
+        run: rm -rf force-app/main/default/profiles
+
+      - name: Normalizar EOL
+        run: git add --renormalize . || true
+
+      - name: Detectar cambios
+        id: diff
+        run: |
+          git add -A
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Sin cambios: PROD == main. Nada que sincronizar."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Cambios detectados: $(git diff --cached --name-only | wc -l) archivos."
+          fi
+
+      - name: Commit + push a rama de sync
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$SYNC_BRANCH"
+          git commit -q \
+            -m "chore: auto-sync PROD -> main ($(date -u +%Y-%m-%d))" \
+            -m "Snapshot automatico del estado de PROD (flujo inverso prod->repo, docs/07). NO despliega. Revisar la direccion de cada diff (paso 5) antes de mergear. profiles/ excluido."
+          git push -f origin "$SYNC_BRANCH"
+
+      - name: Abrir o actualizar PR a main
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          EXISTING=$(gh pr list --head "$SYNC_BRANCH" --base main --state open --json number -q '.[0].number')
+          if [ -n "$EXISTING" ]; then
+            echo "PR #$EXISTING ya existe; el push lo actualizo."
+          else
+            gh pr create --base main --head "$SYNC_BRANCH" \
+              --title "Auto-Sync PROD -> main ($(date -u +%Y-%m-%d))" \
+              --body "Snapshot automatico de PROD (flujo inverso prod->repo, excepcion de docs/00-gobernanza). **NO despliega** a prod.
+
+          ## Revisar antes de mergear (docs/07 paso 5)
+          - [ ] Direccion de cada diff: que no se pise trabajo main-adelante.
+          - [ ] Sin secretos (NamedCredentials/ConnectedApps).
+          - [ ] Tipos nuevos esperados.
+
+          \`profiles/\` excluido (ruido). Generado por el workflow auto-sync-prod."
+          fi
