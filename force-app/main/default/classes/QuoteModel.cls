@@ -92,6 +92,8 @@ public with sharing class QuoteModel {
         @AuraEnabled
         public String quoteId { get; set; }
         @AuraEnabled
+        public String factors { get; set; }
+        @AuraEnabled
         public String salesAgreement { get; set; }
         @AuraEnabled
         public String literOutput { get; set; }

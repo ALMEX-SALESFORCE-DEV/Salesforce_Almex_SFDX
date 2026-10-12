@@ -418,10 +418,13 @@
         <members>Factor__c.CogsUsdFormulaFijo__c</members>
         <members>Factor__c.CogsUsdVariableFijo__c</members>
         <members>Factor__c.CornUsage__c</members>
+        <members>Factor__c.Corn_Freight__c</members>
         <members>Factor__c.FactorA__c</members>
         <members>Factor__c.FactorB__c</members>
         <members>Factor__c.Familia_de_maiz__c</members>
+        <members>Factor__c.Gas_Transp__c</members>
         <members>Factor__c.Mes__c</members>
+        <members>Factor__c.Molienda_diaria__c</members>
         <members>Factor__c.fecha_anio__c</members>
         <members>Factor__c.netCornFijo__c</members>
         <members>Factor__c.sgaUst__c</members>
@@ -1032,6 +1035,7 @@
         <members>CostBook</members>
         <members>CostBookEntry</members>
         <members>DevopsActivityLog</members>
+        <members>DevopsDeployComponent</members>
         <members>DevopsEnvDeployment</members>
         <members>DevopsEnvDeploymentMbr</members>
         <members>DevopsEnvironment</members>
@@ -2169,6 +2173,13 @@
         <members>AttributeDefinition.All_AttributeDefinitions</members>
         <members>AttributePicklist.All_AttributePicklists</members>
         <members>AttributePicklistValue.All_AttributePicklistValues</members>
+        <members>BatchJob.All_Batch_Jobs</members>
+        <members>BatchJobPart.All_Tasks</members>
+        <members>BatchJobPart.All_Tasks_Calc</members>
+        <members>BatchJobPartFailedRecord.All_Failed_Records</members>
+        <members>BusinessMilestone.All_BusinessMilestones</members>
+        <members>CalculationMatrix.Org_PCM_Decision_Table</members>
+        <members>CalculationProcedure.All_CalculationProcedures</members>
         <members>Campaign.AllActiveCampaigns</members>
         <members>Campaign.MyActiveCampaigns</members>
         <members>Campaign.Org_Campaign_Hierarchy</members>
@@ -2181,6 +2192,7 @@
         <members>Case.MyCases</members>
         <members>Case.MyOpenCases</members>
         <members>Case.Service_Case_Case</members>
+        <members>ChangeRequest.AllChangeRequestsDefault</members>
         <members>CodeSetRelationship.All_CodeSetRelationships</members>
         <members>CodeSetRelationship.My_CodeSetRelationships</members>
         <members>CollaborationGroup.All_ChatterGroups</members>
