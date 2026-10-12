@@ -41,7 +41,11 @@ jobs:
 
   validate-deploy:
     name: Validar deploy del delta (dry-run)
-    if: github.event_name == 'pull_request'
+    # Se omite en ramas release/sync-prod-*: esos PR son flujo inverso prod->repo
+    # (ver docs/07). Validar metadata de PROD contra el sandbox da falsos ❌ por
+    # features/report-types que el sandbox no tiene. Mergear a main no despliega;
+    # el control de esos PR es el review, no el dry-run.
+    if: github.event_name == 'pull_request' && !startsWith(github.head_ref, 'release/sync-prod-')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
