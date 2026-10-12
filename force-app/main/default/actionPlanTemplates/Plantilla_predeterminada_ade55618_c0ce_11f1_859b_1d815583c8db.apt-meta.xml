@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ActionPlanTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionPlanTemplateItem>
+        <actionPlanTemplateItemValue>
+            <itemEntityType>Task</itemEntityType>
+            <name>Subject</name>
+            <valueLiteral>Programar reuniones</valueLiteral>
+        </actionPlanTemplateItemValue>
+        <actionPlanTemplateItemValue>
+            <itemEntityType>Task</itemEntityType>
+            <name>Priority</name>
+            <valueLiteral>Normal</valueLiteral>
+        </actionPlanTemplateItemValue>
+        <actionPlanTemplateItemValue>
+            <itemEntityType>Task</itemEntityType>
+            <name>ActivityDate</name>
+            <valueFormula>StartDate + 14</valueFormula>
+        </actionPlanTemplateItemValue>
+        <isRequired>false</isRequired>
+        <itemEntityType>Task</itemEntityType>
+        <name>Programar reuniones</name>
+        <uniqueName>Programar_reuniones_adf7a59d_c0ce_11f1_859b_6f0128efff06</uniqueName>
+    </actionPlanTemplateItem>
+    <actionPlanTemplateItem>
+        <actionPlanTemplateItemValue>
+            <itemEntityType>Event</itemEntityType>
+            <name>Subject</name>
+            <valueLiteral>Organizar actividades</valueLiteral>
+        </actionPlanTemplateItemValue>
+        <actionPlanTemplateItemValue>
+            <itemEntityType>Event</itemEntityType>
+            <name>ActivityDate</name>
+            <valueFormula>StartDate + 28</valueFormula>
+        </actionPlanTemplateItemValue>
+        <isRequired>false</isRequired>
+        <itemEntityType>Event</itemEntityType>
+        <name>Organizar actividades</name>
+        <uniqueName>Organizar_actividades_adf7f3bf_c0ce_11f1_859b_310a31860459</uniqueName>
+    </actionPlanTemplateItem>
+    <description>Plantilla predeterminada para modificar según las necesidades del usuario</description>
+    <isAdHocItemCreationEnabled>false</isAdHocItemCreationEnabled>
+    <name>Plantilla predeterminada</name>
+    <status>Final</status>
+    <targetEntityType>AccountPlanObjective</targetEntityType>
+    <uniqueName>Plantilla_predeterminada_ade55618_c0ce_11f1_859b_1d815583c8db</uniqueName>
+</ActionPlanTemplate>

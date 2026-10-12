@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <aggregateTypes>Sum</aggregateTypes>
+        <field>SalesAgreement$Volumen_total__c</field>
+    </columns>
+    <columns>
+        <field>SalesAgreement$Name</field>
+    </columns>
+    <columns>
+        <field>SalesAgreement$Pricebook</field>
+    </columns>
+    <columns>
+        <field>SalesAgreement$Unidad_de_medida__c</field>
+    </columns>
+    <columns>
+        <field>SalesAgreement$Status</field>
+    </columns>
+    <columns>
+        <field>SalesAgreement$StartDate</field>
+    </columns>
+    <columns>
+        <field>SalesAgreement$EndDate</field>
+    </columns>
+    <columns>
+        <field>SalesAgreement$CreatedDate</field>
+    </columns>
+    <columns>
+        <field>SalesAgreement$CreatedBy</field>
+    </columns>
+    <description>Ver contratos</description>
+    <format>Tabular</format>
+    <name>Contratos ADS</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>acuerdo_de_suministro__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+    <sortColumn>SalesAgreement$Name</sortColumn>
+    <sortOrder>Asc</sortOrder>
+    <timeFrameFilter>
+        <dateColumn>SalesAgreement$CreatedDate</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>
