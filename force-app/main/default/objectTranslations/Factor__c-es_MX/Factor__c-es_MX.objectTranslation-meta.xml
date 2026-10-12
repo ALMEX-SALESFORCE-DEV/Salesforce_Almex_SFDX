@@ -9,4 +9,11 @@
         <value>Factores</value>
     </caseValues>
     <gender>Masculine</gender>
+    <layouts>
+        <layout>Formato Factor</layout>
+        <sections>
+            <label><!-- Vínculos personalizados --></label>
+            <section>Vínculos personalizados</section>
+        </sections>
+    </layouts>
 </CustomObjectTranslation>

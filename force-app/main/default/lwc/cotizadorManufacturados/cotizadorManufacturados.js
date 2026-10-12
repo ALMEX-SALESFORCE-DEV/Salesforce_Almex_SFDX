@@ -164,6 +164,9 @@ export default class CotizadorManufacturados extends LightningElement {
 			this.rangeDates = DateUtils.getDateRangeDetails(this.agreementDate.init, this.agreementDate.end);
 			this.marketReference.cornUsage = data.Corn_Usage__c;
 			this.marketReference.inflation = data.Inflation__c;
+			if (data.date_factor__c) {
+				this.dateFactors = JSON.parse(data.date_factor__c);
+			}
 			this.referenceDate = {
 				basisDate: data.Basis_date__c,
 				cornDate: data.Corn_date__c,
@@ -395,7 +398,8 @@ export default class CotizadorManufacturados extends LightningElement {
 					...this.marketReference,
 					leftDataset: JSON.stringify(leftBackup),
 					rightDataset: JSON.stringify(rightBackup),
-					textMarketReference
+					textMarketReference,
+					factors: JSON.stringify(this.dateFactors)
 				}
 			});
 			if (newQuote.length > 0) {
@@ -629,7 +633,9 @@ export default class CotizadorManufacturados extends LightningElement {
 				Net_Corn_Fijo__c: factor.netCornFijo__c,
 				Cogs_Usd_Variable_Fijo__c: factor.CogsUsdVariableFijo__c,
 				Cogs_Usd_Fijo__c: factor.CogsUsdFijo__c,
-				Cogs_Usd_Formula_Fijo__c: factor.CogsUsdFormulaFijo__c
+				Cogs_Usd_Formula_Fijo__c: factor.CogsUsdFormulaFijo__c,
+				dailyMolienda: factor.Molienda_diaria__c,
+				gasTransp: factor.Gas_Transp__c
 			};
 
 			let coproductValue = 30;

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApprovalProcess xmlns="http://soap.sforce.com/2006/04/metadata">
+    <active>false</active>
+    <allowRecall>true</allowRecall>
+    <allowedSubmitters>
+        <type>owner</type>
+    </allowedSubmitters>
+    <approvalPageFields>
+        <field>Name</field>
+        <field>QuoteAccount</field>
+        <field>Volumen_total__c</field>
+        <field>TotalPrice</field>
+        <field>Fecha_de_inicio__c</field>
+        <field>ExpirationDate</field>
+    </approvalPageFields>
+    <approvalStep>
+        <allowDelegate>false</allowDelegate>
+        <assignedApprover>
+            <approver>
+                <name>desarrollo.almex@etcloudmx.com</name>
+                <type>user</type>
+            </approver>
+            <approver>
+                <name>miguel.azori@almidones.com.mx</name>
+                <type>user</type>
+            </approver>
+            <whenMultipleApprovers>FirstResponse</whenMultipleApprovers>
+        </assignedApprover>
+        <description>Este es el primer paso de aprobación, tiene que pasar por gerente comercial.</description>
+        <label>Aprobación gerente comercial</label>
+        <name>Aprobacion_gerente_comercial</name>
+    </approvalStep>
+    <approvalStep>
+        <allowDelegate>false</allowDelegate>
+        <assignedApprover>
+            <approver>
+                <name>desarrollo.almex@etcloudmx.com</name>
+                <type>user</type>
+            </approver>
+            <approver>
+                <name>miguel.azori@almidones.com.mx</name>
+                <type>user</type>
+            </approver>
+            <whenMultipleApprovers>FirstResponse</whenMultipleApprovers>
+        </assignedApprover>
+        <description>Paso 2 de aprobación. Después de gerente comercial, tiene que ser aprobado por director comercial</description>
+        <entryCriteria>
+            <criteriaItems>
+                <field>Quote.Status</field>
+                <operation>equals</operation>
+                <value>Autorizacion y aviso a personal</value>
+            </criteriaItems>
+        </entryCriteria>
+        <label>Aprobación director comercial</label>
+        <name>Aprobacion_director_comercial</name>
+        <rejectBehavior>
+            <type>RejectRequest</type>
+        </rejectBehavior>
+    </approvalStep>
+    <enableMobileDeviceAccess>false</enableMobileDeviceAccess>
+    <entryCriteria>
+        <criteriaItems>
+            <field>Quote.Status</field>
+            <operation>equals</operation>
+            <value>Autorizacion y aviso a personal</value>
+        </criteriaItems>
+    </entryCriteria>
+    <finalApprovalActions>
+        <action>
+            <name>Actualizar_bandera</name>
+            <type>FieldUpdate</type>
+        </action>
+        <action>
+            <name>Update_Stage_Quote</name>
+            <type>FieldUpdate</type>
+        </action>
+    </finalApprovalActions>
+    <finalApprovalRecordLock>true</finalApprovalRecordLock>
+    <finalRejectionActions>
+        <action>
+            <name>Actualizacion_estado_rechazado</name>
+            <type>FieldUpdate</type>
+        </action>
+    </finalRejectionActions>
+    <finalRejectionRecordLock>false</finalRejectionRecordLock>
+    <label>Proceso de aprobación cotización</label>
+    <processOrder>1</processOrder>
+    <recordEditability>AdminOnly</recordEditability>
+    <showApprovalHistory>true</showApprovalHistory>
+</ApprovalProcess>
