@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssignmentRules xmlns="http://soap.sforce.com/2006/04/metadata">
+    <assignmentRule>
+        <fullName>Asignación de casos por tipo</fullName>
+        <active>true</active>
+        <ruleEntry>
+            <assignedTo>Caso_cola_de_ventas</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Case.Type</field>
+                <operation>equals</operation>
+                <value>Balance de contrato,Cotización,Envío de documentos de calidad</value>
+            </criteriaItems>
+        </ruleEntry>
+        <ruleEntry>
+            <assignedTo>Caso_Cola_de_servicio</assignedTo>
+            <assignedToType>Queue</assignedToType>
+            <criteriaItems>
+                <field>Case.Type</field>
+                <operation>equals</operation>
+                <value>BPMs,Calidad de pedido,Documentación de pedido,Inocuidad de pedido,Otro,Pedido no encontrado,Problema con entrega de pedido,Queja,Question,Rechazo de pedido,Sin acceso a cuenta</value>
+            </criteriaItems>
+        </ruleEntry>
+    </assignmentRule>
+</AssignmentRules>

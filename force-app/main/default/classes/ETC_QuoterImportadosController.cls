@@ -147,6 +147,7 @@ public with sharing class ETC_QuoterImportadosController {
 					Description,
 					Lista_Oracle__c,
 					Pricebook2Id,
+					date_factor__c,
 					(
 						SELECT
 							Incremental_Costs_Rebate_Porcentage__c,
@@ -583,6 +584,10 @@ public with sharing class ETC_QuoterImportadosController {
             newQuote.rightDataset__c = quoteConfigs.rightDataset;
             System.debug(1);
             
+            if (String.isNotBlank(quoteConfigs.factors)) {
+                newQuote.date_factor__c = quoteConfigs.factors;
+            }
+            
             if (newQuoteModel.listaOracle != null) {
                 System.debug('===START_newQuoteModel.listaOracle===');
                 System.debug(newQuoteModel.listaOracle);
@@ -756,7 +761,7 @@ public with sharing class ETC_QuoterImportadosController {
         
         Decimal yearDecimal = Decimal.valueOf(yearToSearch);
         
-        String query = 'SELECT CogsUsdFijo__c, CogsUsdFormulaFijo__c, CogsUsdVariableFijo__c, ' +
+        String query = 'SELECT Molienda_diaria__c, Gas_Transp__c, Corn_Freight__c, CogsUsdFijo__c, CogsUsdFormulaFijo__c, CogsUsdVariableFijo__c, ' +
             'FactorA__c, FactorB__c, netCornFijo__c, CornUsage__c, sgaUst__c, sub_familia_almidon__c ' +
             'FROM Factor__c ' +
             'WHERE fecha_anio__c = :yearDecimal AND Familia_de_maiz__c = :cornFamily';

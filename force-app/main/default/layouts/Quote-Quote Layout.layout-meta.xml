@@ -42,6 +42,10 @@
                 <behavior>Readonly</behavior>
                 <field>Aprobaci_n_por_KAM__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>date_factor__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

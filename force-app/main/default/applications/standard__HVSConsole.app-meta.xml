@@ -21,6 +21,7 @@
     <tabs>standard-Feed</tabs>
     <tabs>standard-CollaborationGroup</tabs>
     <tabs>standard-File</tabs>
+    <tabs>standard-SalesCoachHome</tabs>
     <tabs>Precio_productos__c</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>HVSConsole_UtilityBar</utilityBar>
@@ -60,6 +61,9 @@
         </mappings>
         <mappings>
             <tab>standard-Opportunity</tab>
+        </mappings>
+        <mappings>
+            <tab>standard-SalesCoachHome</tab>
         </mappings>
         <mappings>
             <tab>standard-Task</tab>

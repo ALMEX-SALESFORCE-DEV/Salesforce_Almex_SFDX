@@ -412,7 +412,8 @@
 								</tr>
 								<tr>
 									<td>Gas transp + additional</td>
-									<td class="flex justify-space">$ <span>{opp.Gas_transp_additional__c}</span></td>
+									<td class="flex justify-space">$ <span
+											lwc:if={dateFactors}>{dateFactors.Gas_Transp__c}</span></td>
 									<td>/ mmBTU</td>
 								</tr>
 								<tr>
@@ -424,7 +425,7 @@
 									<td>Corn Freight to Almex</td>
 									<td class="flex justify-space">
 										$
-										<span>{opp.Corn_Freight_to_Almex__c}</span>
+										<span lwc:if={dateFactors}>{dateFactors.Corn_Freight__c}</span>
 									</td>
 									<td class="bold">US$/bu</td>
 								</tr>

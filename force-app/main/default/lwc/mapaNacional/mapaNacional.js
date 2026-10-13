@@ -42,64 +42,34 @@ const PRICE_UNIT_CONFIG = Object.freeze({
 });
 
 const STATE_NAME_ALIASES = Object.freeze({
-    México: 'Estado de México',
-    'Estado de Mexico': 'Estado de México',
-    'Estado de México': 'Estado de México',
-    'Distrito Federal': 'Ciudad de México',
-    'Ciudad de Mexico': 'Ciudad de México',
-    'Ciudad de México': 'Ciudad de México',
-    Michoacan: 'Michoacán',
+    'Estado de Mexico': 'México',
+    'Estado de México': 'México',
+    'Ciudad de Mexico': 'Distrito Federal',
+    'Ciudad de México': 'Distrito Federal',
     'Queretaro': 'Querétaro',
     'San Luis Potosi': 'San Luis Potosí',
     'Yucatan': 'Yucatán',
     'Nuevo Leon': 'Nuevo León'
 });
 
-// Highmaps conserva estos nombres históricos dentro de su geometría.
-// Se usan solo para localizar el polígono; nunca se muestran al usuario.
-const HIGHMAPS_STATE_NAMES = Object.freeze({
-    'Estado de México': 'México',
-    'Ciudad de México': 'Distrito Federal'
-});
-
 const PRODUCT_NAME_ALIASES = Object.freeze({
-    Almidon: 'Almidón',
-    Azucar: 'Azúcar',
     'Fructuosa 42': 'Fructosa 42',
-    'Dextrosa Líquida': 'Dextrosa líquida',
-    'Dextrosa Liquida': 'Dextrosa líquida',
-    'Dextrosa liquida': 'Dextrosa líquida',
-    'Glucosa Alta Maltosa': 'Glucosa alta en maltosa',
-    'Glucosa alta maltosa': 'Glucosa alta en maltosa',
-    'Fructosa Cristalina 99': 'Fructosa cristalina 99',
-    'Krystar Liquido': 'KRYSTAR líquido',
-    'Krystar líquido': 'KRYSTAR líquido',
-    'KRYSTAR Liquido': 'KRYSTAR líquido'
+    'Dextrosa Líquida': 'Dextrosa liquida',
+    'Dextrosa líquida': 'Dextrosa liquida',
+    'Dextrosa Liquida': 'Dextrosa liquida'
 });
 
 const PROVIDER_NAME_ALIASES = Object.freeze({
-    'ADM': 'ADM México',
-    'ADM Mexico': 'ADM México',
-    'Cargill': 'Cargill México',
-    'Cargill Mexico': 'Cargill México',
-    'Ingredion': 'Ingredion México',
-    'Ingredion Mexico': 'Ingredion México',
-    'Tate & Lyle': 'Tate & Lyle México',
-    'Tate & Lyle Mexico': 'Tate & Lyle México',
-    'Roquette': 'Roquette México',
-    'Roquette Mexico': 'Roquette México',
-    'Grupo Azucarero Mexico': 'Grupo Azucarero México',
-    'GAM': 'Grupo Azucarero México'
+    'ADM México': 'ADM',
+    'ADM Mexico': 'ADM',
+    'Cargill México': 'Cargill',
+    'Cargill Mexico': 'Cargill',
+    'Ingredion México': 'Ingredion',
+    'Ingredion Mexico': 'Ingredion'
 });
 
 function normalizeStateName(state) {
-    const normalizedState = String(state || '').trim();
-    return STATE_NAME_ALIASES[normalizedState] || normalizedState;
-}
-
-function getHighmapsStateName(state) {
-    const displayState = normalizeStateName(state);
-    return HIGHMAPS_STATE_NAMES[displayState] || displayState;
+    return STATE_NAME_ALIASES[state] || state;
 }
 
 function normalizeProductName(product) {
@@ -216,7 +186,7 @@ export default class MapaNacional extends LightningElement {
     worldMapData;
     highmapsInitialized = false;
 
-    selectedProduct = 'Azúcar';
+    selectedProduct = 'Azucar';
     summaryTableData = [];
     cityTableData = [];
 
@@ -358,7 +328,7 @@ export default class MapaNacional extends LightningElement {
     }
 
     expandedTable = null;
-
+    
     get isTableExpanded() {
         return this.expandedTable !== null;
     }
@@ -560,52 +530,49 @@ export default class MapaNacional extends LightningElement {
         'Chihuahua',
         'Coahuila',
         'Colima',
-        'Ciudad de México',
         'Durango',
-        'Estado de México',
         'Guanajuato',
         'Guerrero',
         'Hidalgo',
         'Jalisco',
-        'Michoacán',
+        'Estado de Mexico',
+        'Michoacan',
         'Morelos',
         'Nayarit',
-        'Nuevo León',
+        'Nuevo Leon',
         'Oaxaca',
         'Puebla',
-        'Querétaro',
+        'Queretaro',
         'Quintana Roo',
-        'San Luis Potosí',
+        'San Luis Potosi',
         'Sinaloa',
         'Sonora',
         'Tabasco',
         'Tamaulipas',
         'Tlaxcala',
         'Veracruz',
-        'Yucatán',
-        'Zacatecas'
+        'Yucatan',
+        'Zacatecas',
+        'Ciudad de Mexico'
     ];
 
     // ==============================
     // COLOR POR PROVEEDOR
     // ==============================
 
-    // Nombres del catálogo de FormPrices; los registros históricos se normalizan arriba.
-    // Paleta representativa de marca. PIASA y Beta San Miguel conservan sus colores.
     providerColors = {
         'ALMEX': '#D32F2F',
-        'Ingredion México': '#6CB33E',
-        'Cargill México': '#00843D',
-        'ADM México': '#012169',
-        'Tate & Lyle México': '#4D6987',
-        'Roquette México': '#0052D2',
+        'Ingredion': '#4CAF50',
+        'Cargill': '#F9A825',
+        'ADM': '#1A237E',
+        'Tate & Lyle': '#00897B',
         'Primient': '#757575',
         'PIASA': '#B71C1C',
         'Mill Foods': '#7ACDE2',
         'Beta San Miguel': '#3949AB',
-        'Grupo Azucarero México': '#795548',
-        'Grupo Porres': '#009633',
-        'Zucarmex': '#0D662C',
+        'Grupo Azucarero Mexico': '#795548',
+        'GAM': '#A1887F',
+        'Zucarmex': '#388E3C',
         'Ingenio La Gloria': '#F57C00',
         'MC Sugar': '#37B1E0',
         'N/A': '#5B6573'
@@ -630,7 +597,6 @@ export default class MapaNacional extends LightningElement {
 
                 this.prices = records.map(record => ({
                     ...record,
-                    Estado__c: normalizeStateName(record.Estado__c),
                     Nombre_producto__c: normalizeProductName(
                         record.Nombre_producto__c
                     ),
@@ -770,8 +736,7 @@ export default class MapaNacional extends LightningElement {
 
                 const feature = mapFeatures.find(
                     feature =>
-                        feature.properties.name ===
-                            getHighmapsStateName(stateName)
+                        feature.properties.name === stateName
                 );
 
                 if (!feature) {
@@ -1091,7 +1056,7 @@ export default class MapaNacional extends LightningElement {
 
         const states = new Set(
             filteredPrices
-                .map(price => normalizeStateName(price.Estado__c))
+                .map(price => price.Estado__c)
                 .filter(state => state)
         );
 
@@ -1106,36 +1071,49 @@ export default class MapaNacional extends LightningElement {
 
     calculateAveragePrice() {
         const filteredPrices = this.getSelectedProductRecords();
-
+    
         const records = filteredPrices
             .map(record => {
                 const price = Number(record.Precio_producto__c);
                 const unit = record.Unidad__c;
+                const weight = Number(record.Consumo_mensual__c);
 
                 const pricePerKg = normalizePricePerKg(price, unit);
-
+            
                 if (
                     isNaN(price) ||
+                    isNaN(weight) ||
+                    weight <= 0 ||
                     pricePerKg === null
                 ) {
                     return null;
                 }
-
-                return pricePerKg;
+            
+                return {
+                    pricePerKg,
+                    weight
+                };
             })
             .filter(record => record !== null);
-
+        
         if (records.length === 0) {
             this.averagePrice = 0;
             return;
         }
-
-        const totalPrice = records.reduce(
-            (sum, pricePerKg) => sum + pricePerKg,
+    
+        const weightedTotal = records.reduce(
+            (sum, record) =>
+                sum + (record.pricePerKg * record.weight),
             0
         );
-
-        this.averagePrice = (totalPrice / records.length).toFixed(2);
+    
+        const totalWeight = records.reduce(
+            (sum, record) =>
+                sum + record.weight,
+            0
+        );
+    
+        this.averagePrice = (weightedTotal / totalWeight).toFixed(2);
     }
 
 
@@ -1150,7 +1128,7 @@ export default class MapaNacional extends LightningElement {
 
         const statesWithRecords = new Set(
             filteredPrices
-                .map(price => normalizeStateName(price.Estado__c))
+                .map(price => price.Estado__c)
                 .filter(state => state)
         );
 
@@ -1575,7 +1553,7 @@ export default class MapaNacional extends LightningElement {
     // ==============================
     // FILTRAR TABLA POR SELECCIÓN
     // ==============================
-
+    
     handleStateSelection(event) {
         const selectedRows = event.detail.selectedRows || [];
 
@@ -1983,5 +1961,5 @@ export default class MapaNacional extends LightningElement {
         }
     }
 
-
+    
 }
