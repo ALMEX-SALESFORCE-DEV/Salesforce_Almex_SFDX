@@ -3,6 +3,9 @@ name: Auto-Sync PROD -> main
 # Captura programada del estado de PROD en main (flujo inverso prod->repo, docs/07).
 # NO despliega: solo trae metadata y abre/actualiza un PR a main. El merge y la
 # verificacion de direccion (paso 5 de docs/07) siguen siendo manuales.
+#
+# 3 jobs encadenados (grafo nativo en la pestana Actions):
+#   sincronizar -> abrir-pr -> reporte
 on:
   schedule:
     - cron: "0 4 * * 6" # Sabado 04:00 UTC = Viernes 22:00 CST (Mexico, UTC-6)
@@ -21,9 +24,12 @@ env:
   SYNC_BRANCH: release/sync-prod-auto
 
 jobs:
-  sync:
-    name: Traer PROD y abrir/actualizar PR a main
+  sincronizar:
+    name: Sincronizar (retrieve + push)
     runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.diff.outputs.changed }}
+      files: ${{ steps.diff.outputs.files }}
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
@@ -73,10 +79,13 @@ jobs:
           git add -A
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "files=0" >> "$GITHUB_OUTPUT"
             echo "Sin cambios: PROD == main. Nada que sincronizar."
           else
+            N=$(git diff --cached --name-only | wc -l | tr -d ' ')
             echo "changed=true" >> "$GITHUB_OUTPUT"
-            echo "Cambios detectados: $(git diff --cached --name-only | wc -l) archivos."
+            echo "files=$N" >> "$GITHUB_OUTPUT"
+            echo "Cambios detectados: $N archivos."
           fi
 
       - name: Commit + push a rama de sync
@@ -90,23 +99,85 @@ jobs:
             -m "Snapshot automatico del estado de PROD (flujo inverso prod->repo, docs/07). NO despliega. Revisar la direccion de cada diff (paso 5) antes de mergear. profiles/ excluido."
           git push -f origin "$SYNC_BRANCH"
 
+  abrir-pr:
+    name: Abrir/actualizar PR
+    needs: sincronizar
+    if: needs.sincronizar.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      pr: ${{ steps.pr.outputs.pr }}
+    steps:
       - name: Abrir o actualizar PR a main
-        if: steps.diff.outputs.changed == 'true'
+        id: pr
         env:
-          GH_TOKEN: ${{ github.token }}
+          # La org bloquea el GITHUB_TOKEN para crear PRs; se usa un PAT (GH_PAT).
+          # Sin GH_PAT el paso avisa y termina en verde: la rama ya quedo actualizada.
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
-          EXISTING=$(gh pr list --head "$SYNC_BRANCH" --base main --state open --json number -q '.[0].number')
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::warning::GH_PAT no configurado; abre el PR a mano (rama $SYNC_BRANCH ya actualizada)."
+            exit 0
+          fi
+          EXISTING=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$SYNC_BRANCH" --base main --state open --json number -q '.[0].number')
           if [ -n "$EXISTING" ]; then
             echo "PR #$EXISTING ya existe; el push lo actualizo."
+            echo "pr=$EXISTING" >> "$GITHUB_OUTPUT"
           else
-            gh pr create --base main --head "$SYNC_BRANCH" \
+            URL=$(gh pr create --repo "$GITHUB_REPOSITORY" --base main --head "$SYNC_BRANCH" \
               --title "Auto-Sync PROD -> main ($(date -u +%Y-%m-%d))" \
-              --body "Snapshot automatico de PROD (flujo inverso prod->repo, excepcion de docs/00-gobernanza). **NO despliega** a prod.
-
-          ## Revisar antes de mergear (docs/07 paso 5)
-          - [ ] Direccion de cada diff: que no se pise trabajo main-adelante.
-          - [ ] Sin secretos (NamedCredentials/ConnectedApps).
-          - [ ] Tipos nuevos esperados.
-
-          \`profiles/\` excluido (ruido). Generado por el workflow auto-sync-prod."
+              --body "Snapshot automatico de PROD (flujo inverso prod->repo, excepcion de docs/00-gobernanza). NO despliega a prod. Revisar direccion de cada diff (docs/07 paso 5) antes de mergear. profiles/ excluido.")
+            echo "$URL"
+            echo "pr=$(basename "$URL")" >> "$GITHUB_OUTPUT"
           fi
+
+  reporte:
+    name: Reporte
+    needs: [sincronizar, abrir-pr]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generar reporte (summary + artefacto)
+        run: |
+          SYNCRES="${{ needs.sincronizar.result }}"
+          PRRES="${{ needs.abrir-pr.result }}"
+          CHANGED="${{ needs.sincronizar.outputs.changed }}"
+          FILES="${{ needs.sincronizar.outputs.files }}"
+          PR="${{ needs.abrir-pr.outputs.pr }}"
+          DATE=$(date -u +"%Y-%m-%d %H:%M UTC")
+          REPO_URL="${{ github.server_url }}/${{ github.repository }}"
+          {
+            echo "# Auto-Sync PROD -> main"
+            echo ""
+            echo "**Fecha:** $DATE  "
+            echo "**Org:** $ORG  "
+            if [ "$SYNCRES" != "success" ]; then
+              echo "**Resultado:** ⚠️ la sincronizacion fallo (\`$SYNCRES\`). Revisa los logs del job \`sincronizar\`."
+            elif [ "$CHANGED" = "true" ]; then
+              echo "**Resultado:** ✅ $FILES archivos de drift capturados en \`$SYNC_BRANCH\`."
+              if [ -n "$PR" ]; then
+                echo "**PR:** [#$PR]($REPO_URL/pull/$PR)"
+              else
+                echo "**PR:** no se creo automaticamente (ver warning en \`abrir-pr\`; abrelo a mano)."
+              fi
+            else
+              echo "**Resultado:** ✅ sin cambios (PROD == main). Nada que sincronizar."
+            fi
+            echo ""
+            echo "## Etapas"
+            echo "| Etapa | Estado |"
+            echo "|-------|--------|"
+            echo "| Sincronizar (retrieve + push) | \`$SYNCRES\` |"
+            echo "| Abrir PR | \`${PRRES:-skipped}\` |"
+            echo ""
+            echo '```mermaid'
+            echo 'flowchart LR'
+            echo "  S[\"sincronizar<br/>$SYNCRES\"] --> P[\"abrir-pr<br/>${PRRES:-skipped}\"] --> R[\"reporte\"]"
+            echo '```'
+          } | tee sync-report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Subir artefacto del reporte
+        uses: actions/upload-artifact@v4
+        with:
+          name: sync-report
+          path: sync-report.md
+          retention-days: 90

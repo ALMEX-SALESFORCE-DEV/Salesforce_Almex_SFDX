@@ -12,3 +12,10 @@ package.xml
 **/__tests__/**
 
 node_modules/
+
+# Metadata ruidosa en el sync prod->repo (reordena en cada retrieve).
+# Ver docs/07-sync-prod-a-main.md paso 4.
+**/profiles/**
+**/standardValueSets/**
+**/appMenus/**
+**/installedPackages/**

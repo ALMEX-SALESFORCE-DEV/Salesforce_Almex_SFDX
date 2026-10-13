@@ -4,6 +4,10 @@ Repositorio de código fuente (SFDX) de la org **Almidones Mexicanos (ALMEX)**. 
 
 > **Repo:** `ALMEX-SALESFORCE-DEV/Salesforce_Almex_SFDX` (privado) · **Org:** `force-app-5145.my.salesforce.com` · **API:** 67.0
 
+[![Auto-Sync PROD→main](https://github.com/ALMEX-SALESFORCE-DEV/Salesforce_Almex_SFDX/actions/workflows/auto-sync-prod.yml/badge.svg)](https://github.com/ALMEX-SALESFORCE-DEV/Salesforce_Almex_SFDX/actions/workflows/auto-sync-prod.yml)
+[![CI](https://github.com/ALMEX-SALESFORCE-DEV/Salesforce_Almex_SFDX/actions/workflows/ci.yml/badge.svg)](https://github.com/ALMEX-SALESFORCE-DEV/Salesforce_Almex_SFDX/actions/workflows/ci.yml)
+[![Deploy](https://github.com/ALMEX-SALESFORCE-DEV/Salesforce_Almex_SFDX/actions/workflows/deploy.yml/badge.svg)](https://github.com/ALMEX-SALESFORCE-DEV/Salesforce_Almex_SFDX/actions/workflows/deploy.yml)
+
 ---
 
 ## Gobernanza
@@ -57,6 +61,36 @@ git checkout dev
 ```
 dev  ──commit──►  dev (remoto)  ──Pull Request──►  main (prod, requiere tu aprobación)
 ```
+
+---
+
+## 🔄 Ciclo de vida del código (visual)
+
+Dos direcciones, nunca automáticas hacia PROD:
+
+```mermaid
+flowchart TB
+  subgraph REPO["Repositorio (git)"]
+    direction LR
+    F["feature/*"] --> D["dev"] --> R["release/*"] --> M["main · prod, protegida"]
+  end
+  PROD(("Org PROD"))
+
+  %% Flujo normal repo -> prod: deploy MANUAL
+  M -->|"deploy MANUAL<br/>workflow_dispatch + escribir DEPLOY"| PROD
+
+  %% Flujo inverso prod -> repo: reconciliacion de drift (docs/07). NO despliega.
+  PROD -->|"retrieve viernes 22:00 CST<br/>o manual"| SA["release/sync-prod-auto"]
+  SA -->|"PR a main · NO despliega"| M
+
+  classDef prod fill:#ffe0e0,stroke:#c0392b,color:#922;
+  classDef sync fill:#e0efff,stroke:#2471a3,color:#1a5276;
+  class PROD prod
+  class SA sync
+```
+
+- 🟥 **PROD** solo recibe cambios por **deploy manual** (nadie despliega solo).
+- 🟦 El **Auto-Sync** (viernes) trae el estado de PROD y abre un **PR a `main`** — captura drift, **no despliega**. Detalle en [Sincronizar main desde PROD](docs/07-sync-prod-a-main.md).
 
 ---
 
