@@ -13,6 +13,39 @@ PROD ha derivado del repo (cambios hechos directo en la org, sin pasar por el fl
 > contrario: `prod → repo`. Solo se usa para **reconciliar drift**, no es el día a día.
 > Queda declarado como excepción en [Gobernanza](00-gobernanza.md).
 
+## Vista visual del flujo
+
+**Pipeline del sync** (los números son los pasos del [Procedimiento](#procedimiento)):
+
+```mermaid
+flowchart LR
+  PROD(("PROD")) -->|"1-3 retrieve"| WT["working tree"]
+  WT -->|"4 EOL + poda ruido"| CLEAN["cambios reales"]
+  CLEAN -->|"5 verificar direccion"| REV{"drift legitimo?"}
+  REV -->|"si"| BR["release/sync-prod-*"]
+  REV -->|"main-adelante"| DROP["descartar"]
+  BR -->|"6 commit + push"| PR["PR a main"]
+  PR -->|"7 review CODEOWNER"| MAIN["main"]
+  MAIN -->|"8 back-merge"| DEV["dev"]
+  classDef prod fill:#ffe0e0,stroke:#c0392b,color:#922;
+  class PROD prod
+```
+
+**Ramas** — cómo la rama de sync sale de `main` y vuelve por PR:
+
+```mermaid
+gitGraph
+  commit id: "main"
+  branch sync-prod-auto
+  checkout sync-prod-auto
+  commit id: "snapshot PROD"
+  checkout main
+  merge sync-prod-auto tag: "PR aprobado"
+```
+
+> El **Auto-Sync** (`auto-sync-prod.yml`, viernes 22:00 CST) hace los pasos 1-6 solo y
+> abre el PR. Los pasos **5 (dirección)** y **7 (review/merge)** siguen siendo humanos.
+
 ## ¿Por qué es seguro?
 
 **Un PR/merge a `main` NO despliega a producción.** Según [CI/CD](03-cicd.md), el
