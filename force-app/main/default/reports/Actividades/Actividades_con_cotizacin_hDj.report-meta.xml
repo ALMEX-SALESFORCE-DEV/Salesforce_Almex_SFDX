@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>Quote$Name</field>
+    </columns>
+    <columns>
+        <field>Quote.Activities$Subject</field>
+    </columns>
+    <columns>
+        <field>Quote.Activities$Description</field>
+    </columns>
+    <columns>
+        <field>Quote.Activities$CreatedDate</field>
+    </columns>
+    <format>Summary</format>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>Quote.Activities.UserAsOwner$Name</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>Quote.Activities$Status</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>Actividades con cotización</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>Actividades_con_cotizaciones__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+    <timeFrameFilter>
+        <dateColumn>Quote.Activities.UserAsOwner$CreatedDate</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>

@@ -164,6 +164,9 @@ export default class CotizadorManufacturados extends LightningElement {
 			this.rangeDates = DateUtils.getDateRangeDetails(this.agreementDate.init, this.agreementDate.end);
 			this.marketReference.cornUsage = data.Corn_Usage__c;
 			this.marketReference.inflation = data.Inflation__c;
+			if (data.date_factor__c) {
+				this.dateFactors = JSON.parse(data.date_factor__c);
+			}
 			this.referenceDate = {
 				basisDate: data.Basis_date__c,
 				cornDate: data.Corn_date__c,
@@ -395,7 +398,8 @@ export default class CotizadorManufacturados extends LightningElement {
 					...this.marketReference,
 					leftDataset: JSON.stringify(leftBackup),
 					rightDataset: JSON.stringify(rightBackup),
-					textMarketReference
+					textMarketReference,
+					factors: JSON.stringify(this.dateFactors)
 				}
 			});
 			if (newQuote.length > 0) {
@@ -538,13 +542,13 @@ export default class CotizadorManufacturados extends LightningElement {
 		this.comments = evt.target.value;
 	}
 
-	onChangeReference(evt) {
+	async onChangeReference(evt) {
 		const { name, value } = evt.target;
 		try {
 			this.marketReference[name] = value;
 
 			if (name === "inflation") {
-				this.updateBreakdownClasses();
+				await this.updateBreakdownClasses();
 			}
 
 			this.loadRighResult();
@@ -629,7 +633,9 @@ export default class CotizadorManufacturados extends LightningElement {
 				Net_Corn_Fijo__c: factor.netCornFijo__c,
 				Cogs_Usd_Variable_Fijo__c: factor.CogsUsdVariableFijo__c,
 				Cogs_Usd_Fijo__c: factor.CogsUsdFijo__c,
-				Cogs_Usd_Formula_Fijo__c: factor.CogsUsdFormulaFijo__c
+				Cogs_Usd_Formula_Fijo__c: factor.CogsUsdFormulaFijo__c,
+				dailyMolienda: factor.Molienda_diaria__c,
+				gasTransp: factor.Gas_Transp__c
 			};
 
 			let coproductValue = 30;
@@ -657,7 +663,7 @@ export default class CotizadorManufacturados extends LightningElement {
 						productInfo: { ...this.opp.Producto__r, ...params }
 					})
 			);
-			this.updateBreakdownClasses();
+			await this.updateBreakdownClasses();
 			this.loadBreakdowns();
 			if (!metaSupplies) {
 				this.showToast({
@@ -677,18 +683,35 @@ export default class CotizadorManufacturados extends LightningElement {
 
 	// Si algunos de los valores de quotation se actualiza este metodo actualizara todos los valores
 	// dentro de la clase para que se actualicen en la tabla de brekdown
-	updateBreakdownClasses() {
-		const quotes = {
-			sgaUsd: this.dateFactors.sgaUst__c || 0,
-			coproductRecov: this.rightResults[0]?.coproductRecov?.value || 0,
-			exwUsd: this.currentLeftPrice?.exwUsd?.value || 0
-		};
-		this.breakdownClasses = this.breakdownClasses.map((b) => {
-			b.updateQuotes(quotes);
-			b.updateInflation(this.marketReference.inflation ?? 0);
-			return b;
-		});
-		this.loadBreakdowns();
+	async updateBreakdownClasses() {
+		try {
+			if (!this.dateFactors) {
+				const serializedFactors = await getManufacturedFactorsByYear({
+					cornFamily: this.opp.Producto__r.Familia_de_maiz__c,
+					subAlmidonFamily: this.opp.Producto__r.sub_familia_almidon__c,
+					year: new Date(this.agreementDate.init).getUTCFullYear()
+				});
+
+				const factors = JSON.parse(serializedFactors);
+				if (factors) {
+					const [factor] = factors;
+					this.dateFactors = factor;
+				}
+			}
+			const quotes = {
+				sgaUsd: this.dateFactors.sgaUst__c || 0,
+				coproductRecov: this.rightResults[0]?.coproductRecov?.value || 0,
+				exwUsd: this.currentLeftPrice?.exwUsd?.value || 0
+			};
+			this.breakdownClasses = this.breakdownClasses.map((b) => {
+				b.updateQuotes(quotes);
+				b.updateInflation(this.marketReference.inflation ?? 0);
+				return b;
+			});
+			this.loadBreakdowns();
+		} catch (error) {
+			console.log("debug: ", error);
+		}
 	}
 
 	// Actualiza los valores de la tabla de breakdowns a un formato json para que pueda ser leido correctamente
@@ -704,7 +727,7 @@ export default class CotizadorManufacturados extends LightningElement {
 		// console.log("===========+++++++++++++++++++++++++++++===========");
 	}
 
-	onChangeSelect(evt) {
+	async onChangeSelect(evt) {
 		const { name } = evt.target;
 		if (name === "leftPriceSelect") {
 			const currentSelected = this.leftResults.find((e) => e.option === evt.target.value);
@@ -719,12 +742,12 @@ export default class CotizadorManufacturados extends LightningElement {
 		}
 
 		// update breakdown
-		this.updateBreakdownClasses();
+		await this.updateBreakdownClasses();
 		this.loadInitSummary();
 		this.validateCheck();
 	}
 
-	onChangeQuotation(evt) {
+	async onChangeQuotation(evt) {
 		try {
 			if (!Boolean(this.marketReference.cornUsage)) {
 				this.showToast({
@@ -755,7 +778,7 @@ export default class CotizadorManufacturados extends LightningElement {
 				}
 			}
 			this.loadInitSummary();
-			this.updateBreakdownClasses();
+			await this.updateBreakdownClasses();
 			this.validateCheck();
 		} catch (error) {
 			console.log(error);
@@ -974,7 +997,7 @@ export default class CotizadorManufacturados extends LightningElement {
 		}
 	}
 
-	loadTotalSummary() {
+	async loadTotalSummary() {
 		this.totalSummaries = sumObject(this.summaries);
 		const result = sumProductDivide(this.summaries, ["monthVolume", "finalFreight", "monthVolume"]);
 		const isNotAlmexPlant = this.invoiceSellingPrice !== "almex-plant";
@@ -985,7 +1008,7 @@ export default class CotizadorManufacturados extends LightningElement {
 		if (this.currentRightPrice) {
 			this.currentRightPrice = this.rightResults.find((e) => e.key === this.currentRightPrice.key);
 		}
-		this.updateBreakdownClasses();
+		await this.updateBreakdownClasses();
 		this.loadLeftResult();
 		this.validateCheck();
 	}

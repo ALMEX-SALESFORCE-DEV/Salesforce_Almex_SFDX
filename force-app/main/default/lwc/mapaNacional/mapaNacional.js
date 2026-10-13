@@ -1983,5 +1983,5 @@ export default class MapaNacional extends LightningElement {
         }
     }
 
-
+    
 }

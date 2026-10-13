@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Queue xmlns="http://soap.sforce.com/2006/04/metadata">
+    <doesIncludeBosses>true</doesIncludeBosses>
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
+    <name>Caso: Cola de servicio</name>
+    <queueMembers>
+        <users>
+            <user>avelina.arredondo@almidones.com.mx</user>
+            <user>jose.gutierrez@almidones.com.mx</user>
+            <user>lucio.martinez@almidones.com.mx</user>
+            <user>francis.morales@almidones.com.mx</user>
+            <user>roberto.rodriguez@almidones.com.mx</user>
+        </users>
+    </queueMembers>
+    <queueSobject>
+        <sobjectType>Case</sobjectType>
+    </queueSobject>
+</Queue>

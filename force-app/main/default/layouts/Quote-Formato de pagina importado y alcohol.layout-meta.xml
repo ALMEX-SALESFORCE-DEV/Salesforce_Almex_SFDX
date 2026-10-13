@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Layout xmlns="http://soap.sforce.com/2006/04/metadata">
-    <excludeButtons>CreateContract</excludeButtons>
-    <excludeButtons>CreateOrder</excludeButtons>
-    <excludeButtons>DeepCloneAction</excludeButtons>
-    <excludeButtons>OpenSlackRecordChannel</excludeButtons>
+    <excludeButtons>GenerateKnowledge</excludeButtons>
     <layoutSections>
         <customLabel>false</customLabel>
         <detailHeading>false</detailHeading>

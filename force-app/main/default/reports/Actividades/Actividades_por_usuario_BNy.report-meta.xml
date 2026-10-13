@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>User$CreatedDate</field>
+    </columns>
+    <columns>
+        <field>User.Activity$OwnerId$What</field>
+    </columns>
+    <columns>
+        <field>User.Activity$OwnerId$Subject</field>
+    </columns>
+    <columns>
+        <field>User.Activity$OwnerId$Description</field>
+    </columns>
+    <format>Summary</format>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>User$Name</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>User.Activity$OwnerId$Status</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>Actividades por usuario</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>User_Activities__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+    <timeFrameFilter>
+        <dateColumn>User.Activity$OwnerId$CreatedDate</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>

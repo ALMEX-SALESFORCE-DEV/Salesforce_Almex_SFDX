@@ -11,6 +11,10 @@
             <section>Información financiera</section>
         </sections>
     </layouts>
+    <quickActions>
+        <label><!-- Actualizar Prospecto --></label>
+        <name>ActualizacionDeProspecto</name>
+    </quickActions>
     <validationRules>
         <errorMessage><!-- Debe proporcionar al menos un medio de contacto: Celular, Correo Electrónico o Teléfono. --></errorMessage>
         <name>RV_01_Datos_de_contacto</name>
