@@ -106,10 +106,16 @@ jobs:
       - name: Validar deploy (check-only, NO aplica cambios)
         if: steps.guard.outputs.ready == 'true'
         run: |
-          HAS_TYPES=$(grep -c "<types>" delta/package/package.xml || true)
-          if [ "$HAS_TYPES" -gt 0 ]; then
+          # Validamos contra el DIRECTORIO source que genera sgd (--generate-delta),
+          # no contra el manifest. Con `-x` el CLI resuelve los members del
+          # package.xml contra el working tree y en el runner Linux falla el match
+          # para fullNames con espacios/acentos (p.ej. "Gerencia y Direccion
+          # Comercial") -> "No source-backed components present in the package".
+          # Con `-d delta/force-app` despliega los archivos que sgd ya copio
+          # (bytes exactos, presentes garantizado); sin matching manifest->FS.
+          if [ -d delta/force-app ]; then
             echo "Validando delta contra sandbox (dry-run)..."
-            sf project deploy start -x delta/package/package.xml -o sandbox --dry-run --ignore-conflicts
+            sf project deploy start -d delta/force-app -o sandbox --dry-run --ignore-conflicts
           else
             echo "Sin metadata en el delta; nada que validar."
           fi
