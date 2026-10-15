@@ -83,13 +83,13 @@ jobs:
           echo "----- package.xml (a desplegar) -----"
           cat delta/package/package.xml
           echo "----- destructiveChanges.xml (a borrar) -----"
-          cat delta/destructiveChanges/destructiveChanges.xml
+          cat delta/destructiveChanges/destructiveChanges.xml 2>/dev/null || echo "(sin borrados)"
 
       - name: Desplegar delta a Sandbox (DESHABILITADO)
         if: steps.guard.outputs.ready == 'true'
         run: |
-          HAS_TYPES=$(grep -c "<types>" delta/package/package.xml || true)
-          HAS_DESTRUCT=$(grep -c "<types>" delta/destructiveChanges/destructiveChanges.xml || true)
+          HAS_TYPES=$(grep -c "<types>" delta/package/package.xml 2>/dev/null || true); HAS_TYPES=${HAS_TYPES:-0}
+          HAS_DESTRUCT=$(grep -c "<types>" delta/destructiveChanges/destructiveChanges.xml 2>/dev/null || true); HAS_DESTRUCT=${HAS_DESTRUCT:-0}
           echo "::notice::Deploy automatico a Sandbox DESHABILITADO. Deploy manual desde terminal."
           echo "Delta calculado (constructive types=$HAS_TYPES, destructive=$HAS_DESTRUCT)."
           # --- DEPLOY REAL COMENTADO (se deploya manual desde terminal) ---

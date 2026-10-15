@@ -137,9 +137,10 @@ jobs:
             # Nota: la ruta de destructiveChanges depende de la version de sfdx-git-delta.
             cp delta/destructiveChanges/destructiveChanges.xml mdout/destructiveChangesPost.xml
           fi
-          if [ -d mdout ]; then
+          MDOUT_TYPES=$(grep -c "<types>" mdout/package.xml 2>/dev/null || true); MDOUT_TYPES=${MDOUT_TYPES:-0}
+          if [ "$MDOUT_TYPES" -gt 0 ] || [ -f mdout/destructiveChangesPost.xml ]; then
             echo "Validando delta contra ${{ steps.guard.outputs.org_label }} (dry-run)..."
             sf project deploy start --metadata-dir mdout -o target --dry-run --ignore-conflicts
           else
-            echo "Sin metadata en el delta; nada que validar."
+            echo "Sin metadata desplegable tras convert (posible .forceignore); nada que validar."
           fi
