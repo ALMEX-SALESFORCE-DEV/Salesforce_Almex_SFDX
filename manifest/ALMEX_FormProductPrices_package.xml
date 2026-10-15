@@ -6,10 +6,6 @@
         <name>ApexClass</name>
     </types>
     <types>
-        <members>ALMEX_FormPrices</members>
-        <name>CustomTab</name>
-    </types>
-    <types>
         <members>almex_FormProductPrices</members>
         <name>LightningComponentBundle</name>
     </types>
