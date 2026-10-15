@@ -61,13 +61,16 @@ jobs:
       # Guard no-bloqueante: si falta el secret, avisa y se omite.
       - name: Determinar org objetivo y credenciales
         id: guard
+        env:
+          SECRET_RELEASE: ${{ secrets.SF_AUTH_URL_RELEASE }}
+          SECRET_SANDBOX: ${{ secrets.SF_AUTH_URL_SANDBOX }}
         run: |
           if [ "${{ github.base_ref }}" = "main" ]; then
             ORG_LABEL="Release (PreProd)"
-            SECRET="${{ secrets.SF_AUTH_URL_RELEASE }}"
+            SECRET="$SECRET_RELEASE"
           else
             ORG_LABEL="cpsandbox"
-            SECRET="${{ secrets.SF_AUTH_URL_SANDBOX }}"
+            SECRET="$SECRET_SANDBOX"
           fi
           echo "org_label=$ORG_LABEL" >> "$GITHUB_OUTPUT"
           if [ -z "$SECRET" ]; then
@@ -89,11 +92,14 @@ jobs:
 
       - name: Autenticar org objetivo (SFDX Auth URL)
         if: steps.guard.outputs.ready == 'true'
+        env:
+          SECRET_RELEASE: ${{ secrets.SF_AUTH_URL_RELEASE }}
+          SECRET_SANDBOX: ${{ secrets.SF_AUTH_URL_SANDBOX }}
         run: |
           if [ "${{ github.base_ref }}" = "main" ]; then
-            printf '%s' "${{ secrets.SF_AUTH_URL_RELEASE }}" > "$RUNNER_TEMP/sfauth"
+            printf '%s' "$SECRET_RELEASE" > "$RUNNER_TEMP/sfauth"
           else
-            printf '%s' "${{ secrets.SF_AUTH_URL_SANDBOX }}" > "$RUNNER_TEMP/sfauth"
+            printf '%s' "$SECRET_SANDBOX" > "$RUNNER_TEMP/sfauth"
           fi
           sf org login sfdx-url --sfdx-url-file "$RUNNER_TEMP/sfauth" --alias target --set-default
           rm -f "$RUNNER_TEMP/sfauth"
@@ -118,8 +124,8 @@ jobs:
       - name: Validar deploy (check-only, metodo mdapi)
         if: steps.guard.outputs.ready == 'true'
         run: |
-          HAS_TYPES=$(grep -c "<types>" delta/package/package.xml || true)
-          HAS_DESTRUCT=$(grep -c "<types>" delta/destructiveChanges/destructiveChanges.xml 2>/dev/null || true)
+          HAS_TYPES=$(grep -c "<types>" delta/package/package.xml 2>/dev/null || true); HAS_TYPES=${HAS_TYPES:-0}
+          HAS_DESTRUCT=$(grep -c "<types>" delta/destructiveChanges/destructiveChanges.xml 2>/dev/null || true); HAS_DESTRUCT=${HAS_DESTRUCT:-0}
           rm -rf mdout
           if [ "$HAS_TYPES" -gt 0 ]; then
             sf project convert source --root-dir delta/force-app --output-dir mdout
@@ -128,6 +134,7 @@ jobs:
             printf '<?xml version="1.0" encoding="UTF-8"?>\n<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n    <version>67.0</version>\n</Package>\n' > mdout/package.xml
           fi
           if [ "$HAS_DESTRUCT" -gt 0 ]; then
+            # Nota: la ruta de destructiveChanges depende de la version de sfdx-git-delta.
             cp delta/destructiveChanges/destructiveChanges.xml mdout/destructiveChangesPost.xml
           fi
           if [ -d mdout ]; then
