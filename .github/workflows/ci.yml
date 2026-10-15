@@ -42,9 +42,7 @@ jobs:
   validate-deploy:
     name: Validar deploy del delta (dry-run)
     # Se omite en ramas release/sync-prod-*: esos PR son flujo inverso prod->repo
-    # (ver docs/07). Validar metadata de PROD contra el sandbox da falsos ❌ por
-    # features/report-types que el sandbox no tiene. Mergear a main no despliega;
-    # el control de esos PR es el review, no el dry-run.
+    # (ver docs/07). Validar metadata de PROD contra el sandbox da falsos ❌.
     if: github.event_name == 'pull_request' && !startsWith(github.head_ref, 'release/sync-prod-')
     runs-on: ubuntu-latest
     steps:
@@ -57,12 +55,23 @@ jobs:
           node-version: "20"
           cache: npm
 
-      # Sin secret no se puede validar contra la org: avisa y no bloquea.
-      - name: Verificar credenciales
+      # Org objetivo segun la rama BASE del PR:
+      #   base dev  -> cpsandbox (SF_AUTH_URL_SANDBOX)
+      #   base main -> Release/PreProd (SF_AUTH_URL_RELEASE)
+      # Guard no-bloqueante: si falta el secret, avisa y se omite.
+      - name: Determinar org objetivo y credenciales
         id: guard
         run: |
-          if [ -z "${{ secrets.SF_AUTH_URL_SANDBOX }}" ]; then
-            echo "::warning::SF_AUTH_URL_SANDBOX no configurado; se omite la validacion de deploy."
+          if [ "${{ github.base_ref }}" = "main" ]; then
+            ORG_LABEL="Release (PreProd)"
+            SECRET="${{ secrets.SF_AUTH_URL_RELEASE }}"
+          else
+            ORG_LABEL="cpsandbox"
+            SECRET="${{ secrets.SF_AUTH_URL_SANDBOX }}"
+          fi
+          echo "org_label=$ORG_LABEL" >> "$GITHUB_OUTPUT"
+          if [ -z "$SECRET" ]; then
+            echo "::warning::Secret de auth para $ORG_LABEL no configurado; se omite la validacion de deploy."
             echo "ready=false" >> "$GITHUB_OUTPUT"
           else
             echo "ready=true" >> "$GITHUB_OUTPUT"
@@ -78,11 +87,15 @@ jobs:
         if: steps.guard.outputs.ready == 'true'
         run: echo y | sf plugins install sfdx-git-delta
 
-      - name: Autenticar Sandbox (SFDX Auth URL)
+      - name: Autenticar org objetivo (SFDX Auth URL)
         if: steps.guard.outputs.ready == 'true'
         run: |
-          printf '%s' "${{ secrets.SF_AUTH_URL_SANDBOX }}" > "$RUNNER_TEMP/sfauth"
-          sf org login sfdx-url --sfdx-url-file "$RUNNER_TEMP/sfauth" --alias sandbox --set-default
+          if [ "${{ github.base_ref }}" = "main" ]; then
+            printf '%s' "${{ secrets.SF_AUTH_URL_RELEASE }}" > "$RUNNER_TEMP/sfauth"
+          else
+            printf '%s' "${{ secrets.SF_AUTH_URL_SANDBOX }}" > "$RUNNER_TEMP/sfauth"
+          fi
+          sf org login sfdx-url --sfdx-url-file "$RUNNER_TEMP/sfauth" --alias target --set-default
           rm -f "$RUNNER_TEMP/sfauth"
 
       - name: Calcular delta del PR (merge-base -> head)
@@ -90,32 +103,36 @@ jobs:
         run: |
           BASE_REF="${{ github.event.pull_request.base.sha }}"
           HEAD="${{ github.event.pull_request.head.sha }}"
-          # sgd hace `git diff FROM TO` (dos puntos = compara arboles directos).
-          # Si la rama se corto de un base desactualizado respecto al target
-          # (p.ej. rama desde main cuando dev ya avanzo), el diff de dos puntos
-          # arrastra TODO el drift base-vs-head y mete falsos positivos en el
-          # dry-run. Usamos el merge-base para que el delta sea SOLO lo que el PR
-          # introduce, igual que el diff de GitHub (tres puntos).
           BASE=$(git merge-base "$BASE_REF" "$HEAD")
           echo "Delta desde merge-base $BASE hasta $HEAD"
           rm -rf delta && mkdir delta
           sf sgd source delta --from "$BASE" --to "$HEAD" --output-dir delta --generate-delta
-          echo "----- package.xml a validar -----"
+          echo "----- package.xml (constructive) -----"
           cat delta/package/package.xml
+          echo "----- destructiveChanges.xml -----"
+          cat delta/destructiveChanges/destructiveChanges.xml 2>/dev/null || echo "(sin borrados)"
 
-      - name: Validar deploy (check-only, NO aplica cambios)
+      # Metodo robusto: convertir source->mdapi y desplegar --metadata-dir.
+      # Evita el matching manifest<->filesystem de -x (falla en Linux con
+      # fullNames con espacios/acentos) y el NothingToDeploy de -d (source tracking).
+      - name: Validar deploy (check-only, metodo mdapi)
         if: steps.guard.outputs.ready == 'true'
         run: |
-          # Validamos contra el DIRECTORIO source que genera sgd (--generate-delta),
-          # no contra el manifest. Con `-x` el CLI resuelve los members del
-          # package.xml contra el working tree y en el runner Linux falla el match
-          # para fullNames con espacios/acentos (p.ej. "Gerencia y Direccion
-          # Comercial") -> "No source-backed components present in the package".
-          # Con `-d delta/force-app` despliega los archivos que sgd ya copio
-          # (bytes exactos, presentes garantizado); sin matching manifest->FS.
-          if [ -d delta/force-app ]; then
-            echo "Validando delta contra sandbox (dry-run)..."
-            sf project deploy start -d delta/force-app -o sandbox --dry-run --ignore-conflicts
+          HAS_TYPES=$(grep -c "<types>" delta/package/package.xml || true)
+          HAS_DESTRUCT=$(grep -c "<types>" delta/destructiveChanges/destructiveChanges.xml 2>/dev/null || true)
+          rm -rf mdout
+          if [ "$HAS_TYPES" -gt 0 ]; then
+            sf project convert source --root-dir delta/force-app --output-dir mdout
+          elif [ "$HAS_DESTRUCT" -gt 0 ]; then
+            mkdir -p mdout
+            printf '<?xml version="1.0" encoding="UTF-8"?>\n<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n    <version>67.0</version>\n</Package>\n' > mdout/package.xml
+          fi
+          if [ "$HAS_DESTRUCT" -gt 0 ]; then
+            cp delta/destructiveChanges/destructiveChanges.xml mdout/destructiveChangesPost.xml
+          fi
+          if [ -d mdout ]; then
+            echo "Validando delta contra ${{ steps.guard.outputs.org_label }} (dry-run)..."
+            sf project deploy start --metadata-dir mdout -o target --dry-run --ignore-conflicts
           else
             echo "Sin metadata en el delta; nada que validar."
           fi
