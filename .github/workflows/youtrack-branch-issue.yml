@@ -1,0 +1,75 @@
+name: YouTrack - crear issue desde rama
+
+# Al crear una rama nueva, genera un issue en YouTrack (proyecto SaFo) y
+# comenta la rama en el issue. No corre para ramas largas (main/dev/release/*)
+# ni para ramas que ya referencian un issue (SaFo-<num>).
+#
+# Requiere el secret YOUTRACK_TOKEN (token permanente de YouTrack con permiso
+# para crear issues en el proyecto). La URL y el proyecto se configuran abajo.
+
+on:
+  create
+
+permissions:
+  contents: read
+
+env:
+  YOUTRACK_URL: https://appsalmex.youtrack.cloud
+  YT_PROJECT_ID: "0-1"        # SaFo (SalesForce)
+
+jobs:
+  crear-issue:
+    name: Crear issue desde la rama
+    runs-on: ubuntu-latest
+    # Solo ramas (no tags)
+    if: ${{ github.event.ref_type == 'branch' }}
+    steps:
+      - name: Validar y crear issue
+        env:
+          BRANCH: ${{ github.event.ref }}
+          REPO: ${{ github.repository }}
+          YT_TOKEN: ${{ secrets.YOUTRACK_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${YT_TOKEN:-}" ]; then
+            echo "::warning::YOUTRACK_TOKEN no configurado; se omite la creacion de issue."
+            exit 0
+          fi
+
+          # Ramas que NO deben generar issue
+          case "$BRANCH" in
+            main|dev)
+              echo "Rama larga '$BRANCH'; no se crea issue."; exit 0 ;;
+            release/*|preRelease/*|hotfix/*)
+              echo "Rama '$BRANCH' de release/hotfix; no se crea issue."; exit 0 ;;
+          esac
+
+          # Ya referencia un issue (SaFo-123 en cualquier parte del nombre)
+          if echo "$BRANCH" | grep -qiE 'SaFo-[0-9]+'; then
+            echo "La rama '$BRANCH' ya referencia un issue; no se crea otro."
+            exit 0
+          fi
+
+          SUMMARY="Rama: $BRANCH"
+          DESCRIPTION="Issue generado automaticamente al crear la rama \`$BRANCH\` en \`$REPO\`."
+
+          echo "Creando issue en YouTrack para la rama '$BRANCH'..."
+          RESP=$(curl -sS -X POST "$YOUTRACK_URL/api/issues?fields=idReadable,id" \
+            -H "Authorization: Bearer $YT_TOKEN" \
+            -H "Accept: application/json" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n --arg p "$YT_PROJECT_ID" --arg s "$SUMMARY" --arg d "$DESCRIPTION" \
+                  '{project:{id:$p}, summary:$s, description:$d, usesMarkdown:true}')")
+
+          ISSUE=$(echo "$RESP" | jq -r '.idReadable // empty')
+          if [ -z "$ISSUE" ]; then
+            echo "::error::No se pudo crear el issue. Respuesta: $RESP"
+            exit 1
+          fi
+
+          echo "Issue creado: $ISSUE"
+          echo "## YouTrack" >> "$GITHUB_STEP_SUMMARY"
+          echo "Issue **[$ISSUE]($YOUTRACK_URL/issue/$ISSUE)** creado para la rama \`$BRANCH\`." >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "> Tip: renombra la rama a \`$ISSUE-$BRANCH\` para que los commits/PR se enlacen solos." >> "$GITHUB_STEP_SUMMARY"

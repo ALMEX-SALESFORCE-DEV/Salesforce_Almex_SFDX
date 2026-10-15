@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>FK_$Sucursal__c.Cuenta__c</field>
+    </columns>
+    <columns>
+        <field>FK_NAME</field>
+    </columns>
+    <columns>
+        <field>FK_$Sucursal__c.Datos_de_direccion__Street__s</field>
+    </columns>
+    <columns>
+        <field>Requerimientos_Especiales__c.Familia_de_producto__c</field>
+    </columns>
+    <columns>
+        <field>Requerimientos_Especiales__c.Tipo_de_requerimiento__c</field>
+    </columns>
+    <columns>
+        <field>Requerimientos_Especiales__c.Descripci_n_del_requerimiento__c</field>
+    </columns>
+    <columns>
+        <field>Requerimientos_Especiales__c.Estatus__c</field>
+    </columns>
+    <columns>
+        <field>CUST_NAME</field>
+    </columns>
+    <columns>
+        <field>Requerimientos_Especiales__c.rea_responsable_de_ejecuci_n__c</field>
+    </columns>
+    <format>Tabular</format>
+    <name>Requerimientos especiales</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>CustomEntity$Requerimientos_Especiales__c@Requerimientos_Especiales__c.Sucursal__c</reportType>
+    <scope>organization</scope>
+    <showDetails>true</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+    <timeFrameFilter>
+        <dateColumn>CUST_CREATED_DATE</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>

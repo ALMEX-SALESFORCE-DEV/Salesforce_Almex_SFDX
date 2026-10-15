@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Almidones 25kg</fullName>
+        <default>false</default>
+        <label>Almidones 25kg</label>
+    </customValue>
+    <customValue>
+        <fullName>Almidones Granel</fullName>
+        <default>false</default>
+        <label>Almidones Granel</label>
+    </customValue>
+    <customValue>
+        <fullName>Almidones SS</fullName>
+        <default>false</default>
+        <label>Almidones SS</label>
+    </customValue>
+    <customValue>
+        <fullName>Almidones MM</fullName>
+        <default>false</default>
+        <label>Almidones MM</label>
+    </customValue>
+    <masterLabel>sub familia almidon</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

@@ -225,6 +225,8 @@ function getRecordPeriod(record) {
 
     if (
         Number.isInteger(periodYear) &&
+        periodYear >= 2000 &&
+        periodYear <= 2100 &&
         Number.isInteger(periodMonth) &&
         periodMonth >= 1 &&
         periodMonth <= 12

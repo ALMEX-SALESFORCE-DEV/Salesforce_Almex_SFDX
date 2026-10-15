@@ -41,7 +41,11 @@ jobs:
 
   validate-deploy:
     name: Validar deploy del delta (dry-run)
-    if: github.event_name == 'pull_request'
+    # Se omite en ramas release/sync-prod-*: esos PR son flujo inverso prod->repo
+    # (ver docs/07). Validar metadata de PROD contra el sandbox da falsos ❌ por
+    # features/report-types que el sandbox no tiene. Mergear a main no despliega;
+    # el control de esos PR es el review, no el dry-run.
+    if: github.event_name == 'pull_request' && !startsWith(github.head_ref, 'release/sync-prod-')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -81,12 +85,19 @@ jobs:
           sf org login sfdx-url --sfdx-url-file "$RUNNER_TEMP/sfauth" --alias sandbox --set-default
           rm -f "$RUNNER_TEMP/sfauth"
 
-      - name: Calcular delta del PR (base -> head)
+      - name: Calcular delta del PR (merge-base -> head)
         if: steps.guard.outputs.ready == 'true'
         run: |
-          BASE="${{ github.event.pull_request.base.sha }}"
+          BASE_REF="${{ github.event.pull_request.base.sha }}"
           HEAD="${{ github.event.pull_request.head.sha }}"
-          echo "Delta desde $BASE hasta $HEAD"
+          # sgd hace `git diff FROM TO` (dos puntos = compara arboles directos).
+          # Si la rama se corto de un base desactualizado respecto al target
+          # (p.ej. rama desde main cuando dev ya avanzo), el diff de dos puntos
+          # arrastra TODO el drift base-vs-head y mete falsos positivos en el
+          # dry-run. Usamos el merge-base para que el delta sea SOLO lo que el PR
+          # introduce, igual que el diff de GitHub (tres puntos).
+          BASE=$(git merge-base "$BASE_REF" "$HEAD")
+          echo "Delta desde merge-base $BASE hasta $HEAD"
           rm -rf delta && mkdir delta
           sf sgd source delta --from "$BASE" --to "$HEAD" --output-dir delta --generate-delta
           echo "----- package.xml a validar -----"
@@ -95,10 +106,16 @@ jobs:
       - name: Validar deploy (check-only, NO aplica cambios)
         if: steps.guard.outputs.ready == 'true'
         run: |
-          HAS_TYPES=$(grep -c "<types>" delta/package/package.xml || true)
-          if [ "$HAS_TYPES" -gt 0 ]; then
+          # Validamos contra el DIRECTORIO source que genera sgd (--generate-delta),
+          # no contra el manifest. Con `-x` el CLI resuelve los members del
+          # package.xml contra el working tree y en el runner Linux falla el match
+          # para fullNames con espacios/acentos (p.ej. "Gerencia y Direccion
+          # Comercial") -> "No source-backed components present in the package".
+          # Con `-d delta/force-app` despliega los archivos que sgd ya copio
+          # (bytes exactos, presentes garantizado); sin matching manifest->FS.
+          if [ -d delta/force-app ]; then
             echo "Validando delta contra sandbox (dry-run)..."
-            sf project deploy start -x delta/package/package.xml -o sandbox --dry-run --ignore-conflicts
+            sf project deploy start -d delta/force-app -o sandbox --dry-run --ignore-conflicts
           else
             echo "Sin metadata en el delta; nada que validar."
           fi
