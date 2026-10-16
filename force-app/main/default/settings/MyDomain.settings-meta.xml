@@ -13,9 +13,9 @@
     <enableExtendedRedirections>false</enableExtendedRedirections>
     <enableLegacyRedirections>false</enableLegacyRedirections>
     <enableNativeBrowserForAuthOnAndroid>false</enableNativeBrowserForAuthOnAndroid>
-    <enableNativeBrowserForAuthOnIos>false</enableNativeBrowserForAuthOnIos>
+    <enableNativeBrowserForAuthOnIos>true</enableNativeBrowserForAuthOnIos>
     <enableShareBrowserSessionAndroidForAuth>false</enableShareBrowserSessionAndroidForAuth>
-    <enableShareBrowserSessionIOSForAuth>false</enableShareBrowserSessionIOSForAuth>
+    <enableShareBrowserSessionIOSForAuth>true</enableShareBrowserSessionIOSForAuth>
     <instancedUrlRedirectHandling>NoRedirect</instancedUrlRedirectHandling>
     <isFirstPartyCookieUseRequired>false</isFirstPartyCookieUseRequired>
     <isIcorInstApiTrafficBlocked>true</isIcorInstApiTrafficBlocked>
