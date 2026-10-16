@@ -1,12 +1,12 @@
 name: Deploy
 
-# Sandbox: en cada push a dev despliega SOLO lo modificado en ese push
-#          (delta calculado con sfdx-git-delta). No toca lo que no cambio.
-# Prod:    ejecucion manual (workflow_dispatch) escribiendo "DEPLOY".
-#          Sigue desplegando solo el bundle cotizadorManufacturados.
+# Sandbox (push a dev): delta a cpsandbox — DESHABILITADO (deploy manual desde terminal).
+# PreProd/Release (push a main): delta a Release — ACTIVO (metodo mdapi).
+# Prod: manual (workflow_dispatch + escribir "DEPLOY"). Activo pero SOLO manual,
+#       nunca se dispara solo; sigue desplegando el bundle cotizadorManufacturados.
 on:
   push:
-    branches: [dev]
+    branches: [dev, main]
   workflow_dispatch:
     inputs:
       confirm:
@@ -20,7 +20,8 @@ env:
 jobs:
   sandbox:
     name: Deploy delta a Sandbox
-    if: github.event_name == 'push'
+    # Solo en push a dev (no en push a main, que lo maneja el job release).
+    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -104,71 +105,99 @@ jobs:
           #   [ "$HAS_DESTRUCT" -gt 0 ] && cp delta/destructiveChanges/destructiveChanges.xml mdout/destructiveChangesPost.xml
           #   [ -d mdout ] && sf project deploy start --metadata-dir mdout -o sandbox --ignore-conflicts
 
-  # ------------------------------------------------------------------
-  # PreProd (Release): auto-deploy del delta al mergear a main.
-  # DESHABILITADO por ahora (deploy manual desde terminal).
-  # Para activar: (1) agregar `main` a `on.push.branches` arriba,
-  # (2) descomentar este job, (3) tener el secret SF_AUTH_URL_RELEASE.
-  # ------------------------------------------------------------------
-  # release:
-  #   name: Deploy delta a Release (PreProd)
-  #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 0
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version: "20"
-  #         cache: npm
-  #     - name: Verificar credenciales
-  #       id: guard
-  #       run: |
-  #         if [ -z "${{ secrets.SF_AUTH_URL_RELEASE }}" ]; then
-  #           echo "::warning::SF_AUTH_URL_RELEASE no configurado; se omite."
-  #           echo "ready=false" >> "$GITHUB_OUTPUT"
-  #         else
-  #           echo "ready=true" >> "$GITHUB_OUTPUT"
-  #         fi
-  #     - name: Instalar Salesforce CLI
-  #       if: steps.guard.outputs.ready == 'true'
-  #       run: |
-  #         curl -fsSL https://developer.salesforce.com/media/salesforce-cli/sf/channels/stable/sf-linux-x64.tar.xz | tar xJ -C "$HOME"
-  #         echo "$HOME/sf/bin" >> "$GITHUB_PATH"
-  #     - name: Instalar plugin sfdx-git-delta
-  #       if: steps.guard.outputs.ready == 'true'
-  #       run: echo y | sf plugins install sfdx-git-delta
-  #     - name: Autenticar Release (SFDX Auth URL)
-  #       if: steps.guard.outputs.ready == 'true'
-  #       run: |
-  #         printf '%s' "${{ secrets.SF_AUTH_URL_RELEASE }}" > "$RUNNER_TEMP/sfauth"
-  #         sf org login sfdx-url --sfdx-url-file "$RUNNER_TEMP/sfauth" --alias release --set-default
-  #         rm -f "$RUNNER_TEMP/sfauth"
-  #     - name: Calcular delta (solo lo del push)
-  #       if: steps.guard.outputs.ready == 'true'
-  #       run: |
-  #         BEFORE="${{ github.event.before }}"
-  #         AFTER="${{ github.sha }}"
-  #         if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
-  #           BEFORE=$(git rev-parse "$AFTER^" 2>/dev/null || echo "$AFTER")
-  #         fi
-  #         rm -rf delta && mkdir delta
-  #         sf sgd source delta --from "$BEFORE" --to "$AFTER" --output-dir delta --generate-delta
-  #     - name: Desplegar delta a Release (metodo mdapi)
-  #       if: steps.guard.outputs.ready == 'true'
-  #       run: |
-  #         HAS_TYPES=$(grep -c "<types>" delta/package/package.xml || true)
-  #         HAS_DESTRUCT=$(grep -c "<types>" delta/destructiveChanges/destructiveChanges.xml || true)
-  #         rm -rf mdout
-  #         if [ "$HAS_TYPES" -gt 0 ]; then
-  #           sf project convert source --root-dir delta/force-app --output-dir mdout
-  #         elif [ "$HAS_DESTRUCT" -gt 0 ]; then
-  #           mkdir -p mdout
-  #           printf '<?xml version="1.0" encoding="UTF-8"?>\n<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n    <version>67.0</version>\n</Package>\n' > mdout/package.xml
-  #         fi
-  #         [ "$HAS_DESTRUCT" -gt 0 ] && cp delta/destructiveChanges/destructiveChanges.xml mdout/destructiveChangesPost.xml
-  #         [ -d mdout ] && sf project deploy start --metadata-dir mdout -o release --ignore-conflicts
+  # PreProd (Release): auto-deploy del delta al hacer push/merge a main. ACTIVO.
+  # Metodo mdapi (convert source -> --metadata-dir). Guard no-bloqueante si falta el secret.
+  release:
+    name: Deploy delta a Release (PreProd)
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Verificar credenciales
+        id: guard
+        env:
+          SECRET_RELEASE: ${{ secrets.SF_AUTH_URL_RELEASE }}
+        run: |
+          if [ -z "$SECRET_RELEASE" ]; then
+            echo "::warning::SF_AUTH_URL_RELEASE no configurado; se omite el deploy a Release."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Instalar dependencias
+        if: steps.guard.outputs.ready == 'true'
+        run: npm ci
+
+      - name: Tests unitarios (gate)
+        if: steps.guard.outputs.ready == 'true'
+        run: npm run test:unit
+
+      - name: Instalar Salesforce CLI
+        if: steps.guard.outputs.ready == 'true'
+        run: |
+          curl -fsSL https://developer.salesforce.com/media/salesforce-cli/sf/channels/stable/sf-linux-x64.tar.xz | tar xJ -C "$HOME"
+          echo "$HOME/sf/bin" >> "$GITHUB_PATH"
+
+      - name: Instalar plugin sfdx-git-delta
+        if: steps.guard.outputs.ready == 'true'
+        run: echo y | sf plugins install sfdx-git-delta
+
+      - name: Autenticar Release (SFDX Auth URL)
+        if: steps.guard.outputs.ready == 'true'
+        env:
+          SECRET_RELEASE: ${{ secrets.SF_AUTH_URL_RELEASE }}
+        run: |
+          printf '%s' "$SECRET_RELEASE" > "$RUNNER_TEMP/sfauth"
+          sf org login sfdx-url --sfdx-url-file "$RUNNER_TEMP/sfauth" --alias release --set-default
+          rm -f "$RUNNER_TEMP/sfauth"
+
+      - name: Calcular delta (solo lo del push)
+        if: steps.guard.outputs.ready == 'true'
+        run: |
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.sha }}"
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            BEFORE=$(git rev-parse "$AFTER^" 2>/dev/null || echo "$AFTER")
+          fi
+          echo "Delta desde $BEFORE hasta $AFTER"
+          rm -rf delta && mkdir delta
+          sf sgd source delta --from "$BEFORE" --to "$AFTER" --output-dir delta --generate-delta
+          echo "----- package.xml (a desplegar) -----"
+          cat delta/package/package.xml
+          echo "----- destructiveChanges.xml (a borrar) -----"
+          cat delta/destructiveChanges/destructiveChanges.xml 2>/dev/null || echo "(sin borrados)"
+
+      - name: Desplegar delta a Release (metodo mdapi)
+        if: steps.guard.outputs.ready == 'true'
+        run: |
+          HAS_TYPES=$(grep -c "<types>" delta/package/package.xml 2>/dev/null || true); HAS_TYPES=${HAS_TYPES:-0}
+          HAS_DESTRUCT=$(grep -c "<types>" delta/destructiveChanges/destructiveChanges.xml 2>/dev/null || true); HAS_DESTRUCT=${HAS_DESTRUCT:-0}
+          rm -rf mdout
+          if [ "$HAS_TYPES" -gt 0 ]; then
+            sf project convert source --root-dir delta/force-app --output-dir mdout
+          elif [ "$HAS_DESTRUCT" -gt 0 ]; then
+            mkdir -p mdout
+            printf '<?xml version="1.0" encoding="UTF-8"?>\n<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n    <version>67.0</version>\n</Package>\n' > mdout/package.xml
+          fi
+          if [ "$HAS_DESTRUCT" -gt 0 ]; then
+            cp delta/destructiveChanges/destructiveChanges.xml mdout/destructiveChangesPost.xml
+          fi
+          MDOUT_TYPES=$(grep -c "<types>" mdout/package.xml 2>/dev/null || true); MDOUT_TYPES=${MDOUT_TYPES:-0}
+          if [ "$MDOUT_TYPES" -gt 0 ] || [ -f mdout/destructiveChangesPost.xml ]; then
+            echo "Desplegando delta a Release (PreProd)..."
+            sf project deploy start --metadata-dir mdout -o release --ignore-conflicts
+          else
+            echo "Sin metadata desplegable tras convert (posible .forceignore); nada que desplegar."
+          fi
 
   prod:
     name: Deploy a Produccion (manual)
@@ -207,11 +236,10 @@ jobs:
           sf org login sfdx-url --sfdx-url-file "$RUNNER_TEMP/sfauth" --alias prod --set-default
           rm -f "$RUNNER_TEMP/sfauth"
 
-      - name: Deploy a Produccion (DESHABILITADO)
-        run: |
-          echo "::notice::Deploy automatico a PROD DESHABILITADO. Deploy manual desde terminal."
-          # --- DEPLOY REAL COMENTADO (se deploya manual desde terminal) ---
-          # Validacion dry-run (solo cotizadorManufacturados):
-          #   sf project deploy start -d "$DEPLOY_PATH" -o prod --dry-run
-          # Deploy real:
-          #   sf project deploy start -d "$DEPLOY_PATH" -o prod
+      # Solo corre con disparo MANUAL (workflow_dispatch + escribir DEPLOY).
+      # Scope: bundle cotizadorManufacturados (sin cambios respecto al flujo actual).
+      - name: Validar (dry-run, solo cotizadorManufacturados)
+        run: sf project deploy start -d "$DEPLOY_PATH" -o prod --dry-run
+
+      - name: Deploy a Produccion (solo cotizadorManufacturados)
+        run: sf project deploy start -d "$DEPLOY_PATH" -o prod
