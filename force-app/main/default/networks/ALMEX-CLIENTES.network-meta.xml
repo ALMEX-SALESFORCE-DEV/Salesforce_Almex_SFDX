@@ -57,9 +57,9 @@
     <networkMemberGroups>
         <permissionSet>Experience</permissionSet>
         <permissionSet>Permisos_para_portal_de_clientes</permissionSet>
-        <profile>customer community user</profile>
-        <profile>admin</profile>
-        <profile>usuario de comunidades</profile>
+        <profile>Customer Community User</profile>
+        <profile>Admin</profile>
+        <profile>Usuario de comunidades</profile>
     </networkMemberGroups>
     <networkPageOverrides>
         <changePasswordPageOverrideSetting>Standard</changePasswordPageOverrideSetting>

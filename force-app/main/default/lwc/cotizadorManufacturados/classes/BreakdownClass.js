@@ -20,6 +20,10 @@ class BreakdownClass {
 	cogsUsdFijo = 0;
 	cogsUsdFormulaFijo = 0; // x
 
+	// New Factors
+	dailyMolienda = 0;
+	gasTransp = 0;
+
 	// Nuevas variables
 	inflation = 0; // Inflación representada en numero entero 10, 23
 
@@ -41,6 +45,8 @@ class BreakdownClass {
 				this.cogsFixedUSD = Number(supplies.productInfo.Cogs_Usd_Fijo__c) || 0;
 				this.netCornCostUSDFixed = Number(supplies.productInfo.Net_Corn_Fijo__c) || 0;
 				this.cogsUsdFormulaFijo = Number(supplies.productInfo.Cogs_Usd_Formula_Fijo__c) || 0;
+				this.dailyMolienda = Number(supplies.productInfo.dailyMolienda) || 0;
+				this.gasTransp = Number(supplies.productInfo.gasTransp) || 0;
 			}
 		}
 	}
@@ -61,6 +67,8 @@ class BreakdownClass {
 		this.factor2Breakdown = breakdown.original.factor2Breakdown;
 		this.cogsUsdFormulaFijo = breakdown.original.cogsUsdFormulaFijo;
 		this.inflation = breakdown.original.inflation || 0;
+		this.dailyMolienda = breakdown.original.dailyMolienda || 1995;
+		this.gasTransp = breakdown.original.gasTransp || 0;
 	}
 
 	get id() {
@@ -107,7 +115,7 @@ class BreakdownClass {
 	}
 
 	get cogsUsd() {
-		return (this.gas * this.cogsUsdFormulaFijo) / ((1995 * 360) / 12);
+		return (this.gas * this.cogsUsdFormulaFijo) / ((this.dailyMolienda * 360) / 12);
 	}
 
 	get variableMargin() {
@@ -196,7 +204,9 @@ class BreakdownClass {
 			cogsUsdFormulaFijo: this.cogsUsdFormulaFijo,
 			inflation: this.inflation,
 			cogsFixedWithInflation: this.cogsFixedWithInflation,
-			sgaExpensesUSDWithInflation: this.sgaExpensesUSDWithInflation
+			sgaExpensesUSDWithInflation: this.sgaExpensesUSDWithInflation,
+			dailyMolienda: this.dailyMolienda,
+			gasTransp: this.gasTransp
 		};
 
 		return {
@@ -228,6 +238,8 @@ class BreakdownClass {
 			cogsFixedWithInflation: round(this.cogsFixedWithInflation, 2),
 			sgaExpensesUSDWithInflation: round(this.sgaExpensesUSDWithInflation, 2),
 			inflation: this.inflation,
+			dailyMolienda: this.dailyMolienda,
+			gasTransp: this.gasTransp,
 			original: data
 		};
 	}

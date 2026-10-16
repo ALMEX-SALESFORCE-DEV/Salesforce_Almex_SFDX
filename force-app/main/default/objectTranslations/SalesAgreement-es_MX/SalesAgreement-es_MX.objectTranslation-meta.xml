@@ -20,6 +20,22 @@
             <section>Vínculos personalizados</section>
         </sections>
     </layouts>
+    <quickActions>
+        <label><!-- Actualizar Fin de Vigencia de Lista --></label>
+        <name>Actualizar_Fin_de_Vigencia_de_Lista</name>
+    </quickActions>
+    <quickActions>
+        <label><!-- PDF Almex --></label>
+        <name>PDF_Almex</name>
+    </quickActions>
+    <quickActions>
+        <label><!-- PDF Promer --></label>
+        <name>PDF_Promer</name>
+    </quickActions>
+    <quickActions>
+        <label><!-- Vincular Lista de precios --></label>
+        <name>Vincular_Lista_de_precios</name>
+    </quickActions>
     <workflowTasks>
         <name>Aprobaci_n_pendiente</name>
         <subject><!-- Aprobación pendiente --></subject>

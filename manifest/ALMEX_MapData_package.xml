@@ -10,11 +10,6 @@
         <name>LightningComponentBundle</name>
     </types>
     <types>
-        <members>Precio_productos__c.Periodo_Anio__c</members>
-        <members>Precio_productos__c.Periodo_Mes__c</members>
-        <name>CustomField</name>
-    </types>
-    <types>
         <members>MexicoStatesMap</members>
         <name>StaticResource</name>
     </types>

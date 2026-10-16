@@ -97,6 +97,30 @@
             <section>P Venta</section>
         </sections>
     </layouts>
+    <quickActions>
+        <label><!-- Actualizar --></label>
+        <name>Actualizar</name>
+    </quickActions>
+    <quickActions>
+        <label><!-- Actualizar Fin de Vigencia de Lista --></label>
+        <name>Actualizar_Fin_de_Vigencia_de_Lista</name>
+    </quickActions>
+    <quickActions>
+        <label><!-- Convertir a un Acuerdo de suministro --></label>
+        <name>Convertir_personalizado</name>
+    </quickActions>
+    <quickActions>
+        <label><!-- Correo activación de precios --></label>
+        <name>Correo_activaci_n_de_precios</name>
+    </quickActions>
+    <quickActions>
+        <label><!-- SendEmail --></label>
+        <name>SendEmail</name>
+    </quickActions>
+    <quickActions>
+        <label><!-- Vincular Lista de precios --></label>
+        <name>Vincular_Lista_de_precios</name>
+    </quickActions>
     <recordTypes>
         <label><!-- Co producto --></label>
         <name>Co_producto</name>

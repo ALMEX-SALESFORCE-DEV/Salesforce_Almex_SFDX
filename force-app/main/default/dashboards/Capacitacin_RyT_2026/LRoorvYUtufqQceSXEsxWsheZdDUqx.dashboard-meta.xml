@@ -39,7 +39,7 @@
                 </groupingSortProperties>
                 <header>Casos por propietario agrupado por tipo</header>
                 <legendPosition>Right</legendPosition>
-                <report>Servicio/Casos_por_propietario_agrupado_por_tipo_znX</report>
+                <report>Capacitacin_RyT_2026/Servicio/Casos_por_propietario_agrupado_por_tipo_znX</report>
                 <showPercentage>false</showPercentage>
                 <showValues>true</showValues>
                 <sortBy>RowLabelAscending</sortBy>

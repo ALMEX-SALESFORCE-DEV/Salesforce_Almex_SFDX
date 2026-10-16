@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <ContextDefinition xmlns="http://soap.sforce.com/2006/04/metadata">
     <canBeReferenceDefinition>false</canBeReferenceDefinition>
     <clonedFrom>SalesAgreementQuotesConversion__stdctx</clonedFrom>
@@ -39,7 +39,8 @@
                         <queryAttribute>Description</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Description</contextAttribute>
-                    <contextInputAttributeName>Description</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Description</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -47,7 +48,8 @@
                         <queryAttribute>AccountId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Account</contextAttribute>
-                    <contextInputAttributeName>Account</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Account</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -55,7 +57,8 @@
                         <queryAttribute>ContactId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Contact</contextAttribute>
-                    <contextInputAttributeName>Contact</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Contact</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -63,7 +66,8 @@
                         <queryAttribute>OpportunityId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Opportunity</contextAttribute>
-                    <contextInputAttributeName>Opportunity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Opportunity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -71,7 +75,8 @@
                         <queryAttribute>Pricebook2Id</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Pricebook</contextAttribute>
-                    <contextInputAttributeName>Pricebook</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Pricebook</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -79,7 +84,8 @@
                         <queryAttribute>CurrencyIsoCode</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>CurrencyIsoCode</contextAttribute>
-                    <contextInputAttributeName>CurrencyIsoCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >CurrencyIsoCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -87,7 +93,8 @@
                         <queryAttribute>BillToContactId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>BillToContact</contextAttribute>
-                    <contextInputAttributeName>BillToContact</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillToContact</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -95,7 +102,8 @@
                         <queryAttribute>Status</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Status</contextAttribute>
-                    <contextInputAttributeName>Status</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Status</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -103,7 +111,8 @@
                         <queryAttribute>TotalPrice</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>TotalAmount</contextAttribute>
-                    <contextInputAttributeName>TotalAmount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >TotalAmount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -111,7 +120,8 @@
                         <queryAttribute>Subtotal</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Subtotal</contextAttribute>
-                    <contextInputAttributeName>Subtotal</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Subtotal</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -119,7 +129,8 @@
                         <queryAttribute>BillingName</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>BillingName</contextAttribute>
-                    <contextInputAttributeName>BillingName</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingName</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -127,7 +138,8 @@
                         <queryAttribute>BillingStreet</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>BillingStreet</contextAttribute>
-                    <contextInputAttributeName>BillingStreet</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingStreet</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -135,7 +147,8 @@
                         <queryAttribute>BillingCity</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>BillingCity</contextAttribute>
-                    <contextInputAttributeName>BillingCity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingCity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -143,7 +156,8 @@
                         <queryAttribute>BillingState</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>BillingState</contextAttribute>
-                    <contextInputAttributeName>BillingState</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingState</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -151,7 +165,8 @@
                         <queryAttribute>BillingCountry</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>BillingCountry</contextAttribute>
-                    <contextInputAttributeName>BillingCountry</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingCountry</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -159,7 +174,8 @@
                         <queryAttribute>BillingPostalCode</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>BillingPostalCode</contextAttribute>
-                    <contextInputAttributeName>BillingPostalCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingPostalCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -167,7 +183,8 @@
                         <queryAttribute>ShippingName</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ShippingName</contextAttribute>
-                    <contextInputAttributeName>ShippingName</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ShippingName</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -175,7 +192,8 @@
                         <queryAttribute>ShippingStreet</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ShippingStreet</contextAttribute>
-                    <contextInputAttributeName>ShippingStreet</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ShippingStreet</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -183,7 +201,8 @@
                         <queryAttribute>ShippingCity</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ShippingCity</contextAttribute>
-                    <contextInputAttributeName>ShippingCity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ShippingCity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -191,7 +210,8 @@
                         <queryAttribute>ShippingState</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ShippingState</contextAttribute>
-                    <contextInputAttributeName>ShippingState</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ShippingState</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -199,7 +219,8 @@
                         <queryAttribute>ShippingCountry</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ShippingCountry</contextAttribute>
-                    <contextInputAttributeName>ShippingCountry</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ShippingCountry</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -207,7 +228,8 @@
                         <queryAttribute>ShippingPostalCode</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ShippingPostalCode</contextAttribute>
-                    <contextInputAttributeName>ShippingPostalCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ShippingPostalCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -215,7 +237,8 @@
                         <queryAttribute>QuoteToName</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>QuoteToName</contextAttribute>
-                    <contextInputAttributeName>QuoteToName</contextInputAttributeName>
+                    <contextInputAttributeName
+          >QuoteToName</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -223,7 +246,8 @@
                         <queryAttribute>QuoteToStreet</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>QuoteToStreet</contextAttribute>
-                    <contextInputAttributeName>QuoteToStreet</contextInputAttributeName>
+                    <contextInputAttributeName
+          >QuoteToStreet</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -231,7 +255,8 @@
                         <queryAttribute>QuoteToCity</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>QuoteToCity</contextAttribute>
-                    <contextInputAttributeName>QuoteToCity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >QuoteToCity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -239,7 +264,8 @@
                         <queryAttribute>QuoteToState</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>QuoteToState</contextAttribute>
-                    <contextInputAttributeName>QuoteToState</contextInputAttributeName>
+                    <contextInputAttributeName
+          >QuoteToState</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -247,7 +273,8 @@
                         <queryAttribute>QuoteToCountry</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>QuoteToCountry</contextAttribute>
-                    <contextInputAttributeName>QuoteToCountry</contextInputAttributeName>
+                    <contextInputAttributeName
+          >QuoteToCountry</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -255,7 +282,8 @@
                         <queryAttribute>QuoteToPostalCode</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>QuoteToPostalCode</contextAttribute>
-                    <contextInputAttributeName>QuoteToPostalCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >QuoteToPostalCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -263,7 +291,8 @@
                         <queryAttribute>LastPricedDate</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>LastPricedDate</contextAttribute>
-                    <contextInputAttributeName>LastPricedDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >LastPricedDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -271,83 +300,104 @@
                         <queryAttribute>ContractId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Contract</contextAttribute>
-                    <contextInputAttributeName>Contract</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Contract</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>StartDate</contextAttribute>
-                    <contextInputAttributeName>StartDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >StartDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>EndDate</contextAttribute>
-                    <contextInputAttributeName>EndDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >EndDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ProductLevel</contextAttribute>
-                    <contextInputAttributeName>ProductLevel</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ProductLevel</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>AgreementType</contextAttribute>
-                    <contextInputAttributeName>AgreementType</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AgreementType</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ScheduleFrequency</contextAttribute>
-                    <contextInputAttributeName>ScheduleFrequency</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ScheduleFrequency</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ScheduleCount</contextAttribute>
-                    <contextInputAttributeName>ScheduleCount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ScheduleCount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ActualsCalculationMode</contextAttribute>
-                    <contextInputAttributeName>ActualsCalculationMode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ActualsCalculationMode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>AccountInputOnly</contextAttribute>
-                    <contextInputAttributeName>AccountInputOnly</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AccountInputOnly</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>TotalProductAmount</contextAttribute>
-                    <contextInputAttributeName>TotalProductAmount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >TotalProductAmount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>TotalAdjustmentAmount</contextAttribute>
-                    <contextInputAttributeName>TotalAdjustmentAmount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >TotalAdjustmentAmount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
-                    <contextAttribute>TotalAdjustmentDistAmount</contextAttribute>
-                    <contextInputAttributeName>TotalAdjustmentDistAmount</contextInputAttributeName>
+                    <contextAttribute
+          >TotalAdjustmentDistAmount</contextAttribute>
+                    <contextInputAttributeName
+          >TotalAdjustmentDistAmount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ActivatedDate</contextAttribute>
-                    <contextInputAttributeName>ActivatedDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ActivatedDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>StatusCode</contextAttribute>
-                    <contextInputAttributeName>StatusCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >StatusCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Unidad_de_medida__c</contextAttribute>
-                    <contextInputAttributeName>Unidad_de_medida__c</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Unidad_de_medida__c</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>recordId</contextAttribute>
-                    <contextInputAttributeName>recordId</contextInputAttributeName>
+                    <contextInputAttributeName
+          >recordId</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Frecuencia</contextAttribute>
-                    <contextInputAttributeName>Frecuencia</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Frecuencia</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Number_of_months__c</contextAttribute>
-                    <contextInputAttributeName>Number_of_months__c</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Number_of_months__c</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Fecha_de_inicio__c</contextAttribute>
-                    <contextInputAttributeName>Fecha_de_inicio__c</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Fecha_de_inicio__c</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ExpirationDate</contextAttribute>
-                    <contextInputAttributeName>ExpirationDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ExpirationDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextNode>SalesAgreementQuote</contextNode>
                 <object>Quote</object>
@@ -358,16 +408,20 @@
                         <objectName>QuoteLineItem</objectName>
                         <queryAttribute>QuoteId</queryAttribute>
                     </contextAttrHydrationDetails>
-                    <contextAttribute>SalesAgreementQuoteItemParent</contextAttribute>
-                    <contextInputAttributeName>SalesAgreementQuoteItemParent</contextInputAttributeName>
+                    <contextAttribute
+          >SalesAgreementQuoteItemParent</contextAttribute>
+                    <contextInputAttributeName
+          >SalesAgreementQuoteItemParent</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
                         <objectName>QuoteLineItem</objectName>
                         <queryAttribute>Id</queryAttribute>
                     </contextAttrHydrationDetails>
-                    <contextAttribute>SalesAgreementQuoteItemSource</contextAttribute>
-                    <contextInputAttributeName>SalesAgreementQuoteItemSource</contextInputAttributeName>
+                    <contextAttribute
+          >SalesAgreementQuoteItemSource</contextAttribute>
+                    <contextInputAttributeName
+          >SalesAgreementQuoteItemSource</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -375,7 +429,8 @@
                         <queryAttribute>PricebookEntryId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>PricebookEntry</contextAttribute>
-                    <contextInputAttributeName>PricebookEntry</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PricebookEntry</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -383,7 +438,8 @@
                         <queryAttribute>QuantityUnitOfMeasureId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>UnitOfMeasure__std</contextAttribute>
-                    <contextInputAttributeName>UnitOfMeasure__std</contextInputAttributeName>
+                    <contextInputAttributeName
+          >UnitOfMeasure__std</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -391,7 +447,8 @@
                         <queryAttribute>StartQuantity</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>StartQuantity</contextAttribute>
-                    <contextInputAttributeName>StartQuantity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >StartQuantity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -399,7 +456,8 @@
                         <queryAttribute>Subtotal</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Subtotal</contextAttribute>
-                    <contextInputAttributeName>Subtotal</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Subtotal</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -407,7 +465,8 @@
                         <queryAttribute>EndQuantity</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>EndQuantity</contextAttribute>
-                    <contextInputAttributeName>EndQuantity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >EndQuantity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -415,7 +474,8 @@
                         <queryAttribute>Quantity</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Quantity</contextAttribute>
-                    <contextInputAttributeName>Quantity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Quantity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -427,7 +487,8 @@
                         <queryAttribute>ProductSellingModel</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>SellingModelType</contextAttribute>
-                    <contextInputAttributeName>SellingModelType</contextInputAttributeName>
+                    <contextInputAttributeName
+          >SellingModelType</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -435,7 +496,8 @@
                         <queryAttribute>Discount</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Discount</contextAttribute>
-                    <contextInputAttributeName>Discount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Discount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -443,7 +505,8 @@
                         <queryAttribute>DiscountAmount</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>DiscountAmount</contextAttribute>
-                    <contextInputAttributeName>DiscountAmount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >DiscountAmount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -451,7 +514,8 @@
                         <queryAttribute>BillingFrequency</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>BillingFrequency</contextAttribute>
-                    <contextInputAttributeName>BillingFrequency</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingFrequency</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -459,7 +523,8 @@
                         <queryAttribute>StartDate</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ItemStartDate</contextAttribute>
-                    <contextInputAttributeName>ItemStartDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ItemStartDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -467,7 +532,8 @@
                         <queryAttribute>EndDate</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ItemEndDate</contextAttribute>
-                    <contextInputAttributeName>ItemEndDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ItemEndDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -475,7 +541,8 @@
                         <queryAttribute>PricingTermCount</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>PricingTermCount</contextAttribute>
-                    <contextInputAttributeName>PricingTermCount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PricingTermCount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -483,7 +550,8 @@
                         <queryAttribute>PartnerDiscountPercent</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>PartnerDiscountPercent</contextAttribute>
-                    <contextInputAttributeName>PartnerDiscountPercent</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PartnerDiscountPercent</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -491,7 +559,8 @@
                         <queryAttribute>PartnerUnitPrice</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>PartnerUnitPrice</contextAttribute>
-                    <contextInputAttributeName>PartnerUnitPrice</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PartnerUnitPrice</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -499,7 +568,8 @@
                         <queryAttribute>PeriodBoundary</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>PeriodBoundary</contextAttribute>
-                    <contextInputAttributeName>PeriodBoundary</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PeriodBoundary</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -507,27 +577,34 @@
                         <queryAttribute>PeriodBoundaryDay</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>PeriodBoundaryDay</contextAttribute>
-                    <contextInputAttributeName>PeriodBoundaryDay</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PeriodBoundaryDay</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
                         <objectName>QuoteLineItem</objectName>
-                        <queryAttribute>PeriodBoundaryStartMonth</queryAttribute>
+                        <queryAttribute
+            >PeriodBoundaryStartMonth</queryAttribute>
                     </contextAttrHydrationDetails>
-                    <contextAttribute>PeriodBoundaryStartMonth</contextAttribute>
-                    <contextInputAttributeName>PeriodBoundaryStartMonth</contextInputAttributeName>
+                    <contextAttribute
+          >PeriodBoundaryStartMonth</contextAttribute>
+                    <contextInputAttributeName
+          >PeriodBoundaryStartMonth</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
                         <contextAttrHydrationDetails>
                             <objectName>ProrationPolicy</objectName>
-                            <queryAttribute>ArePartialPeriodsAllowed</queryAttribute>
+                            <queryAttribute
+              >ArePartialPeriodsAllowed</queryAttribute>
                         </contextAttrHydrationDetails>
                         <objectName>QuoteLineItem</objectName>
                         <queryAttribute>ProrationPolicy</queryAttribute>
                     </contextAttrHydrationDetails>
-                    <contextAttribute>ArePartialPeriodsAllowed</contextAttribute>
-                    <contextInputAttributeName>ArePartialPeriodsAllowed</contextInputAttributeName>
+                    <contextAttribute
+          >ArePartialPeriodsAllowed</contextAttribute>
+                    <contextInputAttributeName
+          >ArePartialPeriodsAllowed</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -535,7 +612,8 @@
                         <queryAttribute>UnitPrice</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>UnitPrice</contextAttribute>
-                    <contextInputAttributeName>UnitPrice</contextInputAttributeName>
+                    <contextInputAttributeName
+          >UnitPrice</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -543,7 +621,8 @@
                         <queryAttribute>NetUnitPrice</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>NetUnitPrice</contextAttribute>
-                    <contextInputAttributeName>NetUnitPrice</contextInputAttributeName>
+                    <contextInputAttributeName
+          >NetUnitPrice</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -551,15 +630,18 @@
                         <queryAttribute>TotalLineAmount</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>TotalLineAmount</contextAttribute>
-                    <contextInputAttributeName>TotalLineAmount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >TotalLineAmount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
                         <objectName>QuoteLineItem</objectName>
-                        <queryAttribute>PriceWaterfallIdentifier</queryAttribute>
+                        <queryAttribute
+            >PriceWaterfallIdentifier</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>PriceWaterFall</contextAttribute>
-                    <contextInputAttributeName>PriceWaterFall</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PriceWaterFall</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -567,7 +649,8 @@
                         <queryAttribute>QuoteActionId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>SalesTransactionAction</contextAttribute>
-                    <contextInputAttributeName>SalesTransactionAction</contextInputAttributeName>
+                    <contextInputAttributeName
+          >SalesTransactionAction</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -575,7 +658,8 @@
                         <queryAttribute>TaxTreatmentId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>TaxTreatment</contextAttribute>
-                    <contextInputAttributeName>TaxTreatment</contextInputAttributeName>
+                    <contextInputAttributeName
+          >TaxTreatment</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -583,7 +667,8 @@
                         <queryAttribute>Product2Id</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Product</contextAttribute>
-                    <contextInputAttributeName>Product</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Product</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -591,15 +676,18 @@
                         <queryAttribute>ListPrice</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ListPrice</contextAttribute>
-                    <contextInputAttributeName>ListPrice</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ListPrice</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
                         <objectName>QuoteLineItem</objectName>
                         <queryAttribute>TotalAdjustmentAmount</queryAttribute>
                     </contextAttrHydrationDetails>
-                    <contextAttribute>ItemTotalAdjustmentAmount</contextAttribute>
-                    <contextInputAttributeName>ItemTotalAdjustmentAmount</contextInputAttributeName>
+                    <contextAttribute
+          >ItemTotalAdjustmentAmount</contextAttribute>
+                    <contextInputAttributeName
+          >ItemTotalAdjustmentAmount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -607,7 +695,8 @@
                         <queryAttribute>NetTotalPrice</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>NetTotalPrice</contextAttribute>
-                    <contextInputAttributeName>NetTotalPrice</contextInputAttributeName>
+                    <contextInputAttributeName
+          >NetTotalPrice</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -615,7 +704,8 @@
                         <queryAttribute>TotalPrice</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>TotalPrice</contextAttribute>
-                    <contextInputAttributeName>TotalPrice</contextInputAttributeName>
+                    <contextInputAttributeName
+          >TotalPrice</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -623,7 +713,8 @@
                         <queryAttribute>ProductSellingModelId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ProductSellingModel</contextAttribute>
-                    <contextInputAttributeName>ProductSellingModel</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ProductSellingModel</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -631,7 +722,8 @@
                         <queryAttribute>SubscriptionTerm</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>SubscriptionTerm</contextAttribute>
-                    <contextInputAttributeName>SubscriptionTerm</contextInputAttributeName>
+                    <contextInputAttributeName
+          >SubscriptionTerm</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -643,7 +735,8 @@
                         <queryAttribute>ProductSellingModel</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>PricingTermUnit</contextAttribute>
-                    <contextInputAttributeName>PricingTermUnit</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PricingTermUnit</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -651,7 +744,8 @@
                         <queryAttribute>ProrationPolicyId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ProrationPolicy</contextAttribute>
-                    <contextInputAttributeName>ProrationPolicy</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ProrationPolicy</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -659,7 +753,8 @@
                         <queryAttribute>BasisTransactionItemId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>BasisTransactionItem</contextAttribute>
-                    <contextInputAttributeName>BasisTransactionItem</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BasisTransactionItem</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -671,7 +766,8 @@
                         <queryAttribute>Product2</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ProductName</contextAttribute>
-                    <contextInputAttributeName>ProductName</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ProductName</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -683,7 +779,8 @@
                         <queryAttribute>Product2</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ProductCode</contextAttribute>
-                    <contextInputAttributeName>ProductCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ProductCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -695,7 +792,8 @@
                         <queryAttribute>Product2</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>StockKeepingUnit</contextAttribute>
-                    <contextInputAttributeName>StockKeepingUnit</contextInputAttributeName>
+                    <contextInputAttributeName
+          >StockKeepingUnit</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -707,7 +805,8 @@
                         <queryAttribute>Product2</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ProductBasedOn</contextAttribute>
-                    <contextInputAttributeName>ProductBasedOn</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ProductBasedOn</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -718,8 +817,10 @@
                         <objectName>QuoteLineItem</objectName>
                         <queryAttribute>QuoteAction</queryAttribute>
                     </contextAttrHydrationDetails>
-                    <contextAttribute>SalesTransactionSourceAsset</contextAttribute>
-                    <contextInputAttributeName>SalesTransactionSourceAsset</contextInputAttributeName>
+                    <contextAttribute
+          >SalesTransactionSourceAsset</contextAttribute>
+                    <contextInputAttributeName
+          >SalesTransactionSourceAsset</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -730,32 +831,40 @@
                         <objectName>QuoteLineItem</objectName>
                         <queryAttribute>QuoteAction</queryAttribute>
                     </contextAttrHydrationDetails>
-                    <contextAttribute>SalesTransactionActionType</contextAttribute>
-                    <contextInputAttributeName>SalesTransactionActionType</contextInputAttributeName>
+                    <contextAttribute
+          >SalesTransactionActionType</contextAttribute>
+                    <contextInputAttributeName
+          >SalesTransactionActionType</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Deleted</contextAttribute>
-                    <contextInputAttributeName>Deleted</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Deleted</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>TransactionType</contextAttribute>
-                    <contextInputAttributeName>TransactionType</contextInputAttributeName>
+                    <contextInputAttributeName
+          >TransactionType</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>PricingSource</contextAttribute>
-                    <contextInputAttributeName>PricingSource</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PricingSource</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ContractId</contextAttribute>
-                    <contextInputAttributeName>ContractId</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ContractId</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ContractVolumePasId</contextAttribute>
-                    <contextInputAttributeName>ContractVolumePasId</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ContractVolumePasId</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ContractAttributePasId</contextAttribute>
-                    <contextInputAttributeName>ContractAttributePasId</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ContractAttributePasId</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextNode>SalesAgreementQuoteItem</contextNode>
                 <object>QuoteLineItem</object>
@@ -766,8 +875,10 @@
                         <objectName>QuoteLineItemAttribute</objectName>
                         <queryAttribute>QuoteLineItemId</queryAttribute>
                     </contextAttrHydrationDetails>
-                    <contextAttribute>SalesAgreementQuoteItemAttrParent</contextAttribute>
-                    <contextInputAttributeName>SalesAgreementQuoteItemAttrParent</contextInputAttributeName>
+                    <contextAttribute
+          >SalesAgreementQuoteItemAttrParent</contextAttribute>
+                    <contextInputAttributeName
+          >SalesAgreementQuoteItemAttrParent</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -775,7 +886,8 @@
                         <queryAttribute>AttributeDefinitionId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>AttributeKey</contextAttribute>
-                    <contextInputAttributeName>AttributeKey</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AttributeKey</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -783,15 +895,18 @@
                         <queryAttribute>AttributeValue</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>AttributeValue</contextAttribute>
-                    <contextInputAttributeName>AttributeValue</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AttributeValue</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
                         <objectName>QuoteLineItemAttribute</objectName>
-                        <queryAttribute>AttributePicklistValueId</queryAttribute>
+                        <queryAttribute
+            >AttributePicklistValueId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>AttributePicklistValue</contextAttribute>
-                    <contextInputAttributeName>AttributePicklistValue</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AttributePicklistValue</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -799,7 +914,8 @@
                         <queryAttribute>AttributeName</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>AttributeName</contextAttribute>
-                    <contextInputAttributeName>AttributeName</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AttributeName</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -811,17 +927,20 @@
                         <queryAttribute>AttributeDefinition</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>AttributeDefinitionCode</contextAttribute>
-                    <contextInputAttributeName>AttributeDefinitionCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AttributeDefinitionCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>IsPriceImpacting</contextAttribute>
-                    <contextInputAttributeName>IsPriceImpacting</contextInputAttributeName>
+                    <contextInputAttributeName
+          >IsPriceImpacting</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextNode>SalesAgreementQuoteItemAttr</contextNode>
                 <object>QuoteLineItemAttribute</object>
             </contextNodeMappings>
             <default>true</default>
-            <description>Mapping to map quote and related entities for Reading with SAQuote context</description>
+            <description
+      >Mapping to map quote and related entities for Reading with SAQuote context</description>
             <title>QuoteEntitiesReadMapping</title>
         </contextMappings>
         <contextMappings>
@@ -860,7 +979,8 @@
                         <queryAttribute>Description</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Description</contextAttribute>
-                    <contextInputAttributeName>Description</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Description</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -868,7 +988,8 @@
                         <queryAttribute>AccountId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Account</contextAttribute>
-                    <contextInputAttributeName>Account</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Account</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -876,7 +997,8 @@
                         <queryAttribute>PricebookId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Pricebook</contextAttribute>
-                    <contextInputAttributeName>Pricebook</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Pricebook</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -884,7 +1006,8 @@
                         <queryAttribute>ContactId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Contact</contextAttribute>
-                    <contextInputAttributeName>Contact</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Contact</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -892,7 +1015,8 @@
                         <queryAttribute>CurrencyIsoCode</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>CurrencyIsoCode</contextAttribute>
-                    <contextInputAttributeName>CurrencyIsoCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >CurrencyIsoCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -900,7 +1024,8 @@
                         <queryAttribute>StartDate</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>StartDate</contextAttribute>
-                    <contextInputAttributeName>StartDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >StartDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -908,7 +1033,8 @@
                         <queryAttribute>EndDate</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>EndDate</contextAttribute>
-                    <contextInputAttributeName>EndDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >EndDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -916,7 +1042,8 @@
                         <queryAttribute>ProductLevel</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ProductLevel</contextAttribute>
-                    <contextInputAttributeName>ProductLevel</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ProductLevel</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -924,7 +1051,8 @@
                         <queryAttribute>AgreementType</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>AgreementType</contextAttribute>
-                    <contextInputAttributeName>AgreementType</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AgreementType</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -932,7 +1060,8 @@
                         <queryAttribute>ScheduleFrequency</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ScheduleFrequency</contextAttribute>
-                    <contextInputAttributeName>ScheduleFrequency</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ScheduleFrequency</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -940,7 +1069,8 @@
                         <queryAttribute>ScheduleCount</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ScheduleCount</contextAttribute>
-                    <contextInputAttributeName>ScheduleCount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ScheduleCount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -948,155 +1078,194 @@
                         <queryAttribute>ActualsCalculationMode</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ActualsCalculationMode</contextAttribute>
-                    <contextInputAttributeName>ActualsCalculationMode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ActualsCalculationMode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>BillToContact</contextAttribute>
-                    <contextInputAttributeName>BillToContact</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillToContact</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Subtotal</contextAttribute>
-                    <contextInputAttributeName>Subtotal</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Subtotal</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>BillingStreet</contextAttribute>
-                    <contextInputAttributeName>BillingStreet</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingStreet</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>BillingCity</contextAttribute>
-                    <contextInputAttributeName>BillingCity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingCity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>BillingState</contextAttribute>
-                    <contextInputAttributeName>BillingState</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingState</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>BillingCountry</contextAttribute>
-                    <contextInputAttributeName>BillingCountry</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingCountry</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>BillingPostalCode</contextAttribute>
-                    <contextInputAttributeName>BillingPostalCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingPostalCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ShippingStreet</contextAttribute>
-                    <contextInputAttributeName>ShippingStreet</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ShippingStreet</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ShippingCity</contextAttribute>
-                    <contextInputAttributeName>ShippingCity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ShippingCity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ShippingState</contextAttribute>
-                    <contextInputAttributeName>ShippingState</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ShippingState</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ShippingCountry</contextAttribute>
-                    <contextInputAttributeName>ShippingCountry</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ShippingCountry</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ShippingPostalCode</contextAttribute>
-                    <contextInputAttributeName>ShippingPostalCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ShippingPostalCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>LastPricedDate</contextAttribute>
-                    <contextInputAttributeName>LastPricedDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >LastPricedDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Contract</contextAttribute>
-                    <contextInputAttributeName>Contract</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Contract</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>AccountInputOnly</contextAttribute>
-                    <contextInputAttributeName>AccountInputOnly</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AccountInputOnly</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Opportunity</contextAttribute>
-                    <contextInputAttributeName>Opportunity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Opportunity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>TotalAmount</contextAttribute>
-                    <contextInputAttributeName>TotalAmount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >TotalAmount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Status</contextAttribute>
-                    <contextInputAttributeName>Status</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Status</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>TotalProductAmount</contextAttribute>
-                    <contextInputAttributeName>TotalProductAmount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >TotalProductAmount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>TotalAdjustmentAmount</contextAttribute>
-                    <contextInputAttributeName>TotalAdjustmentAmount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >TotalAdjustmentAmount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
-                    <contextAttribute>TotalAdjustmentDistAmount</contextAttribute>
-                    <contextInputAttributeName>TotalAdjustmentDistAmount</contextInputAttributeName>
+                    <contextAttribute
+          >TotalAdjustmentDistAmount</contextAttribute>
+                    <contextInputAttributeName
+          >TotalAdjustmentDistAmount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>BillingName</contextAttribute>
-                    <contextInputAttributeName>BillingName</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingName</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ShippingName</contextAttribute>
-                    <contextInputAttributeName>ShippingName</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ShippingName</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>QuoteToName</contextAttribute>
-                    <contextInputAttributeName>QuoteToName</contextInputAttributeName>
+                    <contextInputAttributeName
+          >QuoteToName</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>QuoteToStreet</contextAttribute>
-                    <contextInputAttributeName>QuoteToStreet</contextInputAttributeName>
+                    <contextInputAttributeName
+          >QuoteToStreet</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>QuoteToCity</contextAttribute>
-                    <contextInputAttributeName>QuoteToCity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >QuoteToCity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>QuoteToState</contextAttribute>
-                    <contextInputAttributeName>QuoteToCity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >QuoteToCity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>QuoteToCountry</contextAttribute>
-                    <contextInputAttributeName>QuoteToCountry</contextInputAttributeName>
+                    <contextInputAttributeName
+          >QuoteToCountry</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>QuoteToPostalCode</contextAttribute>
-                    <contextInputAttributeName>QuoteToPostalCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >QuoteToPostalCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ActivatedDate</contextAttribute>
-                    <contextInputAttributeName>ActivatedDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ActivatedDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>StatusCode</contextAttribute>
-                    <contextInputAttributeName>StatusCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >StatusCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Unidad_de_medida__c</contextAttribute>
-                    <contextInputAttributeName>Unidad_de_medida__c</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Unidad_de_medida__c</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>recordId</contextAttribute>
-                    <contextInputAttributeName>recordId</contextInputAttributeName>
+                    <contextInputAttributeName
+          >recordId</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Frecuencia</contextAttribute>
-                    <contextInputAttributeName>Frecuencia</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Frecuencia</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Number_of_months__c</contextAttribute>
-                    <contextInputAttributeName>Number_of_months__c</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Number_of_months__c</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Fecha_de_inicio__c</contextAttribute>
-                    <contextInputAttributeName>Fecha_de_inicio__c</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Fecha_de_inicio__c</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ExpirationDate</contextAttribute>
-                    <contextInputAttributeName>ExpirationDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ExpirationDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextNode>SalesAgreementQuote</contextNode>
                 <object>SalesAgreement</object>
@@ -1107,8 +1276,10 @@
                         <objectName>SalesAgreementProduct</objectName>
                         <queryAttribute>SalesAgreementId</queryAttribute>
                     </contextAttrHydrationDetails>
-                    <contextAttribute>SalesAgreementQuoteItemParent</contextAttribute>
-                    <contextInputAttributeName>SalesAgreementQuoteItemParent</contextInputAttributeName>
+                    <contextAttribute
+          >SalesAgreementQuoteItemParent</contextAttribute>
+                    <contextInputAttributeName
+          >SalesAgreementQuoteItemParent</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1116,15 +1287,18 @@
                         <queryAttribute>Name</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ProductName</contextAttribute>
-                    <contextInputAttributeName>ProductName</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ProductName</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
                         <objectName>SalesAgreementProduct</objectName>
                         <queryAttribute>Id</queryAttribute>
                     </contextAttrHydrationDetails>
-                    <contextAttribute>SalesAgreementQuoteItemSource</contextAttribute>
-                    <contextInputAttributeName>SalesAgreementQuoteItemSource</contextInputAttributeName>
+                    <contextAttribute
+          >SalesAgreementQuoteItemSource</contextAttribute>
+                    <contextInputAttributeName
+          >SalesAgreementQuoteItemSource</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1132,7 +1306,8 @@
                         <queryAttribute>PricebookEntryId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>PricebookEntry</contextAttribute>
-                    <contextInputAttributeName>PricebookEntry</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PricebookEntry</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1140,7 +1315,8 @@
                         <queryAttribute>UnitOfMeasureId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>UnitOfMeasure__std</contextAttribute>
-                    <contextInputAttributeName>UnitOfMeasure__std</contextInputAttributeName>
+                    <contextInputAttributeName
+          >UnitOfMeasure__std</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1148,7 +1324,8 @@
                         <queryAttribute>InitialPlannedQtyValue</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Quantity</contextAttribute>
-                    <contextInputAttributeName>Quantity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Quantity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1156,7 +1333,8 @@
                         <queryAttribute>DiscountPercentage</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Discount</contextAttribute>
-                    <contextInputAttributeName>Discount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Discount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1164,135 +1342,171 @@
                         <queryAttribute>SalesPrice</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>UnitPrice</contextAttribute>
-                    <contextInputAttributeName>UnitPrice</contextInputAttributeName>
+                    <contextInputAttributeName
+          >UnitPrice</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>StartQuantity</contextAttribute>
-                    <contextInputAttributeName>StartQuantity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >StartQuantity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>SalesTransactionAction</contextAttribute>
-                    <contextInputAttributeName>SalesTransactionAction</contextInputAttributeName>
+                    <contextInputAttributeName
+          >SalesTransactionAction</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>EndQuantity</contextAttribute>
-                    <contextInputAttributeName>EndQuantity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >EndQuantity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ItemStartDate</contextAttribute>
-                    <contextInputAttributeName>ItemStartDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ItemStartDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>SellingModelType</contextAttribute>
-                    <contextInputAttributeName>SellingModelType</contextInputAttributeName>
+                    <contextInputAttributeName
+          >SellingModelType</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>NetTotalPrice</contextAttribute>
-                    <contextInputAttributeName>NetTotalPrice</contextInputAttributeName>
+                    <contextInputAttributeName
+          >NetTotalPrice</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ItemEndDate</contextAttribute>
-                    <contextInputAttributeName>ItemEndDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ItemEndDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ProductSellingModel</contextAttribute>
-                    <contextInputAttributeName>ProductSellingModel</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ProductSellingModel</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>PriceWaterFall</contextAttribute>
-                    <contextInputAttributeName>PriceWaterFall</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PriceWaterFall</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Subtotal</contextAttribute>
-                    <contextInputAttributeName>Subtotal</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Subtotal</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>DiscountAmount</contextAttribute>
-                    <contextInputAttributeName>DiscountAmount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >DiscountAmount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>BillingFrequency</contextAttribute>
-                    <contextInputAttributeName>BillingFrequency</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingFrequency</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>PricingTermCount</contextAttribute>
-                    <contextInputAttributeName>PricingTermCount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PricingTermCount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>PartnerDiscountPercent</contextAttribute>
-                    <contextInputAttributeName>PartnerDiscountPercent</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PartnerDiscountPercent</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>PartnerUnitPrice</contextAttribute>
-                    <contextInputAttributeName>PartnerUnitPrice</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PartnerUnitPrice</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>PeriodBoundary</contextAttribute>
-                    <contextInputAttributeName>PeriodBoundary</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PeriodBoundary</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>PeriodBoundaryDay</contextAttribute>
-                    <contextInputAttributeName>PeriodBoundaryDay</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PeriodBoundaryDay</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
-                    <contextAttribute>PeriodBoundaryStartMonth</contextAttribute>
-                    <contextInputAttributeName>PeriodBoundaryStartMonth</contextInputAttributeName>
+                    <contextAttribute
+          >PeriodBoundaryStartMonth</contextAttribute>
+                    <contextInputAttributeName
+          >PeriodBoundaryStartMonth</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
-                    <contextAttribute>ArePartialPeriodsAllowed</contextAttribute>
-                    <contextInputAttributeName>ArePartialPeriodsAllowed</contextInputAttributeName>
+                    <contextAttribute
+          >ArePartialPeriodsAllowed</contextAttribute>
+                    <contextInputAttributeName
+          >ArePartialPeriodsAllowed</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>TaxTreatment</contextAttribute>
-                    <contextInputAttributeName>TaxTreatment</contextInputAttributeName>
+                    <contextInputAttributeName
+          >TaxTreatment</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
-                    <contextAttribute>ItemTotalAdjustmentAmount</contextAttribute>
-                    <contextInputAttributeName>ItemTotalAdjustmentAmount</contextInputAttributeName>
+                    <contextAttribute
+          >ItemTotalAdjustmentAmount</contextAttribute>
+                    <contextInputAttributeName
+          >ItemTotalAdjustmentAmount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>TotalPrice</contextAttribute>
-                    <contextInputAttributeName>TotalPrice</contextInputAttributeName>
+                    <contextInputAttributeName
+          >TotalPrice</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>SubscriptionTerm</contextAttribute>
-                    <contextInputAttributeName>SubscriptionTerm</contextInputAttributeName>
+                    <contextInputAttributeName
+          >SubscriptionTerm</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>PricingTermUnit</contextAttribute>
-                    <contextInputAttributeName>PricingTermUnit</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PricingTermUnit</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ProrationPolicy</contextAttribute>
-                    <contextInputAttributeName>ProrationPolicy</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ProrationPolicy</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>BasisTransactionItem</contextAttribute>
-                    <contextInputAttributeName>BasisTransactionItem</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BasisTransactionItem</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ProductCode</contextAttribute>
-                    <contextInputAttributeName>ProductCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ProductCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>StockKeepingUnit</contextAttribute>
-                    <contextInputAttributeName>StockKeepingUnit</contextInputAttributeName>
+                    <contextInputAttributeName
+          >StockKeepingUnit</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ProductBasedOn</contextAttribute>
-                    <contextInputAttributeName>ProductBasedOn</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ProductBasedOn</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Deleted</contextAttribute>
-                    <contextInputAttributeName>Deleted</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Deleted</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>TransactionType</contextAttribute>
-                    <contextInputAttributeName>TransactionType</contextInputAttributeName>
+                    <contextInputAttributeName
+          >TransactionType</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>PricingSource</contextAttribute>
-                    <contextInputAttributeName>PricingSource</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PricingSource</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextNode>SalesAgreementQuoteItem</contextNode>
                 <object>SalesAgreementProduct</object>
@@ -1303,8 +1517,10 @@
                         <objectName>SalesAgreeProductAttribute</objectName>
                         <queryAttribute>SalesAgreementProductId</queryAttribute>
                     </contextAttrHydrationDetails>
-                    <contextAttribute>SalesAgreementQuoteItemAttrParent</contextAttribute>
-                    <contextInputAttributeName>SalesAgreementQuoteItemAttrParent</contextInputAttributeName>
+                    <contextAttribute
+          >SalesAgreementQuoteItemAttrParent</contextAttribute>
+                    <contextInputAttributeName
+          >SalesAgreementQuoteItemAttrParent</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1312,7 +1528,8 @@
                         <queryAttribute>AttributeDefinitionId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>AttributeKey</contextAttribute>
-                    <contextInputAttributeName>AttributeKey</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AttributeKey</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1320,15 +1537,18 @@
                         <queryAttribute>AttributeValue</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>AttributeValue</contextAttribute>
-                    <contextInputAttributeName>AttributeValue</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AttributeValue</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
                         <objectName>SalesAgreeProductAttribute</objectName>
-                        <queryAttribute>AttributePicklistValueId</queryAttribute>
+                        <queryAttribute
+            >AttributePicklistValueId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>AttributePicklistValue</contextAttribute>
-                    <contextInputAttributeName>AttributePicklistValue</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AttributePicklistValue</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1336,7 +1556,8 @@
                         <queryAttribute>AttributeDefinitionName</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>AttributeName</contextAttribute>
-                    <contextInputAttributeName>AttributeName</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AttributeName</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1348,17 +1569,20 @@
                         <queryAttribute>AttributeDefinition</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>AttributeDefinitionCode</contextAttribute>
-                    <contextInputAttributeName>AttributeDefinitionCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AttributeDefinitionCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>IsPriceImpacting</contextAttribute>
-                    <contextInputAttributeName>IsPriceImpacting</contextInputAttributeName>
+                    <contextInputAttributeName
+          >IsPriceImpacting</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextNode>SalesAgreementQuoteItemAttr</contextNode>
                 <object>SalesAgreeProductAttribute</object>
             </contextNodeMappings>
             <default>false</default>
-            <description>Mapping to map SalesAgreement and related entities for Writing with SAQuote context</description>
+            <description
+      >Mapping to map SalesAgreement and related entities for Writing with SAQuote context</description>
             <title>SAEntitiesWriteMapping</title>
         </contextMappings>
         <contextMappings>
@@ -1397,7 +1621,8 @@
                         <queryAttribute>Description</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Description</contextAttribute>
-                    <contextInputAttributeName>Description</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Description</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1405,7 +1630,8 @@
                         <queryAttribute>AccountId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>AccountInputOnly</contextAttribute>
-                    <contextInputAttributeName>AccountInputOnly</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AccountInputOnly</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1413,7 +1639,8 @@
                         <queryAttribute>ContactId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Contact</contextAttribute>
-                    <contextInputAttributeName>Contact</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Contact</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1421,7 +1648,8 @@
                         <queryAttribute>OpportunityId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Opportunity</contextAttribute>
-                    <contextInputAttributeName>Opportunity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Opportunity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1429,7 +1657,8 @@
                         <queryAttribute>Pricebook2Id</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Pricebook</contextAttribute>
-                    <contextInputAttributeName>Pricebook</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Pricebook</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1437,7 +1666,8 @@
                         <queryAttribute>CurrencyIsoCode</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>CurrencyIsoCode</contextAttribute>
-                    <contextInputAttributeName>CurrencyIsoCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >CurrencyIsoCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1445,7 +1675,8 @@
                         <queryAttribute>BillToContactId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>BillToContact</contextAttribute>
-                    <contextInputAttributeName>BillToContact</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillToContact</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1453,7 +1684,8 @@
                         <queryAttribute>Status</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Status</contextAttribute>
-                    <contextInputAttributeName>Status</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Status</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1461,7 +1693,8 @@
                         <queryAttribute>BillingName</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>BillingName</contextAttribute>
-                    <contextInputAttributeName>BillingName</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingName</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1469,7 +1702,8 @@
                         <queryAttribute>BillingStreet</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>BillingStreet</contextAttribute>
-                    <contextInputAttributeName>BillingStreet</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingStreet</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1477,7 +1711,8 @@
                         <queryAttribute>BillingCity</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>BillingCity</contextAttribute>
-                    <contextInputAttributeName>BillingCity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingCity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1485,7 +1720,8 @@
                         <queryAttribute>BillingState</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>BillingState</contextAttribute>
-                    <contextInputAttributeName>BillingState</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingState</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1493,7 +1729,8 @@
                         <queryAttribute>BillingCountry</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>BillingCountry</contextAttribute>
-                    <contextInputAttributeName>BillingCountry</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingCountry</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1501,7 +1738,8 @@
                         <queryAttribute>BillingPostalCode</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>BillingPostalCode</contextAttribute>
-                    <contextInputAttributeName>BillingPostalCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingPostalCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1509,7 +1747,8 @@
                         <queryAttribute>ShippingName</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ShippingName</contextAttribute>
-                    <contextInputAttributeName>ShippingName</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ShippingName</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1517,7 +1756,8 @@
                         <queryAttribute>ShippingStreet</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ShippingStreet</contextAttribute>
-                    <contextInputAttributeName>ShippingStreet</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ShippingStreet</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1525,7 +1765,8 @@
                         <queryAttribute>ShippingCity</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ShippingCity</contextAttribute>
-                    <contextInputAttributeName>ShippingCity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ShippingCity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1533,7 +1774,8 @@
                         <queryAttribute>ShippingState</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ShippingState</contextAttribute>
-                    <contextInputAttributeName>ShippingState</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ShippingState</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1541,7 +1783,8 @@
                         <queryAttribute>ShippingCountry</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ShippingCountry</contextAttribute>
-                    <contextInputAttributeName>ShippingCountry</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ShippingCountry</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1549,7 +1792,8 @@
                         <queryAttribute>ShippingPostalCode</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ShippingPostalCode</contextAttribute>
-                    <contextInputAttributeName>ShippingPostalCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ShippingPostalCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1557,7 +1801,8 @@
                         <queryAttribute>QuoteToName</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>QuoteToName</contextAttribute>
-                    <contextInputAttributeName>QuoteToName</contextInputAttributeName>
+                    <contextInputAttributeName
+          >QuoteToName</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1565,7 +1810,8 @@
                         <queryAttribute>QuoteToStreet</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>QuoteToStreet</contextAttribute>
-                    <contextInputAttributeName>QuoteToStreet</contextInputAttributeName>
+                    <contextInputAttributeName
+          >QuoteToStreet</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1573,7 +1819,8 @@
                         <queryAttribute>QuoteToCity</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>QuoteToCity</contextAttribute>
-                    <contextInputAttributeName>QuoteToCity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >QuoteToCity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1581,7 +1828,8 @@
                         <queryAttribute>QuoteToState</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>QuoteToState</contextAttribute>
-                    <contextInputAttributeName>QuoteToState</contextInputAttributeName>
+                    <contextInputAttributeName
+          >QuoteToState</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1589,7 +1837,8 @@
                         <queryAttribute>QuoteToCountry</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>QuoteToCountry</contextAttribute>
-                    <contextInputAttributeName>QuoteToCountry</contextInputAttributeName>
+                    <contextInputAttributeName
+          >QuoteToCountry</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1597,7 +1846,8 @@
                         <queryAttribute>QuoteToPostalCode</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>QuoteToPostalCode</contextAttribute>
-                    <contextInputAttributeName>QuoteToPostalCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >QuoteToPostalCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1605,7 +1855,8 @@
                         <queryAttribute>LastPricedDate</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>LastPricedDate</contextAttribute>
-                    <contextInputAttributeName>LastPricedDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >LastPricedDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1613,91 +1864,114 @@
                         <queryAttribute>ContractId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Contract</contextAttribute>
-                    <contextInputAttributeName>Contract</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Contract</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Account</contextAttribute>
-                    <contextInputAttributeName>Account</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Account</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>StartDate</contextAttribute>
-                    <contextInputAttributeName>StartDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >StartDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>EndDate</contextAttribute>
-                    <contextInputAttributeName>EndDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >EndDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>TotalAmount</contextAttribute>
-                    <contextInputAttributeName>TotalAmount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >TotalAmount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Subtotal</contextAttribute>
-                    <contextInputAttributeName>Subtotal</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Subtotal</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>TotalProductAmount</contextAttribute>
-                    <contextInputAttributeName>TotalProductAmount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >TotalProductAmount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>TotalAdjustmentAmount</contextAttribute>
-                    <contextInputAttributeName>TotalAdjustmentAmount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >TotalAdjustmentAmount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
-                    <contextAttribute>TotalAdjustmentDistAmount</contextAttribute>
-                    <contextInputAttributeName>TotalAdjustmentDistAmount</contextInputAttributeName>
+                    <contextAttribute
+          >TotalAdjustmentDistAmount</contextAttribute>
+                    <contextInputAttributeName
+          >TotalAdjustmentDistAmount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ActivatedDate</contextAttribute>
-                    <contextInputAttributeName>ActivatedDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ActivatedDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>StatusCode</contextAttribute>
-                    <contextInputAttributeName>StatusCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >StatusCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ScheduleFrequency</contextAttribute>
-                    <contextInputAttributeName>ScheduleFrequency</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ScheduleFrequency</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>AgreementType</contextAttribute>
-                    <contextInputAttributeName>AgreementType</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AgreementType</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ProductLevel</contextAttribute>
-                    <contextInputAttributeName>ProductLevel</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ProductLevel</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ScheduleCount</contextAttribute>
-                    <contextInputAttributeName>ScheduleCount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ScheduleCount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ActualsCalculationMode</contextAttribute>
-                    <contextInputAttributeName>ActualsCalculationMode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ActualsCalculationMode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Unidad_de_medida__c</contextAttribute>
-                    <contextInputAttributeName>Unidad_de_medida__c</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Unidad_de_medida__c</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>recordId</contextAttribute>
-                    <contextInputAttributeName>recordId</contextInputAttributeName>
+                    <contextInputAttributeName
+          >recordId</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Frecuencia</contextAttribute>
-                    <contextInputAttributeName>Frecuencia</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Frecuencia</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Number_of_months__c</contextAttribute>
-                    <contextInputAttributeName>Number_of_months__c</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Number_of_months__c</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Fecha_de_inicio__c</contextAttribute>
-                    <contextInputAttributeName>Fecha_de_inicio__c</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Fecha_de_inicio__c</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ExpirationDate</contextAttribute>
-                    <contextInputAttributeName>ExpirationDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ExpirationDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextNode>SalesAgreementQuote</contextNode>
                 <object>Quote</object>
@@ -1708,16 +1982,20 @@
                         <objectName>QuoteLineItem</objectName>
                         <queryAttribute>QuoteId</queryAttribute>
                     </contextAttrHydrationDetails>
-                    <contextAttribute>SalesAgreementQuoteItemParent</contextAttribute>
-                    <contextInputAttributeName>SalesAgreementQuoteItemParent</contextInputAttributeName>
+                    <contextAttribute
+          >SalesAgreementQuoteItemParent</contextAttribute>
+                    <contextInputAttributeName
+          >SalesAgreementQuoteItemParent</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
                         <objectName>QuoteLineItem</objectName>
                         <queryAttribute>Id</queryAttribute>
                     </contextAttrHydrationDetails>
-                    <contextAttribute>SalesAgreementQuoteItemSource</contextAttribute>
-                    <contextInputAttributeName>SalesAgreementQuoteItemSource</contextInputAttributeName>
+                    <contextAttribute
+          >SalesAgreementQuoteItemSource</contextAttribute>
+                    <contextInputAttributeName
+          >SalesAgreementQuoteItemSource</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1725,7 +2003,8 @@
                         <queryAttribute>PricebookEntryId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>PricebookEntry</contextAttribute>
-                    <contextInputAttributeName>PricebookEntry</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PricebookEntry</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1733,7 +2012,8 @@
                         <queryAttribute>QuantityUnitOfMeasureId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>UnitOfMeasure__std</contextAttribute>
-                    <contextInputAttributeName>UnitOfMeasure__std</contextInputAttributeName>
+                    <contextInputAttributeName
+          >UnitOfMeasure__std</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1741,7 +2021,8 @@
                         <queryAttribute>StartQuantity</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>StartQuantity</contextAttribute>
-                    <contextInputAttributeName>StartQuantity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >StartQuantity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1749,7 +2030,8 @@
                         <queryAttribute>Subtotal</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Subtotal</contextAttribute>
-                    <contextInputAttributeName>Subtotal</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Subtotal</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1757,7 +2039,8 @@
                         <queryAttribute>EndQuantity</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>EndQuantity</contextAttribute>
-                    <contextInputAttributeName>EndQuantity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >EndQuantity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1765,7 +2048,8 @@
                         <queryAttribute>Quantity</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Quantity</contextAttribute>
-                    <contextInputAttributeName>Quantity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Quantity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1777,7 +2061,8 @@
                         <queryAttribute>ProductSellingModel</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>SellingModelType</contextAttribute>
-                    <contextInputAttributeName>SellingModelType</contextInputAttributeName>
+                    <contextInputAttributeName
+          >SellingModelType</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1785,7 +2070,8 @@
                         <queryAttribute>Discount</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Discount</contextAttribute>
-                    <contextInputAttributeName>Discount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Discount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1793,7 +2079,8 @@
                         <queryAttribute>DiscountAmount</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>DiscountAmount</contextAttribute>
-                    <contextInputAttributeName>DiscountAmount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >DiscountAmount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1801,7 +2088,8 @@
                         <queryAttribute>BillingFrequency</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>BillingFrequency</contextAttribute>
-                    <contextInputAttributeName>BillingFrequency</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingFrequency</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1809,7 +2097,8 @@
                         <queryAttribute>StartDate</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ItemStartDate</contextAttribute>
-                    <contextInputAttributeName>ItemStartDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ItemStartDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1817,7 +2106,8 @@
                         <queryAttribute>EndDate</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ItemEndDate</contextAttribute>
-                    <contextInputAttributeName>ItemEndDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ItemEndDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1825,7 +2115,8 @@
                         <queryAttribute>PricingTermCount</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>PricingTermCount</contextAttribute>
-                    <contextInputAttributeName>PricingTermCount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PricingTermCount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1833,7 +2124,8 @@
                         <queryAttribute>PartnerDiscountPercent</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>PartnerDiscountPercent</contextAttribute>
-                    <contextInputAttributeName>PartnerDiscountPercent</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PartnerDiscountPercent</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1841,7 +2133,8 @@
                         <queryAttribute>PartnerUnitPrice</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>PartnerUnitPrice</contextAttribute>
-                    <contextInputAttributeName>PartnerUnitPrice</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PartnerUnitPrice</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1849,7 +2142,8 @@
                         <queryAttribute>PeriodBoundary</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>PeriodBoundary</contextAttribute>
-                    <contextInputAttributeName>PeriodBoundary</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PeriodBoundary</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1857,27 +2151,34 @@
                         <queryAttribute>PeriodBoundaryDay</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>PeriodBoundaryDay</contextAttribute>
-                    <contextInputAttributeName>PeriodBoundaryDay</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PeriodBoundaryDay</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
                         <objectName>QuoteLineItem</objectName>
-                        <queryAttribute>PeriodBoundaryStartMonth</queryAttribute>
+                        <queryAttribute
+            >PeriodBoundaryStartMonth</queryAttribute>
                     </contextAttrHydrationDetails>
-                    <contextAttribute>PeriodBoundaryStartMonth</contextAttribute>
-                    <contextInputAttributeName>PeriodBoundaryStartMonth</contextInputAttributeName>
+                    <contextAttribute
+          >PeriodBoundaryStartMonth</contextAttribute>
+                    <contextInputAttributeName
+          >PeriodBoundaryStartMonth</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
                         <contextAttrHydrationDetails>
                             <objectName>ProrationPolicy</objectName>
-                            <queryAttribute>ArePartialPeriodsAllowed</queryAttribute>
+                            <queryAttribute
+              >ArePartialPeriodsAllowed</queryAttribute>
                         </contextAttrHydrationDetails>
                         <objectName>QuoteLineItem</objectName>
                         <queryAttribute>ProrationPolicy</queryAttribute>
                     </contextAttrHydrationDetails>
-                    <contextAttribute>ArePartialPeriodsAllowed</contextAttribute>
-                    <contextInputAttributeName>ArePartialPeriodsAllowed</contextInputAttributeName>
+                    <contextAttribute
+          >ArePartialPeriodsAllowed</contextAttribute>
+                    <contextInputAttributeName
+          >ArePartialPeriodsAllowed</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1885,7 +2186,8 @@
                         <queryAttribute>UnitPrice</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>UnitPrice</contextAttribute>
-                    <contextInputAttributeName>UnitPrice</contextInputAttributeName>
+                    <contextInputAttributeName
+          >UnitPrice</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1893,7 +2195,8 @@
                         <queryAttribute>NetUnitPrice</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>NetUnitPrice</contextAttribute>
-                    <contextInputAttributeName>NetUnitPrice</contextInputAttributeName>
+                    <contextInputAttributeName
+          >NetUnitPrice</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1901,15 +2204,18 @@
                         <queryAttribute>TotalLineAmount</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>TotalLineAmount</contextAttribute>
-                    <contextInputAttributeName>TotalLineAmount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >TotalLineAmount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
                         <objectName>QuoteLineItem</objectName>
-                        <queryAttribute>PriceWaterfallIdentifier</queryAttribute>
+                        <queryAttribute
+            >PriceWaterfallIdentifier</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>PriceWaterFall</contextAttribute>
-                    <contextInputAttributeName>PriceWaterFall</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PriceWaterFall</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1917,7 +2223,8 @@
                         <queryAttribute>QuoteActionId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>SalesTransactionAction</contextAttribute>
-                    <contextInputAttributeName>SalesTransactionAction</contextInputAttributeName>
+                    <contextInputAttributeName
+          >SalesTransactionAction</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1925,7 +2232,8 @@
                         <queryAttribute>TaxTreatmentId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>TaxTreatment</contextAttribute>
-                    <contextInputAttributeName>TaxTreatment</contextInputAttributeName>
+                    <contextInputAttributeName
+          >TaxTreatment</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1933,7 +2241,8 @@
                         <queryAttribute>Product2Id</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Product</contextAttribute>
-                    <contextInputAttributeName>Product</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Product</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1941,15 +2250,18 @@
                         <queryAttribute>ListPrice</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ListPrice</contextAttribute>
-                    <contextInputAttributeName>ListPrice</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ListPrice</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
                         <objectName>QuoteLineItem</objectName>
                         <queryAttribute>TotalAdjustmentAmount</queryAttribute>
                     </contextAttrHydrationDetails>
-                    <contextAttribute>ItemTotalAdjustmentAmount</contextAttribute>
-                    <contextInputAttributeName>ItemTotalAdjustmentAmount</contextInputAttributeName>
+                    <contextAttribute
+          >ItemTotalAdjustmentAmount</contextAttribute>
+                    <contextInputAttributeName
+          >ItemTotalAdjustmentAmount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1957,7 +2269,8 @@
                         <queryAttribute>NetTotalPrice</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>NetTotalPrice</contextAttribute>
-                    <contextInputAttributeName>NetTotalPrice</contextInputAttributeName>
+                    <contextInputAttributeName
+          >NetTotalPrice</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1965,7 +2278,8 @@
                         <queryAttribute>TotalPrice</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>TotalPrice</contextAttribute>
-                    <contextInputAttributeName>TotalPrice</contextInputAttributeName>
+                    <contextInputAttributeName
+          >TotalPrice</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1973,7 +2287,8 @@
                         <queryAttribute>ProductSellingModelId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ProductSellingModel</contextAttribute>
-                    <contextInputAttributeName>ProductSellingModel</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ProductSellingModel</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1981,7 +2296,8 @@
                         <queryAttribute>SubscriptionTerm</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>SubscriptionTerm</contextAttribute>
-                    <contextInputAttributeName>SubscriptionTerm</contextInputAttributeName>
+                    <contextInputAttributeName
+          >SubscriptionTerm</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -1993,7 +2309,8 @@
                         <queryAttribute>ProductSellingModel</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>PricingTermUnit</contextAttribute>
-                    <contextInputAttributeName>PricingTermUnit</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PricingTermUnit</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2001,7 +2318,8 @@
                         <queryAttribute>ProrationPolicyId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ProrationPolicy</contextAttribute>
-                    <contextInputAttributeName>ProrationPolicy</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ProrationPolicy</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2009,7 +2327,8 @@
                         <queryAttribute>BasisTransactionItemId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>BasisTransactionItem</contextAttribute>
-                    <contextInputAttributeName>BasisTransactionItem</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BasisTransactionItem</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2021,7 +2340,8 @@
                         <queryAttribute>Product2</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ProductName</contextAttribute>
-                    <contextInputAttributeName>ProductName</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ProductName</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2033,7 +2353,8 @@
                         <queryAttribute>Product2</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ProductCode</contextAttribute>
-                    <contextInputAttributeName>ProductCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ProductCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2045,7 +2366,8 @@
                         <queryAttribute>Product2</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>StockKeepingUnit</contextAttribute>
-                    <contextInputAttributeName>StockKeepingUnit</contextInputAttributeName>
+                    <contextInputAttributeName
+          >StockKeepingUnit</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2057,7 +2379,8 @@
                         <queryAttribute>Product2</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ProductBasedOn</contextAttribute>
-                    <contextInputAttributeName>ProductBasedOn</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ProductBasedOn</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2068,8 +2391,10 @@
                         <objectName>QuoteLineItem</objectName>
                         <queryAttribute>QuoteAction</queryAttribute>
                     </contextAttrHydrationDetails>
-                    <contextAttribute>SalesTransactionSourceAsset</contextAttribute>
-                    <contextInputAttributeName>SalesTransactionSourceAsset</contextInputAttributeName>
+                    <contextAttribute
+          >SalesTransactionSourceAsset</contextAttribute>
+                    <contextInputAttributeName
+          >SalesTransactionSourceAsset</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2080,8 +2405,10 @@
                         <objectName>QuoteLineItem</objectName>
                         <queryAttribute>QuoteAction</queryAttribute>
                     </contextAttrHydrationDetails>
-                    <contextAttribute>SalesTransactionActionType</contextAttribute>
-                    <contextInputAttributeName>SalesTransactionActionType</contextInputAttributeName>
+                    <contextAttribute
+          >SalesTransactionActionType</contextAttribute>
+                    <contextInputAttributeName
+          >SalesTransactionActionType</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextNode>SalesAgreementQuoteItem</contextNode>
                 <object>QuoteLineItem</object>
@@ -2092,8 +2419,10 @@
                         <objectName>QuoteLineItemAttribute</objectName>
                         <queryAttribute>QuoteLineItemId</queryAttribute>
                     </contextAttrHydrationDetails>
-                    <contextAttribute>SalesAgreementQuoteItemAttrParent</contextAttribute>
-                    <contextInputAttributeName>SalesAgreementQuoteItemAttrParent</contextInputAttributeName>
+                    <contextAttribute
+          >SalesAgreementQuoteItemAttrParent</contextAttribute>
+                    <contextInputAttributeName
+          >SalesAgreementQuoteItemAttrParent</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2101,7 +2430,8 @@
                         <queryAttribute>AttributeDefinitionId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>AttributeKey</contextAttribute>
-                    <contextInputAttributeName>AttributeKey</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AttributeKey</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2109,15 +2439,18 @@
                         <queryAttribute>AttributeValue</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>AttributeValue</contextAttribute>
-                    <contextInputAttributeName>AttributeValue</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AttributeValue</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
                         <objectName>QuoteLineItemAttribute</objectName>
-                        <queryAttribute>AttributePicklistValueId</queryAttribute>
+                        <queryAttribute
+            >AttributePicklistValueId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>AttributePicklistValue</contextAttribute>
-                    <contextInputAttributeName>AttributePicklistValue</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AttributePicklistValue</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2125,7 +2458,8 @@
                         <queryAttribute>AttributeName</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>AttributeName</contextAttribute>
-                    <contextInputAttributeName>AttributeName</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AttributeName</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2137,13 +2471,15 @@
                         <queryAttribute>AttributeDefinition</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>AttributeDefinitionCode</contextAttribute>
-                    <contextInputAttributeName>AttributeDefinitionCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AttributeDefinitionCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextNode>SalesAgreementQuoteItemAttr</contextNode>
                 <object>QuoteLineItemAttribute</object>
             </contextNodeMappings>
             <default>false</default>
-            <description>Mapping to map quote and related entities for Writing with SAQuote context</description>
+            <description
+      >Mapping to map quote and related entities for Writing with SAQuote context</description>
             <title>QuoteEntitiesWriteMapping</title>
         </contextMappings>
         <contextMappings>
@@ -2182,7 +2518,8 @@
                         <queryAttribute>Description</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Description</contextAttribute>
-                    <contextInputAttributeName>Description</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Description</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2190,7 +2527,8 @@
                         <queryAttribute>AccountId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>AccountInputOnly</contextAttribute>
-                    <contextInputAttributeName>AccountInputOnly</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AccountInputOnly</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2198,7 +2536,8 @@
                         <queryAttribute>PricebookId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Pricebook</contextAttribute>
-                    <contextInputAttributeName>Pricebook</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Pricebook</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2206,7 +2545,8 @@
                         <queryAttribute>ContactId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Contact</contextAttribute>
-                    <contextInputAttributeName>Contact</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Contact</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2214,7 +2554,8 @@
                         <queryAttribute>CurrencyIsoCode</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>CurrencyIsoCode</contextAttribute>
-                    <contextInputAttributeName>CurrencyIsoCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >CurrencyIsoCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2222,7 +2563,8 @@
                         <queryAttribute>StartDate</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>StartDate</contextAttribute>
-                    <contextInputAttributeName>StartDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >StartDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2230,7 +2572,8 @@
                         <queryAttribute>ProductLevel</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ProductLevel</contextAttribute>
-                    <contextInputAttributeName>ProductLevel</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ProductLevel</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2238,7 +2581,8 @@
                         <queryAttribute>AgreementType</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>AgreementType</contextAttribute>
-                    <contextInputAttributeName>AgreementType</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AgreementType</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2246,7 +2590,8 @@
                         <queryAttribute>ScheduleFrequency</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ScheduleFrequency</contextAttribute>
-                    <contextInputAttributeName>ScheduleFrequency</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ScheduleFrequency</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2254,7 +2599,8 @@
                         <queryAttribute>ScheduleCount</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ScheduleCount</contextAttribute>
-                    <contextInputAttributeName>ScheduleCount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ScheduleCount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2262,159 +2608,199 @@
                         <queryAttribute>ActualsCalculationMode</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ActualsCalculationMode</contextAttribute>
-                    <contextInputAttributeName>ActualsCalculationMode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ActualsCalculationMode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Opportunity</contextAttribute>
-                    <contextInputAttributeName>Opportunity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Opportunity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Account</contextAttribute>
-                    <contextInputAttributeName>Account</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Account</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>EndDate</contextAttribute>
-                    <contextInputAttributeName>EndDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >EndDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>BillToContact</contextAttribute>
-                    <contextInputAttributeName>BillToContact</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillToContact</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>TotalAmount</contextAttribute>
-                    <contextInputAttributeName>TotalAmount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >TotalAmount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Subtotal</contextAttribute>
-                    <contextInputAttributeName>Subtotal</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Subtotal</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Status</contextAttribute>
-                    <contextInputAttributeName>Status</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Status</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>TotalProductAmount</contextAttribute>
-                    <contextInputAttributeName>TotalProductAmount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >TotalProductAmount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>TotalAdjustmentAmount</contextAttribute>
-                    <contextInputAttributeName>TotalAdjustmentAmount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >TotalAdjustmentAmount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
-                    <contextAttribute>TotalAdjustmentDistAmount</contextAttribute>
-                    <contextInputAttributeName>TotalAdjustmentDistAmount</contextInputAttributeName>
+                    <contextAttribute
+          >TotalAdjustmentDistAmount</contextAttribute>
+                    <contextInputAttributeName
+          >TotalAdjustmentDistAmount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>BillingName</contextAttribute>
-                    <contextInputAttributeName>BillingName</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingName</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>BillingStreet</contextAttribute>
-                    <contextInputAttributeName>BillingStreet</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingStreet</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>BillingCity</contextAttribute>
-                    <contextInputAttributeName>BillingCity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingCity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>BillingState</contextAttribute>
-                    <contextInputAttributeName>BillingState</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingState</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>BillingCountry</contextAttribute>
-                    <contextInputAttributeName>BillingCountry</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingCountry</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>BillingPostalCode</contextAttribute>
-                    <contextInputAttributeName>BillingPostalCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >BillingPostalCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ShippingName</contextAttribute>
-                    <contextInputAttributeName>ShippingName</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ShippingName</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ShippingStreet</contextAttribute>
-                    <contextInputAttributeName>ShippingStreet</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ShippingStreet</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ShippingCity</contextAttribute>
-                    <contextInputAttributeName>ShippingCity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ShippingCity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ShippingState</contextAttribute>
-                    <contextInputAttributeName>ShippingState</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ShippingState</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ShippingCountry</contextAttribute>
-                    <contextInputAttributeName>ShippingCountry</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ShippingCountry</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ShippingPostalCode</contextAttribute>
-                    <contextInputAttributeName>ShippingPostalCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ShippingPostalCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>QuoteToName</contextAttribute>
-                    <contextInputAttributeName>QuoteToName</contextInputAttributeName>
+                    <contextInputAttributeName
+          >QuoteToName</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>QuoteToStreet</contextAttribute>
-                    <contextInputAttributeName>QuoteToStreet</contextInputAttributeName>
+                    <contextInputAttributeName
+          >QuoteToStreet</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>QuoteToCity</contextAttribute>
-                    <contextInputAttributeName>QuoteToCity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >QuoteToCity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>QuoteToState</contextAttribute>
-                    <contextInputAttributeName>QuoteToState</contextInputAttributeName>
+                    <contextInputAttributeName
+          >QuoteToState</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>QuoteToCountry</contextAttribute>
-                    <contextInputAttributeName>QuoteToCountry</contextInputAttributeName>
+                    <contextInputAttributeName
+          >QuoteToCountry</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>QuoteToPostalCode</contextAttribute>
-                    <contextInputAttributeName>QuoteToPostalCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >QuoteToPostalCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ActivatedDate</contextAttribute>
-                    <contextInputAttributeName>ActivatedDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ActivatedDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>LastPricedDate</contextAttribute>
-                    <contextInputAttributeName>LastPricedDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >LastPricedDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Contract</contextAttribute>
-                    <contextInputAttributeName>Contract</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Contract</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>StatusCode</contextAttribute>
-                    <contextInputAttributeName>StatusCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >StatusCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Unidad_de_medida__c</contextAttribute>
-                    <contextInputAttributeName>Unidad_de_medida__c</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Unidad_de_medida__c</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>recordId</contextAttribute>
-                    <contextInputAttributeName>recordId</contextInputAttributeName>
+                    <contextInputAttributeName
+          >recordId</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Frecuencia</contextAttribute>
-                    <contextInputAttributeName>Frecuencia</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Frecuencia</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Number_of_months__c</contextAttribute>
-                    <contextInputAttributeName>Number_of_months__c</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Number_of_months__c</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>Fecha_de_inicio__c</contextAttribute>
-                    <contextInputAttributeName>Fecha_de_inicio__c</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Fecha_de_inicio__c</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttribute>ExpirationDate</contextAttribute>
-                    <contextInputAttributeName>ExpirationDate</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ExpirationDate</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextNode>SalesAgreementQuote</contextNode>
                 <object>SalesAgreement</object>
@@ -2425,8 +2811,10 @@
                         <objectName>SalesAgreementProduct</objectName>
                         <queryAttribute>SalesAgreementId</queryAttribute>
                     </contextAttrHydrationDetails>
-                    <contextAttribute>SalesAgreementQuoteItemParent</contextAttribute>
-                    <contextInputAttributeName>SalesAgreementQuoteItemParent</contextInputAttributeName>
+                    <contextAttribute
+          >SalesAgreementQuoteItemParent</contextAttribute>
+                    <contextInputAttributeName
+          >SalesAgreementQuoteItemParent</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2434,15 +2822,18 @@
                         <queryAttribute>Name</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>ProductName</contextAttribute>
-                    <contextInputAttributeName>ProductName</contextInputAttributeName>
+                    <contextInputAttributeName
+          >ProductName</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
                         <objectName>SalesAgreementProduct</objectName>
                         <queryAttribute>Id</queryAttribute>
                     </contextAttrHydrationDetails>
-                    <contextAttribute>SalesAgreementQuoteItemSource</contextAttribute>
-                    <contextInputAttributeName>SalesAgreementQuoteItemSource</contextInputAttributeName>
+                    <contextAttribute
+          >SalesAgreementQuoteItemSource</contextAttribute>
+                    <contextInputAttributeName
+          >SalesAgreementQuoteItemSource</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2450,7 +2841,8 @@
                         <queryAttribute>PricebookEntryId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>PricebookEntry</contextAttribute>
-                    <contextInputAttributeName>PricebookEntry</contextInputAttributeName>
+                    <contextInputAttributeName
+          >PricebookEntry</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2458,7 +2850,8 @@
                         <queryAttribute>InitialPlannedQtyValue</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Quantity</contextAttribute>
-                    <contextInputAttributeName>Quantity</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Quantity</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2466,7 +2859,8 @@
                         <queryAttribute>DiscountPercentage</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Discount</contextAttribute>
-                    <contextInputAttributeName>Discount</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Discount</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2474,7 +2868,8 @@
                         <queryAttribute>SalesPrice</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>UnitPrice</contextAttribute>
-                    <contextInputAttributeName>UnitPrice</contextInputAttributeName>
+                    <contextInputAttributeName
+          >UnitPrice</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2482,7 +2877,8 @@
                         <queryAttribute>ProductId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>Product</contextAttribute>
-                    <contextInputAttributeName>Product</contextInputAttributeName>
+                    <contextInputAttributeName
+          >Product</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2490,7 +2886,8 @@
                         <queryAttribute>UnitOfMeasureId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>UnitOfMeasure__std</contextAttribute>
-                    <contextInputAttributeName>UnitOfMeasure__std</contextInputAttributeName>
+                    <contextInputAttributeName
+          >UnitOfMeasure__std</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextNode>SalesAgreementQuoteItem</contextNode>
                 <object>SalesAgreementProduct</object>
@@ -2501,8 +2898,10 @@
                         <objectName>SalesAgreeProductAttribute</objectName>
                         <queryAttribute>SalesAgreementProductId</queryAttribute>
                     </contextAttrHydrationDetails>
-                    <contextAttribute>SalesAgreementQuoteItemAttrParent</contextAttribute>
-                    <contextInputAttributeName>SalesAgreementQuoteItemAttrParent</contextInputAttributeName>
+                    <contextAttribute
+          >SalesAgreementQuoteItemAttrParent</contextAttribute>
+                    <contextInputAttributeName
+          >SalesAgreementQuoteItemAttrParent</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2510,7 +2909,8 @@
                         <queryAttribute>AttributeDefinitionId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>AttributeKey</contextAttribute>
-                    <contextInputAttributeName>AttributeKey</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AttributeKey</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2518,15 +2918,18 @@
                         <queryAttribute>AttributeValue</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>AttributeValue</contextAttribute>
-                    <contextInputAttributeName>AttributeValue</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AttributeValue</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
                         <objectName>SalesAgreeProductAttribute</objectName>
-                        <queryAttribute>AttributePicklistValueId</queryAttribute>
+                        <queryAttribute
+            >AttributePicklistValueId</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>AttributePicklistValue</contextAttribute>
-                    <contextInputAttributeName>AttributePicklistValue</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AttributePicklistValue</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2534,7 +2937,8 @@
                         <queryAttribute>AttributeDefinitionName</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>AttributeName</contextAttribute>
-                    <contextInputAttributeName>AttributeName</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AttributeName</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextAttributeMappings>
                     <contextAttrHydrationDetails>
@@ -2546,13 +2950,15 @@
                         <queryAttribute>AttributeDefinition</queryAttribute>
                     </contextAttrHydrationDetails>
                     <contextAttribute>AttributeDefinitionCode</contextAttribute>
-                    <contextInputAttributeName>AttributeDefinitionCode</contextInputAttributeName>
+                    <contextInputAttributeName
+          >AttributeDefinitionCode</contextInputAttributeName>
                 </contextAttributeMappings>
                 <contextNode>SalesAgreementQuoteItemAttr</contextNode>
                 <object>SalesAgreeProductAttribute</object>
             </contextNodeMappings>
             <default>false</default>
-            <description>Mapping to map SalesAgreement and related entities for reading with SAQuote context</description>
+            <description
+      >Mapping to map SalesAgreement and related entities for reading with SAQuote context</description>
             <title>SAEntitiesReadMapping</title>
         </contextMappings>
         <contextNodes>
@@ -4133,11 +4539,12 @@
         <versionNumber>3</versionNumber>
     </contextDefinitionVersions>
     <contextTtl>10</contextTtl>
-    <description>Context definition for Converting between Sales Agreements and Quotes and vice versa</description>
+    <description
+  >Context definition for Converting between Sales Agreements and Quotes and vice versa</description>
     <hasSystemTags>false</hasSystemTags>
     <isProtected>false</isProtected>
     <isTransformationEnabled>false</isTransformationEnabled>
     <masterLabel>QuoteToAcuerdo</masterLabel>
-    <releaseVersion>262.14.26</releaseVersion>
+    <releaseVersion>264.7.7</releaseVersion>
     <title>QuoteToAcuerdo</title>
 </ContextDefinition>
