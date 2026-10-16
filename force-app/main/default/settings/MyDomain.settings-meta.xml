@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <MyDomainSettings xmlns="http://soap.sforce.com/2006/04/metadata">
     <areLegacyRedirectsMaintained>false</areLegacyRedirectsMaintained>
     <areLgcyRdirMaintainedWntr26>false</areLgcyRdirMaintainedWntr26>
@@ -12,10 +12,13 @@
     <enableEdgeDuringRollout>true</enableEdgeDuringRollout>
     <enableExtendedRedirections>false</enableExtendedRedirections>
     <enableLegacyRedirections>false</enableLegacyRedirections>
-    <enableNativeBrowserForAuthOnAndroid>false</enableNativeBrowserForAuthOnAndroid>
-    <enableNativeBrowserForAuthOnIos>false</enableNativeBrowserForAuthOnIos>
-    <enableShareBrowserSessionAndroidForAuth>false</enableShareBrowserSessionAndroidForAuth>
-    <enableShareBrowserSessionIOSForAuth>false</enableShareBrowserSessionIOSForAuth>
+    <enableNativeBrowserForAuthOnAndroid
+  >false</enableNativeBrowserForAuthOnAndroid>
+    <enableNativeBrowserForAuthOnIos>true</enableNativeBrowserForAuthOnIos>
+    <enableShareBrowserSessionAndroidForAuth
+  >false</enableShareBrowserSessionAndroidForAuth>
+    <enableShareBrowserSessionIOSForAuth
+  >true</enableShareBrowserSessionIOSForAuth>
     <instancedUrlRedirectHandling>NoRedirect</instancedUrlRedirectHandling>
     <isFirstPartyCookieUseRequired>false</isFirstPartyCookieUseRequired>
     <isIcorInstApiTrafficBlocked>true</isIcorInstApiTrafficBlocked>
@@ -26,9 +29,11 @@
     <onboardCustomerSpecificSuffix>false</onboardCustomerSpecificSuffix>
     <redirectForceComSiteUrls>true</redirectForceComSiteUrls>
     <redirectPriorMyDomain>true</redirectPriorMyDomain>
-    <use3rdPartyCookieBlockingCompatibleHostnames>true</use3rdPartyCookieBlockingCompatibleHostnames>
+    <use3rdPartyCookieBlockingCompatibleHostnames
+  >true</use3rdPartyCookieBlockingCompatibleHostnames>
     <useEdge>true</useEdge>
     <useEnhancedDomainsInSandbox>true</useEnhancedDomainsInSandbox>
     <useStabilizedMyDomainHostnames>true</useStabilizedMyDomainHostnames>
-    <useStabilizedSandboxMyDomainHostnames>true</useStabilizedSandboxMyDomainHostnames>
+    <useStabilizedSandboxMyDomainHostnames
+  >true</useStabilizedSandboxMyDomainHostnames>
 </MyDomainSettings>
