@@ -19,3 +19,7 @@ node_modules/
 **/standardValueSets/**
 **/appMenus/**
 **/installedPackages/**
+
+# Data Cloud: config de plataforma (field mappings) que el deploy rechaza
+# fuera del org donde Data Cloud esta configurado. No se gestiona por source.
+**/cleanDataServices/**

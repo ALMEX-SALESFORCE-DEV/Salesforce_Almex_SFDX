@@ -3,7 +3,6 @@
     <customConsoleComponents>
         <primaryTabComponents>
             <containers>
-                <height>25</height>
                 <isContainerAutoSizeEnabled>true</isContainerAutoSizeEnabled>
                 <region>Right</region>
                 <sidebarComponents>
