@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
     <actionOverrides>
         <actionName>CancelEdit</actionName>
@@ -118,16 +118,22 @@
     <searchLayouts>
         <customTabListAdditionalFields>Agent</customTabListAdditionalFields>
         <customTabListAdditionalFields>LoginTime</customTabListAdditionalFields>
-        <customTabListAdditionalFields>LogoutTime</customTabListAdditionalFields>
+        <customTabListAdditionalFields
+    >LogoutTime</customTabListAdditionalFields>
         <lookupDialogsAdditionalFields>Agent</lookupDialogsAdditionalFields>
         <lookupDialogsAdditionalFields>LoginTime</lookupDialogsAdditionalFields>
-        <lookupDialogsAdditionalFields>LogoutTime</lookupDialogsAdditionalFields>
-        <lookupPhoneDialogsAdditionalFields>Agent</lookupPhoneDialogsAdditionalFields>
-        <lookupPhoneDialogsAdditionalFields>LoginTime</lookupPhoneDialogsAdditionalFields>
-        <lookupPhoneDialogsAdditionalFields>LogoutTime</lookupPhoneDialogsAdditionalFields>
+        <lookupDialogsAdditionalFields
+    >LogoutTime</lookupDialogsAdditionalFields>
+        <lookupPhoneDialogsAdditionalFields
+    >Agent</lookupPhoneDialogsAdditionalFields>
+        <lookupPhoneDialogsAdditionalFields
+    >LoginTime</lookupPhoneDialogsAdditionalFields>
+        <lookupPhoneDialogsAdditionalFields
+    >LogoutTime</lookupPhoneDialogsAdditionalFields>
         <searchResultsAdditionalFields>Agent</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>LoginTime</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields>LogoutTime</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields
+    >LogoutTime</searchResultsAdditionalFields>
     </searchLayouts>
     <sharingModel>Private</sharingModel>
 </CustomObject>

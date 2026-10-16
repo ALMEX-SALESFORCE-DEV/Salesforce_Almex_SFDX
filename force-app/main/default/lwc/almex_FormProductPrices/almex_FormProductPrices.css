@@ -458,7 +458,8 @@
 
 lightning-input,
 lightning-combobox,
-.native-select {
+.native-select,
+.native-price {
     --slds-c-input-radius-border: 0.45rem;
     --slds-c-input-color-border: #aebfd4;
     --slds-c-input-shadow-focus: 0 0 0 2px rgb(11 79 162 / 14%);
@@ -482,7 +483,9 @@ lightning-combobox,
     color: #ba0517;
 }
 
-.native-select {
+.native-select,
+.native-price {
+    box-sizing: border-box;
     width: 100%;
     height: 2rem;
     padding: 0 2rem 0 0.75rem;
@@ -493,7 +496,8 @@ lightning-combobox,
     font: inherit;
 }
 
-.native-select:focus {
+.native-select:focus,
+.native-price:focus {
     border-color: var(--almex-blue);
     outline: 0;
     box-shadow: 0 0 0 2px rgb(11 79 162 / 14%);
@@ -515,7 +519,8 @@ lightning-combobox,
     .field-grid--three,
     .field-grid--product,
     .field-grid--product-without-subproduct,
-    .field-grid--product-with-shipment {
+    .field-grid--product-with-shipment,
+    .field-grid--product-with-shipment-no-subproduct {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
@@ -536,7 +541,8 @@ lightning-combobox,
     .field-grid--three,
     .field-grid--product,
     .field-grid--product-without-subproduct,
-    .field-grid--product-with-shipment {
+    .field-grid--product-with-shipment,
+    .field-grid--product-with-shipment-no-subproduct {
         grid-template-columns: 1fr;
     }
 

@@ -19,3 +19,12 @@ node_modules/
 **/standardValueSets/**
 **/appMenus/**
 **/installedPackages/**
+
+# Data Cloud: config de plataforma (field mappings) que el deploy rechaza
+# fuera del org donde Data Cloud esta configurado. No se gestiona por source.
+**/cleanDataServices/**
+
+# Layouts estandar de chat (LiveChatTranscript): el retrieve captura
+# construcciones que el deploy rechaza (height+width, section CustomLinks).
+# No son parte del flujo; se gestionan en el org, no por source.
+**/layouts/LiveChatTranscript*
