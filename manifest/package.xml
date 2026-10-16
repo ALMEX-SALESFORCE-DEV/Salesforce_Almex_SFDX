@@ -1122,6 +1122,10 @@
         <members>LearningAssignmentProgress</members>
         <members>LearningItem</members>
         <members>LearningLinkProgress</members>
+        <members>LiveAgentSession</members>
+        <members>LiveChatTranscript</members>
+        <members>LiveChatTranscriptEvent</members>
+        <members>LiveChatVisitor</members>
         <members>Location</members>
         <members>LocationTrustMeasure</members>
         <members>MLModel</members>
@@ -3418,6 +3422,8 @@
         <members>Lead</members>
         <members>LearningItem</members>
         <members>ListEmail</members>
+        <members>LiveAgentSession</members>
+        <members>LiveChatTranscript</members>
         <members>Location</members>
         <members>LocationTrustMeasure</members>
         <members>Macro</members>
