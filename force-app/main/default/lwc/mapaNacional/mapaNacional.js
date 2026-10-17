@@ -42,87 +42,34 @@ const PRICE_UNIT_CONFIG = Object.freeze({
 });
 
 const STATE_NAME_ALIASES = Object.freeze({
-    México: 'Estado de México',
-    'Estado de Mexico': 'Estado de México',
-    'Estado de México': 'Estado de México',
-    'Distrito Federal': 'Ciudad de México',
-    'Ciudad de Mexico': 'Ciudad de México',
-    'Ciudad de México': 'Ciudad de México',
-    Michoacan: 'Michoacán',
+    'Estado de Mexico': 'México',
+    'Estado de México': 'México',
+    'Ciudad de Mexico': 'Distrito Federal',
+    'Ciudad de México': 'Distrito Federal',
     'Queretaro': 'Querétaro',
     'San Luis Potosi': 'San Luis Potosí',
     'Yucatan': 'Yucatán',
     'Nuevo Leon': 'Nuevo León'
 });
 
-// Highmaps conserva estos nombres históricos dentro de su geometría.
-// Se usan solo para localizar el polígono; nunca se muestran al usuario.
-const HIGHMAPS_STATE_NAMES = Object.freeze({
-    'Estado de México': 'México',
-    'Ciudad de México': 'Distrito Federal'
-});
-
 const PRODUCT_NAME_ALIASES = Object.freeze({
-    'Almidon': 'Almidón',
-    'Azucar': 'Azúcar',
     'Fructuosa 42': 'Fructosa 42',
-    // Compatibilidad de lectura: el nombre anterior corresponde al mismo producto.
-    'Dextrosa líquida': 'Dextrosa 95% líquida',
-    'Dextrosa Líquida': 'Dextrosa 95% líquida',
-    'Dextrosa Liquida': 'Dextrosa 95% líquida',
-    'Dextrosa liquida': 'Dextrosa 95% líquida',
-    'Glucosa Alta Maltosa': 'Glucosa alta en maltosa',
-    'Glucosa alta maltosa': 'Glucosa alta en maltosa',
-    'Fructosa Cristalina 99': 'Fructosa cristalina 99',
-    'Krystar Liquido': 'KRYSTAR líquido',
-    'Krystar líquido': 'KRYSTAR líquido',
-    'KRYSTAR Liquido': 'KRYSTAR líquido',
-    'Dextrosa 95% liquida': 'Dextrosa 95% líquida',
-    'Dextrosa 95% Líquida': 'Dextrosa 95% líquida'
+    'Dextrosa Líquida': 'Dextrosa liquida',
+    'Dextrosa líquida': 'Dextrosa liquida',
+    'Dextrosa Liquida': 'Dextrosa liquida'
 });
 
-const DEFAULT_PROVIDER_COLOR = '#5B6573';
-// Una sola definición de identidad y color, compartida por mapa, leyendas,
-// filtros, tablas y exportación. Conservar los colores existentes de PIASA/BSM.
-const PROVIDER_CATALOG = Object.freeze([
-    { name: 'ALMEX', color: '#D32F2F' },
-    { name: 'Ingredion México', color: '#6CB33E', aliases: ['Ingredion'] },
-    { name: 'Cargill México', color: '#00843D', aliases: ['Cargill'] },
-    { name: 'ADM México', color: '#012169', aliases: ['ADM'] },
-    { name: 'Tate & Lyle México', color: '#4D6987', aliases: ['Tate & Lyle'] },
-    { name: 'Roquette México', color: '#0052D2', aliases: ['Roquette'] },
-    { name: 'Primient', color: '#757575' },
-    { name: 'PIASA', color: '#B71C1C' },
-    { name: 'Mill Foods', color: '#7ACDE2' },
-    { name: 'Beta San Miguel', color: '#3949AB' },
-    { name: 'Grupo Azucarero México', color: '#795548', aliases: ['Grupo Azucarero Mexico', 'GAM'] },
-    { name: 'Grupo Porres', color: '#009633' },
-    { name: 'Zucarmex', color: '#0D662C' },
-    { name: 'Ingenio La Gloria', color: '#F57C00' },
-    { name: 'MC Sugar', color: '#37B1E0' },
-    { name: 'N/A', color: DEFAULT_PROVIDER_COLOR }
-]);
-
-function providerIdentityKey(provider) {
-    return String(provider || '').normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '').toUpperCase().replace(/[^A-Z0-9]/g, '');
-}
-
-const PROVIDERS_BY_KEY = Object.freeze(Object.fromEntries(PROVIDER_CATALOG.flatMap(provider =>
-    [provider.name, ...(provider.aliases || [])].map(name => [providerIdentityKey(name), provider])
-)));
-const PROVIDER_COLORS = Object.freeze(Object.fromEntries(
-    PROVIDER_CATALOG.map(({ name, color }) => [name, color])
-));
+const PROVIDER_NAME_ALIASES = Object.freeze({
+    'ADM México': 'ADM',
+    'ADM Mexico': 'ADM',
+    'Cargill México': 'Cargill',
+    'Cargill Mexico': 'Cargill',
+    'Ingredion México': 'Ingredion',
+    'Ingredion Mexico': 'Ingredion'
+});
 
 function normalizeStateName(state) {
-    const normalizedState = String(state || '').trim();
-    return STATE_NAME_ALIASES[normalizedState] || normalizedState;
-}
-
-function getHighmapsStateName(state) {
-    const displayState = normalizeStateName(state);
-    return HIGHMAPS_STATE_NAMES[displayState] || displayState;
+    return STATE_NAME_ALIASES[state] || state;
 }
 
 function normalizeProductName(product) {
@@ -136,7 +83,7 @@ function normalizeProvider(provider) {
         return 'N/A';
     }
 
-    return PROVIDERS_BY_KEY[providerIdentityKey(normalizedProvider)]?.name || normalizedProvider;
+    return PROVIDER_NAME_ALIASES[normalizedProvider] || normalizedProvider;
 }
 
 function normalizeUnitKey(unit) {
@@ -184,10 +131,6 @@ function getRecordCurrency(record) {
     return getPriceUnitConfig(record?.Unidad__c)?.currency || null;
 }
 
-function getRecordConsumptionType(record) {
-    return String(record?.Tipo_consumo_toneladas__c || '').trim().toUpperCase() || 'M';
-}
-
 function normalizePricePerKg(price, unit) {
     const numericPrice = Number(price);
     const unitConfig = getPriceUnitConfig(unit);
@@ -199,19 +142,15 @@ function normalizePricePerKg(price, unit) {
     return numericPrice / unitConfig.divisor;
 }
 
-function productUsesShipmentSize(product) {
+function isLiquidProduct(product) {
     const normalizedProduct = String(product || '')
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
-        .toLowerCase()
-        .trim();
+        .toLowerCase();
 
     return (
         normalizedProduct.includes('glucosa') ||
         normalizedProduct.includes('fructosa') ||
-        normalizedProduct.includes('fructuosa') ||
-        normalizedProduct === 'krystar liquido' ||
-        normalizedProduct === 'dextrosa monohidratada' ||
         (
             normalizedProduct.includes('dextrosa') &&
             normalizedProduct.includes('liquida')
@@ -225,8 +164,6 @@ function getRecordPeriod(record) {
 
     if (
         Number.isInteger(periodYear) &&
-        periodYear >= 2000 &&
-        periodYear <= 2100 &&
         Number.isInteger(periodMonth) &&
         periodMonth >= 1 &&
         periodMonth <= 12
@@ -249,7 +186,7 @@ export default class MapaNacional extends LightningElement {
     worldMapData;
     highmapsInitialized = false;
 
-    selectedProduct = 'Azúcar';
+    selectedProduct = 'Azucar';
     summaryTableData = [];
     cityTableData = [];
 
@@ -263,7 +200,6 @@ export default class MapaNacional extends LightningElement {
     selectedProvider = 'ALL';
     selectedMapProviders = [];
     selectedCurrency = CURRENCIES.MXN;
-    selectedConsumptionType = 'M';
     lastLegendClickProvider = '';
     lastLegendClickTime = 0;
 
@@ -291,32 +227,6 @@ export default class MapaNacional extends LightningElement {
         return `${this.selectedCurrency}/Kg`;
     }
 
-    get isMonthlyConsumption() {
-        return this.selectedConsumptionType === 'M';
-    }
-
-    get isAnnualConsumption() {
-        return this.selectedConsumptionType === 'A';
-    }
-
-    get monthlyConsumptionButtonClass() {
-        return this.isMonthlyConsumption
-            ? 'currency-option currency-option-active' : 'currency-option';
-    }
-
-    get annualConsumptionButtonClass() {
-        return this.isAnnualConsumption
-            ? 'currency-option currency-option-active' : 'currency-option';
-    }
-
-    get consumptionPeriodLabel() {
-        return this.isAnnualConsumption ? 'anual' : 'mensual';
-    }
-
-    get mapSubtitle() {
-        return `Proveedor líder por consumo ${this.consumptionPeriodLabel} en cada estado`;
-    }
-
     get averagePriceDisplay() {
         const numericPrice = Number(this.averagePrice) || 0;
         const prefix = this.isUsdSelected ? 'US$' : '$';
@@ -325,7 +235,7 @@ export default class MapaNacional extends LightningElement {
     }
 
     get usesShipmentSize() {
-        return productUsesShipmentSize(this.selectedProduct);
+        return isLiquidProduct(this.selectedProduct);
     }
 
     get summaryRowCount() {
@@ -352,7 +262,7 @@ export default class MapaNacional extends LightningElement {
 
     get selectedProviderBadges() {
         return this.activeProviderNames.map(provider => {
-            const color = this.providerColors[provider] || DEFAULT_PROVIDER_COLOR;
+            const color = this.providerColors[provider] || '#5B6573';
 
             return {
                 name: provider,
@@ -368,7 +278,7 @@ export default class MapaNacional extends LightningElement {
     }
 
     get summaryContextLabel() {
-        return `${this.providerSelectionLabel} · ${this.currentPriceUnitLabel} · Consumo ${this.consumptionPeriodLabel}`;
+        return `${this.providerSelectionLabel} · ${this.currentPriceUnitLabel}`;
     }
 
     matchesActiveProvider(record) {
@@ -389,12 +299,11 @@ export default class MapaNacional extends LightningElement {
                         price =>
                             price.Nombre_producto__c ===
                                 this.selectedProduct &&
-                            this.isRecordInSelectedCurrency(price) &&
-                            getRecordConsumptionType(price) === this.selectedConsumptionType
+                            this.isRecordInSelectedCurrency(price)
                     )
                     .map(
                         price =>
-                            normalizeProvider(price.Proveedor__c)
+                            price.Proveedor__c?.trim()
                     )
                     .filter(Boolean)
             )
@@ -419,7 +328,7 @@ export default class MapaNacional extends LightningElement {
     }
 
     expandedTable = null;
-
+    
     get isTableExpanded() {
         return this.expandedTable !== null;
     }
@@ -445,7 +354,7 @@ export default class MapaNacional extends LightningElement {
     get yearOptions() {
         const years = [
             ...new Set(
-                this.getSelectedProductRecords()
+                (this.prices || [])
                     .map(record => getRecordPeriod(record)?.year)
                     .filter(Number.isInteger)
             )
@@ -470,10 +379,6 @@ export default class MapaNacional extends LightningElement {
 
 
     get cityTableColumns() {
-        return this.getCityTableColumns(this.selectedConsumptionType);
-    }
-
-    getCityTableColumns(consumptionType) {
         const productDetailColumn = this.usesShipmentSize
             ? {
                 label: 'Tamaño de embarque',
@@ -518,7 +423,7 @@ export default class MapaNacional extends LightningElement {
                 initialWidth: 130
             },
             {
-                label: consumptionType === 'A' ? 'Consumo anual (Ton)' : 'Consumo mensual (Ton)',
+                label: 'Venta mensual (Ton)',
                 fieldName: 'consumption',
                 type: 'number',
                 typeAttributes: {
@@ -549,10 +454,6 @@ export default class MapaNacional extends LightningElement {
     }
 
     get summaryTableColumns() {
-        return this.getSummaryTableColumns(this.selectedConsumptionType);
-    }
-
-    getSummaryTableColumns(consumptionType) {
         return [
             {
                 label: 'Estado',
@@ -561,7 +462,7 @@ export default class MapaNacional extends LightningElement {
                 initialWidth: 120
             },
             {
-                label: consumptionType === 'A' ? 'Consumo anual (Ton)' : 'Consumo mensual (Ton)',
+                label: 'Consumo mensual (Ton)',
                 fieldName: 'consumption',
                 type: 'number',
                 typeAttributes: {
@@ -629,37 +530,53 @@ export default class MapaNacional extends LightningElement {
         'Chihuahua',
         'Coahuila',
         'Colima',
-        'Ciudad de México',
         'Durango',
-        'Estado de México',
         'Guanajuato',
         'Guerrero',
         'Hidalgo',
         'Jalisco',
-        'Michoacán',
+        'Estado de Mexico',
+        'Michoacan',
         'Morelos',
         'Nayarit',
-        'Nuevo León',
+        'Nuevo Leon',
         'Oaxaca',
         'Puebla',
-        'Querétaro',
+        'Queretaro',
         'Quintana Roo',
-        'San Luis Potosí',
+        'San Luis Potosi',
         'Sinaloa',
         'Sonora',
         'Tabasco',
         'Tamaulipas',
         'Tlaxcala',
         'Veracruz',
-        'Yucatán',
-        'Zacatecas'
+        'Yucatan',
+        'Zacatecas',
+        'Ciudad de Mexico'
     ];
 
     // ==============================
     // COLOR POR PROVEEDOR
     // ==============================
 
-    providerColors = PROVIDER_COLORS;
+    providerColors = {
+        'ALMEX': '#D32F2F',
+        'Ingredion': '#4CAF50',
+        'Cargill': '#F9A825',
+        'ADM': '#1A237E',
+        'Tate & Lyle': '#00897B',
+        'Primient': '#757575',
+        'PIASA': '#B71C1C',
+        'Mill Foods': '#7ACDE2',
+        'Beta San Miguel': '#3949AB',
+        'Grupo Azucarero Mexico': '#795548',
+        'GAM': '#A1887F',
+        'Zucarmex': '#388E3C',
+        'Ingenio La Gloria': '#F57C00',
+        'MC Sugar': '#37B1E0',
+        'N/A': '#5B6573'
+    };
 
 
     // ==============================
@@ -680,7 +597,6 @@ export default class MapaNacional extends LightningElement {
 
                 this.prices = records.map(record => ({
                     ...record,
-                    Estado__c: normalizeStateName(record.Estado__c),
                     Nombre_producto__c: normalizeProductName(
                         record.Nombre_producto__c
                     ),
@@ -711,10 +627,6 @@ export default class MapaNacional extends LightningElement {
     // ==============================
 
     renderedCallback() {
-        const productSelect = this.template.querySelector('.product-select');
-        if (productSelect && productSelect.value !== this.selectedProduct) {
-            productSelect.value = this.selectedProduct;
-        }
         if (this.highmapsInitialized) {
             return;
         }
@@ -758,20 +670,18 @@ export default class MapaNacional extends LightningElement {
             '.map-container'
         );
 
-        if (!container || !window.Highcharts) {
+        if (!container) {
             return;
         }
 
         const result = this.prices.filter(
             price =>
                 price.Nombre_producto__c === this.selectedProduct &&
-                this.isRecordInSelectedCurrency(price) &&
-                getRecordConsumptionType(price) === this.selectedConsumptionType
+                this.isRecordInSelectedCurrency(price)
         );
 
         const currencyPrefix = this.isUsdSelected ? 'US$' : '$';
         const priceUnitLabel = this.currentPriceUnitLabel;
-        const consumptionPeriodLabel = this.consumptionPeriodLabel;
 
         const activeProviders = this.activeProviderNames;
         const hasProviderSelection = activeProviders.length > 0;
@@ -826,8 +736,7 @@ export default class MapaNacional extends LightningElement {
 
                 const feature = mapFeatures.find(
                     feature =>
-                        feature.properties.name ===
-                            getHighmapsStateName(stateName)
+                        feature.properties.name === stateName
                 );
 
                 if (!feature) {
@@ -868,7 +777,7 @@ export default class MapaNacional extends LightningElement {
 
                 color:
                     this.providerColors[provider] ||
-                    DEFAULT_PROVIDER_COLOR,
+                    '#CCCCCC',
 
                 showInLegend: true,
 
@@ -903,7 +812,7 @@ export default class MapaNacional extends LightningElement {
                         const state =
                             this.custom?.state || '-';
 
-                        const pointProvider =
+                        const provider =
                             this.custom?.provider || '-';
 
                         const consumption =
@@ -927,8 +836,8 @@ export default class MapaNacional extends LightningElement {
 
                         return `
                             <b>${state}</b><br>
-                            <b>Proveedor líder:</b> ${pointProvider}<br>
-                            <b>Consumo ${consumptionPeriodLabel}:</b>
+                            <b>Proveedor líder:</b> ${provider}<br>
+                            <b>Consumo mensual:</b>
                             ${consumption.toLocaleString('es-MX')} Ton<br>
                             <b>Precio promedio del estado:</b>
                             ${averagePriceText}<br>
@@ -944,7 +853,7 @@ export default class MapaNacional extends LightningElement {
         // MAPA
         // ==========================================
 
-        window.Highcharts.mapChart(container, {
+        Highcharts.mapChart(container, {
 
             chart: {
                 map: mapData,
@@ -1128,8 +1037,6 @@ export default class MapaNacional extends LightningElement {
 
         const products = new Set(
             this.prices
-                .filter(price => this.isRecordInSelectedCurrency(price)
-                    && getRecordConsumptionType(price) === this.selectedConsumptionType)
                 .map(price => price.Nombre_producto__c)
                 .filter(product => product)
         );
@@ -1149,7 +1056,7 @@ export default class MapaNacional extends LightningElement {
 
         const states = new Set(
             filteredPrices
-                .map(price => normalizeStateName(price.Estado__c))
+                .map(price => price.Estado__c)
                 .filter(state => state)
         );
 
@@ -1164,36 +1071,49 @@ export default class MapaNacional extends LightningElement {
 
     calculateAveragePrice() {
         const filteredPrices = this.getSelectedProductRecords();
-
+    
         const records = filteredPrices
             .map(record => {
                 const price = Number(record.Precio_producto__c);
                 const unit = record.Unidad__c;
+                const weight = Number(record.Consumo_mensual__c);
 
                 const pricePerKg = normalizePricePerKg(price, unit);
-
+            
                 if (
                     isNaN(price) ||
+                    isNaN(weight) ||
+                    weight <= 0 ||
                     pricePerKg === null
                 ) {
                     return null;
                 }
-
-                return pricePerKg;
+            
+                return {
+                    pricePerKg,
+                    weight
+                };
             })
             .filter(record => record !== null);
-
+        
         if (records.length === 0) {
             this.averagePrice = 0;
             return;
         }
-
-        const totalPrice = records.reduce(
-            (sum, pricePerKg) => sum + pricePerKg,
+    
+        const weightedTotal = records.reduce(
+            (sum, record) =>
+                sum + (record.pricePerKg * record.weight),
             0
         );
-
-        this.averagePrice = (totalPrice / records.length).toFixed(2);
+    
+        const totalWeight = records.reduce(
+            (sum, record) =>
+                sum + record.weight,
+            0
+        );
+    
+        this.averagePrice = (weightedTotal / totalWeight).toFixed(2);
     }
 
 
@@ -1208,12 +1128,12 @@ export default class MapaNacional extends LightningElement {
 
         const statesWithRecords = new Set(
             filteredPrices
-                .map(price => normalizeStateName(price.Estado__c))
+                .map(price => price.Estado__c)
                 .filter(state => state)
         );
 
         this.outOfRangeStates = this.mexicanStates.filter(
-            state => !statesWithRecords.has(normalizeStateName(state))
+            state => !statesWithRecords.has(state)
         ).length;
     }
 
@@ -1222,12 +1142,11 @@ export default class MapaNacional extends LightningElement {
     // FILTRAR POR PRODUCTO
     // ==============================
 
-    getSelectedProductRecords(consumptionType = this.selectedConsumptionType) {
+    getSelectedProductRecords() {
         return this.prices.filter(
             price =>
                 price.Nombre_producto__c === this.selectedProduct &&
                 this.isRecordInSelectedCurrency(price) &&
-                getRecordConsumptionType(price) === consumptionType &&
                 this.matchesActiveProvider(price)
         );
     }
@@ -1272,25 +1191,6 @@ export default class MapaNacional extends LightningElement {
         this.selectedStateRowIds = [];
         this.selectedStates = [];
 
-        this.syncSelectedYear();
-        this.updateCards();
-        this.updateSummaryTable();
-        this.updateCityTable();
-        this.renderMap();
-        this.renderTrendChart();
-    }
-
-    handleConsumptionTypeChange(event) {
-        const consumptionType = event.currentTarget.dataset.consumptionType;
-        if (!['M', 'A'].includes(consumptionType)
-            || consumptionType === this.selectedConsumptionType) {
-            return;
-        }
-        this.selectedConsumptionType = consumptionType;
-        this.selectedProvider = 'ALL';
-        this.selectedMapProviders = [];
-        this.selectedStateRowIds = [];
-        this.selectedStates = [];
         this.syncSelectedYear();
         this.updateCards();
         this.updateSummaryTable();
@@ -1406,7 +1306,7 @@ export default class MapaNacional extends LightningElement {
 
                     color:
                         this.providerColors[winner[0]] ||
-                        DEFAULT_PROVIDER_COLOR
+                        '#CCCCCC'
                 };
             }
         });
@@ -1475,7 +1375,6 @@ export default class MapaNacional extends LightningElement {
     refreshProviderFilteredViews() {
         this.selectedStateRowIds = [];
         this.selectedStates = [];
-        this.syncSelectedYear();
         this.updateCards();
         this.updateSummaryTable();
         this.updateCityTable();
@@ -1488,12 +1387,13 @@ export default class MapaNacional extends LightningElement {
     // ==============================
 
     updateSummaryTable() {
-        this.summaryTableData = this.buildSummaryTableData(
-            this.getSelectedProductRecords(), this.selectedConsumptionType
+        const result = this.prices.filter(
+            price =>
+                price.Nombre_producto__c ===
+                    this.selectedProduct &&
+                this.isRecordInSelectedCurrency(price) &&
+                this.matchesActiveProvider(price)
         );
-    }
-
-    buildSummaryTableData(result, consumptionType) {
 
         const leadingProviders = this.getLeadingProviders(result);
 
@@ -1572,7 +1472,7 @@ export default class MapaNacional extends LightningElement {
         // ARMAR TABLA
         // ==========================================
 
-        return Object.entries(
+        this.summaryTableData = Object.entries(
             leadingProviders
         ).map(([state, stateData], index) => {
             const prices = statePrices[state] || {
@@ -1597,7 +1497,7 @@ export default class MapaNacional extends LightningElement {
                     : null;
 
             return {
-                id: `${this.selectedProduct}-${this.selectedCurrency}-${consumptionType}-${index}`,
+                id: `${this.selectedProduct}-${this.selectedCurrency}-${index}`,
 
                 state: state,
 
@@ -1621,19 +1521,20 @@ export default class MapaNacional extends LightningElement {
     // ==============================
 
     updateCityTable() {
-        this.allCityTableData = this.buildCityTableData(
-            this.getSelectedProductRecords(), this.selectedConsumptionType
+        const result = this.prices.filter(
+            price =>
+                price.Nombre_producto__c ===
+                    this.selectedProduct &&
+                this.isRecordInSelectedCurrency(price) &&
+                this.matchesActiveProvider(price)
         );
-        this.cityTableData = [...this.allCityTableData];
-    }
 
-    buildCityTableData(result, consumptionType) {
-        return result.map((price, index) => {
+        this.allCityTableData = result.map((price, index) => {
             const rawState = price.Estado__c;
             const normalizedState = normalizeStateName(rawState);
 
             return {
-                id: `city-${this.selectedProduct}-${this.selectedCurrency}-${consumptionType}-${index}-${price.Id}`,
+                id: `city-${this.selectedProduct}-${this.selectedCurrency}-${index}-${price.Id}`,
                 state: normalizedState,
                 city: price.Ciudad__c || '',
                 client: price.Nombre_comercial__c || '',
@@ -1646,12 +1547,13 @@ export default class MapaNacional extends LightningElement {
             };
         });
 
+        this.cityTableData = [...this.allCityTableData];
     }
 
     // ==============================
     // FILTRAR TABLA POR SELECCIÓN
     // ==============================
-
+    
     handleStateSelection(event) {
         const selectedRows = event.detail.selectedRows || [];
 
@@ -1691,7 +1593,7 @@ export default class MapaNacional extends LightningElement {
             '.trend-chart'
         );
 
-        if (!container || !window.Highcharts) {
+        if (!container || typeof Highcharts === 'undefined') {
             return;
         }
 
@@ -1704,7 +1606,6 @@ export default class MapaNacional extends LightningElement {
             if (
                 record.Nombre_producto__c !== this.selectedProduct ||
                 !this.isRecordInSelectedCurrency(record) ||
-                getRecordConsumptionType(record) !== this.selectedConsumptionType ||
                 !this.matchesActiveProvider(record) ||
                 !period ||
                 period.year !== selectedYear
@@ -1748,7 +1649,7 @@ export default class MapaNacional extends LightningElement {
 
         const currencyPrefix = this.isUsdSelected ? 'US$' : '$';
 
-        this.trendChart = window.Highcharts.chart(
+        this.trendChart = Highcharts.chart(
             container,
             {
                 chart: {
@@ -1772,7 +1673,7 @@ export default class MapaNacional extends LightningElement {
 
                 subtitle: {
                     text: populatedMonths
-                        ? `${this.selectedProduct} · ${this.providerSelectionLabel} · ${this.currentPriceUnitLabel} · Consumo ${this.consumptionPeriodLabel} · ${populatedMonths} meses con información`
+                        ? `${this.selectedProduct} · ${this.providerSelectionLabel} · ${this.currentPriceUnitLabel} · ${populatedMonths} meses con información`
                         : `${this.selectedProduct} · ${this.providerSelectionLabel} · Sin registros con periodo para ${selectedYear}`,
                     align: 'left',
                     style: {
@@ -1906,8 +1807,6 @@ export default class MapaNacional extends LightningElement {
     }
 
     handleChartsTabActive() {
-        // Espera a que Salesforce monte el contenido de la pestaña de gráficas.
-        // eslint-disable-next-line @lwc/lwc/no-async-operation
         setTimeout(() => {
 
             const yearSelect = this.template.querySelector(
@@ -1964,13 +1863,12 @@ export default class MapaNacional extends LightningElement {
         ];
     }
 
-    getExcelContextRows(sectionTitle, consumptionType) {
+    getExcelContextRows(sectionTitle) {
         return [
             [sectionTitle],
             ['Producto', this.selectedProduct],
             ['Proveedor(es)', this.providerSelectionLabel],
             ['Moneda', this.selectedCurrency],
-            ['Tipo de consumo', consumptionType === 'A' ? 'Anual' : 'Mensual'],
             ['Unidad normalizada', this.currentPriceUnitLabel],
             []
         ];
@@ -1997,42 +1895,52 @@ export default class MapaNacional extends LightningElement {
 
             const workbook = XLSXLibrary.utils.book_new();
 
-            const selectedStateSet = new Set(this.selectedStates);
-            for (const consumptionType of ['M', 'A']) {
-                const periodLabel = consumptionType === 'A' ? 'anual' : 'mensual';
-                const sheetName = `Resumen por consumo ${periodLabel}`;
-                const records = this.getSelectedProductRecords(consumptionType).filter(
-                    record => !selectedStateSet.size
-                        || selectedStateSet.has(normalizeStateName(record.Estado__c))
-                );
-                const stateRows = this.buildSummaryTableData(records, consumptionType);
-                const cityRows = this.buildCityTableData(records, consumptionType);
-                const stateColumns = this.getSummaryTableColumns(consumptionType);
-                const cityColumns = this.getCityTableColumns(consumptionType);
-                const contextRows = this.getExcelContextRows(sheetName, consumptionType);
-                const stateTable = this.getExcelTableData(stateRows, stateColumns);
-                const cityTitleRow = contextRows.length + 1 + stateTable.length + 2;
-                const excelData = [
-                    ...contextRows,
-                    ['Resumen estatal'],
-                    ...stateTable,
-                    [],
-                    [],
-                    ['Desglose por ciudad'],
-                    ...this.getExcelTableData(cityRows, cityColumns)
-                ];
-                const worksheet = XLSXLibrary.utils.aoa_to_sheet(excelData);
-                const columnCount = Math.max(stateColumns.length, cityColumns.length);
-                worksheet['!cols'] = Array.from({ length: columnCount }, (_, columnIndex) => ({
-                    wch: Math.min(45, excelData.reduce(
-                        (width, row) => Math.max(width, String(row[columnIndex] ?? '').length + 2), 18
-                    ))
-                }));
-                worksheet['!merges'] = [0, contextRows.length, cityTitleRow].map(row => ({
-                    s: { r: row, c: 0 }, e: { r: row, c: columnCount - 1 }
-                }));
-                XLSXLibrary.utils.book_append_sheet(workbook, worksheet, sheetName);
-            }
+            // Datos que aparecen actualmente en Resumen Estatal
+            const selectedStateSet = new Set(
+                this.selectedStates
+            );
+
+            const stateRowsToExport =
+                this.selectedStates.length > 0
+                    ? this.summaryTableData.filter(
+                        row => selectedStateSet.has(row.state)
+                    )
+                    : this.summaryTableData;
+
+            const stateExcelData = [
+                ...this.getExcelContextRows('Resumen Estatal'),
+                ...this.getExcelTableData(
+                    stateRowsToExport,
+                    this.summaryTableColumns
+                )
+            ];
+
+            const stateWorksheet =
+                XLSXLibrary.utils.aoa_to_sheet(stateExcelData);
+
+            XLSXLibrary.utils.book_append_sheet(
+                workbook,
+                stateWorksheet,
+                'Resumen Estatal'
+            );
+
+            // Datos que aparecen actualmente en Desglose por ciudad
+            const cityExcelData = [
+                ...this.getExcelContextRows('Desglose por ciudad'),
+                ...this.getExcelTableData(
+                    this.cityTableData,
+                    this.cityTableColumns
+                )
+            ];
+
+            const cityWorksheet =
+                XLSXLibrary.utils.aoa_to_sheet(cityExcelData);
+
+            XLSXLibrary.utils.book_append_sheet(
+                workbook,
+                cityWorksheet,
+                'Resumen Ciudades'
+            );
 
             const productName = (
                 this.selectedProduct || 'Productos'
@@ -2053,5 +1961,5 @@ export default class MapaNacional extends LightningElement {
         }
     }
 
-
+    
 }
