@@ -146,43 +146,43 @@
                     <div class="account-lookup">
                         <lightning-input
                             type="search"
-                            label="Sucursal del cliente"
-                            value={branchSearch}
-                            placeholder="Escribe el nombre de la sucursal..."
-                            onchange={handleBranchSearch}
-                            onfocus={handleBranchFocus}
-                            onblur={handleBranchBlur}
+                            label="Cliente"
+                            value={accountSearch}
+                            placeholder="Escribe el cliente..."
+                            onchange={handleAccountSearch}
+                            onfocus={handleAccountFocus}
+                            onblur={handleAccountBlur}
                             autocomplete="off">
                         </lightning-input>
-                        <template lwc:if={isSearchingBranches}>
+                        <template lwc:if={isSearchingAccounts}>
                             <lightning-spinner
                                 class="account-lookup__spinner"
-                                alternative-text="Buscando sucursales"
+                                alternative-text="Buscando clientes"
                                 size="x-small">
                             </lightning-spinner>
                         </template>
-                        <template lwc:if={showBranchSuggestions}>
-                            <div class="account-lookup__menu" role="listbox" aria-label="Sucursales encontradas">
-                                <template for:each={branchSuggestions} for:item="branch">
+                        <template lwc:if={showAccountSuggestions}>
+                            <div class="account-lookup__menu" role="listbox" aria-label="Clientes encontrados">
+                                <template for:each={accountSuggestions} for:item="account">
                                     <button
-                                        key={branch.branchId}
+                                        key={account.accountId}
                                         type="button"
                                         class="account-lookup__option"
-                                        data-id={branch.branchId}
+                                        data-id={account.accountId}
                                         onmousedown={handleLookupOptionMouseDown}
-                                        onclick={selectBranch}
+                                        onclick={selectAccount}
                                         role="option">
                                         <lightning-icon icon-name="standard:account" size="small"></lightning-icon>
                                         <span class="account-lookup__copy">
-                                            <strong>{branch.name}</strong>
-                                            <small>{branch.subtitle}</small>
+                                            <strong>{account.name}</strong>
+                                            <small>{account.subtitle}</small>
                                         </span>
                                     </button>
                                 </template>
                             </div>
                         </template>
-                        <template lwc:if={branchSearchMessage}>
-                            <p class="account-lookup__message">{branchSearchMessage}</p>
+                        <template lwc:if={accountSearchMessage}>
+                            <p class="account-lookup__message">{accountSearchMessage}</p>
                         </template>
                     </div>
                 </template>
@@ -324,19 +324,11 @@
                     </div>
                 </div>
 
-                <div class="field-grid field-grid--four">
-                    <lightning-combobox
-                        name="consumptionType"
-                        label="Tipo de consumo"
-                        value={form.consumptionType}
-                        options={consumptionTypeOptions}
-                        onchange={handleFieldChange}
-                        required>
-                    </lightning-combobox>
+                <div class="field-grid field-grid--three">
                     <lightning-input
                         data-field="monthlyConsumption"
                         type="number"
-                        label={consumptionLabel}
+                        label="Consumo mensual (Ton)"
                         value={form.monthlyConsumption}
                         onchange={handleTextChange}
                         min="0"
@@ -344,28 +336,16 @@
                         required>
                     </lightning-input>
 
-                    <div class="native-field slds-form-element">
-                        <label class="slds-form-element__label" for="price-input">
-                            <abbr class="slds-required" title="obligatorio">*</abbr> Precio
-                        </label>
-                        <div class="slds-form-element__control">
-                            <input
-                                id="price-input"
-                                class="slds-input native-price"
-                                data-field="price"
-                                type="text"
-                                inputmode="decimal"
-                                value={priceDisplay}
-                                pattern="[0-9,]*([.][0-9]{1,2})?"
-                                title="Ingresa un precio con punto decimal y hasta dos decimales."
-                                oninput={handlePriceInput}
-                                onchange={handlePriceInput}
-                                onkeydown={handlePriceKeyDown}
-                                onpaste={handlePricePaste}
-                                onblur={handlePriceBlur}
-                                required />
-                        </div>
-                    </div>
+                    <lightning-input
+                        data-field="price"
+                        type="number"
+                        label="Precio"
+                        value={form.price}
+                        onchange={handleTextChange}
+                        min="0"
+                        step="0.01"
+                        required>
+                    </lightning-input>
 
                     <lightning-combobox
                         name="unit"
@@ -398,6 +378,7 @@
                             id="supplier-select"
                             class="native-select"
                             name="supplier"
+                            value={form.supplier}
                             onchange={handleSupplierChange}
                             disabled={isSupplierDisabled}
                             required>
