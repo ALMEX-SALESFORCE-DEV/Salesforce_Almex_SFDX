@@ -16,6 +16,9 @@ node_modules/
 # Metadata ruidosa en el sync prod->repo (reordena en cada retrieve).
 # Ver docs/07-sync-prod-a-main.md paso 4.
 **/profiles/**
+!**/profiles/Admin.profile-meta.xml
+!**/profiles/Gerencia y Dirección Comercial.profile-meta.xml
+!**/profiles/Supervisor y Ejecutivo Comercial.profile-meta.xml
 **/standardValueSets/**
 **/appMenus/**
 **/installedPackages/**

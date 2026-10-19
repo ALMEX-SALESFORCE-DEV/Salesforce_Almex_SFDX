@@ -1,0 +1,1277 @@
+<template>
+
+    <section class="calendar-shell">
+
+        <!-- CABECERA DEL MÓDULO -->
+        <header class="calendar-toolbar calendar-module-toolbar">
+            <div class="calendar-heading-block">
+                <div class="calendar-heading">
+                    <div class="calendar-icon">
+                        <lightning-icon icon-name="utility:event" size="small" variant="inverse"
+                            alternative-text="Calendario">
+                        </lightning-icon>
+                    </div>
+
+                    <div>
+                        <h1>Calendario de Visitas y Actividades</h1>
+                        <p>Visualiza y administra las actividades comerciales.</p>
+                    </div>
+                </div>
+
+                <div class="calendar-section-selector" role="tablist" aria-label="Vista del calendario">
+                    <button type="button" class={calendarSectionButtonClass} data-section="calendar" role="tab"
+                        aria-selected={isCalendarSectionSelected} onclick={handleCalendarSectionSelect}>
+                        Calendario
+                    </button>
+
+                    <button type="button" class={myActivitiesSectionButtonClass} data-section="activities" role="tab"
+                        aria-selected={isMyActivitiesSectionSelected} onclick={handleCalendarSectionSelect}>
+                        Mis actividades
+                    </button>
+                </div>
+            </div>
+
+            <template lwc:if={isCalendarSectionSelected}>
+                <div class="calendar-navigation">
+                    <div class="navigation-group">
+                        <button type="button" class="navigation-button" title="Mes anterior" onclick={handlePrevious}>
+                            <lightning-icon icon-name="utility:chevronleft" size="x-small" alternative-text="Anterior">
+                            </lightning-icon>
+                        </button>
+
+                        <button type="button" class="navigation-button" title="Mes siguiente" onclick={handleNext}>
+                            <lightning-icon icon-name="utility:chevronright" size="x-small" alternative-text="Siguiente">
+                            </lightning-icon>
+                        </button>
+                    </div>
+
+                    <div class="calendar-title">{calendarTitle}</div>
+                </div>
+            </template>
+
+            <template lwc:else>
+                <div class="my-activities-toolbar-action">
+                    <button type="button" class="new-activity-button" onclick={handleNewActivityFromList}>
+                        <lightning-icon icon-name="utility:add" size="x-small" variant="inverse"
+                            alternative-text=""></lightning-icon>
+                        Nueva actividad
+                    </button>
+                </div>
+            </template>
+        </header>
+
+        <template lwc:if={isCalendarSectionSelected}>
+            <div class="mobile-add-action">
+                <button type="button" class="mobile-add-button" onclick={handleMobileAddActivity}>
+                    <lightning-icon icon-name="utility:add" size="x-small" variant="inverse" alternative-text="">
+                    </lightning-icon>
+                    Agregar nueva actividad
+                </button>
+            </div>
+        </template>
+
+        <!-- VISTA CALENDARIO -->
+        <div class="calendar-content" hidden={isCalendarSectionHidden}>
+            <aside class="filter-panel">
+                <h2 class="filter-title">Filtros</h2>
+
+                <div class="calendar-filter-controls">
+                    <div class="calendar-filter-field">
+                        <label for="calendar-filter-executive">Ejecutivo</label>
+                        <select id="calendar-filter-executive" name="executive" value={calendarFilters.executive}
+                            onchange={handleCalendarFilterChange}>
+                            <option value="">Todos</option>
+                            <template for:each={executiveFilterOptions} for:item="option">
+                                <option key={option.value} value={option.value}>{option.label}</option>
+                            </template>
+                        </select>
+                    </div>
+
+                    <div class="calendar-filter-field">
+                        <label for="calendar-filter-client">Sucursal / Prospecto</label>
+                        <select id="calendar-filter-client" name="client" value={calendarFilters.client}
+                            onchange={handleCalendarFilterChange}>
+                            <option value="">Todos</option>
+                            <template for:each={clientFilterOptions} for:item="option">
+                                <option key={option.value} value={option.value}>{option.label}</option>
+                            </template>
+                        </select>
+                    </div>
+
+                    <div class="calendar-filter-field">
+                        <label for="calendar-filter-state">Estado</label>
+                        <select id="calendar-filter-state" name="state" value={calendarFilters.state}
+                            onchange={handleCalendarFilterChange}>
+                            <option value="">Todos</option>
+                            <template for:each={stateFilterOptions} for:item="option">
+                                <option key={option.value} value={option.value}>{option.label}</option>
+                            </template>
+                        </select>
+                    </div>
+
+                    <div class="calendar-filter-field">
+                        <label for="calendar-filter-follow-up">Seguimiento</label>
+                        <select id="calendar-filter-follow-up" name="followUp" value={calendarFilters.followUp}
+                            onchange={handleCalendarFilterChange}>
+                            <option value="">Todos</option>
+                            <option value="true">Con seguimiento</option>
+                            <option value="false">Sin seguimiento</option>
+                        </select>
+                    </div>
+
+                    <button type="button" class="clear-calendar-filters" onclick={handleClearCalendarFilters}>
+                        Limpiar filtros
+                    </button>
+                </div>
+
+                <div class="filter-group">
+                    <h3 class="filter-subtitle">Ejecutivos</h3>
+                    <ul class="executive-list">
+                        <template for:each={calendarExecutives} for:item="executive">
+                            <li class="executive-item" key={executive.id}>
+                                <span class="executive-dot" style={executive.dotStyle}></span>
+                                <span class="executive-name">{executive.name}</span>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
+
+                <div class="filter-total">
+                    <span>Total de actividades</span>
+                    <strong>{totalActivities}</strong>
+                </div>
+            </aside>
+
+            <main class="calendar-main">
+                <div class="calendar-body">
+                    <div class="agenda-fullcalendar" lwc:dom="manual"></div>
+                </div>
+            </main>
+        </div>
+
+        <!-- VISTA MIS ACTIVIDADES -->
+        <section class="activities-workspace" hidden={isMyActivitiesSectionHidden}
+            aria-label="Mis actividades">
+            <aside class="activities-sidebar">
+                <div class="activities-sidebar-group">
+                    <h2>Mis actividades</h2>
+                    <template for:each={activityStatusNavigation} for:item="item">
+                        <button key={item.value} type="button" class={item.className} data-filter={item.value}
+                            onclick={handleMyActivityStatusFilter} aria-pressed={item.isActive}>
+                            <lightning-icon icon-name={item.iconName} size="x-small" alternative-text="">
+                            </lightning-icon>
+                            <span>{item.label}</span>
+                            <strong>{item.count}</strong>
+                        </button>
+                    </template>
+                </div>
+
+                <div class="activities-sidebar-group activities-views-group">
+                    <h2>Vistas</h2>
+                    <template for:each={activityPeriodNavigation} for:item="item">
+                        <button key={item.value} type="button" class={item.className} data-filter={item.value}
+                            onclick={handleMyActivityPeriodFilter} aria-pressed={item.isActive}>
+                            <lightning-icon icon-name={item.iconName} size="x-small" alternative-text="">
+                            </lightning-icon>
+                            <span>{item.label}</span>
+                        </button>
+                    </template>
+                </div>
+            </aside>
+
+            <main class="activities-list-panel">
+                <header class="activities-list-header">
+                    <div>
+                        <h2>{myActivitiesListTitle}</h2>
+                        <p>{myActivitiesResultSummary}</p>
+                    </div>
+                </header>
+
+                <div class="activities-table-container">
+                    <template lwc:if={isLoadingMyActivities}>
+                        <div class="activities-loading-state">
+                            <lightning-spinner alternative-text="Cargando actividades" size="medium">
+                            </lightning-spinner>
+                            <p>Consultando tus actividades y la información de sus clientes...</p>
+                        </div>
+                    </template>
+
+                    <template lwc:else>
+                        <template lwc:if={hasMyActivityRows}>
+                            <table class="activities-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Asunto</th>
+                                        <th scope="col">Fecha</th>
+                                        <th scope="col">Ubicación</th>
+                                        <th scope="col">Seguimiento</th>
+                                        <th scope="col">Estatus</th>
+                                        <th scope="col"><span class="slds-assistive-text">Acciones</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={myActivityRows} for:item="activity">
+                                        <tr key={activity.id}>
+                                            <td>
+                                                <button type="button" class="activity-subject-button"
+                                                    data-id={activity.id} onclick={handleMyActivityClick}>
+                                                    <span class={activity.iconClass}>
+                                                        <lightning-icon icon-name={activity.iconName} size="x-small"
+                                                            variant="inverse" alternative-text="">
+                                                        </lightning-icon>
+                                                    </span>
+                                                    <span class="activity-subject-copy">
+                                                        <strong>{activity.title}</strong>
+                                                        <small>{activity.context}</small>
+                                                    </span>
+                                                </button>
+                                            </td>
+                                            <td>{activity.dateLabel}</td>
+                                            <td>{activity.location}</td>
+                                            <td>
+                                                <span class={activity.followUpClass}>{activity.followUpLabel}</span>
+                                            </td>
+                                            <td>
+                                                <span class={activity.statusClass}>{activity.status}</span>
+                                            </td>
+                                            <td class="activity-row-action">
+                                                <lightning-button-menu alternative-text="Acciones de la actividad"
+                                                    title="Acciones" data-id={activity.id}
+                                                    onselect={handleMyActivityAction} menu-alignment="auto">
+                                                    <lightning-menu-item value="edit" label="Editar">
+                                                    </lightning-menu-item>
+                                                </lightning-button-menu>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </template>
+
+                        <template lwc:else>
+                            <div class="activities-empty-state">
+                                <lightning-icon icon-name="utility:event" size="large" alternative-text="">
+                                </lightning-icon>
+                                <h3>No hay actividades para esta selección</h3>
+                                <p>Prueba otra combinación de estatus y periodo o registra una nueva actividad.</p>
+                            </div>
+                        </template>
+                    </template>
+                </div>
+            </main>
+        </section>
+
+    </section>
+
+    <!-- =========================================================
+         MODAL DE ACTIVIDAD
+         ========================================================= -->
+
+    <template lwc:if={isActivityModalOpen}>
+
+        <div class="activity-modal-backdrop" onclick={closeActivityModal}>
+        </div>
+
+        <section class="activity-modal" role="dialog" aria-modal="true" aria-labelledby="activity-modal-title">
+
+            <!-- CABECERA -->
+            <header class="activity-modal-header">
+
+                <div class="activity-modal-heading">
+                    <h2 id="activity-modal-title">
+                        {activityModalTitle}
+                    </h2>
+
+                    <template lwc:if={isViewingActivity}>
+                        <span class="activity-status-badge">
+                            {activityForm.status}
+                        </span>
+                    </template>
+                </div>
+
+                <div class="activity-modal-header-actions">
+
+                    <template lwc:if={showActivityHeaderActions}>
+
+                        <button type="button" class="activity-header-button activity-complete-button"
+                            onclick={handleCompleteActivity} disabled={isActivityHeaderActionDisabled}>
+
+                            <lightning-icon icon-name="utility:check" size="xx-small" alternative-text="">
+                            </lightning-icon>
+
+                            Completar
+                        </button>
+
+                        <button type="button" class="activity-header-button reagendar-button activity-reschedule-button"
+                            onclick={openRescheduleActivity} disabled={isActivityHeaderActionDisabled}>
+
+                            <lightning-icon icon-name="utility:knowledge_base" size="xx-small"
+                                alternative-text="Reagendar" class="reagendar-icon">
+                            </lightning-icon>
+
+                            Reagendar
+                        </button>
+
+                        <button type="button" class="activity-header-button activity-cancel-header-button"
+                            onclick={openCancelActivity} disabled={isActivityHeaderActionDisabled}>
+
+                            <lightning-icon icon-name="utility:ban" size="xx-small" alternative-text="">
+                            </lightning-icon>
+
+                            Cancelar
+                        </button>
+
+                    </template>
+
+                    <button type="button" class="activity-modal-close" title="Cerrar" onclick={closeActivityModal}
+                        disabled={isProcessingActivityAction}>
+
+                        <lightning-icon icon-name="utility:close" size="small" alternative-text="Cerrar">
+                        </lightning-icon>
+                    </button>
+
+                </div>
+
+            </header>
+
+            <!-- ACCIONES SOBRE LA ACTIVIDAD -->
+            <template lwc:if={isActivityActionOpen}>
+
+                <!-- =====================================================
+                     INICIO: CIERRE CON SEGUIMIENTO
+                     Para ocultarlo, cambia enableFollowUpCompletionInterface
+                     a false al inicio de agendaCalendar.js.
+                     La resolución se guarda en Salesforce mediante Apex.
+                     ===================================================== -->
+                <template lwc:if={isFollowUpCompletionFlow}>
+
+                    <form class="activity-action-form follow-up-completion-form" onsubmit={handleCompleteFollowUp}>
+
+                        <div class="follow-up-completion-intro">
+                            <span class="follow-up-completion-icon" aria-hidden="true">✓</span>
+
+                            <p>
+                                Esta actividad tiene asuntos marcados para seguimiento.
+                                Resume los puntos concluidos antes de completarla.
+                            </p>
+                        </div>
+
+                        <div class="activity-field activity-field-full">
+                            <label for="follow-up-completion-summary">
+                                Resumen de resolución
+                                <span class="required-indicator">*</span>
+                            </label>
+
+                            <textarea id="follow-up-completion-summary" value={followUpCompletionSummary}
+                                placeholder="Describe acuerdos, entregables y puntos concluidos..."
+                                oninput={handleFollowUpCompletionInput} maxlength="1000" required>
+                            </textarea>
+                        </div>
+
+                        <section class="follow-up-completion-result" aria-label="Resultado del cierre">
+                            <h3>Resultado</h3>
+
+                            <div class="follow-up-result-row">
+                                <span class="follow-up-result-check" aria-hidden="true">✓</span>
+                                <strong>Seguimiento:</strong>
+                                <span>Se desactivará</span>
+                            </div>
+
+                            <div class="follow-up-result-row">
+                                <span class="follow-up-result-check" aria-hidden="true">✓</span>
+                                <strong>Estatus:</strong>
+                                <span>Completada</span>
+                            </div>
+                        </section>
+
+                        <footer class="activity-action-form-actions">
+                            <button type="button" class="activity-cancel-button" onclick={returnToActivityDetails}>
+                                Volver
+                            </button>
+
+                            <button type="submit" class="activity-save-button">
+                                Completar actividad
+                            </button>
+                        </footer>
+
+                    </form>
+
+                </template>
+                <!-- FIN: CIERRE CON SEGUIMIENTO -->
+
+                <template lwc:else>
+
+                    <form class="activity-action-form" onsubmit={handleConfirmActivityAction}>
+
+                        <div class="activity-action-summary">
+                            <span>Actividad seleccionada</span>
+
+                            <strong>
+                                {activityForm.folio} — {activityForm.title}
+                            </strong>
+
+                            <small>
+                                Fecha actual: {activityForm.startDate}
+                            </small>
+                        </div>
+
+                        <template lwc:if={isReschedulingActivity}>
+
+                            <div class="activity-action-message activity-action-message-info">
+                                La actividad original quedará como
+                                <strong>Reagendada</strong> y se creará una nueva
+                                actividad en la fecha seleccionada.
+                            </div>
+
+                            <div class="activity-field">
+                                <label for="current-activity-date">
+                                    Fecha actual
+                                </label>
+
+                                <input id="current-activity-date" type="date" value={activityForm.startDate} readonly>
+                            </div>
+
+                            <div class="activity-field">
+                                <label for="new-activity-date">
+                                    Nueva fecha
+                                </label>
+
+                                <input id="new-activity-date" name="newDate" type="date"
+                                    value={activityActionForm.newDate} onchange={handleActivityActionInputChange}
+                                    required>
+                            </div>
+
+                        </template>
+
+                        <template lwc:else>
+
+                            <div class="activity-action-message activity-action-message-warning">
+                                La actividad se marcará como
+                                <strong>Cancelada</strong>. El registro no será
+                                eliminado y permanecerá disponible para auditoría.
+                            </div>
+
+                        </template>
+
+                        <div class="activity-field activity-field-full">
+                            <div class="notes-field-header">
+                                <label for="activity-justification">
+                                    Justificación
+                                </label>
+
+                                <template lwc:if={showNotesSpeechControl}>
+                                    <div class="notes-field-actions">
+                                        <button type="button" class={notesSpeechButtonClass}
+                                            onclick={handleToggleActivityActionJustificationDictation}
+                                            disabled={isActivityActionSpeechButtonDisabled}
+                                            title="Dictar la justificación utilizando el micrófono"
+                                            aria-pressed={isDictatingNotes}>
+                                            <template lwc:if={showSpeechMicrophoneIcon}>
+                                                <svg class="speech-microphone-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                                    <path d="M12 15.25a3.75 3.75 0 0 0 3.75-3.75V6.25a3.75 3.75 0 0 0-7.5 0v5.25A3.75 3.75 0 0 0 12 15.25Zm-1.75-9a1.75 1.75 0 0 1 3.5 0v5.25a1.75 1.75 0 0 1-3.5 0V6.25Zm7.5 4.75a1 1 0 0 1 2 0v.5a7.75 7.75 0 0 1-6.75 7.68V21h2a1 1 0 1 1 0 2H9a1 1 0 1 1 0-2h2v-1.82a7.75 7.75 0 0 1-6.75-7.68V11a1 1 0 1 1 2 0v.5a5.75 5.75 0 0 0 11.5 0V11Z"></path>
+                                                </svg>
+                                            </template>
+                                            <template lwc:else>
+                                                <lightning-icon icon-name={notesSpeechIconName} size="xx-small"
+                                                    alternative-text=""></lightning-icon>
+                                            </template>
+                                            <span>{justificationSpeechButtonLabel}</span>
+                                        </button>
+
+                                        <template lwc:if={showTextImprovementControl}>
+                                            <button type="button" class="notes-improve-button"
+                                                data-target="actionJustification" onclick={handleImproveText}
+                                                disabled={isActionJustificationImproveButtonDisabled}
+                                                title="Mejorar la redacción sin cambiar la información">
+                                                <svg class="text-sparkles-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                                    <path d="M12 2 13.35 5.65 17 7l-3.65 1.35L12 12l-1.35-3.65L7 7l3.65-1.35L12 2Zm6 9 1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2ZM6.5 12l1.55 3.95L12 17.5l-3.95 1.55L6.5 23l-1.55-3.95L1 17.5l3.95-1.55L6.5 12Z"></path>
+                                                </svg>
+                                                <template lwc:if={isImprovingText}>
+                                                    <span>Mejorando...</span>
+                                                </template>
+                                                <template lwc:else>
+                                                    <span>Mejorar texto</span>
+                                                </template>
+                                            </button>
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <textarea id="activity-justification" data-element="activity-action-justification"
+                                name="justification"
+                                value={activityActionForm.justification}
+                                placeholder="Explica por qué se cancela o reagenda la actividad..."
+                                oninput={handleActivityActionInputChange}
+                                readonly={isActivityActionJustificationInputReadOnly}
+                                maxlength="1000" required>
+                            </textarea>
+
+                            <template lwc:if={showActivityActionJustificationDictationStatus}>
+                                <p class={notesDictationStatusClass} role="status" aria-live="polite">
+                                    {notesDictationStatus}
+                                </p>
+                            </template>
+                        </div>
+
+                        <footer class="activity-action-form-actions">
+
+                            <button type="button" class="activity-cancel-button" onclick={returnToActivityDetails}
+                                disabled={isActivityActionButtonDisabled}>
+
+                                Volver
+                            </button>
+
+                            <template lwc:if={isReschedulingActivity}>
+
+                                <button type="submit" class="activity-save-button"
+                                    disabled={isActivityActionButtonDisabled}>
+
+                                    Confirmar reprogramación
+                                </button>
+
+                            </template>
+
+                            <template lwc:else>
+
+                                <button type="submit" class="activity-confirm-cancel-button"
+                                    disabled={isActivityActionButtonDisabled}>
+
+                                    Confirmar cancelación
+                                </button>
+
+                            </template>
+
+                        </footer>
+
+                    </form>
+
+                </template>
+
+            </template>
+
+            <!-- FORMULARIO NORMAL / DETALLE -->
+            <template lwc:else>
+
+                <form class="activity-form" onsubmit={handleSaveActivity}>
+
+                    <!-- TÍTULO -->
+                    <div class="activity-field activity-field-full">
+                        <label for="activity-title">
+                            Título de la actividad
+                        </label>
+
+                        <input id="activity-title" name="title" type="text" value={activityForm.title}
+                            placeholder="Ejemplo: Visita a Lala" onchange={handleActivityInputChange}
+                            readonly={isViewingActivity} required>
+                    </div>
+
+                    <!-- TIPO DE ACTIVIDAD -->
+                    <div class="activity-field">
+                        <label for="activity-type">
+                            Tipo de actividad
+                        </label>
+
+                        <select id="activity-type" data-element="activity-type" name="activity"
+                            value={activityForm.activity}
+                            onchange={handleActivityInputChange} disabled={isViewingActivity} required>
+
+                            <option value="">
+                                Selecciona una actividad
+                            </option>
+
+                            <option value="Visita">Visita</option>
+                            <option value="Visitas urgentes">Visitas urgentes</option>
+                            <option value="Llamada">Llamada</option>
+                            <option value="Reunión Teams">Reunión Teams</option>
+                            <option value="Seguimiento">Seguimiento</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+
+                    <!-- EJECUTIVO -->
+                    <div class="activity-field">
+                        <label for="activity-executive">
+                            Ejecutivo
+                        </label>
+
+                        <select id="activity-executive" name="executive" value={activityForm.executive} disabled>
+
+                            <template for:each={activityExecutiveOptions} for:item="executive">
+
+                                <option key={executive.id} value={executive.id}>
+
+                                    {executive.name}
+                                </option>
+
+                            </template>
+                        </select>
+                    </div>
+
+                    <!-- FECHA -->
+                    <div class="activity-field">
+                        <label for="activity-date">
+                            Fecha
+                        </label>
+
+                        <input id="activity-date" name="startDate" type="date" value={activityForm.startDate}
+                            min={minimumActivityDate} onchange={handleActivityInputChange} readonly={isViewingActivity}
+                            required>
+                    </div>
+
+                    <!-- =====================================================
+                         INICIO: LLAMADA EN SUSTITUCIÓN DE VISITA
+                         Para ocultar esta interfaz, cambia
+                         enableCallReplacementInterface a false al inicio de
+                         agendaCalendar.js.
+                         ===================================================== -->
+                    <template lwc:if={showCallReplacementInterface}>
+
+                        <section class="call-replacement-panel activity-field-full">
+                            <h3>¿Llamada en sustitución de visita?</h3>
+
+                            <div class="call-replacement-options">
+                                <label class={callReplacementYesClass}>
+                                    <input type="radio" name="callReplacement" value="yes"
+                                        checked={isCallVisitReplacement} onchange={handleActivityInputChange} required>
+
+                                    <span class="call-replacement-copy">
+                                        <strong>Sí, llamada en sustitución de visita</strong>
+                                        <small>
+                                            Utiliza esta opción únicamente cuando el cliente no pueda
+                                            recibir una visita presencial.
+                                        </small>
+                                    </span>
+                                </label>
+
+                                <label class={callReplacementNoClass}>
+                                    <input type="radio" name="callReplacement" value="no" checked={isRegularCall}
+                                        onchange={handleActivityInputChange}>
+
+                                    <span class="call-replacement-copy">
+                                        <strong>No, esta llamada no es una sustitución de visita</strong>
+                                        <small>
+                                            Registra una llamada de seguimiento o contacto sin contabilizarla
+                                            como visita presencial.
+                                        </small>
+                                    </span>
+                                </label>
+                            </div>
+                        </section>
+
+                        <template lwc:if={isCallVisitReplacement}>
+                            <div class="activity-field activity-field-full call-exception-reason">
+                                <label for="call-exception-reason">
+                                    Motivo de la excepción
+                                    <span class="required-indicator">*</span>
+                                </label>
+
+                                <select id="call-exception-reason" name="callExceptionReason"
+                                    value={activityForm.callExceptionReason} onchange={handleActivityInputChange}
+                                    required>
+                                    <option value="">Selecciona un motivo</option>
+                                    <option value="El cliente no puede recibir una visita presencial">
+                                        El cliente no puede recibir una visita presencial
+                                    </option>
+                                    <option value="Solicitud expresa del cliente">
+                                        Solicitud expresa del cliente
+                                    </option>
+                                    <option value="Restricciones de acceso o seguridad">
+                                        Restricciones de acceso o seguridad
+                                    </option>
+                                    <option value="Disponibilidad o ubicación excepcional">
+                                        Disponibilidad o ubicación excepcional
+                                    </option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+                        </template>
+
+                    </template>
+                    <!-- FIN: LLAMADA EN SUSTITUCIÓN DE VISITA -->
+
+                    <template lwc:if={showExtraordinaryVisitNotice}>
+                        <section class="extraordinary-visit-notice activity-field-full">
+                            <strong>Visitas urgentes</strong>
+                            <span>
+                                Se registrará en la agenda y en la bitácora, pero no aumentará
+                                el avance de la frecuencia anual.
+                            </span>
+                        </section>
+                    </template>
+
+                    <!-- CLIENTE / PROSPECTO EN MODO DETALLE -->
+                    <template lwc:if={isViewingActivity}>
+
+                        <template lwc:if={hasActivityClient}>
+
+                            <div class="activity-field">
+                                <label for="activity-client-view">
+                                    Cliente
+                                </label>
+
+                                <input id="activity-client-view" type="text" value={activityForm.client} readonly>
+                            </div>
+
+                            <div class="activity-field">
+                                <label for="activity-branch-view">
+                                    Sucursal
+                                </label>
+
+                                <input id="activity-branch-view" type="text" value={activityForm.branchName} readonly>
+                            </div>
+
+                        </template>
+
+                        <template lwc:else>
+
+                            <div class="activity-field activity-field-full">
+                                <label for="activity-prospect-view">
+                                    Prospecto
+                                </label>
+
+                                <input id="activity-prospect-view" type="text" value={activityForm.prospect} readonly>
+                            </div>
+
+                        </template>
+
+                    </template>
+
+                    <!-- CLIENTE / PROSPECTO EN NUEVA ACTIVIDAD -->
+                    <template lwc:else>
+
+                        <div class="activity-field activity-field-full">
+                            <label>
+                                ¿La actividad es en una sucursal o con un prospecto?
+                            </label>
+
+                            <div class="activity-target-selector">
+
+                                <button type="button" class={clientTargetButtonClass} data-type="client"
+                                    onclick={handleActivityTargetChange}>
+
+                                    <lightning-icon icon-name="standard:location" size="x-small"
+                                        alternative-text="Sucursal">
+                                    </lightning-icon>
+
+                                    Sucursal
+                                </button>
+
+                                <button type="button" class={prospectTargetButtonClass} data-type="prospect"
+                                    onclick={handleActivityTargetChange}>
+
+                                    <lightning-icon icon-name="standard:lead" size="x-small"
+                                        alternative-text="Prospecto">
+                                    </lightning-icon>
+
+                                    Prospecto
+                                </button>
+
+                            </div>
+                        </div>
+
+                        <!-- BUSCADOR DE SUCURSALES ASIGNADAS -->
+                        <template lwc:if={isClientTarget}>
+
+                            <div class="activity-field activity-field-full account-picker branch-picker">
+                                <label for="activity-branch-search">
+                                    Sucursal asignada
+                                </label>
+
+                                <div class="account-search-container">
+
+                                    <lightning-icon icon-name="utility:search" size="x-small" alternative-text="">
+                                    </lightning-icon>
+
+                                    <input id="activity-branch-search" type="search" value={branchSearch}
+                                        placeholder="Escribe la sucursal o el cliente..." autocomplete="off"
+                                        disabled={isBranchInputDisabled} oninput={handleBranchSearch}
+                                        onfocus={handleBranchFocus} onblur={handleBranchBlur}>
+
+                                </div>
+
+                                <template lwc:if={isLoadingBranches}>
+                                    <span class="account-loading">
+                                        Cargando sucursales...
+                                    </span>
+                                </template>
+
+                                <template lwc:if={showBranchResults}>
+
+                                    <div class="account-results">
+
+                                        <template lwc:if={hasFilteredBranches}>
+
+                                            <template for:each={filteredBranches} for:item="branch">
+
+                                                <button key={branch.id} type="button" class="account-result"
+                                                    data-branch-id={branch.id} onclick={handleBranchSelect}>
+
+                                                    <span class="account-result-icon">
+                                                        <lightning-icon icon-name="standard:location" size="small"
+                                                            alternative-text="">
+                                                        </lightning-icon>
+                                                    </span>
+
+                                                    <span class="account-result-information">
+                                                        <strong>{branch.name}</strong>
+                                                        <small>{branch.client} · {branch.city} · {branch.state}</small>
+                                                    </span>
+
+                                                </button>
+
+                                            </template>
+
+                                        </template>
+
+                                        <template lwc:else>
+                                            <div class="account-empty">
+                                                No se encontraron sucursales asignadas.
+                                            </div>
+                                        </template>
+
+                                    </div>
+
+                                </template>
+
+                            </div>
+
+                        </template>
+
+                        <!-- BUSCADOR DE PROSPECTOS ASIGNADOS -->
+                        <template lwc:if={isProspectTarget}>
+
+                            <div class="activity-field activity-field-full account-picker prospect-picker">
+                                <label for="activity-prospect-search">
+                                    Prospecto asignado
+                                </label>
+
+                                <div class="account-search-container">
+
+                                    <lightning-icon icon-name="utility:search" size="x-small" alternative-text="">
+                                    </lightning-icon>
+
+                                    <input id="activity-prospect-search" type="search" value={prospectSearch}
+                                        placeholder="Escribe el nombre del prospecto..." autocomplete="off"
+                                        oninput={handleProspectSearch} onfocus={handleProspectFocus}
+                                        onblur={handleProspectBlur} required>
+
+                                </div>
+
+                                <template lwc:if={showProspectResults}>
+
+                                    <div class="account-results">
+
+                                        <template lwc:if={isSearchingProspects}>
+                                            <div class="account-empty">
+                                                Buscando prospectos...
+                                            </div>
+                                        </template>
+
+                                        <template lwc:else>
+
+                                            <template lwc:if={hasProspectResults}>
+
+                                                <template for:each={prospectResults} for:item="prospect">
+
+                                                    <button key={prospect.id} type="button" class="account-result"
+                                                        data-prospect-id={prospect.id} onclick={handleProspectSelect}>
+
+                                                        <span class="account-result-icon">
+                                                            <lightning-icon icon-name="standard:lead" size="small"
+                                                                alternative-text="">
+                                                            </lightning-icon>
+                                                        </span>
+
+                                                        <span class="account-result-information">
+                                                            <strong>{prospect.name}</strong>
+                                                            <small>Compañía: {prospect.company}</small>
+                                                        </span>
+
+                                                    </button>
+
+                                                </template>
+
+                                            </template>
+
+                                            <template lwc:else>
+                                                <div class="account-empty">
+                                                    {prospectEmptyMessage}
+                                                </div>
+                                            </template>
+
+                                        </template>
+
+                                    </div>
+
+                                </template>
+
+                            </div>
+
+                        </template>
+
+                    </template>
+
+                    <!-- ESTADO -->
+
+                    <div class="activity-field">
+                        <label for="activity-state">
+                            Estado
+                        </label>
+
+                        <template lwc:if={isLocationReadOnly}>
+                            <input id="activity-state" name="state" type="text" value={activityForm.state} readonly>
+                        </template>
+
+                        <template lwc:else>
+                            <select id="activity-state-select" name="state" value={activityForm.state}
+                                onchange={handleActivityInputChange} required>
+
+                                <option value="">
+                                    Selecciona un estado
+                                </option>
+                                <option value="Aguascalientes">Aguascalientes</option>
+                                <option value="Baja California">Baja California</option>
+                                <option value="Baja California Sur">Baja California Sur</option>
+                                <option value="Campeche">Campeche</option>
+                                <option value="Chiapas">Chiapas</option>
+                                <option value="Chihuahua">Chihuahua</option>
+                                <option value="Ciudad de México">Ciudad de México</option>
+                                <option value="Coahuila">Coahuila</option>
+                                <option value="Colima">Colima</option>
+                                <option value="Durango">Durango</option>
+                                <option value="Estado de México">Estado de México</option>
+                                <option value="Guanajuato">Guanajuato</option>
+                                <option value="Guerrero">Guerrero</option>
+                                <option value="Hidalgo">Hidalgo</option>
+                                <option value="Jalisco">Jalisco</option>
+                                <option value="Michoacán">Michoacán</option>
+                                <option value="Morelos">Morelos</option>
+                                <option value="Nayarit">Nayarit</option>
+                                <option value="Nuevo León">Nuevo León</option>
+                                <option value="Oaxaca">Oaxaca</option>
+                                <option value="Puebla">Puebla</option>
+                                <option value="Querétaro">Querétaro</option>
+                                <option value="Quintana Roo">Quintana Roo</option>
+                                <option value="San Luis Potosí">San Luis Potosí</option>
+                                <option value="Sinaloa">Sinaloa</option>
+                                <option value="Sonora">Sonora</option>
+                                <option value="Tabasco">Tabasco</option>
+                                <option value="Tamaulipas">Tamaulipas</option>
+                                <option value="Tlaxcala">Tlaxcala</option>
+                                <option value="Veracruz">Veracruz</option>
+                                <option value="Yucatán">Yucatán</option>
+                                <option value="Zacatecas">Zacatecas</option>
+                            </select>
+                        </template>
+                    </div>
+
+                    <!-- CIUDAD -->
+                    <div class="activity-field">
+                        <label for="activity-city">
+                            Ciudad
+                        </label>
+
+                        <input id="activity-city" name="city" type="text" value={activityForm.city}
+                            readonly={isLocationReadOnly}
+                            onchange={handleActivityInputChange}>
+                    </div>
+
+                    <!-- SEGUIMIENTO -->
+                    <div class="activity-follow-up activity-field-full">
+
+                        <input id="activity-follow-up" name="followUp" type="checkbox" checked={activityForm.followUp}
+                            onchange={handleActivityInputChange} disabled={isActivityDetailReadOnly}>
+
+                        <label for="activity-follow-up">
+                            ¿Requiere seguimiento?
+                        </label>
+
+                        <lightning-helptext
+                            content="Activa esta opción cuando la actividad necesite una acción posterior, como volver a contactar al cliente, enviar información, resolver un pendiente o programar otra visita. Así podrá identificarse fácilmente en los filtros de seguimiento.">
+                        </lightning-helptext>
+
+                    </div>
+
+                    <!-- =====================================================
+                         VISTA PREVIA BLOQUEADA DE JUSTIFICACIÓN
+                         La información proviene de
+                         Justificacion_de_excepcion__c.
+                         ===================================================== -->
+                    <template lwc:if={showExceptionJustificationPreview}>
+                        <div class="activity-field activity-field-full call-justification-preview">
+                            <label for="call-justification-preview">
+                                Justificación
+                            </label>
+
+                            <textarea id="call-justification-preview"
+                                data-element="exception-justification-preview"
+                                value={activityForm.exceptionJustification} readonly>
+                            </textarea>
+
+                            <small>
+                                Información registrada para documentar la excepción de esta actividad.
+                            </small>
+                        </div>
+                    </template>
+
+                    <!-- JUSTIFICACIÓN DINÁMICA DE EXCEPCIÓN -->
+                    <template lwc:if={showEditableExceptionJustification}>
+                        <div class="activity-field activity-field-full">
+                            <div class="notes-field-header">
+                                <label for="activity-exception-justification">
+                                    Justificación
+                                    <span class="required-indicator">*</span>
+                                </label>
+
+                                <template lwc:if={showExceptionJustificationSpeechControl}>
+                                    <div class="notes-field-actions">
+                                        <button type="button" class={notesSpeechButtonClass}
+                                            onclick={handleToggleExceptionJustificationDictation}
+                                            disabled={isExceptionJustificationSpeechButtonDisabled}
+                                            title="Dictar la justificación utilizando el micrófono"
+                                            aria-pressed={isDictatingNotes}>
+                                            <template lwc:if={showSpeechMicrophoneIcon}>
+                                                <svg class="speech-microphone-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                                    <path d="M12 15.25a3.75 3.75 0 0 0 3.75-3.75V6.25a3.75 3.75 0 0 0-7.5 0v5.25A3.75 3.75 0 0 0 12 15.25Zm-1.75-9a1.75 1.75 0 0 1 3.5 0v5.25a1.75 1.75 0 0 1-3.5 0V6.25Zm7.5 4.75a1 1 0 0 1 2 0v.5a7.75 7.75 0 0 1-6.75 7.68V21h2a1 1 0 1 1 0 2H9a1 1 0 1 1 0-2h2v-1.82a7.75 7.75 0 0 1-6.75-7.68V11a1 1 0 1 1 2 0v.5a5.75 5.75 0 0 0 11.5 0V11Z"></path>
+                                                </svg>
+                                            </template>
+                                            <template lwc:else>
+                                                <lightning-icon icon-name={notesSpeechIconName} size="xx-small"
+                                                    alternative-text=""></lightning-icon>
+                                            </template>
+                                            <span>{justificationSpeechButtonLabel}</span>
+                                        </button>
+
+                                        <template lwc:if={showTextImprovementControl}>
+                                            <button type="button" class="notes-improve-button"
+                                                data-target="exceptionJustification" onclick={handleImproveText}
+                                                disabled={isExceptionJustificationImproveButtonDisabled}
+                                                title="Mejorar la redacción sin cambiar la información">
+                                                <svg class="text-sparkles-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                                    <path d="M12 2 13.35 5.65 17 7l-3.65 1.35L12 12l-1.35-3.65L7 7l3.65-1.35L12 2Zm6 9 1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2ZM6.5 12l1.55 3.95L12 17.5l-3.95 1.55L6.5 23l-1.55-3.95L1 17.5l3.95-1.55L6.5 12Z"></path>
+                                                </svg>
+                                                <template lwc:if={isImprovingText}>
+                                                    <span>Mejorando...</span>
+                                                </template>
+                                                <template lwc:else>
+                                                    <span>Mejorar texto</span>
+                                                </template>
+                                            </button>
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <textarea id="activity-exception-justification"
+                                data-element="activity-exception-justification" name="exceptionJustification"
+                                value={activityForm.exceptionJustification}
+                                placeholder="Explica por qué esta actividad debe tratarse como una excepción..."
+                                oninput={handleActivityInputChange}
+                                readonly={isExceptionJustificationInputReadOnly} maxlength="160" required>
+                            </textarea>
+
+                            <template lwc:if={showExceptionJustificationDictationStatus}>
+                                <p class={notesDictationStatusClass} role="status" aria-live="polite">
+                                    {notesDictationStatus}
+                                </p>
+                            </template>
+                        </div>
+                    </template>
+
+                    <template lwc:else>
+                        <div class="activity-field activity-field-full">
+                            <div class="notes-field-header">
+                                <label for="activity-notes">Notas</label>
+
+                                <template lwc:if={showNotesSpeechControl}>
+                                    <div class="notes-field-actions">
+                                        <button type="button" class={notesSpeechButtonClass}
+                                            onclick={handleToggleNotesDictation} disabled={isNotesSpeechButtonDisabled}
+                                            title={notesSpeechButtonTitle} aria-pressed={isDictatingNotes}>
+
+                                            <template lwc:if={showSpeechMicrophoneIcon}>
+                                                <svg class="speech-microphone-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                                    <path d="M12 15.25a3.75 3.75 0 0 0 3.75-3.75V6.25a3.75 3.75 0 0 0-7.5 0v5.25A3.75 3.75 0 0 0 12 15.25Zm-1.75-9a1.75 1.75 0 0 1 3.5 0v5.25a1.75 1.75 0 0 1-3.5 0V6.25Zm7.5 4.75a1 1 0 0 1 2 0v.5a7.75 7.75 0 0 1-6.75 7.68V21h2a1 1 0 1 1 0 2H9a1 1 0 1 1 0-2h2v-1.82a7.75 7.75 0 0 1-6.75-7.68V11a1 1 0 1 1 2 0v.5a5.75 5.75 0 0 0 11.5 0V11Z"></path>
+                                                </svg>
+                                            </template>
+                                            <template lwc:else>
+                                                <lightning-icon icon-name={notesSpeechIconName} size="xx-small"
+                                                    alternative-text=""></lightning-icon>
+                                            </template>
+
+                                            <span>{notesSpeechButtonLabel}</span>
+                                        </button>
+
+                                        <template lwc:if={showTextImprovementControl}>
+                                            <button type="button" class="notes-improve-button" data-target="notes"
+                                                onclick={handleImproveText} disabled={isNotesImproveButtonDisabled}
+                                                title="Mejorar la redacción sin cambiar la información">
+                                                <svg class="text-sparkles-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                                    <path d="M12 2 13.35 5.65 17 7l-3.65 1.35L12 12l-1.35-3.65L7 7l3.65-1.35L12 2Zm6 9 1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2ZM6.5 12l1.55 3.95L12 17.5l-3.95 1.55L6.5 23l-1.55-3.95L1 17.5l3.95-1.55L6.5 12Z"></path>
+                                                </svg>
+                                                <template lwc:if={isImprovingText}>
+                                                    <span>Mejorando...</span>
+                                                </template>
+                                                <template lwc:else>
+                                                    <span>Mejorar texto</span>
+                                                </template>
+                                            </button>
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <textarea id="activity-notes" data-element="activity-notes" name="notes"
+                                placeholder="Agrega información importante de la actividad..."
+                                oninput={handleActivityInputChange} readonly={isNotesInputReadOnly}
+                                maxlength="32768">
+                            </textarea>
+
+                            <template lwc:if={showNotesDictationStatus}>
+                                <p class={notesDictationStatusClass} role="status" aria-live="polite">
+                                    {notesDictationStatus}
+                                </p>
+                            </template>
+                        </div>
+                    </template>
+
+                    <!-- INFORMACIÓN DE AUDITORÍA -->
+                    <template lwc:if={isViewingActivity}>
+
+                        <div class="activity-audit-panel">
+
+                            <div class="activity-audit-item">
+                                <span>Folio</span>
+                                <strong>{activityForm.folio}</strong>
+                            </div>
+
+                            <div class="activity-audit-item">
+                                <span>Estatus</span>
+                                <strong>{activityForm.status}</strong>
+                            </div>
+
+                            <template lwc:if={showActivityFrequencyIndicator}>
+
+                                <div class="activity-audit-item">
+                                    <span>Cuenta para frecuencia</span>
+                                    <strong>{activityFrequencyLabel}</strong>
+                                </div>
+
+                            </template>
+
+                            <template lwc:if={activityForm.originalFolio}>
+
+                                <div class="activity-audit-item">
+                                    <span>Actividad original</span>
+                                    <strong>{activityForm.originalFolio}</strong>
+                                </div>
+
+                            </template>
+
+                            <template lwc:if={activityForm.justification}>
+
+                                <div class="activity-audit-item activity-audit-item-full">
+                                    <span>Justificación</span>
+                                    <p>{activityForm.justification}</p>
+                                </div>
+
+                            </template>
+
+                        </div>
+
+                    </template>
+
+                    <!-- ACCIONES -->
+                    <footer class="activity-form-actions">
+
+                        <template lwc:if={isViewingActivity}>
+
+                            <button type="button" class="activity-cancel-button" onclick={closeActivityModal}>
+
+                                Cerrar
+                            </button>
+
+                            <template lwc:if={canEditActivityDetails}>
+                                <button type="button" class="activity-save-button"
+                                    onclick={handleUpdateActivityDetails} disabled={isUpdateActivityDisabled}>
+
+                                    Actualizar
+                                </button>
+                            </template>
+
+                        </template>
+
+                        <template lwc:else>
+
+                            <button type="button" class="activity-cancel-button" onclick={closeActivityModal}
+                                disabled={isSavingActivity}>
+
+                                Cancelar
+                            </button>
+
+                            <button type="submit" class="activity-save-button" disabled={isActivitySaveDisabled}>
+
+                                Guardar actividad
+                            </button>
+
+                        </template>
+
+                    </footer>
+
+                </form>
+
+            </template>
+
+        </section>
+
+    </template>
+
+    <template lwc:if={isTextImprovementPreviewOpen}>
+        <div class="text-improvement-backdrop" onclick={closeTextImprovementPreview}></div>
+
+        <section class="text-improvement-modal" role="dialog" aria-modal="true"
+            aria-labelledby="text-improvement-title">
+            <header class="text-improvement-header">
+                <div class="text-improvement-heading">
+                    <span class="text-improvement-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2 13.35 5.65 17 7l-3.65 1.35L12 12l-1.35-3.65L7 7l3.65-1.35L12 2Zm6 9 1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2ZM6.5 12l1.55 3.95L12 17.5l-3.95 1.55L6.5 23l-1.55-3.95L1 17.5l3.95-1.55L6.5 12Z"></path>
+                        </svg>
+                    </span>
+                    <div>
+                        <h2 id="text-improvement-title">Revisar texto mejorado</h2>
+                        <p>La propuesta no se aplicará hasta que la confirmes.</p>
+                    </div>
+                </div>
+
+                <button type="button" class="text-improvement-close" onclick={closeTextImprovementPreview}
+                    title="Cerrar vista previa" aria-label="Cerrar vista previa">
+                    &times;
+                </button>
+            </header>
+
+            <div class="text-improvement-body">
+                <article class="text-improvement-panel">
+                    <h3>Texto original</h3>
+                    <div class="text-improvement-copy">{textImprovementOriginal}</div>
+                </article>
+
+                <article class="text-improvement-panel text-improvement-panel-proposal">
+                    <h3>Propuesta mejorada</h3>
+                    <div class="text-improvement-copy">{textImprovementSuggestion}</div>
+                </article>
+            </div>
+
+            <footer class="text-improvement-actions">
+                <button type="button" class="activity-cancel-button" onclick={closeTextImprovementPreview}>
+                    Conservar original
+                </button>
+                <button type="button" class="activity-save-button" onclick={handleUseImprovedText}>
+                    Usar texto mejorado
+                </button>
+            </footer>
+        </section>
+    </template>
+
+</template>

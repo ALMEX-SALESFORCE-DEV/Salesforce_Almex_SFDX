@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>ALMEX_AgendaDataController</members>
+        <members>ALMEX_AgendaDataControllerTest</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>agendas</members>
+        <members>agendaCalendar</members>
+        <members>agendaActivityBreakdown</members>
+        <members>activityBreakdownDatatable</members>
+        <members>agendaServices</members>
+        <members>agendaUtils</members>
+        <members>visitLog</members>
+        <members>visitLogActivityModal</members>
+        <members>visitLogDatatable</members>
+        <members>visitLogMonthCell</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <types>
+        <members>agendaCalendarStyles</members>
+        <members>fullCalendar</members>
+        <members>sheetjs</members>
+        <name>StaticResource</name>
+    </types>
+    <types>
+        <members>Actividad_de_Agenda__c</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>Sucursal__c.Frecuencia_visitas__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>ALMEX_Agendas_IA</members>
+        <name>CustomPermission</name>
+    </types>
+    <types>
+        <members>ALMEX_Agendas</members>
+        <name>CustomTab</name>
+    </types>
+    <!-- Los perfiles completos se conservan en el repositorio. Para desplegar
+         solo sus permisos de Agendas, usar Deploy-ALMEX_Agendas.ps1. -->
+    <types>
+        <members>Admin</members>
+        <members>Gerencia y Dirección Comercial</members>
+        <members>Supervisor y Ejecutivo Comercial</members>
+        <name>Profile</name>
+    </types>
+    <version>67.0</version>
+</Package>
