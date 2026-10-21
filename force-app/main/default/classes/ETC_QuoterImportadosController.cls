@@ -197,6 +197,7 @@ public with sharing class ETC_QuoterImportadosController {
 							UnitPrice,
 							freightCost__c,
 							Ajuste_a_Flete__c,
+                            Complemento_de_precio__c,
 							Flete_con_Ajuste__c
 						FROM QuoteLineItems
 						WHERE UnitPrice != 0
