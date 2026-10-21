@@ -843,7 +843,7 @@
 
                             <div class="activity-field activity-field-full account-picker prospect-picker">
                                 <label for="activity-prospect-search">
-                                    Prospecto asignado
+                                    Prospecto
                                 </label>
 
                                 <div class="account-search-container">
@@ -852,11 +852,15 @@
                                     </lightning-icon>
 
                                     <input id="activity-prospect-search" type="search" value={prospectSearch}
-                                        placeholder="Escribe el nombre del prospecto..." autocomplete="off"
+                                        placeholder="Escribe un prospecto o selecciónalo de la lista..." autocomplete="off"
                                         oninput={handleProspectSearch} onfocus={handleProspectFocus}
-                                        onblur={handleProspectBlur} required>
+                                        onblur={handleProspectBlur} maxlength="255" required>
 
                                 </div>
+
+                                <span class="prospect-helper">
+                                    Si no existe en Salesforce, se registrará como prospecto manual.
+                                </span>
 
                                 <template lwc:if={showProspectResults}>
 

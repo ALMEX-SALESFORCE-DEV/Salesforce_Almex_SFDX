@@ -21,7 +21,6 @@
     <types>
         <members>agendaCalendarStyles</members>
         <members>fullCalendar</members>
-        <members>sheetjs</members>
         <name>StaticResource</name>
     </types>
     <types>
@@ -29,24 +28,8 @@
         <name>CustomObject</name>
     </types>
     <types>
-        <members>Sucursal__c.Frecuencia_visitas__c</members>
-        <name>CustomField</name>
-    </types>
-    <types>
         <members>ALMEX_Agendas_IA</members>
         <name>CustomPermission</name>
-    </types>
-    <types>
-        <members>ALMEX_Agendas</members>
-        <name>CustomTab</name>
-    </types>
-    <!-- Los perfiles completos se conservan en el repositorio. Para desplegar
-         solo sus permisos de Agendas, usar Deploy-ALMEX_Agendas.ps1. -->
-    <types>
-        <members>Admin</members>
-        <members>Gerencia y Dirección Comercial</members>
-        <members>Supervisor y Ejecutivo Comercial</members>
-        <name>Profile</name>
     </types>
     <version>67.0</version>
 </Package>

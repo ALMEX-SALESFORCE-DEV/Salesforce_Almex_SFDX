@@ -33,7 +33,8 @@ export function createAgendaActivity(formData) {
         followUp: Boolean(formData.followUp),
         notes: formData.notes || null,
         countsTowardFrequency: Boolean(formData.countsTowardFrequency),
-        exceptionJustification: formData.exceptionJustification || null
+        exceptionJustification: formData.exceptionJustification || null,
+        manualProspectName: formData.manualProspectName || null
     });
 }
 

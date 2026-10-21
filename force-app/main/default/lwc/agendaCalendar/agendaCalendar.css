@@ -1425,6 +1425,13 @@
     padding-left: 38px;
 }
 
+.prospect-helper {
+    display: block;
+    margin-top: 6px;
+    color: #706e6b;
+    font-size: 12px;
+}
+
 .account-results {
     position: absolute;
     top: calc(100% + 5px);

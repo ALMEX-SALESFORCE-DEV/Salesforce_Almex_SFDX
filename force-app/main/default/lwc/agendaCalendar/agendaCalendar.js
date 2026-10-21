@@ -1895,10 +1895,14 @@ export default class AgendaCalendar extends LightningElement {
             return;
         }
 
-        if (this.isProspectTarget && !this.hasSelectedProspect) {
+        if (
+            this.isProspectTarget &&
+            !this.hasSelectedProspect &&
+            !this.prospectSearch.trim()
+        ) {
             this.showToast(
-                'Selecciona un prospecto',
-                'Debes elegir un prospecto de la lista de sugerencias.',
+                'Indica un prospecto',
+                'Escribe el nombre del prospecto o elige una sugerencia.',
                 'warning'
             );
 
@@ -1920,6 +1924,10 @@ export default class AgendaCalendar extends LightningElement {
                 prospectId: this.isProspectTarget
                     ? this.selectedProspectId
                     : null,
+                manualProspectName:
+                    this.isProspectTarget && !this.hasSelectedProspect
+                        ? this.prospectSearch.trim()
+                        : null,
                 branchId: this.isClientTarget
                     ? this.selectedBranchId
                     : null,
@@ -3108,7 +3116,7 @@ export default class AgendaCalendar extends LightningElement {
         this.selectedProspectId = '';
         this.activityForm = {
             ...this.activityForm,
-            prospect: '',
+            prospect: prospectSearch,
             prospectId: '',
             prospectCompany: ''
         };

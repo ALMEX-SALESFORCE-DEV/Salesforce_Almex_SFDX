@@ -285,7 +285,8 @@ public with sharing class ALMEX_AgendaDataController {
         Boolean followUp,
         String notes,
         Boolean countsTowardFrequency,
-        String exceptionJustification
+        String exceptionJustification,
+        String manualProspectName
     ) {
         if (String.isBlank(title)) {
             throw new AuraHandledException('El título es obligatorio.');
@@ -300,8 +301,31 @@ public with sharing class ALMEX_AgendaDataController {
             throw new AuraHandledException('La fecha es obligatoria.');
         }
 
+        String normalizedManualProspectName =
+            String.isBlank(manualProspectName)
+                ? null
+                : manualProspectName.trim();
+
+        if (
+            normalizedManualProspectName != null &&
+            normalizedManualProspectName.length() > 255
+        ) {
+            throw new AuraHandledException(
+                'El nombre del prospecto no puede exceder 255 caracteres.'
+            );
+        }
+
         Boolean isClientActivity = branchId != null;
-        Boolean isProspectActivity = prospectId != null;
+        Boolean isExistingProspectActivity = prospectId != null;
+        Boolean isManualProspectActivity = normalizedManualProspectName != null;
+        Boolean isProspectActivity =
+            isExistingProspectActivity || isManualProspectActivity;
+
+        if (isExistingProspectActivity && isManualProspectActivity) {
+            throw new AuraHandledException(
+                'Registra un prospecto manual o selecciona uno existente, pero no ambos.'
+            );
+        }
 
         if (isClientActivity == isProspectActivity) {
             throw new AuraHandledException(
@@ -383,23 +407,29 @@ public with sharing class ALMEX_AgendaDataController {
                 );
             }
 
-            List<Lead> prospects = [
-                SELECT Id, Name, Company
-                FROM Lead
-                WHERE Id = :prospectId
-                AND OwnerId = :currentUser.Id
-                AND IsConverted = false
-                WITH USER_MODE
-                LIMIT 1
-            ];
+            if (isExistingProspectActivity) {
+                List<Lead> prospects = [
+                    SELECT Id, Name, Company
+                    FROM Lead
+                    WHERE Id = :prospectId
+                    AND OwnerId = :currentUser.Id
+                    AND IsConverted = false
+                    WITH USER_MODE
+                    LIMIT 1
+                ];
 
-            if (prospects.isEmpty()) {
-                throw new AuraHandledException(
-                    'El prospecto seleccionado no está asignado al usuario actual.'
-                );
+                if (prospects.isEmpty()) {
+                    throw new AuraHandledException(
+                        'El prospecto seleccionado no está asignado al usuario actual.'
+                    );
+                }
+
+                prospectName = prospects[0].Name;
+            } else {
+                // El prospecto aún no existe como Lead: se conserva el nombre
+                // capturado para no bloquear el registro de la actividad.
+                prospectName = normalizedManualProspectName;
             }
-
-            prospectName = prospects[0].Name;
             activityState = normalizeMexicanState(state);
             activityCity = String.isBlank(city) ? null : city.trim();
         }

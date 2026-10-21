@@ -96,6 +96,7 @@ private class ALMEX_AgendaDataControllerTest {
             true,
             'Notas iniciales',
             false,
+            null,
             null
         );
 
@@ -138,6 +139,44 @@ private class ALMEX_AgendaDataControllerTest {
         System.assertEquals(true, containsActivity(monthActivities, activityId));
     }
 
+    /**
+     * Permite programar una actividad para un prospecto aún no dado de alta
+     * como Lead. El nombre manual se conserva en Prospecto__c sin crear ni
+     * modificar registros del objeto Lead.
+     */
+    @IsTest
+    static void createsManualProspectActivity() {
+        Date activityDate = Date.today().addDays(6);
+
+        Test.startTest();
+        Id activityId = ALMEX_AgendaDataController.createActivity(
+            'Visita a prospecto por registrar',
+            'Visita',
+            activityDate,
+            'NL',
+            'Monterrey',
+            null,
+            null,
+            false,
+            'Primer acercamiento comercial.',
+            false,
+            null,
+            'Prospecto manual de prueba'
+        );
+        Test.stopTest();
+
+        Actividad_de_Agenda__c stored = [
+            SELECT Prospecto__c, Sucursal__c, Estado__c, Ciudad__c
+            FROM Actividad_de_Agenda__c
+            WHERE Id = :activityId
+        ];
+
+        System.assertEquals('Prospecto manual de prueba', stored.Prospecto__c);
+        System.assertEquals(null, stored.Sucursal__c);
+        System.assertEquals('Nuevo León', stored.Estado__c);
+        System.assertEquals('Monterrey', stored.Ciudad__c);
+    }
+
     // =====================================================================
     // 3. FLUJO CON SUCURSAL Y GENERACIÓN DE LA BITÁCORA
     // =====================================================================
@@ -171,6 +210,7 @@ private class ALMEX_AgendaDataControllerTest {
             false,
             'Validar inventario',
             true,
+            null,
             null
         );
         ALMEX_AgendaDataController.VisitLogResponse visitLog =
@@ -239,10 +279,10 @@ private class ALMEX_AgendaDataControllerTest {
         Id urgentId = ALMEX_AgendaDataController.createActivity(
             'Visita urgente', 'Visitas urgentes', Date.today(), 'Jalisco',
             'Guadalajara', null, branch.Id, false, 'Urgencia del cliente',
-            true, 'Solicitud urgente del cliente');
+            true, 'Solicitud urgente del cliente', null);
         Id meetingId = ALMEX_AgendaDataController.createActivity(
             'Reunión virtual', 'Reunión', Date.today(), 'Jalisco',
-            'Guadalajara', null, branch.Id, false, null, false, null);
+            'Guadalajara', null, branch.Id, false, null, false, null, null);
         ALMEX_AgendaDataController.VisitLogResponse visitLog =
             ALMEX_AgendaDataController.getCurrentUserVisitLog();
         if (ALMEX_AgendaDataController.canViewActivityBreakdown()) {
@@ -826,19 +866,19 @@ private class ALMEX_AgendaDataControllerTest {
             if (actionName == 'CREATE_WITHOUT_TARGET') {
                 return ALMEX_AgendaDataController.createActivity(
                     'Sin destino', 'Visita', Date.today(), null, null,
-                    null, null, false, null, false, null
+                    null, null, false, null, false, null, null
                 );
             }
             if (actionName == 'CREATE_WITH_TWO_TARGETS') {
                 return ALMEX_AgendaDataController.createActivity(
                     'Dos destinos', 'Visita', Date.today(), null, null,
-                    prospectId, branchId, false, null, false, null
+                    prospectId, branchId, false, null, false, null, null
                 );
             }
             if (actionName == 'CALL_WITHOUT_JUSTIFICATION') {
                 return ALMEX_AgendaDataController.createActivity(
                     'Llamada', 'Llamada', Date.today(), null, null,
-                    null, branchId, false, null, true, null
+                    null, branchId, false, null, true, null, null
                 );
             }
             if (actionName == 'COMPLETE_WITHOUT_RESOLUTION') {
