@@ -21,11 +21,16 @@
     <types>
         <members>agendaCalendarStyles</members>
         <members>fullCalendar</members>
+        <members>sheetjs</members>
         <name>StaticResource</name>
     </types>
     <types>
         <members>Actividad_de_Agenda__c</members>
         <name>CustomObject</name>
+    </types>
+    <types>
+        <members>Sucursal__c.Frecuencia_visitas__c</members>
+        <name>CustomField</name>
     </types>
     <types>
         <members>ALMEX_Agendas_IA</members>

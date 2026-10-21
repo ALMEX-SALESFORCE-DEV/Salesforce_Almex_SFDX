@@ -10435,10 +10435,6 @@
         <visible>false</visible>
     </recordTypeVisibilities>
     <tabVisibilities>
-        <tab>ALMEX_Agendas</tab>
-        <visibility>DefaultOn</visibility>
-    </tabVisibilities>
-    <tabVisibilities>
         <tab>ALMEX_FormPrices</tab>
         <visibility>DefaultOn</visibility>
     </tabVisibilities>

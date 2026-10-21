@@ -97,8 +97,4 @@
         <object>Actividad_de_Agenda__c</object>
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
-    <tabVisibilities>
-        <tab>ALMEX_Agendas</tab>
-        <visibility>DefaultOn</visibility>
-    </tabVisibilities>
 </Profile>
