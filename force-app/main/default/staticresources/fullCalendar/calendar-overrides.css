@@ -1,0 +1,167 @@
+.agenda-fullcalendar .fc {
+    color: #181818;
+
+    font-family:
+        Arial,
+        "Helvetica Neue",
+        sans-serif;
+
+    font-size: 13px;
+}
+
+/* TABLA PRINCIPAL */
+
+.agenda-fullcalendar .fc-scrollgrid {
+    overflow: hidden;
+
+    border-color: #d8dde6;
+    border-radius: 6px;
+}
+
+.agenda-fullcalendar .fc-theme-standard td,
+.agenda-fullcalendar .fc-theme-standard th {
+    border-color: #dfe3e8;
+}
+
+/* ENCABEZADOS DOM, LUN, MAR... */
+
+.agenda-fullcalendar .fc-col-header-cell {
+    height: 35px;
+
+    background: #ffffff;
+}
+
+.agenda-fullcalendar .fc-col-header-cell-cushion {
+    padding: 9px 4px;
+
+    color: #2e3340;
+
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+/* CELDAS DE LOS DÍAS */
+
+.agenda-fullcalendar .fc-daygrid-day-frame {
+    min-height: 113px;
+}
+
+.agenda-fullcalendar .fc-daygrid-day-number {
+    padding: 9px 12px;
+
+    color: #252b37;
+
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.agenda-fullcalendar .fc-day-other {
+    background: #fbfbfc;
+}
+
+.agenda-fullcalendar .fc-day-other .fc-daygrid-day-number {
+    color: #969ba3;
+}
+
+.agenda-fullcalendar .fc-day-today {
+    background: #ffffff;
+}
+
+.agenda-fullcalendar .fc-day-today
+.fc-daygrid-day-number {
+    color: #0176d3;
+}
+
+/* EVENTOS */
+
+.agenda-fullcalendar .fc-daygrid-event {
+    min-width: 0;
+
+    margin: 2px 8px;
+    padding: 2px 5px;
+
+    border-width: 1px;
+    border-radius: 4px;
+
+    box-shadow: none;
+}
+
+.agenda-fullcalendar .fc-event-main {
+    overflow: hidden;
+}
+
+.agenda-fullcalendar .agenda-event-content {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.agenda-fullcalendar .agenda-event-dot {
+    width: 7px;
+    height: 7px;
+
+    flex: 0 0 7px;
+
+    display: inline-block;
+
+    border-radius: 50%;
+}
+
+.agenda-fullcalendar .agenda-event-label {
+    overflow: hidden;
+
+    font-size: 11px;
+    font-weight: 500;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* +N MÁS */
+
+.agenda-fullcalendar .fc-daygrid-more-link {
+    display: block;
+
+    margin: 6px 0 0;
+    padding: 0 12px;
+
+    color: #0176d3;
+
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.agenda-fullcalendar .fc-daygrid-more-link:hover {
+    text-decoration: underline;
+}
+
+/* VISTAS SEMANA Y DÍA */
+
+.agenda-fullcalendar .fc-timegrid-slot {
+    height: 36px;
+}
+
+.agenda-fullcalendar .fc-timegrid-axis-cushion,
+.agenda-fullcalendar .fc-timegrid-slot-label-cushion {
+    color: #5c6370;
+    font-size: 11px;
+}
+
+/* POPOVER DE +N MÁS */
+
+.agenda-fullcalendar .fc-popover {
+    border: 1px solid #d8dde6;
+    border-radius: 6px;
+
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+.agenda-fullcalendar .fc-popover-header {
+    padding: 8px 10px;
+    background: #f3f6fa;
+}
