@@ -588,16 +588,27 @@ export default class CotizadorManufacturados extends LightningElement {
 			this.loadRighResult();
 			this.loadLeftResult();
 			this.loadInitSummary();
+			this.loadTotalSummary();
 			this.validateCheck();
 		} catch (error) {
 			console.log(error.message);
 		}
 	}
 
+	async refreshQuotation() {
+		await this.loadSupplies();
+		this.loadRighResult();
+		this.loadLeftResult();
+		this.loadInitSummary();
+		this.loadTotalSummary();
+		this.validateCheck();
+	}
+
 	// cuando se actualize una fecha se obtendran suministros y
 	// actualizara todas las tablas relacionadas a esta como el de suministros y
 	// breakdown
 	async loadSupplies(metaSupplies = null) {
+		console.log("debug: ", metaSupplies);
 		let supplies = metaSupplies?.type === "click" ? null : metaSupplies;
 		if (!supplies) {
 			const { init, end } = this.agreementDate;
@@ -611,6 +622,7 @@ export default class CotizadorManufacturados extends LightningElement {
 				this.referenceDate.gasDate = lastItem.split("T")[0];
 			}
 		}
+		console.log("debug: ", supplies);
 		this.serviceSupplies = supplies;
 		this.marketAverages = marketAverages(supplies);
 		this.supplies = parseSupplies(supplies, this.isUpdate);
@@ -622,8 +634,8 @@ export default class CotizadorManufacturados extends LightningElement {
 		});
 
 		const factors = JSON.parse(serializedFactors);
-		console.log("debug: ", this.opp.Producto__r.sub_familia_almidon__c);
-		console.log("debug: ", factors);
+		// console.log("debug: ", this.opp.Producto__r.sub_familia_almidon__c);
+		// console.log("debug: ", factors);
 		if (factors) {
 			const [factor] = factors;
 			this.dateFactors = factor;
@@ -644,10 +656,29 @@ export default class CotizadorManufacturados extends LightningElement {
 				coproductValue = this.opp.Coproduct_Recov__c;
 			}
 
-			this.rightResults = resultR({
+			// console.log("debug: ", {
+			// 	sgaUsd: factor.sgaUst__c,
+			// 	coproductRecov: coproductValue
+			// });
+
+			const freshResults = resultR({
 				sgaUsd: factor.sgaUst__c,
 				coproductRecov: coproductValue
 			});
+			const previousResults = Array.isArray(this.rightResults) ? this.rightResults : [];
+
+			this.rightResults = freshResults.map((f) => {
+				const prev = previousResults.find((p) => p.key === f.key);
+				if (!prev) return f;
+				return {
+					...f,
+					aditionalCost: { ...f.aditionalCost, value: prev.aditionalCost.value }
+				};
+			});
+
+			if (this.currentRightPrice) {
+				this.currentRightPrice = this.rightResults.find((rr) => rr.key === this.currentRightPrice.key);
+			}
 
 			const quotes = {
 				sgaUsd: factor.sgaUst__c || 0,
@@ -665,6 +696,7 @@ export default class CotizadorManufacturados extends LightningElement {
 			);
 			await this.updateBreakdownClasses();
 			this.loadBreakdowns();
+			// console.log("debug: ", metaSupplies);
 			if (!metaSupplies) {
 				this.showToast({
 					message: "Se han cargado los suministros más recientes al cotizador",

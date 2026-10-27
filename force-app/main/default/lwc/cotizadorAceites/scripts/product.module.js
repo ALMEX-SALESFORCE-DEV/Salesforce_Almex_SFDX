@@ -83,9 +83,12 @@ export class PlantProduct {
 		this.incrementalCostCalc = qli.Incremental_Costs_Rebate__c;
 		this.finantialCost = qli.Financial_Costs_Rate__c;
 		this.incrementalCost = qli.Incremental_Costs_Rebate_Porcentage__c;
-		this.productCostInput = qli.Total_Costo_de_Producto__c;
-		this.movement = qli.Movimiento__c;
+
 		this.priceComplement = qli.Complemento_de_precio__c ? qli.Complemento_de_precio__c : 0;
+		this.productCostInput = qli.Total_Costo_de_Producto__c - this.priceComplement;
+
+		this.movement = qli.Movimiento__c;
+
 		if (qli.Moneda__c) {
 			this.currentCurrency = qli.Moneda__c.toLowerCase();
 		}
