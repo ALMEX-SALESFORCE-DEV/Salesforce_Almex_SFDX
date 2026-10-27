@@ -46,6 +46,10 @@
                 <name>jaime.beltran@almidones.com.mx</name>
                 <type>user</type>
             </approver>
+            <approver>
+                <name>juan.santoyo@almidones.com.mx</name>
+                <type>user</type>
+            </approver>
             <whenMultipleApprovers>FirstResponse</whenMultipleApprovers>
         </assignedApprover>
         <label>Aprobación dirección comercial</label>
