@@ -288,7 +288,7 @@ private class ALMEX_AgendaDataControllerTest {
         if (ALMEX_AgendaDataController.canViewActivityBreakdown()) {
             ALMEX_AgendaDataController.ManagementActivityPage urgentPage =
                 ALMEX_AgendaDataController.getManagementActivities(
-                    Date.today(), Date.today(), null, 'Visitas urgentes',
+                    Date.today(), Date.today(), null, new List<String>{'Visitas urgentes'},
                     null, branch.Id, null, null, null, null, null, null, 50, null);
             System.assertEquals(2, urgentPage.totalRecords,
                 'El filtro nuevo debe recuperar también el registro histórico.');
@@ -543,12 +543,12 @@ private class ALMEX_AgendaDataControllerTest {
                 activityDate.addDays(-1),
                 activityDate.addDays(1),
                 new List<String>{ UserInfo.getName(), ' ' },
-                'Visita',
-                'Jalisco',
+                new List<String>{'Visita'},
+                new List<String>{'Jalisco'},
                 null,
                 prospect.Name,
-                false,
-                'Programada',
+                new List<Boolean>{false},
+                new List<String>{'Programada'},
                 null,
                 null,
                 null,
@@ -635,8 +635,10 @@ private class ALMEX_AgendaDataControllerTest {
             );
         ALMEX_AgendaDataController.ManagementActivityPage filtered =
             ALMEX_AgendaDataController.getManagementActivities(
-                Date.today(), Date.today(), new List<String>{'Juanito'}, 'Visita', 'Jalisco',
-                null, null, false, 'Programada', null, null, null, 50, branchA.Cuenta__c
+                Date.today(), Date.today(), new List<String>{'Juanito'},
+                new List<String>{'Visita'}, new List<String>{'Jalisco'},
+                null, null, new List<Boolean>{false}, new List<String>{'Programada'},
+                null, null, null, 50, branchA.Cuenta__c
             );
         List<Account> clients = ALMEX_AgendaDataController.searchManagementClients('Cuenta Prueba');
         System.assertEquals(0, ALMEX_AgendaDataController.searchManagementClients('C').size());
@@ -650,6 +652,75 @@ private class ALMEX_AgendaDataControllerTest {
         System.assertEquals(juanito.Id, filtered.records[0].Id);
         System.assertEquals(1, clients.size());
         System.assertEquals(branchA.Cuenta__c, clients[0].Id);
+    }
+
+    /**
+     * Los filtros múltiples unen valores de una misma categoría (OR), pero
+     * intersectan categorías (AND). Conteo y paginación deben usar ese mismo
+     * conjunto, incluyendo tipos históricos y listas vacías = sin restricción.
+     */
+    @IsTest
+    static void filtersMultipleManagementChoicesAndPaginates() {
+        if (!ALMEX_AgendaDataController.canViewActivityBreakdown()) {
+            return;
+        }
+        Sucursal__c branch = [SELECT Id, Cuenta__c FROM Sucursal__c
+            WHERE Name = 'Sucursal Prueba Agenda' LIMIT 1];
+        Date activityDate = Date.today();
+        Actividad_de_Agenda__c visit = buildActivity('Visita filtrada', activityDate, branch.Id, null);
+        visit.Seguimiento__c = true;
+        Actividad_de_Agenda__c call = buildActivity('Llamada filtrada', activityDate, branch.Id, null);
+        call.Tipo_de_actividad__c = 'Llamada';
+        call.Estado__c = 'Sonora';
+        call.Estatus__c = 'Completada';
+        Actividad_de_Agenda__c legacy = buildActivity('Urgente histórica', activityDate, branch.Id, null);
+        legacy.Tipo_de_actividad__c = 'Visita extraordinaria';
+        Actividad_de_Agenda__c otherType = buildActivity('Otro tipo', activityDate, branch.Id, null);
+        otherType.Tipo_de_actividad__c = 'Otro';
+        Actividad_de_Agenda__c otherState = buildActivity('Otro estado', activityDate, branch.Id, null);
+        otherState.Estado__c = 'Nuevo León';
+        Actividad_de_Agenda__c cancelled = buildActivity('Cancelada', activityDate, branch.Id, null);
+        cancelled.Estatus__c = 'Cancelada';
+        insert new List<Actividad_de_Agenda__c>{visit, call, legacy, otherType, otherState, cancelled,
+            buildActivity('Fuera de periodo', activityDate.addDays(-1), branch.Id, null)};
+
+        Test.startTest();
+        List<String> types = new List<String>{'Visita', 'Llamada', 'Visitas urgentes', 'Visita', ' ', null};
+        List<String> states = new List<String>{' Jalisco ', 'Sonora'};
+        List<String> statuses = new List<String>{'Programada', 'Completada'};
+        ALMEX_AgendaDataController.ManagementActivityPage first =
+            ALMEX_AgendaDataController.getManagementActivities(
+                activityDate, activityDate, null, types, states, null, null,
+                new List<Boolean>{true, false, null}, statuses, null, null, null, 1, branch.Cuenta__c);
+        ALMEX_AgendaDataController.ManagementActivityPage second =
+            ALMEX_AgendaDataController.getManagementActivities(
+                activityDate, activityDate, null, types, states, null, null,
+                new List<Boolean>{true, false}, statuses, first.nextCursorDate,
+                first.nextCursorCreatedDate, first.nextCursorId, 1, branch.Cuenta__c);
+        ALMEX_AgendaDataController.ManagementActivityPage following =
+            ALMEX_AgendaDataController.getManagementActivities(
+                activityDate, activityDate, null, types, states, null, null,
+                new List<Boolean>{true}, statuses, null, null, null, 50, branch.Cuenta__c);
+        ALMEX_AgendaDataController.ManagementActivityPage all =
+            ALMEX_AgendaDataController.getManagementActivities(
+                activityDate, activityDate, new List<String>(), new List<String>(),
+                new List<String>(), null, null, new List<Boolean>(), new List<String>(),
+                null, null, null, 50, branch.Cuenta__c);
+        ALMEX_AgendaDataController.ManagementActivityPage none =
+            ALMEX_AgendaDataController.getManagementActivities(
+                activityDate, activityDate, null, new List<String>{'Llamada'},
+                new List<String>{'Jalisco'}, null, null, null, null, null, null, null,
+                50, branch.Cuenta__c);
+        Test.stopTest();
+
+        System.assertEquals(3, first.totalRecords, 'Tres combinaciones válidas, sin duplicar por tipo repetido.');
+        System.assertEquals(3, second.totalRecords, 'La siguiente página conserva el conteo filtrado.');
+        System.assert(first.hasNext);
+        System.assertNotEquals(first.records[0].Id, second.records[0].Id);
+        System.assertEquals(1, following.totalRecords, 'Solo la visita con seguimiento.');
+        System.assertEquals(visit.Id, following.records[0].Id);
+        System.assertEquals(6, all.totalRecords, 'Listas vacías incluyen todos los valores del periodo.');
+        System.assertEquals(0, none.totalRecords, 'Las categorías se intersectan, no se unen entre sí.');
     }
 
     // =====================================================================

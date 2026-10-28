@@ -639,12 +639,12 @@ public with sharing class ALMEX_AgendaDataController {
         Date dateFrom,
         Date dateTo,
         List<String> executives,
-        String activityType,
-        String state,
+        List<String> activityTypes,
+        List<String> states,
         Id branchId,
         String prospect,
-        Boolean followUp,
-        String status,
+        List<Boolean> followUps,
+        List<String> statuses,
         Date cursorDate,
         Datetime cursorCreatedDate,
         Id cursorId,
@@ -707,14 +707,20 @@ public with sharing class ALMEX_AgendaDataController {
             }
         }
 
-        if (!String.isBlank(activityType)) {
-            dataConditions.add('Tipo_de_actividad__c IN :activityTypes');
-            dataBinds.put('activityTypes', getActivityTypeFilterValues(activityType));
+        // OR entre opciones de una categoría, AND entre categorías. Se mantienen
+        // los alias históricos de los tipos renombrados y los binds seguros.
+        Set<String> activityTypeValues = new Set<String>();
+        for (String activityType : cleanManagementFilterValues(activityTypes)) {
+            activityTypeValues.addAll(getActivityTypeFilterValues(activityType));
         }
-
-        if (!String.isBlank(state)) {
-            dataConditions.add('Estado__c = :state');
-            dataBinds.put('state', state);
+        if (!activityTypeValues.isEmpty()) {
+            dataConditions.add('Tipo_de_actividad__c IN :activityTypeValues');
+            dataBinds.put('activityTypeValues', activityTypeValues);
+        }
+        Set<String> stateValues = cleanManagementFilterValues(states);
+        if (!stateValues.isEmpty()) {
+            dataConditions.add('Estado__c IN :stateValues');
+            dataBinds.put('stateValues', stateValues);
         }
 
         String prospectName = String.isBlank(prospect)
@@ -746,14 +752,20 @@ public with sharing class ALMEX_AgendaDataController {
             dataBinds.put('prospectName', prospectName);
         }
 
-        if (followUp != null) {
-            dataConditions.add('Seguimiento__c = :followUp');
-            dataBinds.put('followUp', followUp);
+        Set<Boolean> followUpValues = new Set<Boolean>();
+        if (followUps != null) {
+            followUpValues.addAll(followUps);
+            followUpValues.remove(null);
         }
-
-        if (!String.isBlank(status)) {
-            dataConditions.add('Estatus__c = :status');
-            dataBinds.put('status', status);
+        // Elegir ambos booleanos equivale a no restringir seguimiento.
+        if (followUpValues.size() == 1) {
+            dataConditions.add('Seguimiento__c = :followUpValue');
+            dataBinds.put('followUpValue', followUpValues.contains(true));
+        }
+        Set<String> statusValues = cleanManagementFilterValues(statuses);
+        if (!statusValues.isEmpty()) {
+            dataConditions.add('Estatus__c IN :statusValues');
+            dataBinds.put('statusValues', statusValues);
         }
 
         String dataWhere = String.join(dataConditions, ' AND ');
@@ -999,6 +1011,18 @@ public with sharing class ALMEX_AgendaDataController {
             return 'Visitas urgentes';
         }
         return type;
+    }
+
+    private static Set<String> cleanManagementFilterValues(List<String> values) {
+        Set<String> cleaned = new Set<String>();
+        if (values != null) {
+            for (String value : values) {
+                if (!String.isBlank(value)) {
+                    cleaned.add(value.trim());
+                }
+            }
+        }
+        return cleaned;
     }
 
     @TestVisible

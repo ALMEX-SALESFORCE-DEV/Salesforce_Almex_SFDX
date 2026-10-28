@@ -59,7 +59,7 @@
                     </div>
 
                     <lightning-button label="Descargar Excel" icon-name="utility:download"
-                        onclick={handleDownloadManagementExcel} disabled={isDownloadingManagementExcel}>
+                        onclick={handleDownloadManagementExcel} disabled={isManagementDownloadDisabled}>
                     </lightning-button>
 
                 </div>
@@ -72,7 +72,7 @@
             <section class="table-filters" aria-label="Filtros de consulta">
                 <div class="filters-heading">
                     <h3>Filtros de consulta</h3>
-                    <p>Define qué actividades quieres consultar.</p>
+                    <p>Selecciona una o varias opciones. Los resultados se actualizan automáticamente.</p>
                 </div>
 
                 <div class="filters-primary">
@@ -81,7 +81,7 @@
                         <label>Ejecutivo</label>
 
                         <details class="multi-select" ontoggle={handleTableFilterToggle} onclick={handleFilterMenuClick}>
-                            <summary>
+                            <summary aria-label="Filtrar por ejecutivo">
                                 <span>{tableExecutiveFilterLabel}</span>
 
                                 <lightning-icon
@@ -225,11 +225,11 @@
                         <label>Tipo de actividad</label>
 
                         <details
-                            class="multi-select table-single-select"
+                            class="multi-select"
                             ontoggle={handleTableFilterToggle}
                             onclick={handleFilterMenuClick}
                         >
-                            <summary>
+                            <summary aria-label="Filtrar por tipo de actividad">
                                 <span>{tableActivityTypeFilterLabel}</span>
 
                                 <lightning-icon
@@ -242,8 +242,8 @@
                             <div class="multi-select-options">
                                 <label class="multi-select-option">
                                     <input
-                                        type="radio"
-                                        name="activityType"
+                                        type="checkbox"
+                                        name="activityTypes"
                                         value=""
                                         checked={allActivityTypesSelected}
                                         onchange={handleTableFilterChange}
@@ -255,8 +255,8 @@
                                 <template for:each={tableActivityTypeOptions} for:item="activityType">
                                     <label class="multi-select-option" key={activityType.id}>
                                         <input
-                                            type="radio"
-                                            name="activityType"
+                                            type="checkbox"
+                                            name="activityTypes"
                                             value={activityType.label}
                                             checked={activityType.selected}
                                             onchange={handleTableFilterChange}
@@ -280,31 +280,48 @@
 
                     <!-- ESTADO -->
                     <div class="table-filter">
-                        <label for="state-filter">Estado</label>
-
-                        <select id="state-filter" name="state" value={tableFilters.state} onchange={handleTableFilterChange}>
-                            <option value="" selected={allManagementStatesSelected}>Todos los estados</option>
-
-                            <template for:each={tableStateOptions} for:item="state">
-                                <option key={state.value} value={state.value} selected={state.selected}>{state.label}</option>
-                            </template>
-                        </select>
+                        <label>Estado</label>
+                        <details class="multi-select" ontoggle={handleTableFilterToggle} onclick={handleFilterMenuClick}>
+                            <summary aria-label="Filtrar por estado">
+                                <span>{tableStateFilterLabel}</span>
+                                <lightning-icon icon-name="utility:chevrondown" size="xx-small" alternative-text="Abrir"></lightning-icon>
+                            </summary>
+                            <div class="multi-select-options">
+                                <label class="multi-select-option">
+                                    <input type="checkbox" name="states" value="" checked={allManagementStatesSelected} onchange={handleTableFilterChange} />
+                                    <span>Todos los estados</span>
+                                </label>
+                                <template for:each={tableStateOptions} for:item="state">
+                                    <label class="multi-select-option" key={state.value}>
+                                        <input type="checkbox" name="states" value={state.value} checked={state.selected} onchange={handleTableFilterChange} />
+                                        <span>{state.label}</span>
+                                    </label>
+                                </template>
+                            </div>
+                        </details>
                     </div>
 
                     <!-- SEGUIMIENTO -->
                     <div class="table-filter">
-                        <label for="follow-up-filter">Seguimiento</label>
-
-                        <select
-                            id="follow-up-filter"
-                            name="followUp"
-                            value={tableFilters.followUp}
-                            onchange={handleTableFilterChange}
-                        >
-                            <option value="">Todos</option>
-                            <option value="true">Con seguimiento</option>
-                            <option value="false">Sin seguimiento</option>
-                        </select>
+                        <label>Seguimiento</label>
+                        <details class="multi-select" ontoggle={handleTableFilterToggle} onclick={handleFilterMenuClick}>
+                            <summary aria-label="Filtrar por seguimiento">
+                                <span>{tableFollowUpFilterLabel}</span>
+                                <lightning-icon icon-name="utility:chevrondown" size="xx-small" alternative-text="Abrir"></lightning-icon>
+                            </summary>
+                            <div class="multi-select-options">
+                                <label class="multi-select-option">
+                                    <input type="checkbox" name="followUps" value="" checked={allFollowUpsSelected} onchange={handleTableFilterChange} />
+                                    <span>Todos</span>
+                                </label>
+                                <template for:each={tableFollowUpOptions} for:item="followUp">
+                                    <label class="multi-select-option" key={followUp.value}>
+                                        <input type="checkbox" name="followUps" value={followUp.value} checked={followUp.selected} onchange={handleTableFilterChange} />
+                                        <span>{followUp.label}</span>
+                                    </label>
+                                </template>
+                            </div>
+                        </details>
                     </div>
 
                     <!-- ESTATUS -->
@@ -312,11 +329,11 @@
                         <label>Estatus</label>
 
                         <details
-                            class="multi-select table-single-select"
+                            class="multi-select"
                             ontoggle={handleTableFilterToggle}
                             onclick={handleFilterMenuClick}
                         >
-                            <summary>
+                            <summary aria-label="Filtrar por estatus">
                                 <span>{tableStatusFilterLabel}</span>
 
                                 <lightning-icon
@@ -329,8 +346,8 @@
                             <div class="multi-select-options">
                                 <label class="multi-select-option">
                                     <input
-                                        type="radio"
-                                        name="status"
+                                        type="checkbox"
+                                        name="statuses"
                                         value=""
                                         checked={allStatusesSelected}
                                         onchange={handleTableFilterChange}
@@ -342,8 +359,8 @@
                                 <template for:each={tableStatusOptions} for:item="status">
                                     <label class="multi-select-option" key={status.id}>
                                         <input
-                                            type="radio"
-                                            name="status"
+                                            type="checkbox"
+                                            name="statuses"
                                             value={status.label}
                                             checked={status.selected}
                                             onchange={handleTableFilterChange}
@@ -389,16 +406,40 @@
                     </div>
                 </div>
 
-                <!-- ACCIONES -->
+                <!-- CRITERIOS ACTIVOS: cada etiqueta permite quitar solo ese valor. -->
                 <div class="table-filter-actions">
-                    <p class="filter-actions-hint">Los criterios se aplican al consultar.</p>
-                    <div class="filter-action-buttons">
-                        <button type="button" class="table-filter-clear" onclick={handleClearTableFilters}>Limpiar</button>
-
-                        <button type="button" class="table-filter-apply" onclick={handleApplyTableDateRange}>
-                            Aplicar filtros
-                        </button>
+                    <div class="active-filters-summary">
+                        <div class="active-filters-heading">
+                            <strong>Filtros activos</strong>
+                            <span>Periodo: {managementPeriodLabel}</span>
+                            <span class="filters-live-status" role="status" aria-live="polite">{managementFilterStatus}</span>
+                        </div>
+                        <template lwc:if={hasActiveManagementFilters}>
+                            <div class="active-filter-groups">
+                                <template for:each={activeManagementFilterGroups} for:item="group">
+                                    <div key={group.field} class={group.className} role="group" aria-label={group.label}>
+                                        <span class="active-filter-category">{group.label}</span>
+                                        <div class="active-filter-values">
+                                            <template for:each={group.filters} for:item="filter">
+                                                <span key={filter.key} class="filter-chip">
+                                                    <span class="filter-chip-label">{filter.label}</span>
+                                                    <button type="button" class="filter-chip-remove" data-field={filter.field} data-value={filter.value}
+                                                        aria-label={filter.removeLabel} title={filter.removeLabel} onclick={handleRemoveManagementFilter}>×</button>
+                                                </span>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                        <template lwc:else>
+                            <p class="filter-actions-hint">Sin filtros adicionales. Se muestran las actividades del periodo indicado.</p>
+                        </template>
+                        <template lwc:if={managementFilterFeedback}>
+                            <p class="filter-validation-message" role="alert">{managementFilterFeedback}</p>
+                        </template>
                     </div>
+                    <button type="button" class="table-filter-clear" onclick={handleClearTableFilters}>Limpiar filtros</button>
                 </div>
             </section>
 

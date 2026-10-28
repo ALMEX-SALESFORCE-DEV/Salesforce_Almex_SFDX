@@ -19,7 +19,9 @@ export default class AgendaActivityBreakdown extends LightningElement {
     sheetJsLoaded = false;
     isDownloadingManagementExcel = false;
     isLoadingManagementActivities = false;
-    refreshQueued = false;
+    managementFilterTimer;
+    managementRequestId = 0;
+    managementLoadError = '';
     _refreshToken = 0;
     currentMonthDate = '';
     activeBreakdownSection = 'consultation';
@@ -62,10 +64,10 @@ export default class AgendaActivityBreakdown extends LightningElement {
         branchId: '',
         accountId: '',
         prospect: '',
-        activityType: '',
-        state: '',
-        followUp: '',
-        status: '',
+        activityTypes: [],
+        states: [],
+        followUps: [],
+        statuses: [],
         dateFrom: '',
         dateTo: ''
     };
@@ -425,21 +427,7 @@ export default class AgendaActivityBreakdown extends LightningElement {
     }
 
     requestManagementRefresh() {
-        if (this.isLoadingManagementActivities) {
-            this.refreshQueued = true;
-            return;
-        }
-
-        this.refreshManagementActivities();
-    }
-
-    async refreshManagementActivities() {
-        await this.loadManagementActivities(true);
-
-        if (this.refreshQueued) {
-            this.refreshQueued = false;
-            this.requestManagementRefresh();
-        }
+        this.loadManagementActivities(true);
     }
 
     get managementActivitiesCount() {
@@ -463,6 +451,8 @@ export default class AgendaActivityBreakdown extends LightningElement {
         }
 
         this.managementPartySearchRequest += 1;
+        this.managementRequestId += 1;
+        clearTimeout(this.managementFilterTimer);
     }
 
     getExecutivePalette(executiveName) {
@@ -558,7 +548,7 @@ export default class AgendaActivityBreakdown extends LightningElement {
     }
 
     async handleDownloadManagementExcel() {
-        if (this.isDownloadingManagementExcel) {
+        if (this.isManagementDownloadDisabled) {
             return;
         }
 
@@ -819,21 +809,21 @@ export default class AgendaActivityBreakdown extends LightningElement {
             'Zacatecas'
         ];
 
-        const selectedState = this.tableFilters.state;
-
-        if (selectedState && !states.includes(selectedState)) {
-            states.push(selectedState);
+        for (const selectedState of this.tableFilters.states) {
+            if (!states.includes(selectedState)) {
+                states.push(selectedState);
+            }
         }
 
         return states.map(state => ({
             label: state,
             value: state,
-            selected: selectedState === state
+            selected: this.tableFilters.states.includes(state)
         }));
     }
 
     get allManagementStatesSelected() {
-        return !this.tableFilters.state;
+        return this.tableFilters.states.length === 0;
     }
 
     get tableExecutiveFilterLabel() {
@@ -868,7 +858,7 @@ export default class AgendaActivityBreakdown extends LightningElement {
                 id: activityType,
                 label: activityType,
                 selected:
-                    this.tableFilters.activityType === activityType,
+                    this.tableFilters.activityTypes.includes(activityType),
                 iconName: presentation.iconName,
                 iconStyle: presentation.iconStyle
             };
@@ -891,7 +881,7 @@ export default class AgendaActivityBreakdown extends LightningElement {
                 id: status,
                 label: status,
                 selected:
-                    this.tableFilters.status === status,
+                    this.tableFilters.statuses.includes(status),
                 symbol: presentation.symbol,
                 pillStyle: presentation.pillStyle
             };
@@ -899,35 +889,54 @@ export default class AgendaActivityBreakdown extends LightningElement {
     }
 
     get tableActivityTypeFilterLabel() {
-        return this.tableFilters.activityType || 'Todos los tipos';
+        return this.getManagementChoiceLabel('activityTypes', 'Todos los tipos', 'tipos');
+    }
+
+    get tableStateFilterLabel() {
+        return this.getManagementChoiceLabel('states', 'Todos los estados', 'estados');
+    }
+
+    get tableFollowUpOptions() {
+        return [
+            { value: 'true', label: 'Con seguimiento' },
+            { value: 'false', label: 'Sin seguimiento' }
+        ].map(option => ({
+            ...option,
+            selected: this.tableFilters.followUps.includes(option.value)
+        }));
+    }
+
+    get tableFollowUpFilterLabel() {
+        const selected = this.tableFollowUpOptions.filter(option => option.selected);
+        return selected.length === 1 ? selected[0].label : 'Todos';
+    }
+
+    get allFollowUpsSelected() {
+        return this.tableFilters.followUps.length === 0;
     }
 
     get tableStatusFilterLabel() {
-        return this.tableFilters.status || 'Todos los estatus';
+        return this.getManagementChoiceLabel('statuses', 'Todos los estatus', 'estatus');
+    }
+
+    getManagementChoiceLabel(field, emptyLabel, pluralLabel) {
+        const selected = this.tableFilters[field];
+        if (!selected.length) {
+            return emptyLabel;
+        }
+        return selected.length === 1 ? selected[0] : `${selected.length} ${pluralLabel} seleccionados`;
     }
 
     get allActivityTypesSelected() {
-        return !this.tableFilters.activityType;
+        return this.tableFilters.activityTypes.length === 0;
     }
 
     get allStatusesSelected() {
-        return !this.tableFilters.status;
+        return this.tableFilters.statuses.length === 0;
     }
 
     handleExecutiveTableFilterChange(event) {
-        const selectedExecutives =
-            new Set(this.tableFilters.executives);
-
-        if (event.target.checked) {
-            selectedExecutives.add(event.target.value);
-        } else {
-            selectedExecutives.delete(event.target.value);
-        }
-
-        this.tableFilters = {
-            ...this.tableFilters,
-            executives: [...selectedExecutives]
-        };
+        this.updateManagementChoice('executives', event.target.value, event.target.checked);
     }
 
     handleManagementPartyTypeChange(event) {
@@ -944,13 +953,14 @@ export default class AgendaActivityBreakdown extends LightningElement {
             branchId: '',
             accountId: '',
             prospect: '',
-            state: this.managementPartyStateAutofilled
-                ? ''
-                : this.tableFilters.state
+            states: this.managementPartyStateAutofilled
+                ? []
+                : this.tableFilters.states
         };
 
         this.managementPartyStateAutofilled = false;
         this.resetManagementPartyAutocomplete();
+        this.scheduleManagementFilterRefresh();
     }
 
     handleManagementPartySearch(event) {
@@ -962,13 +972,14 @@ export default class AgendaActivityBreakdown extends LightningElement {
             branchId: '',
             accountId: '',
             prospect: '',
-            state: this.managementPartyStateAutofilled
-                ? ''
-                : this.tableFilters.state
+            states: this.managementPartyStateAutofilled
+                ? []
+                : this.tableFilters.states
         };
 
         this.managementPartyStateAutofilled = false;
         this.scheduleManagementPartySearch(partySearch);
+        this.scheduleManagementFilterRefresh();
     }
 
     handleManagementPartyFocus() {
@@ -983,6 +994,7 @@ export default class AgendaActivityBreakdown extends LightningElement {
     }
 
     handleManagementPartyBlur() {
+        // eslint-disable-next-line @lwc/lwc/no-async-operation -- Permite seleccionar la sugerencia antes de cerrar la lista.
         setTimeout(() => {
             this.isManagementPartyDropdownOpen = false;
         }, 180);
@@ -1001,6 +1013,7 @@ export default class AgendaActivityBreakdown extends LightningElement {
         this.isManagementPartyDropdownOpen = true;
         this.isSearchingManagementParties = true;
 
+        // eslint-disable-next-line @lwc/lwc/no-async-operation -- Debounce del autocompletado; se cancela al cambiar criterios o desmontar.
         this.managementPartySearchTimer = setTimeout(() => {
             this.managementPartySearchTimer = undefined;
             this.searchManagementPartyOptions(
@@ -1131,7 +1144,7 @@ export default class AgendaActivityBreakdown extends LightningElement {
                 branchId: selectedResult.id,
                 accountId: '',
                 prospect: '',
-                state: selectedResult.state
+                states: selectedResult.state ? [selectedResult.state] : []
             };
 
             this.managementPartyStateAutofilled = true;
@@ -1157,6 +1170,7 @@ export default class AgendaActivityBreakdown extends LightningElement {
         }
 
         this.resetManagementPartyAutocomplete();
+        this.scheduleManagementFilterRefresh();
     }
 
     resetManagementPartyAutocomplete() {
@@ -1173,22 +1187,24 @@ export default class AgendaActivityBreakdown extends LightningElement {
     }
 
     handleTableFilterChange(event) {
-        const { name, value, type } = event.target;
-
-        this.tableFilters = {
-            ...this.tableFilters,
-            [name]: value
-        };
-
-        if (name === 'state') {
+        const { name, value, checked } = event.target;
+        if (name === 'states') {
             this.managementPartyStateAutofilled = false;
         }
+        this.updateManagementChoice(name, value, checked);
+    }
 
-        if (type === 'radio') {
-            event.target
-                .closest('details')
-                ?.removeAttribute('open');
+    updateManagementChoice(field, value, checked) {
+        const selected = new Set(this.tableFilters[field]);
+        if (!value) {
+            selected.clear();
+        } else if (checked) {
+            selected.add(value);
+        } else {
+            selected.delete(value);
         }
+        this.tableFilters = { ...this.tableFilters, [field]: [...selected] };
+        this.scheduleManagementFilterRefresh();
     }
 
     handleTableDateChange(event) {
@@ -1208,46 +1224,40 @@ export default class AgendaActivityBreakdown extends LightningElement {
         }
 
         this.tableFilters = updatedFilters;
+        this.scheduleManagementFilterRefresh();
     }
 
-    async handleApplyTableDateRange() {
+    get managementFilterValidationMessage() {
         const { dateFrom, dateTo } = this.tableFilters;
-
         if (dateTo && !dateFrom) {
-            this.showToast(
-                'Falta fecha inicial',
-                'Selecciona primero la fecha De.',
-                'warning'
-            );
-
-            return;
+            return 'Selecciona primero la fecha inicial.';
         }
-
         if (dateFrom && dateTo && dateFrom > dateTo) {
-            this.showToast(
-                'Periodo incorrecto',
-                'La fecha inicial no puede ser posterior a la fecha final.',
-                'warning'
-            );
+            return 'La fecha inicial no puede ser posterior a la fecha final.';
+        }
+        if (this.tableFilters.partySearch.trim() && !this.hasManagementPartySelection) {
+            return 'Elige una sucursal, cliente o prospecto de las sugerencias para consultar sus actividades.';
+        }
+        return '';
+    }
 
+    // Agrupa cambios rápidos. El contador invalida la consulta anterior desde
+    // el clic, no hasta que empieza la siguiente petición a Apex.
+    scheduleManagementFilterRefresh() {
+        clearTimeout(this.managementFilterTimer);
+        this.managementRequestId += 1;
+        this.managementLoadError = '';
+        this.resetManagementPagination();
+        this.clearManagementResults();
+        this.isLoadingManagementActivities = !this.managementFilterValidationMessage;
+        if (!this.isLoadingManagementActivities) {
             return;
         }
-
-        const hasPartySearch = Boolean(
-            this.tableFilters.partySearch.trim()
-        );
-
-        if (hasPartySearch && !this.hasManagementPartySelection) {
-            this.showToast(
-                'Selecciona una coincidencia',
-                'Elige una sucursal, cliente o prospecto de la lista de resultados.',
-                'warning'
-            );
-
-            return;
-        }
-
-        await this.loadManagementActivities(true);
+        // eslint-disable-next-line @lwc/lwc/no-async-operation -- Debounce intencional, cancelable y protegido contra respuestas obsoletas.
+        this.managementFilterTimer = setTimeout(() => {
+            this.managementFilterTimer = undefined;
+            this.loadManagementActivities(true);
+        }, 250);
     }
 
     async handleClearTableFilters() {
@@ -1258,10 +1268,10 @@ export default class AgendaActivityBreakdown extends LightningElement {
             branchId: '',
             accountId: '',
             prospect: '',
-            activityType: '',
-            state: '',
-            followUp: '',
-            status: '',
+            activityTypes: [],
+            states: [],
+            followUps: [],
+            statuses: [],
             dateFrom: '',
             dateTo: ''
         };
@@ -1269,7 +1279,109 @@ export default class AgendaActivityBreakdown extends LightningElement {
         this.managementPartyStateAutofilled = false;
         this.resetManagementPartyAutocomplete();
 
-        await this.loadManagementActivities(true);
+        this.closeTableFilterMenus();
+        this.scheduleManagementFilterRefresh();
+    }
+
+    get activeManagementFilterGroups() {
+        const definitions = [
+            ['executives', 'Ejecutivo'],
+            ['activityTypes', 'Tipo de actividad'],
+            ['states', 'Estado'],
+            ['followUps', 'Seguimiento'],
+            ['statuses', 'Estatus']
+        ];
+        const groups = definitions.map(([field, label]) => ({
+            field,
+            label,
+            className: `active-filter-group filter-group--${field}`,
+            filters: this.tableFilters[field].map(value => {
+                const text = field === 'followUps'
+                    ? value === 'true' ? 'Con seguimiento' : 'Sin seguimiento'
+                    : value;
+                return {
+                    key: `${field}:${value}`, field, value, label: text,
+                    removeLabel: `Quitar ${label.toLowerCase()}: ${text}`
+                };
+            })
+        }));
+        if (this.hasManagementPartySelection) {
+            const label = this.isManagementClientTarget ? 'Cliente'
+                : this.isManagementBranchTarget ? 'Sucursal' : 'Prospecto';
+            groups.push({
+                field: 'party', label,
+                className: 'active-filter-group filter-group--party',
+                filters: [{
+                    key: 'party', field: 'party', value: '',
+                    label: this.tableFilters.partySearch,
+                    removeLabel: `Quitar ${label.toLowerCase()}: ${this.tableFilters.partySearch}`
+                }]
+            });
+        }
+        if (this.tableFilters.dateFrom) {
+            groups.push({
+                field: 'period', label: 'Periodo',
+                className: 'active-filter-group filter-group--period',
+                filters: [{
+                    key: 'period', field: 'period', value: '',
+                    label: this.managementPeriodLabel,
+                    removeLabel: 'Quitar periodo personalizado y volver al mes del calendario'
+                }]
+            });
+        }
+        return groups.filter(group => group.filters.length > 0);
+    }
+
+    get hasActiveManagementFilters() {
+        return this.activeManagementFilterGroups.length > 0;
+    }
+
+    get managementPeriodLabel() {
+        const { dateFrom, dateTo } = this.getManagementQueryDates();
+        return dateTo
+            ? `${this.formatActivityDate(dateFrom)} – ${this.formatActivityDate(dateTo)}`
+            : `Desde ${this.formatActivityDate(dateFrom)}`;
+    }
+
+    get managementFilterFeedback() {
+        return this.managementFilterValidationMessage || this.managementLoadError;
+    }
+
+    get managementFilterStatus() {
+        if (this.managementFilterFeedback) {
+            return 'Consulta pendiente';
+        }
+        return this.isLoadingManagementActivities
+            ? 'Actualizando resultados…'
+            : `${this.managementTotalRecords} registros encontrados`;
+    }
+
+    get isManagementDownloadDisabled() {
+        return this.isDownloadingManagementExcel || this.isLoadingManagementActivities ||
+            Boolean(this.managementFilterFeedback);
+    }
+
+    handleRemoveManagementFilter(event) {
+        const { field, value } = event.currentTarget.dataset;
+        if (field === 'party') {
+            this.tableFilters = {
+                ...this.tableFilters, partySearch: '', branchId: '', accountId: '', prospect: '',
+                states: this.managementPartyStateAutofilled ? [] : this.tableFilters.states
+            };
+            this.managementPartyStateAutofilled = false;
+            this.resetManagementPartyAutocomplete();
+        } else if (field === 'period') {
+            this.tableFilters = { ...this.tableFilters, dateFrom: '', dateTo: '' };
+        } else {
+            this.tableFilters = {
+                ...this.tableFilters,
+                [field]: this.tableFilters[field].filter(selected => selected !== value)
+            };
+            if (field === 'states') {
+                this.managementPartyStateAutofilled = false;
+            }
+        }
+        this.scheduleManagementFilterRefresh();
     }
 
     handleTableFilterToggle(event) {
@@ -1404,7 +1516,12 @@ export default class AgendaActivityBreakdown extends LightningElement {
     }
 
     async loadManagementActivities(resetPagination = false) {
-        if (this.isLoadingManagementActivities) {
+        clearTimeout(this.managementFilterTimer);
+        const requestId = ++this.managementRequestId;
+        this.managementLoadError = '';
+        if (this.managementFilterValidationMessage) {
+            this.isLoadingManagementActivities = false;
+            this.clearManagementResults();
             return false;
         }
 
@@ -1414,11 +1531,6 @@ export default class AgendaActivityBreakdown extends LightningElement {
 
         const dates = this.getManagementQueryDates();
 
-        const followUp =
-            this.tableFilters.followUp === ''
-                ? null
-                : this.tableFilters.followUp === 'true';
-
         this.isLoadingManagementActivities = true;
 
         try {
@@ -1426,17 +1538,21 @@ export default class AgendaActivityBreakdown extends LightningElement {
                 dateFrom: dates.dateFrom,
                 dateTo: dates.dateTo,
                 executives: this.tableFilters.executives,
-                activityType: this.tableFilters.activityType,
-                state: this.tableFilters.state,
+                activityTypes: [...this.tableFilters.activityTypes],
+                states: [...this.tableFilters.states],
                 branchId: this.tableFilters.branchId,
                 accountId: this.tableFilters.accountId,
                 prospect: this.tableFilters.prospect,
-                followUp,
-                status: this.tableFilters.status,
+                followUps: this.tableFilters.followUps.map(value => value === 'true'),
+                statuses: [...this.tableFilters.statuses],
                 cursor: this.managementCurrentCursor,
                 pageSize: this.managementPageSize
             });
 
+            // Solo la respuesta de la selección más reciente puede pintar la tabla.
+            if (requestId !== this.managementRequestId) {
+                return false;
+            }
             this.managementExecutiveNames =
                 response.executiveOptions || [];
 
@@ -1467,6 +1583,11 @@ export default class AgendaActivityBreakdown extends LightningElement {
 
             return true;
         } catch (error) {
+            if (requestId !== this.managementRequestId) {
+                return false;
+            }
+            this.clearManagementResults();
+            this.managementLoadError = error?.message || 'No fue posible cargar el desglose. Cambia un filtro para reintentar.';
             console.error(
                 'Error cargando desglose de actividades:',
                 error
@@ -1481,8 +1602,18 @@ export default class AgendaActivityBreakdown extends LightningElement {
 
             return false;
         } finally {
-            this.isLoadingManagementActivities = false;
+            if (requestId === this.managementRequestId) {
+                this.isLoadingManagementActivities = false;
+            }
         }
+    }
+
+    clearManagementResults() {
+        this.allManagementActivities = [];
+        this.managementActivities = [];
+        this.managementTotalRecords = 0;
+        this.managementHasNext = false;
+        this.managementNextCursor = null;
     }
 
     mapManagementActivity(record) {

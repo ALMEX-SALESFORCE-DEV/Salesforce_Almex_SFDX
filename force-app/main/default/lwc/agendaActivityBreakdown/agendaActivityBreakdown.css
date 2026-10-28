@@ -321,6 +321,13 @@
     list-style: none;
 }
 
+.multi-select summary > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .multi-select summary::-webkit-details-marker {
     display: none;
 }
@@ -393,21 +400,15 @@
 
 .table-filter-actions {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 16px;
     padding-top: 16px;
     border-top: 1px solid #edf1ee;
 }
 
-.filter-action-buttons {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.table-filter-clear,
-.table-filter-apply {
+.table-filter-clear {
+    flex-shrink: 0;
     min-height: 40px;
     padding: 0 18px;
     border-radius: 7px;
@@ -418,8 +419,7 @@
     transition: background-color 150ms ease, border-color 150ms ease;
 }
 
-.table-filter-clear:focus-visible,
-.table-filter-apply:focus-visible {
+.table-filter-clear:focus-visible {
     outline: 2px solid #287d4b;
     outline-offset: 3px;
 }
@@ -435,15 +435,142 @@
     border-color: #91ad9c;
 }
 
-.table-filter-apply {
-    color: #ffffff;
-    background: #287d4b;
-    border: 1px solid #287d4b;
+.active-filters-summary {
+    flex: 1;
+    min-width: 0;
+    display: grid;
+    gap: 12px;
 }
 
-.table-filter-apply:hover {
-    background: #21663e;
-    border-color: #21663e;
+.active-filters-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 16px;
+    color: #6c7871;
+    font-size: 12px;
+}
+
+.active-filters-heading strong {
+    color: #25392e;
+}
+
+.filters-live-status {
+    color: #287d4b;
+}
+
+.active-filter-groups {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+}
+
+.active-filter-group {
+    --chip-text: #35566d;
+    --chip-border: #c3d7e3;
+    --chip-background: #f1f7fb;
+    display: grid;
+    gap: 6px;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.filter-group--activityTypes {
+    --chip-text: #654297;
+    --chip-border: #d9cbed;
+    --chip-background: #f7f3fc;
+}
+
+.filter-group--states {
+    --chip-text: #28634d;
+    --chip-border: #bedccd;
+    --chip-background: #f0f8f3;
+}
+
+.filter-group--followUps {
+    --chip-text: #855619;
+    --chip-border: #e9d1a7;
+    --chip-background: #fff9ef;
+}
+
+.filter-group--statuses {
+    --chip-text: #365f9b;
+    --chip-border: #c6d6ed;
+    --chip-background: #f1f6fd;
+}
+
+.filter-group--party,
+.filter-group--period {
+    --chip-text: #535d68;
+    --chip-border: #d4dbe1;
+    --chip-background: #f6f8fa;
+}
+
+.active-filter-category {
+    color: #6c7871;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.active-filter-values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-width: 0;
+}
+
+.filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+    min-width: 0;
+    padding: 3px 4px 3px 9px;
+    border: 1px solid var(--chip-border);
+    border-radius: 5px;
+    color: var(--chip-text);
+    background: var(--chip-background);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.filter-chip-label {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.filter-chip-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 26px;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    border-radius: 4px;
+    color: inherit;
+    background: transparent;
+    font: inherit;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.filter-chip-remove:hover {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+.filter-chip-remove:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 1px;
+}
+
+.filter-validation-message {
+    margin: 0;
+    color: #9b4215;
+    font-size: 12px;
+    line-height: 1.5;
 }
 
 .table-pagination {
@@ -1263,20 +1390,6 @@
     font-size: 18px;
 }
 
-.table-single-select {
-    width: 100%;
-}
-
-.table-single-select summary {
-    overflow: hidden;
-}
-
-.table-single-select summary > span {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
 .table-filter-activity-icon {
     width: 23px;
     height: 23px;
@@ -1535,17 +1648,12 @@
         grid-column: 1 / -1;
     }
 
-    .filter-actions-hint {
-        display: none;
+    .table-filter-actions {
+        flex-direction: column;
     }
 
-    .filter-action-buttons {
-        width: 100%;
-    }
-
-    .table-filter-clear,
-    .table-filter-apply {
-        flex: 1;
+    .table-filter-clear {
+        align-self: flex-end;
         min-height: 44px;
     }
 
