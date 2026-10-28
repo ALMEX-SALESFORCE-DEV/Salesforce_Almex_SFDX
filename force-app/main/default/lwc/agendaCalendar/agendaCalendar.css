@@ -1891,9 +1891,9 @@
 }
 
 .activities-navigation-button span {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.4;
 }
 
 .activities-navigation-button strong {

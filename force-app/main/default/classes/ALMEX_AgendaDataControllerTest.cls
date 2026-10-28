@@ -288,8 +288,8 @@ private class ALMEX_AgendaDataControllerTest {
         if (ALMEX_AgendaDataController.canViewActivityBreakdown()) {
             ALMEX_AgendaDataController.ManagementActivityPage urgentPage =
                 ALMEX_AgendaDataController.getManagementActivities(
-                    Date.today(), Date.today(), null, 'Visitas urgentes',
-                    null, branch.Id, null, null, null, null, null, null, 50);
+                    Date.today(), Date.today(), null, new List<String>{'Visitas urgentes'},
+                    null, branch.Id, null, null, null, null, null, null, 50, null);
             System.assertEquals(2, urgentPage.totalRecords,
                 'El filtro nuevo debe recuperar también el registro histórico.');
         }
@@ -378,6 +378,102 @@ private class ALMEX_AgendaDataControllerTest {
         );
     }
 
+    /**
+     * La original reagendada se conserva de solo lectura; las notas y el
+     * seguimiento se actualizan únicamente en la actividad nueva programada.
+     */
+    @IsTest
+    static void editsReplacementWithoutChangingHistoricalOriginal() {
+        Actividad_de_Agenda__c original = insertScheduledActivity(
+            'Seguimiento reagendado', Date.today().addDays(2)
+        );
+        Date replacementDate = Date.today().addDays(12);
+
+        Test.startTest();
+        Id replacementId = ALMEX_AgendaDataController.rescheduleActivity(
+            original.Id, replacementDate, 'Cambio de fecha solicitado.'
+        );
+        assertAuraException(new TestAction('UPDATE_CLOSED', null, null, original.Id));
+        ALMEX_AgendaDataController.updateActivityDetails(
+            replacementId, false, 'Se confirmó la nueva fecha.', null
+        );
+        Test.stopTest();
+
+        Map<Id, Actividad_de_Agenda__c> records = new Map<Id, Actividad_de_Agenda__c>([
+            SELECT Estatus__c, Fecha__c, Notas__c, Seguimiento__c, Actividad_Original__c
+            FROM Actividad_de_Agenda__c
+            WHERE Id IN :new Set<Id>{original.Id, replacementId}
+        ]);
+        System.assertEquals('Reagendada', records.get(original.Id).Estatus__c);
+        System.assertEquals(true, records.get(original.Id).Seguimiento__c);
+        System.assertEquals('Registro de prueba', records.get(original.Id).Notas__c);
+        System.assertEquals('Programada', records.get(replacementId).Estatus__c);
+        System.assertEquals(replacementDate, records.get(replacementId).Fecha__c);
+        System.assertEquals(original.Id, records.get(replacementId).Actividad_Original__c);
+        System.assertEquals(false, records.get(replacementId).Seguimiento__c);
+        System.assertEquals('Se confirmó la nueva fecha.', records.get(replacementId).Notas__c);
+    }
+
+    /**
+     * Una segunda reagendación se hace sobre la nueva Programada. Se conserva
+     * toda la cadena histórica y únicamente se completa la actividad vigente.
+     */
+    @IsTest
+    static void managesCurrentReplacementAndPreservesHistory() {
+        Actividad_de_Agenda__c original = insertScheduledActivity(
+            'Visita con cambios de fecha', Date.today().addDays(2)
+        );
+        Date finalDate = Date.today().addDays(14);
+
+        Test.startTest();
+        Id replacementId = ALMEX_AgendaDataController.rescheduleActivity(
+            original.Id, Date.today().addDays(7), 'Primer cambio de fecha.'
+        );
+        Id currentId = ALMEX_AgendaDataController.rescheduleActivity(
+            replacementId, finalDate, 'Segundo cambio de fecha.'
+        );
+        assertAuraException(new TestAction('COMPLETE_WITHOUT_RESOLUTION', null, null, currentId));
+        ALMEX_AgendaDataController.completeActivity(currentId, 'Pendientes resueltos.');
+        Test.stopTest();
+
+        Set<Id> recordIds = new Set<Id>{original.Id, replacementId, currentId};
+        Map<Id, Actividad_de_Agenda__c> stored = new Map<Id, Actividad_de_Agenda__c>([
+            SELECT Estatus__c, Justificacion__c, Seguimiento__c, Fecha__c, Actividad_Original__c
+            FROM Actividad_de_Agenda__c WHERE Id IN :recordIds
+        ]);
+        System.assertEquals('Reagendada', stored.get(original.Id).Estatus__c);
+        System.assertEquals('Reagendada', stored.get(replacementId).Estatus__c);
+        System.assertEquals(original.Id, stored.get(replacementId).Actividad_Original__c);
+        System.assertEquals('Completada', stored.get(currentId).Estatus__c);
+        System.assertEquals(false, stored.get(currentId).Seguimiento__c);
+        System.assertEquals('Pendientes resueltos.', stored.get(currentId).Justificacion__c);
+        System.assertEquals(finalDate, stored.get(currentId).Fecha__c);
+        System.assertEquals(replacementId, stored.get(currentId).Actividad_Original__c);
+    }
+
+    /** Los estados finales e históricos están protegidos también al invocar Apex directamente. */
+    @IsTest
+    static void rejectsActionsOnClosedAndRescheduledActivities() {
+        List<Actividad_de_Agenda__c> closedActivities = new List<Actividad_de_Agenda__c>();
+        for (String status : new List<String>{'Completada', 'Cancelada', 'Reagendada'}) {
+            Actividad_de_Agenda__c activity = buildActivity(
+                status, Date.today().addDays(2), null, 'Prospecto Prueba Agenda'
+            );
+            activity.Estatus__c = status;
+            closedActivities.add(activity);
+        }
+        insert closedActivities;
+
+        Test.startTest();
+        for (Actividad_de_Agenda__c activity : closedActivities) {
+            assertAuraException(new TestAction('COMPLETE_WITHOUT_RESOLUTION', null, null, activity.Id));
+            assertAuraException(new TestAction('CANCEL_CLOSED', null, null, activity.Id));
+            assertAuraException(new TestAction('RESCHEDULE_CLOSED', null, null, activity.Id));
+            assertAuraException(new TestAction('UPDATE_CLOSED', null, null, activity.Id));
+        }
+        Test.stopTest();
+    }
+
     // =====================================================================
     // 5. DESGLOSE ADMINISTRATIVO Y BÚSQUEDAS ASÍNCRONAS
     // =====================================================================
@@ -447,16 +543,17 @@ private class ALMEX_AgendaDataControllerTest {
                 activityDate.addDays(-1),
                 activityDate.addDays(1),
                 new List<String>{ UserInfo.getName(), ' ' },
-                'Visita',
-                'Jalisco',
+                new List<String>{'Visita'},
+                new List<String>{'Jalisco'},
                 null,
                 prospect.Name,
-                false,
-                'Programada',
+                new List<Boolean>{false},
+                new List<String>{'Programada'},
                 null,
                 null,
                 null,
-                1
+                1,
+                null
             );
         ALMEX_AgendaDataController.ManagementActivityPage branchPage =
             ALMEX_AgendaDataController.getManagementActivities(
@@ -472,7 +569,8 @@ private class ALMEX_AgendaDataControllerTest {
                 null,
                 null,
                 null,
-                50
+                50,
+                null
             );
         List<Sucursal__c> branchResults =
             ALMEX_AgendaDataController.searchManagementBranches('Sucursal Prueba');
@@ -490,6 +588,139 @@ private class ALMEX_AgendaDataControllerTest {
         System.assertEquals(1, prospectResults.size());
         System.assertNotEquals(null, supplyAgreements);
         System.assert(firstPage.executiveOptions.contains(UserInfo.getName()));
+    }
+
+    /**
+     * Un cliente agrupa actividades de varias sucursales y ejecutivos. La
+     * paginación y los filtros adicionales mantienen el mismo alcance.
+     */
+    @IsTest
+    static void filtersManagementActivitiesAcrossClientBranches() {
+        if (!ALMEX_AgendaDataController.canViewActivityBreakdown()) {
+            return;
+        }
+        Sucursal__c branchA = [SELECT Id, Cuenta__c FROM Sucursal__c
+            WHERE Name = 'Sucursal Prueba Agenda' LIMIT 1];
+        Account otherClient = new Account(Name = 'Otro Cliente Agenda');
+        insert as system otherClient;
+        Sucursal__c branchB = new Sucursal__c(Name = 'Sucursal B Agenda', Cuenta__c = branchA.Cuenta__c);
+        Sucursal__c otherBranch = new Sucursal__c(Name = 'Sucursal Ajena Agenda', Cuenta__c = otherClient.Id);
+        insert as system new List<Sucursal__c>{branchB, otherBranch};
+
+        Actividad_de_Agenda__c pedrito = buildActivity('Visita A', Date.today(), branchA.Id, null);
+        pedrito.Ejecutivo__c = 'Pedrito';
+        Actividad_de_Agenda__c juanito = buildActivity('Visita B', Date.today(), branchB.Id, null);
+        juanito.Ejecutivo__c = 'Juanito';
+        Actividad_de_Agenda__c call = buildActivity('Llamada B', Date.today(), branchB.Id, null);
+        call.Tipo_de_actividad__c = 'Llamada';
+        call.Ejecutivo__c = 'Juanito';
+        insert new List<Actividad_de_Agenda__c>{
+            pedrito, juanito, call,
+            buildActivity('Otra cuenta', Date.today(), otherBranch.Id, null),
+            buildActivity('Prospecto homónimo', Date.today(), null, 'Cuenta Prueba Agenda'),
+            buildActivity('Fuera de periodo', Date.today().addMonths(-1), branchA.Id, null)
+        };
+
+        Test.startTest();
+        ALMEX_AgendaDataController.ManagementActivityPage firstPage =
+            ALMEX_AgendaDataController.getManagementActivities(
+                Date.today(), Date.today(), null, null, null, null, null,
+                null, null, null, null, null, 1, branchA.Cuenta__c
+            );
+        ALMEX_AgendaDataController.ManagementActivityPage secondPage =
+            ALMEX_AgendaDataController.getManagementActivities(
+                Date.today(), Date.today(), null, null, null, null, null,
+                null, null, firstPage.nextCursorDate, firstPage.nextCursorCreatedDate,
+                firstPage.nextCursorId, 1, branchA.Cuenta__c
+            );
+        ALMEX_AgendaDataController.ManagementActivityPage filtered =
+            ALMEX_AgendaDataController.getManagementActivities(
+                Date.today(), Date.today(), new List<String>{'Juanito'},
+                new List<String>{'Visita'}, new List<String>{'Jalisco'},
+                null, null, new List<Boolean>{false}, new List<String>{'Programada'},
+                null, null, null, 50, branchA.Cuenta__c
+            );
+        List<Account> clients = ALMEX_AgendaDataController.searchManagementClients('Cuenta Prueba');
+        System.assertEquals(0, ALMEX_AgendaDataController.searchManagementClients('C').size());
+        Test.stopTest();
+
+        System.assertEquals(3, firstPage.totalRecords);
+        System.assertEquals(true, firstPage.hasNext);
+        System.assertEquals(3, secondPage.totalRecords);
+        System.assertNotEquals(firstPage.records[0].Id, secondPage.records[0].Id);
+        System.assertEquals(1, filtered.totalRecords);
+        System.assertEquals(juanito.Id, filtered.records[0].Id);
+        System.assertEquals(1, clients.size());
+        System.assertEquals(branchA.Cuenta__c, clients[0].Id);
+    }
+
+    /**
+     * Los filtros múltiples unen valores de una misma categoría (OR), pero
+     * intersectan categorías (AND). Conteo y paginación deben usar ese mismo
+     * conjunto, incluyendo tipos históricos y listas vacías = sin restricción.
+     */
+    @IsTest
+    static void filtersMultipleManagementChoicesAndPaginates() {
+        if (!ALMEX_AgendaDataController.canViewActivityBreakdown()) {
+            return;
+        }
+        Sucursal__c branch = [SELECT Id, Cuenta__c FROM Sucursal__c
+            WHERE Name = 'Sucursal Prueba Agenda' LIMIT 1];
+        Date activityDate = Date.today();
+        Actividad_de_Agenda__c visit = buildActivity('Visita filtrada', activityDate, branch.Id, null);
+        visit.Seguimiento__c = true;
+        Actividad_de_Agenda__c call = buildActivity('Llamada filtrada', activityDate, branch.Id, null);
+        call.Tipo_de_actividad__c = 'Llamada';
+        call.Estado__c = 'Sonora';
+        call.Estatus__c = 'Completada';
+        Actividad_de_Agenda__c legacy = buildActivity('Urgente histórica', activityDate, branch.Id, null);
+        legacy.Tipo_de_actividad__c = 'Visita extraordinaria';
+        Actividad_de_Agenda__c otherType = buildActivity('Otro tipo', activityDate, branch.Id, null);
+        otherType.Tipo_de_actividad__c = 'Otro';
+        Actividad_de_Agenda__c otherState = buildActivity('Otro estado', activityDate, branch.Id, null);
+        otherState.Estado__c = 'Nuevo León';
+        Actividad_de_Agenda__c cancelled = buildActivity('Cancelada', activityDate, branch.Id, null);
+        cancelled.Estatus__c = 'Cancelada';
+        insert new List<Actividad_de_Agenda__c>{visit, call, legacy, otherType, otherState, cancelled,
+            buildActivity('Fuera de periodo', activityDate.addDays(-1), branch.Id, null)};
+
+        Test.startTest();
+        List<String> types = new List<String>{'Visita', 'Llamada', 'Visitas urgentes', 'Visita', ' ', null};
+        List<String> states = new List<String>{' Jalisco ', 'Sonora'};
+        List<String> statuses = new List<String>{'Programada', 'Completada'};
+        ALMEX_AgendaDataController.ManagementActivityPage first =
+            ALMEX_AgendaDataController.getManagementActivities(
+                activityDate, activityDate, null, types, states, null, null,
+                new List<Boolean>{true, false, null}, statuses, null, null, null, 1, branch.Cuenta__c);
+        ALMEX_AgendaDataController.ManagementActivityPage second =
+            ALMEX_AgendaDataController.getManagementActivities(
+                activityDate, activityDate, null, types, states, null, null,
+                new List<Boolean>{true, false}, statuses, first.nextCursorDate,
+                first.nextCursorCreatedDate, first.nextCursorId, 1, branch.Cuenta__c);
+        ALMEX_AgendaDataController.ManagementActivityPage following =
+            ALMEX_AgendaDataController.getManagementActivities(
+                activityDate, activityDate, null, types, states, null, null,
+                new List<Boolean>{true}, statuses, null, null, null, 50, branch.Cuenta__c);
+        ALMEX_AgendaDataController.ManagementActivityPage all =
+            ALMEX_AgendaDataController.getManagementActivities(
+                activityDate, activityDate, new List<String>(), new List<String>(),
+                new List<String>(), null, null, new List<Boolean>(), new List<String>(),
+                null, null, null, 50, branch.Cuenta__c);
+        ALMEX_AgendaDataController.ManagementActivityPage none =
+            ALMEX_AgendaDataController.getManagementActivities(
+                activityDate, activityDate, null, new List<String>{'Llamada'},
+                new List<String>{'Jalisco'}, null, null, null, null, null, null, null,
+                50, branch.Cuenta__c);
+        Test.stopTest();
+
+        System.assertEquals(3, first.totalRecords, 'Tres combinaciones válidas, sin duplicar por tipo repetido.');
+        System.assertEquals(3, second.totalRecords, 'La siguiente página conserva el conteo filtrado.');
+        System.assert(first.hasNext);
+        System.assertNotEquals(first.records[0].Id, second.records[0].Id);
+        System.assertEquals(1, following.totalRecords, 'Solo la visita con seguimiento.');
+        System.assertEquals(visit.Id, following.records[0].Id);
+        System.assertEquals(6, all.totalRecords, 'Listas vacías incluyen todos los valores del periodo.');
+        System.assertEquals(0, none.totalRecords, 'Las categorías se intersectan, no se unen entre sí.');
     }
 
     // =====================================================================
@@ -888,6 +1119,19 @@ private class ALMEX_AgendaDataControllerTest {
             if (actionName == 'CANCEL_WITHOUT_JUSTIFICATION') {
                 ALMEX_AgendaDataController.cancelActivity(activityId, ' ');
                 return null;
+            }
+            if (actionName == 'CANCEL_CLOSED') {
+                ALMEX_AgendaDataController.cancelActivity(activityId, 'Intento sobre actividad cerrada.');
+                return null;
+            }
+            if (actionName == 'UPDATE_CLOSED') {
+                ALMEX_AgendaDataController.updateActivityDetails(activityId, false, 'Intento de edición.', null);
+                return null;
+            }
+            if (actionName == 'RESCHEDULE_CLOSED') {
+                return ALMEX_AgendaDataController.rescheduleActivity(
+                    activityId, Date.today().addDays(20), 'Intento sobre actividad cerrada.'
+                );
             }
             if (actionName == 'RESCHEDULE_SAME_DATE') {
                 ALMEX_AgendaDataController.rescheduleActivity(

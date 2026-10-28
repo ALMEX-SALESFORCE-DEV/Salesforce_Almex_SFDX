@@ -10,6 +10,7 @@ import getAlmexSupplyAgreementsApex from '@salesforce/apex/ALMEX_AgendaDataContr
 import getCurrentUserBranchesApex from '@salesforce/apex/ALMEX_AgendaDataController.getCurrentUserBranches';
 import searchCurrentUserProspectsApex from '@salesforce/apex/ALMEX_AgendaDataController.searchCurrentUserProspects';
 import searchManagementBranchesApex from '@salesforce/apex/ALMEX_AgendaDataController.searchManagementBranches';
+import searchManagementClientsApex from '@salesforce/apex/ALMEX_AgendaDataController.searchManagementClients';
 import searchManagementProspectsApex from '@salesforce/apex/ALMEX_AgendaDataController.searchManagementProspects';
 import improveAgendaTextApex from '@salesforce/apex/ALMEX_AgendaDataController.improveAgendaText';
 import { normalizeAgendaActivityType } from 'c/agendaUtils';
@@ -101,12 +102,13 @@ export async function getManagementActivities(filters) {
             dateFrom: filters.dateFrom || null,
             dateTo: filters.dateTo || null,
             executives: filters.executives || [],
-            activityType: filters.activityType || null,
-            state: filters.state || null,
+            activityTypes: filters.activityTypes || [],
+            states: filters.states || [],
             branchId: filters.branchId || null,
+            accountId: filters.accountId || null,
             prospect: filters.prospect || null,
-            followUp: filters.followUp,
-            status: filters.status || null,
+            followUps: filters.followUps || [],
+            statuses: filters.statuses || [],
             cursorDate: filters.cursor?.date || null,
             cursorCreatedDate: filters.cursor?.createdDate || null,
             cursorId: filters.cursor?.id || null,
@@ -191,4 +193,9 @@ export async function searchManagementProspects(searchTerm) {
     );
 
     return prospects || [];
+}
+
+export async function searchManagementClients(searchTerm) {
+    const clients = await runApex(searchManagementClientsApex, { searchTerm });
+    return clients || [];
 }

@@ -639,16 +639,17 @@ public with sharing class ALMEX_AgendaDataController {
         Date dateFrom,
         Date dateTo,
         List<String> executives,
-        String activityType,
-        String state,
+        List<String> activityTypes,
+        List<String> states,
         Id branchId,
         String prospect,
-        Boolean followUp,
-        String status,
+        List<Boolean> followUps,
+        List<String> statuses,
         Date cursorDate,
         Datetime cursorCreatedDate,
         Id cursorId,
-        Integer pageSize
+        Integer pageSize,
+        Id accountId
     ) {
         User currentUser = getSessionUser();
         validateManagementAccess(currentUser);
@@ -706,23 +707,33 @@ public with sharing class ALMEX_AgendaDataController {
             }
         }
 
-        if (!String.isBlank(activityType)) {
-            dataConditions.add('Tipo_de_actividad__c IN :activityTypes');
-            dataBinds.put('activityTypes', getActivityTypeFilterValues(activityType));
+        // OR entre opciones de una categoría, AND entre categorías. Se mantienen
+        // los alias históricos de los tipos renombrados y los binds seguros.
+        Set<String> activityTypeValues = new Set<String>();
+        for (String activityType : cleanManagementFilterValues(activityTypes)) {
+            activityTypeValues.addAll(getActivityTypeFilterValues(activityType));
         }
-
-        if (!String.isBlank(state)) {
-            dataConditions.add('Estado__c = :state');
-            dataBinds.put('state', state);
+        if (!activityTypeValues.isEmpty()) {
+            dataConditions.add('Tipo_de_actividad__c IN :activityTypeValues');
+            dataBinds.put('activityTypeValues', activityTypeValues);
+        }
+        Set<String> stateValues = cleanManagementFilterValues(states);
+        if (!stateValues.isEmpty()) {
+            dataConditions.add('Estado__c IN :stateValues');
+            dataBinds.put('stateValues', stateValues);
         }
 
         String prospectName = String.isBlank(prospect)
             ? null
             : prospect.trim();
 
-        if (branchId != null && prospectName != null) {
+        Integer selectedPartyCount =
+            (branchId == null ? 0 : 1) +
+            (prospectName == null ? 0 : 1) +
+            (accountId == null ? 0 : 1);
+        if (selectedPartyCount > 1) {
             throw new AuraHandledException(
-                'Selecciona una sucursal o un prospecto, pero no ambos.'
+                'Selecciona solo una sucursal, un cliente o un prospecto.'
             );
         }
 
@@ -731,19 +742,30 @@ public with sharing class ALMEX_AgendaDataController {
             dataBinds.put('branchId', branchId);
         }
 
+        if (accountId != null) {
+            dataConditions.add('Sucursal__r.Cuenta__c = :accountId');
+            dataBinds.put('accountId', accountId);
+        }
+
         if (prospectName != null) {
             dataConditions.add('Prospecto__c = :prospectName');
             dataBinds.put('prospectName', prospectName);
         }
 
-        if (followUp != null) {
-            dataConditions.add('Seguimiento__c = :followUp');
-            dataBinds.put('followUp', followUp);
+        Set<Boolean> followUpValues = new Set<Boolean>();
+        if (followUps != null) {
+            followUpValues.addAll(followUps);
+            followUpValues.remove(null);
         }
-
-        if (!String.isBlank(status)) {
-            dataConditions.add('Estatus__c = :status');
-            dataBinds.put('status', status);
+        // Elegir ambos booleanos equivale a no restringir seguimiento.
+        if (followUpValues.size() == 1) {
+            dataConditions.add('Seguimiento__c = :followUpValue');
+            dataBinds.put('followUpValue', followUpValues.contains(true));
+        }
+        Set<String> statusValues = cleanManagementFilterValues(statuses);
+        if (!statusValues.isEmpty()) {
+            dataConditions.add('Estatus__c IN :statusValues');
+            dataBinds.put('statusValues', statusValues);
         }
 
         String dataWhere = String.join(dataConditions, ' AND ');
@@ -920,10 +942,11 @@ public with sharing class ALMEX_AgendaDataController {
     ) {
         if (
             activity.Estatus__c == 'Cancelada' ||
+            activity.Estatus__c == 'Completada' ||
             activity.Estatus__c == 'Reagendada'
         ) {
             throw new AuraHandledException(
-                'Las notas de una actividad cancelada o reagendada no pueden modificarse.'
+                'Las notas de una actividad cancelada, completada o reagendada no pueden modificarse.'
             );
         }
     }
@@ -988,6 +1011,18 @@ public with sharing class ALMEX_AgendaDataController {
             return 'Visitas urgentes';
         }
         return type;
+    }
+
+    private static Set<String> cleanManagementFilterValues(List<String> values) {
+        Set<String> cleaned = new Set<String>();
+        if (values != null) {
+            for (String value : values) {
+                if (!String.isBlank(value)) {
+                    cleaned.add(value.trim());
+                }
+            }
+        }
+        return cleaned;
     }
 
     @TestVisible
@@ -1178,6 +1213,10 @@ public with sharing class ALMEX_AgendaDataController {
     }
 
     private static String getTextImprovementContextLabel(String context) {
+        if (context == 'followUpResolution') {
+            return 'resumen de resolución del seguimiento de una actividad';
+        }
+
         if (context == 'exceptionJustification') {
             return 'justificación de una excepción de visita';
         }
@@ -1194,7 +1233,7 @@ public with sharing class ALMEX_AgendaDataController {
             return 160;
         }
 
-        if (context == 'actionJustification') {
+        if (context == 'actionJustification' || context == 'followUpResolution') {
             return 1000;
         }
 
@@ -1327,6 +1366,39 @@ public with sharing class ALMEX_AgendaDataController {
         }
 
         return branches;
+    }
+
+    /** Clientes con sucursales visibles; el filtro de actividades usa el Id de Cuenta. */
+    @AuraEnabled(cacheable=true)
+    public static List<Account> searchManagementClients(String searchTerm) {
+        validateManagementAccess();
+
+        String normalizedSearch = String.isBlank(searchTerm)
+            ? ''
+            : searchTerm.trim().replace('%', '').replace('_', '');
+        if (normalizedSearch.length() < 2) {
+            return new List<Account>();
+        }
+
+        List<String> tokens = normalizedSearch.split('\\s+');
+        List<String> conditions = new List<String>{
+            'Id IN (SELECT Cuenta__c FROM Sucursal__c WHERE Cuenta__c != null)'
+        };
+        Map<String, Object> binds = new Map<String, Object>();
+        for (Integer index = 0; index < Math.min(tokens.size(), 6); index++) {
+            String bindName = 'clientToken' + index;
+            conditions.add('Name LIKE :' + bindName);
+            binds.put(bindName, '%' + tokens[index] + '%');
+        }
+
+        List<Account> clients = new List<Account>();
+        for (SObject record : Database.queryWithBinds(
+            'SELECT Id, Name FROM Account WHERE ' + String.join(conditions, ' AND ') +
+            ' ORDER BY Name, Id LIMIT 8', binds, AccessLevel.USER_MODE
+        )) {
+            clients.add((Account) record);
+        }
+        return clients;
     }
 
     @AuraEnabled(cacheable=true)

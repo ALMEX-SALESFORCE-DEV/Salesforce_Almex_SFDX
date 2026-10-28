@@ -59,7 +59,7 @@
                     </div>
 
                     <lightning-button label="Descargar Excel" icon-name="utility:download"
-                        onclick={handleDownloadManagementExcel} disabled={isDownloadingManagementExcel}>
+                        onclick={handleDownloadManagementExcel} disabled={isManagementDownloadDisabled}>
                     </lightning-button>
 
                 </div>
@@ -69,290 +69,379 @@
 
         <template lwc:if={isActivityConsultationSelected}>
 
-            <div class="table-filters">
-
-                <!-- EJECUTIVOS -->
-                <div class="table-filter table-filter-executives">
-                    <label>Ejecutivo</label>
-
-                    <details class="multi-select" ontoggle={handleTableFilterToggle} onclick={handleFilterMenuClick}>
-
-                        <summary>
-                            <span>{tableExecutiveFilterLabel}</span>
-
-                            <lightning-icon icon-name="utility:chevrondown" size="xx-small" alternative-text="Abrir">
-                            </lightning-icon>
-                        </summary>
-
-                        <div class="multi-select-options">
-                            <template for:each={tableExecutiveOptions} for:item="executive">
-
-                                <label class="multi-select-option" key={executive.id}>
-
-                                    <input type="checkbox" name="executive" value={executive.name}
-                                        checked={executive.selected} onchange={handleExecutiveTableFilterChange}>
-
-                                    <span class="filter-executive-dot" style={executive.dotStyle}>
-                                    </span>
-
-                                    <span class="filter-executive-name">
-                                        {executive.name}
-                                    </span>
-
-                                </label>
-                            </template>
-                        </div>
-                    </details>
+            <section class="table-filters" aria-label="Filtros de consulta">
+                <div class="filters-heading">
+                    <h3>Filtros de consulta</h3>
+                    <p>Selecciona una o varias opciones. Los resultados se actualizan automáticamente.</p>
                 </div>
 
-                <!-- SUCURSAL / PROSPECTO -->
-                <div class="table-filter management-party-filter" onclick={handleFilterMenuClick}>
-                    <label for="management-party-filter">
-                        Sucursal / Prospecto
-                    </label>
+                <div class="filters-primary">
+                    <!-- EJECUTIVOS -->
+                    <div class="table-filter table-filter-executives">
+                        <label>Ejecutivo</label>
 
-                    <div class="management-party-type-selector" role="radiogroup" aria-label="Tipo de relación">
+                        <details class="multi-select" ontoggle={handleTableFilterToggle} onclick={handleFilterMenuClick}>
+                            <summary aria-label="Filtrar por ejecutivo">
+                                <span>{tableExecutiveFilterLabel}</span>
 
-                        <label class="management-party-type-option">
-                            <input type="radio" name="managementPartyType" value="branch"
-                                checked={isManagementBranchTarget} onchange={handleManagementPartyTypeChange}>
+                                <lightning-icon
+                                    icon-name="utility:chevrondown"
+                                    size="xx-small"
+                                    alternative-text="Abrir"
+                                ></lightning-icon>
+                            </summary>
 
-                            <span>Sucursal</span>
-                        </label>
+                            <div class="multi-select-options">
+                                <template for:each={tableExecutiveOptions} for:item="executive">
+                                    <label class="multi-select-option" key={executive.id}>
+                                        <input
+                                            type="checkbox"
+                                            name="executive"
+                                            value={executive.name}
+                                            checked={executive.selected}
+                                            onchange={handleExecutiveTableFilterChange}
+                                        />
 
-                        <label class="management-party-type-option">
-                            <input type="radio" name="managementPartyType" value="prospect"
-                                checked={isManagementProspectTarget} onchange={handleManagementPartyTypeChange}>
+                                        <span class="filter-executive-dot" style={executive.dotStyle}></span>
 
-                            <span>Prospecto</span>
-                        </label>
-
+                                        <span class="filter-executive-name">{executive.name}</span>
+                                    </label>
+                                </template>
+                            </div>
+                        </details>
                     </div>
 
-                    <div class="filter-input-icon">
-                        <lightning-icon icon-name="utility:search" size="xx-small" alternative-text="">
-                        </lightning-icon>
+                    <!-- SUCURSAL / CLIENTE / PROSPECTO -->
+                    <div class="table-filter management-party-filter" onclick={handleFilterMenuClick}>
+                        <label for="management-party-filter">Relación comercial</label>
 
-                        <input id="management-party-filter" type="search" value={tableFilters.partySearch}
-                            placeholder={managementPartySearchPlaceholder} autocomplete="off"
-                            oninput={handleManagementPartySearch} onfocus={handleManagementPartyFocus}
-                            onblur={handleManagementPartyBlur}>
-                    </div>
+                        <div class="management-party-controls">
+                            <div class="management-party-type-selector" role="radiogroup" aria-label="Tipo de relación">
+                                <label class="management-party-type-option">
+                                    <input
+                                        type="radio"
+                                        name="managementPartyType"
+                                        value="branch"
+                                        checked={isManagementBranchTarget}
+                                        onchange={handleManagementPartyTypeChange}
+                                    />
 
-                    <template lwc:if={showManagementPartyResults}>
+                                    <span>Sucursal</span>
+                                </label>
 
-                        <div class="management-party-results" role="listbox">
+                                <label class="management-party-type-option">
+                                    <input
+                                        type="radio"
+                                        name="managementPartyType"
+                                        value="client"
+                                        checked={isManagementClientTarget}
+                                        onchange={handleManagementPartyTypeChange}
+                                    />
 
-                            <template lwc:if={isSearchingManagementParties}>
+                                    <span>Cliente</span>
+                                </label>
 
-                                <div class="management-party-feedback">
-                                    <lightning-spinner alternative-text="Buscando coincidencias" size="small">
-                                    </lightning-spinner>
+                                <label class="management-party-type-option">
+                                    <input
+                                        type="radio"
+                                        name="managementPartyType"
+                                        value="prospect"
+                                        checked={isManagementProspectTarget}
+                                        onchange={handleManagementPartyTypeChange}
+                                    />
 
-                                    <span>Buscando coincidencias...</span>
-                                </div>
+                                    <span>Prospecto</span>
+                                </label>
+                            </div>
 
-                            </template>
+                            <div class="filter-input-icon">
+                                <lightning-icon icon-name="utility:search" size="xx-small" alternative-text=""></lightning-icon>
 
-                            <template lwc:else>
+                                <input
+                                    id="management-party-filter"
+                                    type="search"
+                                    value={tableFilters.partySearch}
+                                    placeholder={managementPartySearchPlaceholder}
+                                    autocomplete="off"
+                                    oninput={handleManagementPartySearch}
+                                    onfocus={handleManagementPartyFocus}
+                                    onblur={handleManagementPartyBlur}
+                                />
+                            </div>
+                        </div>
 
-                                <template lwc:if={hasManagementPartyResults}>
+                        <template lwc:if={showManagementPartyResults}>
+                            <div class="management-party-results" role="listbox">
+                                <template lwc:if={isSearchingManagementParties}>
+                                    <div class="management-party-feedback">
+                                        <lightning-spinner
+                                            alternative-text="Buscando coincidencias"
+                                            size="small"
+                                        ></lightning-spinner>
 
-                                    <template for:each={managementPartyResults} for:item="result">
-
-                                        <button key={result.key} type="button" class="management-party-result"
-                                            data-result-key={result.key} onclick={handleManagementPartySelect}
-                                            role="option">
-
-                                            <span class="management-party-result-icon">
-                                                <lightning-icon icon-name={result.iconName} size="small"
-                                                    alternative-text={result.typeLabel}>
-                                                </lightning-icon>
-                                            </span>
-
-                                            <span class="management-party-result-copy">
-                                                <strong>{result.name}</strong>
-                                                <small>{result.secondary}</small>
-                                            </span>
-
-                                        </button>
-
-                                    </template>
-
+                                        <span>Buscando coincidencias...</span>
+                                    </div>
                                 </template>
 
                                 <template lwc:else>
+                                    <template lwc:if={hasManagementPartyResults}>
+                                        <template for:each={managementPartyResults} for:item="result">
+                                            <button
+                                                key={result.key}
+                                                type="button"
+                                                class="management-party-result"
+                                                data-result-key={result.key}
+                                                onclick={handleManagementPartySelect}
+                                                role="option"
+                                            >
+                                                <span class="management-party-result-icon">
+                                                    <lightning-icon
+                                                        icon-name={result.iconName}
+                                                        size="small"
+                                                        alternative-text={result.typeLabel}
+                                                    ></lightning-icon>
+                                                </span>
 
-                                    <div class="management-party-feedback">
-                                        {managementPartyEmptyMessage}
-                                    </div>
+                                                <span class="management-party-result-copy">
+                                                    <strong>{result.name}</strong>
+                                                    <small>{result.secondary}</small>
+                                                </span>
+                                            </button>
+                                        </template>
+                                    </template>
 
+                                    <template lwc:else>
+                                        <div class="management-party-feedback">{managementPartyEmptyMessage}</div>
+                                    </template>
                                 </template>
-
-                            </template>
-
-                        </div>
-
-                    </template>
-                </div>
-
-                <!-- TIPO DE ACTIVIDAD -->
-                <div class="table-filter">
-                    <label>Tipo de actividad</label>
-
-                    <details class="multi-select table-single-select" ontoggle={handleTableFilterToggle}
-                        onclick={handleFilterMenuClick}>
-
-                        <summary>
-                            <span>{tableActivityTypeFilterLabel}</span>
-
-                            <lightning-icon icon-name="utility:chevrondown" size="xx-small" alternative-text="Abrir">
-                            </lightning-icon>
-                        </summary>
-
-                        <div class="multi-select-options">
-
-                            <label class="multi-select-option">
-                                <input type="radio" name="activityType" value="" checked={allActivityTypesSelected}
-                                    onchange={handleTableFilterChange}>
-
-                                <span>Todos los tipos</span>
-                            </label>
-
-                            <template for:each={tableActivityTypeOptions} for:item="activityType">
-
-                                <label class="multi-select-option" key={activityType.id}>
-
-                                    <input type="radio" name="activityType" value={activityType.label}
-                                        checked={activityType.selected} onchange={handleTableFilterChange}>
-
-                                    <span class="table-filter-activity-icon" style={activityType.iconStyle}>
-
-                                        <lightning-icon icon-name={activityType.iconName} size="xx-small"
-                                            variant="inverse" alternative-text={activityType.label}>
-                                        </lightning-icon>
-
-                                    </span>
-
-                                    <span class="table-filter-option-label">
-                                        {activityType.label}
-                                    </span>
-
-                                </label>
-                            </template>
-
-                        </div>
-                    </details>
-                </div>
-
-                <!-- ESTADO -->
-                <div class="table-filter">
-                    <label for="state-filter">Estado</label>
-
-                    <select id="state-filter" name="state" value={tableFilters.state}
-                        onchange={handleTableFilterChange}>
-
-                        <option value="" selected={allManagementStatesSelected}>
-                            Todos los estados
-                        </option>
-
-                        <template for:each={tableStateOptions} for:item="state">
-
-                            <option key={state.value} value={state.value} selected={state.selected}>
-                                {state.label}
-                            </option>
-
+                            </div>
                         </template>
-                    </select>
+                    </div>
                 </div>
 
-                <!-- SEGUIMIENTO -->
-                <div class="table-filter">
-                    <label for="follow-up-filter">
-                        Seguimiento
-                    </label>
+                <div class="filters-secondary">
+                    <!-- TIPO DE ACTIVIDAD -->
+                    <div class="table-filter">
+                        <label>Tipo de actividad</label>
 
-                    <select id="follow-up-filter" name="followUp" value={tableFilters.followUp}
-                        onchange={handleTableFilterChange}>
+                        <details
+                            class="multi-select"
+                            ontoggle={handleTableFilterToggle}
+                            onclick={handleFilterMenuClick}
+                        >
+                            <summary aria-label="Filtrar por tipo de actividad">
+                                <span>{tableActivityTypeFilterLabel}</span>
 
-                        <option value="">Todos</option>
-                        <option value="true">Con seguimiento</option>
-                        <option value="false">Sin seguimiento</option>
-                    </select>
-                </div>
+                                <lightning-icon
+                                    icon-name="utility:chevrondown"
+                                    size="xx-small"
+                                    alternative-text="Abrir"
+                                ></lightning-icon>
+                            </summary>
 
-                <!-- ESTATUS -->
-                <div class="table-filter">
-                    <label>Estatus</label>
+                            <div class="multi-select-options">
+                                <label class="multi-select-option">
+                                    <input
+                                        type="checkbox"
+                                        name="activityTypes"
+                                        value=""
+                                        checked={allActivityTypesSelected}
+                                        onchange={handleTableFilterChange}
+                                    />
 
-                    <details class="multi-select table-single-select" ontoggle={handleTableFilterToggle}
-                        onclick={handleFilterMenuClick}>
+                                    <span>Todos los tipos</span>
+                                </label>
 
-                        <summary>
-                            <span>{tableStatusFilterLabel}</span>
+                                <template for:each={tableActivityTypeOptions} for:item="activityType">
+                                    <label class="multi-select-option" key={activityType.id}>
+                                        <input
+                                            type="checkbox"
+                                            name="activityTypes"
+                                            value={activityType.label}
+                                            checked={activityType.selected}
+                                            onchange={handleTableFilterChange}
+                                        />
 
-                            <lightning-icon icon-name="utility:chevrondown" size="xx-small" alternative-text="Abrir">
-                            </lightning-icon>
-                        </summary>
-
-                        <div class="multi-select-options">
-
-                            <label class="multi-select-option">
-                                <input type="radio" name="status" value="" checked={allStatusesSelected}
-                                    onchange={handleTableFilterChange}>
-
-                                <span>Todos los estatus</span>
-                            </label>
-
-                            <template for:each={tableStatusOptions} for:item="status">
-
-                                <label class="multi-select-option" key={status.id}>
-
-                                    <input type="radio" name="status" value={status.label} checked={status.selected}
-                                        onchange={handleTableFilterChange}>
-
-                                    <span style={status.pillStyle}>
-                                        <span class="table-filter-status-symbol">
-                                            {status.symbol}
+                                        <span class="table-filter-activity-icon" style={activityType.iconStyle}>
+                                            <lightning-icon
+                                                icon-name={activityType.iconName}
+                                                size="xx-small"
+                                                variant="inverse"
+                                                alternative-text={activityType.label}
+                                            ></lightning-icon>
                                         </span>
 
-                                        <span>{status.label}</span>
-                                    </span>
+                                        <span class="table-filter-option-label">{activityType.label}</span>
+                                    </label>
+                                </template>
+                            </div>
+                        </details>
+                    </div>
 
+                    <!-- ESTADO -->
+                    <div class="table-filter">
+                        <label>Estado</label>
+                        <details class="multi-select" ontoggle={handleTableFilterToggle} onclick={handleFilterMenuClick}>
+                            <summary aria-label="Filtrar por estado">
+                                <span>{tableStateFilterLabel}</span>
+                                <lightning-icon icon-name="utility:chevrondown" size="xx-small" alternative-text="Abrir"></lightning-icon>
+                            </summary>
+                            <div class="multi-select-options">
+                                <label class="multi-select-option">
+                                    <input type="checkbox" name="states" value="" checked={allManagementStatesSelected} onchange={handleTableFilterChange} />
+                                    <span>Todos los estados</span>
                                 </label>
-                            </template>
+                                <template for:each={tableStateOptions} for:item="state">
+                                    <label class="multi-select-option" key={state.value}>
+                                        <input type="checkbox" name="states" value={state.value} checked={state.selected} onchange={handleTableFilterChange} />
+                                        <span>{state.label}</span>
+                                    </label>
+                                </template>
+                            </div>
+                        </details>
+                    </div>
 
+                    <!-- SEGUIMIENTO -->
+                    <div class="table-filter">
+                        <label>Seguimiento</label>
+                        <details class="multi-select" ontoggle={handleTableFilterToggle} onclick={handleFilterMenuClick}>
+                            <summary aria-label="Filtrar por seguimiento">
+                                <span>{tableFollowUpFilterLabel}</span>
+                                <lightning-icon icon-name="utility:chevrondown" size="xx-small" alternative-text="Abrir"></lightning-icon>
+                            </summary>
+                            <div class="multi-select-options">
+                                <label class="multi-select-option">
+                                    <input type="checkbox" name="followUps" value="" checked={allFollowUpsSelected} onchange={handleTableFilterChange} />
+                                    <span>Todos</span>
+                                </label>
+                                <template for:each={tableFollowUpOptions} for:item="followUp">
+                                    <label class="multi-select-option" key={followUp.value}>
+                                        <input type="checkbox" name="followUps" value={followUp.value} checked={followUp.selected} onchange={handleTableFilterChange} />
+                                        <span>{followUp.label}</span>
+                                    </label>
+                                </template>
+                            </div>
+                        </details>
+                    </div>
+
+                    <!-- ESTATUS -->
+                    <div class="table-filter">
+                        <label>Estatus</label>
+
+                        <details
+                            class="multi-select"
+                            ontoggle={handleTableFilterToggle}
+                            onclick={handleFilterMenuClick}
+                        >
+                            <summary aria-label="Filtrar por estatus">
+                                <span>{tableStatusFilterLabel}</span>
+
+                                <lightning-icon
+                                    icon-name="utility:chevrondown"
+                                    size="xx-small"
+                                    alternative-text="Abrir"
+                                ></lightning-icon>
+                            </summary>
+
+                            <div class="multi-select-options">
+                                <label class="multi-select-option">
+                                    <input
+                                        type="checkbox"
+                                        name="statuses"
+                                        value=""
+                                        checked={allStatusesSelected}
+                                        onchange={handleTableFilterChange}
+                                    />
+
+                                    <span>Todos los estatus</span>
+                                </label>
+
+                                <template for:each={tableStatusOptions} for:item="status">
+                                    <label class="multi-select-option" key={status.id}>
+                                        <input
+                                            type="checkbox"
+                                            name="statuses"
+                                            value={status.label}
+                                            checked={status.selected}
+                                            onchange={handleTableFilterChange}
+                                        />
+
+                                        <span style={status.pillStyle}>
+                                            <span class="table-filter-status-symbol">{status.symbol}</span>
+
+                                            <span>{status.label}</span>
+                                        </span>
+                                    </label>
+                                </template>
+                            </div>
+                        </details>
+                    </div>
+
+                    <!-- FECHA INICIAL -->
+                    <div class="filters-period" role="group" aria-label="Periodo de consulta">
+                        <div class="table-filter">
+                            <label for="date-from-filter">Desde</label>
+
+                            <input
+                                id="date-from-filter"
+                                name="dateFrom"
+                                type="date"
+                                value={tableFilters.dateFrom}
+                                onchange={handleTableDateChange}
+                            />
                         </div>
-                    </details>
+
+                        <!-- FECHA FINAL -->
+                        <div class="table-filter">
+                            <label for="date-to-filter">Hasta</label>
+                            <input
+                                id="date-to-filter"
+                                name="dateTo"
+                                type="date"
+                                value={tableFilters.dateTo}
+                                disabled={isDateToDisabled}
+                                onchange={handleTableDateChange}
+                            />
+                        </div>
+                    </div>
                 </div>
 
-                <!-- FECHA INICIAL -->
-                <div class="table-filter">
-                    <label for="date-from-filter">De</label>
-
-                    <input id="date-from-filter" name="dateFrom" type="date" value={tableFilters.dateFrom}
-                        onchange={handleTableDateChange}>
-                </div>
-
-                <!-- FECHA FINAL -->
-                <div class="table-filter">
-                    <label for="date-to-filter">A</label>
-                    <input id="date-to-filter" name="dateTo" type="date" value={tableFilters.dateTo}
-                        disabled={isDateToDisabled} onchange={handleTableDateChange}>
-                </div>
-
-                <!-- ACCIONES -->
+                <!-- CRITERIOS ACTIVOS: cada etiqueta permite quitar solo ese valor. -->
                 <div class="table-filter-actions">
-                    <button type="button" class="table-filter-clear" onclick={handleClearTableFilters}>
-                        Limpiar
-                    </button>
-
-                    <button type="button" class="table-filter-apply" onclick={handleApplyTableDateRange}>
-                        Consultar periodo
-                    </button>
+                    <div class="active-filters-summary">
+                        <div class="active-filters-heading">
+                            <strong>Filtros activos</strong>
+                            <span>Periodo: {managementPeriodLabel}</span>
+                            <span class="filters-live-status" role="status" aria-live="polite">{managementFilterStatus}</span>
+                        </div>
+                        <template lwc:if={hasActiveManagementFilters}>
+                            <div class="active-filter-groups">
+                                <template for:each={activeManagementFilterGroups} for:item="group">
+                                    <div key={group.field} class={group.className} role="group" aria-label={group.label}>
+                                        <span class="active-filter-category">{group.label}</span>
+                                        <div class="active-filter-values">
+                                            <template for:each={group.filters} for:item="filter">
+                                                <span key={filter.key} class="filter-chip">
+                                                    <span class="filter-chip-label">{filter.label}</span>
+                                                    <button type="button" class="filter-chip-remove" data-field={filter.field} data-value={filter.value}
+                                                        aria-label={filter.removeLabel} title={filter.removeLabel} onclick={handleRemoveManagementFilter}>×</button>
+                                                </span>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                        <template lwc:else>
+                            <p class="filter-actions-hint">Sin filtros adicionales. Se muestran las actividades del periodo indicado.</p>
+                        </template>
+                        <template lwc:if={managementFilterFeedback}>
+                            <p class="filter-validation-message" role="alert">{managementFilterFeedback}</p>
+                        </template>
+                    </div>
+                    <button type="button" class="table-filter-clear" onclick={handleClearTableFilters}>Limpiar filtros</button>
                 </div>
-
-            </div>
+            </section>
 
             <div class="activities-table-container">
 
