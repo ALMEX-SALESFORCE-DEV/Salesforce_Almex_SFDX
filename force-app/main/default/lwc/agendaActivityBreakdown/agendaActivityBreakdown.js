@@ -5,6 +5,7 @@ import {
     getAlmexSupplyAgreements,
     getManagementActivities,
     searchManagementBranches,
+    searchManagementClients,
     searchManagementProspects
 } from 'c/agendaServices';
 import {
@@ -59,6 +60,7 @@ export default class AgendaActivityBreakdown extends LightningElement {
         partyType: 'branch',
         partySearch: '',
         branchId: '',
+        accountId: '',
         prospect: '',
         activityType: '',
         state: '',
@@ -732,7 +734,23 @@ export default class AgendaActivityBreakdown extends LightningElement {
         return this.tableFilters.partyType === 'prospect';
     }
 
+    get isManagementClientTarget() {
+        return this.tableFilters.partyType === 'client';
+    }
+
+    get hasManagementPartySelection() {
+        if (this.isManagementClientTarget) {
+            return Boolean(this.tableFilters.accountId);
+        }
+        return this.isManagementBranchTarget
+            ? Boolean(this.tableFilters.branchId)
+            : Boolean(this.tableFilters.prospect);
+    }
+
     get managementPartySearchPlaceholder() {
+        if (this.isManagementClientTarget) {
+            return 'Buscar cliente...';
+        }
         return this.isManagementBranchTarget
             ? 'Buscar sucursal o cuenta...'
             : 'Buscar prospecto...';
@@ -754,6 +772,10 @@ export default class AgendaActivityBreakdown extends LightningElement {
     get managementPartyEmptyMessage() {
         if (this.managementPartySearchError) {
             return this.managementPartySearchError;
+        }
+
+        if (this.isManagementClientTarget) {
+            return 'No se encontraron clientes con sucursales.';
         }
 
         return this.isManagementBranchTarget
@@ -920,6 +942,7 @@ export default class AgendaActivityBreakdown extends LightningElement {
             partyType,
             partySearch: '',
             branchId: '',
+            accountId: '',
             prospect: '',
             state: this.managementPartyStateAutofilled
                 ? ''
@@ -937,6 +960,7 @@ export default class AgendaActivityBreakdown extends LightningElement {
             ...this.tableFilters,
             partySearch,
             branchId: '',
+            accountId: '',
             prospect: '',
             state: this.managementPartyStateAutofilled
                 ? ''
@@ -948,12 +972,8 @@ export default class AgendaActivityBreakdown extends LightningElement {
     }
 
     handleManagementPartyFocus() {
-        const hasSelection = this.isManagementBranchTarget
-            ? Boolean(this.tableFilters.branchId)
-            : Boolean(this.tableFilters.prospect);
-
         if (
-            !hasSelection &&
+            !this.hasManagementPartySelection &&
             normalizeAgendaSearchText(
                 this.tableFilters.partySearch
             ).length >= 2
@@ -1032,6 +1052,20 @@ export default class AgendaActivityBreakdown extends LightningElement {
                         typeLabel: 'Sucursal'
                     };
                 });
+            } else if (partyType === 'client') {
+                const clients = await searchManagementClients(searchTerm);
+                if (requestId !== this.managementPartySearchRequest) {
+                    return;
+                }
+                this.managementPartyResults = clients.map(client => ({
+                    key: client.Id,
+                    id: client.Id,
+                    name: client.Name,
+                    selectionLabel: client.Name,
+                    secondary: 'Todas las sucursales del cliente',
+                    iconName: 'standard:account',
+                    typeLabel: 'Cliente'
+                }));
             } else {
                 const prospects = await searchManagementProspects(
                     searchTerm
@@ -1066,7 +1100,7 @@ export default class AgendaActivityBreakdown extends LightningElement {
             }
 
             console.error(
-                'Error buscando sucursales o prospectos:',
+                'Error buscando sucursales, clientes o prospectos:',
                 error
             );
 
@@ -1095,16 +1129,27 @@ export default class AgendaActivityBreakdown extends LightningElement {
                 ...this.tableFilters,
                 partySearch: selectedResult.selectionLabel,
                 branchId: selectedResult.id,
+                accountId: '',
                 prospect: '',
                 state: selectedResult.state
             };
 
             this.managementPartyStateAutofilled = true;
+        } else if (this.isManagementClientTarget) {
+            this.tableFilters = {
+                ...this.tableFilters,
+                partySearch: selectedResult.selectionLabel,
+                branchId: '',
+                accountId: selectedResult.id,
+                prospect: ''
+            };
+            this.managementPartyStateAutofilled = false;
         } else {
             this.tableFilters = {
                 ...this.tableFilters,
                 partySearch: selectedResult.selectionLabel,
                 branchId: '',
+                accountId: '',
                 prospect: selectedResult.name
             };
 
@@ -1192,14 +1237,10 @@ export default class AgendaActivityBreakdown extends LightningElement {
             this.tableFilters.partySearch.trim()
         );
 
-        const hasPartySelection = this.isManagementBranchTarget
-            ? Boolean(this.tableFilters.branchId)
-            : Boolean(this.tableFilters.prospect);
-
-        if (hasPartySearch && !hasPartySelection) {
+        if (hasPartySearch && !this.hasManagementPartySelection) {
             this.showToast(
                 'Selecciona una coincidencia',
-                'Elige una sucursal o prospecto de la lista de resultados.',
+                'Elige una sucursal, cliente o prospecto de la lista de resultados.',
                 'warning'
             );
 
@@ -1215,6 +1256,7 @@ export default class AgendaActivityBreakdown extends LightningElement {
             partyType: 'branch',
             partySearch: '',
             branchId: '',
+            accountId: '',
             prospect: '',
             activityType: '',
             state: '',
@@ -1387,6 +1429,7 @@ export default class AgendaActivityBreakdown extends LightningElement {
                 activityType: this.tableFilters.activityType,
                 state: this.tableFilters.state,
                 branchId: this.tableFilters.branchId,
+                accountId: this.tableFilters.accountId,
                 prospect: this.tableFilters.prospect,
                 followUp,
                 status: this.tableFilters.status,

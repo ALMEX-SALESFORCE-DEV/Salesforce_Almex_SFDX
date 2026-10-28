@@ -1107,6 +1107,19 @@ export default class AgendaCalendar extends LightningElement {
         return this.isTextImprovementDisabled('actionJustification');
     }
 
+    get isFollowUpResolutionImproveButtonDisabled() {
+        return this.isTextImprovementDisabled('followUpResolution');
+    }
+
+    get isFollowUpResolutionInputReadOnly() {
+        return (
+            this.isDictatingTarget('followUpResolution') ||
+            this.isStoppingTarget('followUpResolution') ||
+            this.isImprovingText ||
+            this.isProcessingActivityAction
+        );
+    }
+
     get isNotesSpeechButtonDisabled() {
         return (
             !this.notesSpeechRecognitionSupported ||
@@ -1223,6 +1236,10 @@ export default class AgendaCalendar extends LightningElement {
         return this.shouldShowDictationStatusFor('actionJustification');
     }
 
+    get showFollowUpResolutionDictationStatus() {
+        return this.shouldShowDictationStatusFor('followUpResolution');
+    }
+
     get notesDictationStatusClass() {
         return this.isDictatingNotes
             ? 'notes-dictation-status is-listening'
@@ -1239,6 +1256,10 @@ export default class AgendaCalendar extends LightningElement {
 
     handleToggleActivityActionJustificationDictation() {
         this.handleToggleSpeechDictation('actionJustification');
+    }
+
+    handleToggleFollowUpResolutionDictation() {
+        this.handleToggleSpeechDictation('followUpResolution');
     }
 
     handleToggleSpeechDictation(target) {
@@ -1439,7 +1460,7 @@ export default class AgendaCalendar extends LightningElement {
     }
 
     syncNotesInputValue() {
-        ['notes', 'exceptionJustification', 'actionJustification']
+        ['notes', 'exceptionJustification', 'actionJustification', 'followUpResolution']
             .map(target => this.getSpeechTargetConfig(target))
             .forEach(config => {
                 const field = this.template.querySelector(config.selector);
@@ -1466,6 +1487,11 @@ export default class AgendaCalendar extends LightningElement {
                 selector: '[data-element="activity-action-justification"]',
                 value: this.activityActionForm.justification,
                 maxLength: ACTION_JUSTIFICATION_MAX_LENGTH
+            },
+            followUpResolution: {
+                selector: '[data-element="follow-up-resolution"]',
+                value: this.followUpCompletionSummary,
+                maxLength: ACTION_JUSTIFICATION_MAX_LENGTH
             }
         };
 
@@ -1473,6 +1499,11 @@ export default class AgendaCalendar extends LightningElement {
     }
 
     setSpeechTargetValue(target, value) {
+        if (target === 'followUpResolution') {
+            this.followUpCompletionSummary = value;
+            return;
+        }
+
         if (target === 'actionJustification') {
             this.activityActionForm = {
                 ...this.activityActionForm,
@@ -1502,7 +1533,7 @@ export default class AgendaCalendar extends LightningElement {
             return true;
         }
 
-        if (target === 'actionJustification') {
+        if (['actionJustification', 'followUpResolution'].includes(target)) {
             return this.isProcessingActivityAction;
         }
 
@@ -1628,7 +1659,7 @@ export default class AgendaCalendar extends LightningElement {
     }
 
     isSpeechTargetDisabled(target) {
-        if (target === 'actionJustification') {
+        if (['actionJustification', 'followUpResolution'].includes(target)) {
             return this.isActivityActionSpeechButtonDisabled;
         }
         if (target === 'exceptionJustification') {
@@ -2155,27 +2186,22 @@ export default class AgendaCalendar extends LightningElement {
     }
 
     countActivitiesByStatus(events, status) {
-        if (status === 'Todas') {
-            return events.length;
-        }
-
-        if (status === 'Seguimiento') {
-            return events.filter(event => event.extendedProps.followUp).length;
-        }
-
-        return events.filter(event => event.extendedProps.status === status).length;
+        return events.filter(event =>
+            this.matchesMyActivityStatusFilter(event, status)
+        ).length;
     }
 
-    matchesMyActivityStatusFilter(event) {
-        if (this.myActivityStatusFilter === 'Todas') {
+    matchesMyActivityStatusFilter(event, status = this.myActivityStatusFilter) {
+        if (status === 'Todas') {
             return true;
         }
 
-        if (this.myActivityStatusFilter === 'Seguimiento') {
-            return event.extendedProps.followUp === true;
+        if (status === 'Seguimiento') {
+            return event.extendedProps.followUp === true &&
+                event.extendedProps.status !== 'Reagendada';
         }
 
-        return event.extendedProps.status === this.myActivityStatusFilter;
+        return event.extendedProps.status === status;
     }
 
     isActivityInSelectedPeriod(dateValue) {
@@ -2687,6 +2713,7 @@ export default class AgendaCalendar extends LightningElement {
 
     returnToActivityDetails() {
         this.disposeNotesSpeechRecognition();
+        this.resetTextImprovementState();
         this.activityAction = '';
         this.followUpCompletionSummary = '';
         this.activityActionForm = {
@@ -2774,11 +2801,21 @@ export default class AgendaCalendar extends LightningElement {
     // Valida y guarda la resolución antes de completar la actividad.
     // =========================================================
     handleFollowUpCompletionInput(event) {
+        if (
+            this.speechDictationTarget === 'followUpResolution' &&
+            (this.isDictatingNotes || this.isStoppingNotesDictation)
+        ) {
+            this.disposeNotesSpeechRecognition();
+        }
         this.followUpCompletionSummary = event.target.value;
     }
 
     async handleCompleteFollowUp(event) {
         event.preventDefault();
+
+        if (this.isActivityActionButtonDisabled) {
+            return;
+        }
 
         const followUpResolution =
             this.followUpCompletionSummary.trim();

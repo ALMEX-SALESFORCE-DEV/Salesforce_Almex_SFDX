@@ -10,6 +10,7 @@ import getAlmexSupplyAgreementsApex from '@salesforce/apex/ALMEX_AgendaDataContr
 import getCurrentUserBranchesApex from '@salesforce/apex/ALMEX_AgendaDataController.getCurrentUserBranches';
 import searchCurrentUserProspectsApex from '@salesforce/apex/ALMEX_AgendaDataController.searchCurrentUserProspects';
 import searchManagementBranchesApex from '@salesforce/apex/ALMEX_AgendaDataController.searchManagementBranches';
+import searchManagementClientsApex from '@salesforce/apex/ALMEX_AgendaDataController.searchManagementClients';
 import searchManagementProspectsApex from '@salesforce/apex/ALMEX_AgendaDataController.searchManagementProspects';
 import improveAgendaTextApex from '@salesforce/apex/ALMEX_AgendaDataController.improveAgendaText';
 import { normalizeAgendaActivityType } from 'c/agendaUtils';
@@ -104,6 +105,7 @@ export async function getManagementActivities(filters) {
             activityType: filters.activityType || null,
             state: filters.state || null,
             branchId: filters.branchId || null,
+            accountId: filters.accountId || null,
             prospect: filters.prospect || null,
             followUp: filters.followUp,
             status: filters.status || null,
@@ -191,4 +193,9 @@ export async function searchManagementProspects(searchTerm) {
     );
 
     return prospects || [];
+}
+
+export async function searchManagementClients(searchTerm) {
+    const clients = await runApex(searchManagementClientsApex, { searchTerm });
+    return clients || [];
 }
