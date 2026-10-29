@@ -775,234 +775,296 @@ private class ALMEX_AgendaDataControllerTest {
     // =====================================================================
 
     /**
-     * Simula una respuesta exitosa de OpenRouter y verifica:
-     * - El controlador realiza un POST al endpoint de chat configurado.
-     * - El texto original viaja dentro del cuerpo de la solicitud.
-     * - Se utiliza openrouter/free sin fijar modelos ni proveedores concretos.
-     * - ZDR y la prohibición de recolección permanecen obligatorios.
-     * - El límite de precio cero impide pasar a un endpoint de pago.
-     * - La respuesta se extrae de choices[0].message.content.
-     *
-     * La prueba nunca consume la API real ni necesita conocer su token.
+     * CUATRO ESCENARIOS de IA con HttpCalloutMock: no consumen solicitudes
+     * reales ni necesitan exponer la API key de la credencial nombrada.
      */
     @IsTest
-    static void improvesAgendaTextWithOpenRouter() {
+    static void discoversFreeTextZdrModelsDynamically() {
         ALMEX_AgendaDataController.bypassAiPermissionCheck = true;
-        Test.setMock(HttpCalloutMock.class, new OpenRouterSuccessMock());
-
+        OpenRouterAiMock mock = new OpenRouterAiMock('success', 200);
+        Test.setMock(HttpCalloutMock.class, mock);
         Test.startTest();
-        String improvedText = ALMEX_AgendaDataController.improveAgendaText(
+        List<String> candidates = ALMEX_AgendaDataController.getAgendaAiCandidates();
+        Test.stopTest();
+        System.assertEquals(new List<String>{
+            'mock/beta:free', 'mock/alpha:free', 'mock/gamma:free'
+        }, candidates, 'Ordena por disponibilidad y latencia, elimina duplicados y limita a tres.');
+        System.assertEquals(2, mock.catalogCalls);
+        System.assertEquals(0, mock.inferenceCalls, 'Descubrir modelos no envía notas.');
+    }
+
+    @IsTest
+    static void sendsModelFallbacksWithStrictPrivacyInOnePost() {
+        ALMEX_AgendaDataController.bypassAiPermissionCheck = true;
+        OpenRouterAiMock mock = new OpenRouterAiMock('success', 200);
+        Test.setMock(HttpCalloutMock.class, mock);
+        Test.startTest();
+        String improved = ALMEX_AgendaDataController.improveAgendaText(
+            'visitamos al cliente y quedo pendiente la cotizacion', 'notes', null);
+        String resolution = ALMEX_AgendaDataController.improveAgendaText(
             'visitamos al cliente y quedo pendiente la cotizacion',
-            'notes'
-        );
+            'followUpResolution', new List<String>{
+                'openrouter/free', 'mock/beta:free', 'mock/beta:free',
+                'mock/alpha:free', 'mock/gamma:free', 'mock/delta:free'
+            });
         Test.stopTest();
-
-        System.assertEquals(
-            'Visitamos al cliente y quedó pendiente la cotización.',
-            improvedText,
-            'Debe devolver únicamente el texto mejorado por el proveedor.'
-        );
-    }
-
-    /**
-     * Reproduce falta de endpoints (404) y saturación temporal (429).
-     * Ambos solicitan nuevamente selección automática sin relajar privacidad.
-     */
-    @IsTest
-    static void improvesTextWithFallbackWhenModelIsUnavailable() {
-        assertOpenRouterFallback(404);
+        System.assertEquals('Visitamos al cliente y quedó pendiente la cotización.', improved);
+        System.assertEquals(improved, resolution);
+        System.assertEquals(2, mock.catalogCalls, 'El plan del navegador evita consultar el catálogo otra vez.');
+        System.assertEquals(2, mock.inferenceCalls, 'Un POST por cada clic, sin reenviar a ciegas.');
+        System.assert(mock.lastBody.contains('resumen de resolución'));
+        System.assert(mock.lastBody.contains('1000 caracteres'));
     }
 
     @IsTest
-    static void improvesTextWithFallbackWhenModelIsRateLimited() {
-        assertOpenRouterFallback(429);
-    }
-
-    @IsTest
-    static void improvesTextWithRouterRetryWhenProviderFails() {
-        assertOpenRouterFallback(503);
-    }
-
-    @IsTest
-    static void improvesTextWithRouterRetryWhenRequestTimesOut() {
-        assertOpenRouterFallback(408);
-    }
-
-    @IsTest
-    static void retriesOpenRouterErrorInsideHttpSuccess() {
-        // Un HTTP 200 con error 429 en el cuerpo no es una propuesta válida.
-        assertOpenRouterFallback(200);
-    }
-
-    private static void assertOpenRouterFallback(Integer firstStatus) {
+    static void failsClosedWhenCatalogHasNoEligibleModelsOrIsUnavailable() {
         ALMEX_AgendaDataController.bypassAiPermissionCheck = true;
-        OpenRouterFallbackMock mock = new OpenRouterFallbackMock(firstStatus);
-        Test.setMock(HttpCalloutMock.class, mock);
-
         Test.startTest();
-        String result = ALMEX_AgendaDataController.improveAgendaText(
-            'visitamos al cliente y quedo pendiente la cotizacion', 'notes'
-        );
-        Test.stopTest();
-
-        System.assertEquals(2, mock.attempts, 'Debe solicitar selección nuevamente al router.');
-        System.assertEquals(
-            'Visitamos al cliente y quedó pendiente la cotización.', result
-        );
-    }
-
-    /**
-     * Si todos los endpoints faltan, informa del problema y conserva el texto.
-     * Un error de credenciales no debe provocar reintentos con otros modelos.
-     */
-    @IsTest
-    static void rejectsTextImprovementWhenNoModelIsAvailable() {
-        assertOpenRouterFailure(404, 2);
-    }
-
-    @IsTest
-    static void rejectsTextImprovementWithoutRetryingUnauthorizedCredential() {
-        assertOpenRouterFailure(401, 1);
-    }
-
-    @IsTest
-    static void rejectsTextImprovementWithoutRetryingForbiddenRequest() {
-        assertOpenRouterFailure(403, 1);
-    }
-
-    @IsTest
-    static void rejectsTextImprovementWithoutRetryingAccountPaymentError() {
-        assertOpenRouterFailure(402, 1);
-    }
-
-    private static void assertOpenRouterFailure(Integer statusCode, Integer expectedAttempts) {
-        ALMEX_AgendaDataController.bypassAiPermissionCheck = true;
-        OpenRouterFailureMock mock = new OpenRouterFailureMock(statusCode);
-        Test.setMock(HttpCalloutMock.class, mock);
-        Boolean thrown = false;
-
-        Test.startTest();
-        try {
-            ALMEX_AgendaDataController.improveAgendaText(
-                'visitamos al cliente y quedo pendiente la cotizacion', 'notes'
-            );
-        } catch (AuraHandledException expectedException) {
-            thrown = true;
+        for (String scenario : new List<String>{'empty', 'malformed', 'catalogError', 'catalogTimeout'}) {
+            OpenRouterAiMock mock = new OpenRouterAiMock(scenario, 200);
+            Test.setMock(HttpCalloutMock.class, mock);
+            Boolean rejected = false;
+            try {
+                ALMEX_AgendaDataController.improveAgendaText(
+                    'visitamos al cliente y quedo pendiente la cotizacion', 'notes', null);
+            } catch (AuraHandledException expected) {
+                rejected = true;
+            }
+            System.assert(rejected, 'No debe inferir si el catálogo es inválido o no hay candidatos.');
+            System.assertEquals(0, mock.inferenceCalls);
         }
         Test.stopTest();
-
-        System.assert(thrown, 'Debe devolver un error controlado.');
-        System.assertEquals(expectedAttempts, mock.attempts);
     }
 
-    private class OpenRouterFallbackMock implements HttpCalloutMock {
-        Integer attempts = 0;
-        Integer firstStatus;
-        String originalRequestBody;
+    @IsTest
+    static void handlesInferenceErrorsWithoutMultiplyingRequests() {
+        ALMEX_AgendaDataController.bypassAiPermissionCheck = true;
+        Test.startTest();
+        for (Integer code : new List<Integer>{404, 429, 503, 408, 401, 403, 402, 200}) {
+            // El 200 incluye un error 429 en JSON; no debe tratarse como éxito.
+            OpenRouterAiMock mock = new OpenRouterAiMock('failure', code);
+            Test.setMock(HttpCalloutMock.class, mock);
+            Boolean rejected = false;
+            try {
+                ALMEX_AgendaDataController.improveAgendaText(
+                    'visitamos al cliente y quedo pendiente la cotizacion', 'notes',
+                    new List<String>{'mock/beta:free', 'mock/alpha:free', 'mock/gamma:free'});
+            } catch (AuraHandledException expected) {
+                rejected = true;
+            }
+            System.assert(rejected);
+            System.assertEquals(1, mock.inferenceCalls, 'Los respaldos son internos a OpenRouter.');
+            System.assertEquals(0, mock.catalogCalls);
+        }
+        for (String scenario : new List<String>{'blank', 'tooLong', 'truncated', 'inferenceTimeout'}) {
+            OpenRouterAiMock mock = new OpenRouterAiMock(scenario, 200);
+            Test.setMock(HttpCalloutMock.class, mock);
+            Boolean rejected = false;
+            try {
+                ALMEX_AgendaDataController.improveAgendaText(
+                    'visitamos al cliente y quedo pendiente la cotizacion',
+                    'exceptionJustification', new List<String>{'mock/alpha:free'});
+            } catch (AuraHandledException expected) {
+                rejected = true;
+            }
+            System.assert(rejected, 'No acepta respuestas vacías, demasiado largas o desconexiones.');
+            System.assertEquals(1, mock.inferenceCalls);
+        }
+        Test.stopTest();
+    }
 
-        OpenRouterFallbackMock(Integer firstStatus) {
-            this.firstStatus = firstStatus;
+    private class OpenRouterAiMock implements HttpCalloutMock {
+        String scenario;
+        Integer responseCode;
+        Integer catalogCalls = 0;
+        Integer inferenceCalls = 0;
+        String lastBody;
+
+        OpenRouterAiMock(String scenario, Integer responseCode) {
+            this.scenario = scenario;
+            this.responseCode = responseCode;
         }
 
         public HttpResponse respond(HttpRequest request) {
-            attempts++;
-            HttpResponse response = new OpenRouterSuccessMock().respond(request);
-            if (attempts == 1) {
-                originalRequestBody = request.getBody();
-                response.setStatusCode(firstStatus);
+            HttpResponse response = new HttpResponse();
+            response.setHeader('Content-Type', 'application/json');
+            response.setStatusCode(200);
+            if (request.getMethod() == 'GET') {
+                catalogCalls++;
+                System.assert(String.isBlank(request.getBody()), 'El catálogo nunca recibe notas.');
+                if (scenario == 'catalogTimeout') { throw new CalloutException('Simulated timeout'); }
+                if (scenario == 'catalogError') {
+                    response.setStatusCode(429);
+                    response.setBody('{"error":{"code":429}}');
+                } else if (scenario == 'malformed') {
+                    response.setBody('{"data":{}}');
+                } else if (request.getEndpoint().endsWith('/api/v1/endpoints/zdr')) {
+                    response.setBody(JSON.serialize(new Map<String, Object>{
+                        'data' => scenario == 'empty' ? new List<Object>() : buildAiEndpointCatalog()
+                    }));
+                } else {
+                    System.assert(request.getEndpoint().endsWith('/api/v1/models'));
+                    response.setBody(JSON.serialize(new Map<String, Object>{'data' => buildAiModelCatalog()}));
+                }
+                return response;
+            }
+            inferenceCalls++;
+            System.assertEquals('POST', request.getMethod());
+            System.assert(request.getEndpoint().endsWith('/api/v1/chat/completions'));
+            lastBody = request.getBody();
+            Map<String, Object> body = (Map<String, Object>) JSON.deserializeUntyped(lastBody);
+            List<Object> models = (List<Object>) body.get('models');
+            System.assert(models.size() > 0 && models.size() <= 3);
+            System.assertEquals(models.size(), new Set<Object>(models).size(), 'No repite candidatos.');
+            System.assertEquals(false, body.containsKey('model'), 'No utiliza el router aleatorio.');
+            Map<String, Object> provider = (Map<String, Object>) body.get('provider');
+            System.assertEquals(true, provider.get('zdr'));
+            System.assertEquals('deny', provider.get('data_collection'));
+            System.assertEquals(true, provider.get('allow_fallbacks'));
+            Map<String, Object> prices = (Map<String, Object>) provider.get('max_price');
+            for (String key : new List<String>{'prompt', 'completion', 'request'}) {
+                System.assertEquals(0, prices.get(key), 'Nunca permite pago ni al cambiar de modelo.');
+            }
+            System.assertEquals(false, provider.containsKey('only'));
+            System.assertEquals(false, body.get('stream'));
+            System.assertEquals(0.1, body.get('temperature'));
+            Map<String, Object> format = (Map<String, Object>) body.get('response_format');
+            System.assertEquals('json_schema', format.get('type'));
+            Map<String, Object> jsonSchema = (Map<String, Object>) format.get('json_schema');
+            System.assertEquals(true, jsonSchema.get('strict'));
+            Map<String, Object> schema = (Map<String, Object>) jsonSchema.get('schema');
+            System.assertEquals(false, schema.get('additionalProperties'));
+            System.assertEquals(new List<Object>{'texto'}, schema.get('required'));
+            System.assert(lastBody.contains('TRES toneladas solicitadas ahora y CINCO de la compra anterior'));
+            System.assert(lastBody.contains('la ficha sigue PENDIENTE'));
+            System.assert(lastBody.contains('No describas, evalúes ni justifiques'));
+            System.assert(lastBody.contains('visitamos al cliente y quedo pendiente la cotizacion'));
+            System.assert(lastBody.contains('No inventes información'));
+            if (scenario == 'inferenceTimeout') { throw new CalloutException('Simulated timeout'); }
+            response.setStatusCode(responseCode);
+            if (scenario == 'failure') {
                 response.setBody(JSON.serialize(new Map<String, Object>{
-                    'error' => new Map<String, Object>{
-                        'code' => firstStatus == 200 ? 429 : firstStatus,
-                        'message' => 'Endpoint unavailable'
-                    }
+                    'error' => new Map<String, Object>{'code' => responseCode == 200 ? 429 : responseCode}
                 }));
             } else {
-                System.assertEquals(originalRequestBody, request.getBody(),
-                    'Los reintentos deben conservar texto, prompt y restricciones.');
+                String content = scenario == 'blank' ? ' ' :
+                    scenario == 'tooLong' ? 'X'.repeat(161) :
+                    'Visitamos al cliente y quedó pendiente la cotización.';
+                response.setBody(JSON.serialize(new Map<String, Object>{
+                    'model' => models[models.size() - 1],
+                    'choices' => new List<Object>{new Map<String, Object>{
+                        'finish_reason' => scenario == 'truncated' ? 'length' : 'stop',
+                        'message' => new Map<String, Object>{
+                            'content' => JSON.serialize(new Map<String, Object>{'texto' => content})
+                        }
+                    }}
+                }));
             }
             return response;
         }
     }
 
-    private class OpenRouterFailureMock implements HttpCalloutMock {
-        Integer attempts = 0;
-        Integer statusCode;
-
-        OpenRouterFailureMock(Integer statusCode) {
-            this.statusCode = statusCode;
-        }
-
-        public HttpResponse respond(HttpRequest request) {
-            attempts++;
-            HttpResponse response = new OpenRouterSuccessMock().respond(request);
-            response.setStatusCode(statusCode);
-            response.setBody('{"error":{"message":"Endpoint unavailable"}}');
-            return response;
+    /**
+     * Regresión del caso reportado: ningún análisis, encabezado ni explicación
+     * debe alcanzar la vista previa, incluso si viene dentro de un JSON válido.
+     * Solo prueba el validador local; no realiza callouts ni consume cuota.
+     */
+    @IsTest
+    static void rejectsEditorialAnalysisAndUnresolvedDictation() {
+        List<String> invalidOutputs = new List<String>{
+            'Revisé el texto y lo he mejorado en los siguientes puntos:\n' +
+                '- Corregí errores tipográficos.\n- La cantidad correcta es cinco toneladas.\n\n' +
+                'Texto mejorado:\nHoy fui con Laura. Necesitan cinco toneladas... no, perdón, tres.',
+            '{"texto":"Revisé el texto y lo he mejorado en los siguientes puntos: correcciones."}',
+            '{"texto":"Hoy fui con Laura.\\n\\nTexto mejorado:\\nEl cliente solicita tres toneladas."}',
+            '{"texto":"El cliente necesita cinco toneladas... no, perdón, tres."}',
+            '{"texto":"Nota correcta.","explicacion":"Corregí la gramática."}',
+            '{"texto":["No es un texto"]}',
+            '{"texto":"   "}',
+            '```json\n{"texto":"No debe extraer fragmentos de Markdown."}\n```'
+        };
+        for (String content : invalidOutputs) {
+            Boolean rejected = false;
+            try {
+                ALMEX_AgendaDataController.validateAgendaAiTextOutput(content, 6000);
+            } catch (AuraHandledException expected) {
+                rejected = true;
+            }
+            System.assert(rejected, 'Una respuesta fuera del contrato no debe mostrarse.');
         }
     }
 
-    /**
-     * Sustituye el callout HTTP durante la prueba para que sea determinista,
-     * rápida y no exponga ni consuma la credencial configurada en Salesforce.
-     */
-    private class OpenRouterSuccessMock implements HttpCalloutMock {
-        public HttpResponse respond(HttpRequest request) {
-            System.assertEquals('POST', request.getMethod());
-            System.assert(
-                request.getEndpoint().endsWith('/api/v1/chat/completions'),
-                'Debe utilizar el endpoint de chat completions de OpenRouter.'
-            );
-            System.assertEquals(
-                'application/json',
-                request.getHeader('Content-Type')
-            );
+    @IsTest
+    static void extractsOnlyTheCorrectedCommercialNote() {
+        String note = 'Durante la visita a Laura, de Compras de Alimentos del Centro, ' +
+            'se solicitó una cotización de tres toneladas de glucosa para el 12 de noviembre. ' +
+            'La compra anterior fue de cinco toneladas. El pedido aún no está confirmado. ' +
+            'El último embarque tuvo dos días de retraso y afectó la producción. ' +
+            'Quedó pendiente revisar la incidencia con Logística, enviar la cotización mañana ' +
+            'y enviar la ficha técnica. No se acordó descuento ni se cerró la venta. ' +
+            'Se acordó hablar el viernes.';
+        String content = JSON.serialize(new Map<String, Object>{'texto' => '  ' + note + '  '});
+        System.assertEquals(note,
+            ALMEX_AgendaDataController.validateAgendaAiTextOutput(content, 6000));
+        System.assertEquals('X'.repeat(160),
+            ALMEX_AgendaDataController.validateAgendaAiTextOutput(
+                JSON.serialize(new Map<String, Object>{
+                    'texto' => 'X'.repeat(160)
+                }), 160));
+    }
 
-            Map<String, Object> requestBody =
-                (Map<String, Object>) JSON.deserializeUntyped(
-                    request.getBody()
-                );
-            System.assertEquals('openrouter/free', requestBody.get('model'));
-            System.assertEquals(false, requestBody.get('stream'));
-            System.assertEquals(false, requestBody.containsKey('models'),
-                'No debe mantener una lista fija de modelos.');
+    private static Map<String, Object> buildAiModel(String modelId, String output, String promptPrice) {
+        return new Map<String, Object>{
+            'id' => modelId,
+            'pricing' => new Map<String, Object>{'prompt' => promptPrice, 'completion' => '0'},
+            'architecture' => new Map<String, Object>{
+                'input_modalities' => new List<String>{'text'},
+                'output_modalities' => new List<String>{output}
+            }
+        };
+    }
 
-            Map<String, Object> provider =
-                (Map<String, Object>) requestBody.get('provider');
-            System.assertEquals(true, provider.get('zdr'));
-            System.assertEquals('deny', provider.get('data_collection'));
-            System.assertEquals(true, provider.get('allow_fallbacks'));
-
-            System.assertEquals(false, provider.containsKey('only'),
-                'Cualquier proveedor que cumpla ZDR y precio cero es elegible.');
-            System.assertEquals(false, provider.containsKey('order'));
-            System.assertEquals(false, provider.containsKey('ignore'));
-
-            Map<String, Object> maxPrice =
-                (Map<String, Object>) provider.get('max_price');
-            System.assertEquals(0, maxPrice.get('prompt'));
-            System.assertEquals(0, maxPrice.get('completion'));
-            System.assertEquals(0, maxPrice.get('request'));
-
-            Map<String, Object> reasoning =
-                (Map<String, Object>) requestBody.get('reasoning');
-            System.assertEquals(false, reasoning.get('enabled'));
-            System.assertEquals(0.1, requestBody.get('temperature'));
-            System.assert(
-                request.getBody().contains(
-                    'visitamos al cliente y quedo pendiente la cotizacion'
-                ),
-                'La solicitud debe incluir el texto proporcionado por el usuario.'
-            );
-
-            HttpResponse response = new HttpResponse();
-            response.setStatusCode(200);
-            response.setHeader('Content-Type', 'application/json');
-            response.setBody(
-                '{"choices":[{"message":{"role":"assistant",' +
-                '"content":"Visitamos al cliente y quedó pendiente la cotización."}}]}'
-            );
-            return response;
+    private static List<Object> buildAiModelCatalog() {
+        List<Object> models = new List<Object>();
+        for (String name : new List<String>{'alpha', 'beta', 'gamma', 'delta', 'small', 'noParams', 'requestFee'}) {
+            models.add(buildAiModel('mock/' + name + ':free', 'text', '0'));
         }
+        models.add(buildAiModel('mock/paid', 'text', '0.1'));
+        models.add(buildAiModel('mock/image', 'image', '0'));
+        models.add(buildAiModel('openrouter/free', 'text', '0'));
+        Map<String, Object> reasoner = buildAiModel('mock/reasoner', 'text', '0');
+        reasoner.put('reasoning', new Map<String, Object>{'mandatory' => true});
+        models.add(reasoner);
+        return models;
+    }
+
+    private static List<Object> buildAiEndpointCatalog() {
+        List<Object> endpoints = new List<Object>();
+        Integer index = 0;
+        for (String name : new List<String>{
+            'alpha', 'beta', 'gamma', 'delta', 'paid', 'image',
+            'reasoner', 'small', 'noParams', 'requestFee'
+        }) {
+            index++;
+            endpoints.add(new Map<String, Object>{
+                'model_id' => 'mock/' + name +
+                    (new Set<String>{'paid', 'image', 'reasoner'}.contains(name) ? '' : ':free'),
+                'pricing' => new Map<String, Object>{
+                    'prompt' => '0', 'completion' => '0', 'request' => name == 'requestFee' ? '0.01' : '0'
+                },
+                'context_length' => name == 'small' ? 4096 : 32768,
+                'max_completion_tokens' => 2000,
+                'supported_parameters' => name == 'noParams' ?
+                    new List<String>() : new List<String>{'temperature', 'max_tokens'},
+                'uptime_last_30m' => index < 3 ? 100 : 100 - index,
+                'latency_last_30m' => name == 'beta' ? 1 : 2,
+                'native_tools' => new Map<String, Object>{'extra' => new List<Object>{true, null}},
+                'supports_tool_choice' => new Map<String, Object>{'none' => true, 'auto' => true},
+                'future_metadata' => new Map<String, Object>{'nested' => new Map<String, Object>{'value' => 1}}
+            });
+        }
+        endpoints.add(endpoints[0]); // Un mismo modelo con dos endpoints no se duplica.
+        return endpoints;
     }
 
     // =====================================================================

@@ -2,7 +2,7 @@ import { createElement } from 'lwc';
 import AgendaCalendar from 'c/agendaCalendar';
 import getCurrentUser from '@salesforce/apex/ALMEX_AgendaDataController.getCurrentUser';
 import {
-    getAgendaActivities, improveAgendaText, completeAgendaActivity,
+    getAgendaActivities, getAssignedBranches, improveAgendaText, completeAgendaActivity,
     cancelAgendaActivity, rescheduleAgendaActivity
 } from 'c/agendaServices';
 
@@ -14,6 +14,7 @@ jest.mock('@salesforce/customPermission/ALMEX_Agendas_IA', () => ({
 }), { virtual: true });
 jest.mock('c/agendaServices', () => ({
     getAgendaActivities: jest.fn(),
+    getAssignedBranches: jest.fn(),
     improveAgendaText: jest.fn(),
     completeAgendaActivity: jest.fn(),
     cancelAgendaActivity: jest.fn(),
@@ -42,6 +43,7 @@ function record(id, status, followUp = false) {
 async function openMyActivities(records) {
     getCurrentUser.mockResolvedValue({ Id: '005test', Name: 'Ejecutivo Prueba' });
     getAgendaActivities.mockResolvedValue(records);
+    getAssignedBranches.mockResolvedValue([]);
     const element = createElement('c-agenda-calendar', { is: AgendaCalendar });
     document.body.appendChild(element);
     await flush();
@@ -189,23 +191,53 @@ describe('Mis actividades y resolución de seguimiento', () => {
         expect(completeAgendaActivity).toHaveBeenCalledWith('seguimiento', 'Se entregó la cotización.');
     });
 
-    it('aplica la propuesta de IA al resumen sin sobrescribir las notas', async () => {
-        improveAgendaText.mockResolvedValue('Se entregó la cotización y se resolvió el pendiente.');
+    it('oculta temporalmente la IA en notas y seguimiento aunque el usuario tenga permiso', async () => {
         const element = await openMyActivities([record('seguimiento', 'Programada', true)]);
-        await openFollowUp(element);
+        element.shadowRoot.querySelector('.activity-subject-button').click();
+        await flush();
+        expect(element.shadowRoot.querySelector('.notes-improve-button')).toBeNull();
+        expect(element.shadowRoot.querySelector('.notes-speech-button')).not.toBeNull();
+        expect(element.shadowRoot.querySelector('[data-element="activity-notes"]').value).toBe('Notas originales');
+
+        element.shadowRoot.querySelector('.activity-complete-button').click();
+        await flush();
         const summary = element.shadowRoot.querySelector('[data-element="follow-up-resolution"]');
         summary.value = 'ya se entrego cotizacion y resuelto';
-        summary.dispatchEvent(new Event('input'));
+        summary.dispatchEvent(new CustomEvent('input'));
         await flush();
-        element.shadowRoot.querySelector('[data-target="followUpResolution"]').click();
-        await flush();
-        expect(improveAgendaText).toHaveBeenCalledWith('ya se entrego cotizacion y resuelto', 'followUpResolution');
+        expect(element.shadowRoot.querySelector('.notes-improve-button')).toBeNull();
+        expect(element.shadowRoot.querySelector('.follow-up-completion-form .notes-speech-button')).not.toBeNull();
+        expect(improveAgendaText).not.toHaveBeenCalled();
         expect(summary.value).toBe('ya se entrego cotizacion y resuelto');
-        element.shadowRoot.querySelector('.text-improvement-actions .activity-save-button').click();
+        element.shadowRoot.querySelector('.follow-up-completion-form').dispatchEvent(new CustomEvent('submit'));
         await flush();
-        expect(summary.value).toBe('Se entregó la cotización y se resolvió el pendiente.');
-        element.shadowRoot.querySelector('.follow-up-completion-form .activity-cancel-button').click();
+        expect(completeAgendaActivity).toHaveBeenCalledWith('seguimiento', 'ya se entrego cotizacion y resuelto');
+    });
+
+    it('oculta la IA en nueva actividad y justificaciones sin quitar el dictado', async () => {
+        const element = await openMyActivities([record('programada', 'Programada')]);
+        element.shadowRoot.querySelector('.new-activity-button').click();
         await flush();
-        expect(element.shadowRoot.querySelector('[data-element="activity-notes"]').value).toBe('Notas originales');
+        expect(element.shadowRoot.querySelector('.notes-improve-button')).toBeNull();
+        expect(element.shadowRoot.querySelector('.notes-speech-button')).not.toBeNull();
+        const activityType = element.shadowRoot.querySelector('[data-element="activity-type"]');
+        activityType.value = 'Llamada';
+        activityType.dispatchEvent(new CustomEvent('change'));
+        await flush();
+        element.shadowRoot.querySelector('[name="callReplacement"][value="yes"]').dispatchEvent(new CustomEvent('change'));
+        await flush();
+        expect(element.shadowRoot.querySelector('[data-element="activity-exception-justification"]')).not.toBeNull();
+        expect(element.shadowRoot.querySelector('.notes-improve-button')).toBeNull();
+        expect(element.shadowRoot.querySelector('.notes-speech-button')).not.toBeNull();
+        element.shadowRoot.querySelector('.activity-cancel-button').click();
+        await flush();
+        element.shadowRoot.querySelector('.activity-subject-button').click();
+        await flush();
+        element.shadowRoot.querySelector('.activity-cancel-header-button').click();
+        await flush();
+        expect(element.shadowRoot.querySelector('[data-element="activity-action-justification"]')).not.toBeNull();
+        expect(element.shadowRoot.querySelector('.notes-improve-button')).toBeNull();
+        expect(element.shadowRoot.querySelector('.notes-speech-button')).not.toBeNull();
+        expect(improveAgendaText).not.toHaveBeenCalled();
     });
 });
