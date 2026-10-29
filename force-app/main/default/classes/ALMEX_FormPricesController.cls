@@ -49,6 +49,12 @@ public with sharing class ALMEX_FormPricesController {
         @AuraEnabled public String city { get; set; }
         @AuraEnabled public Decimal monthlyConsumption { get; set; }
         @AuraEnabled public String consumptionType { get; set; }
+        @AuraEnabled public String commercialOperationType { get; set; }
+        @AuraEnabled public Date contractStartDate { get; set; }
+        @AuraEnabled public Date contractEndDate { get; set; }
+        @AuraEnabled public Boolean importedProduct { get; set; }
+        @AuraEnabled public Id clientAccountId { get; set; }
+        @AuraEnabled public Id branchId { get; set; }
         @AuraEnabled public Decimal price { get; set; }
         @AuraEnabled public String unit { get; set; }
         @AuraEnabled public String shipmentSize { get; set; }
@@ -71,6 +77,36 @@ public with sharing class ALMEX_FormPricesController {
         @AuraEnabled public String municipality { get; set; }
         @AuraEnabled public String city { get; set; }
         @AuraEnabled public String subtitle { get; set; }
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static List<Account> searchAccounts(String searchTerm) {
+        String term = String.isBlank(searchTerm) ? '' : searchTerm.trim().replace('%', '').replace('_', '');
+        if (term.length() < 2) return new List<Account>();
+        String pattern = '%' + term + '%';
+        // No saltarse la visibilidad de las cuentas del usuario que captura.
+        return [SELECT Id, Name FROM Account WHERE Name LIKE :pattern WITH USER_MODE ORDER BY Name LIMIT 10];
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static List<BranchSuggestion> getBranchesForAccount(Id accountId) {
+        if (accountId == null) return new List<BranchSuggestion>();
+        List<Account> accessibleAccounts = [SELECT Id FROM Account WHERE Id = :accountId WITH USER_MODE];
+        if (accessibleAccounts.isEmpty()) return new List<BranchSuggestion>();
+        List<BranchSuggestion> result = new List<BranchSuggestion>();
+        for (Sucursal__c branch : [SELECT Id, Name, Estado__c, Ciudad__c, Datos_de_direccion__CountryCode__s FROM Sucursal__c
+                WHERE Cuenta__c = :accountId WITH USER_MODE ORDER BY Name, Id]) {
+            BranchSuggestion suggestion = new BranchSuggestion();
+            suggestion.branchId = branch.Id;
+            suggestion.name = branch.Name;
+            // CO es Colorado en EE. UU. y Coahuila en México: no homologar sin país.
+            suggestion.state = branch.Datos_de_direccion__CountryCode__s == 'US'
+                ? branch.Estado__c : normalizeMexicanState(branch.Estado__c);
+            suggestion.city = branch.Ciudad__c;
+            suggestion.subtitle = joinNonBlank(new List<String>{ suggestion.city, suggestion.state }, ' · ');
+            result.add(suggestion);
+        }
+        return result;
     }
 
     @AuraEnabled(cacheable=true)
@@ -182,6 +218,18 @@ public with sharing class ALMEX_FormPricesController {
 
     @AuraEnabled
     public static SaveResponse savePrice(PriceInput input) {
+        if (input != null && (input.clientAccountId != null || input.branchId != null)) {
+            if (input.clientAccountId == null || input.branchId == null) {
+                throw new AuraHandledException('Selecciona el cliente y una sucursal de ese cliente.');
+            }
+            List<Account> accounts = [SELECT Id FROM Account WHERE Id = :input.clientAccountId WITH USER_MODE];
+            List<Sucursal__c> branches = [SELECT Name FROM Sucursal__c WHERE Id = :input.branchId
+                AND Cuenta__c = :input.clientAccountId WITH USER_MODE];
+            if (accounts.isEmpty() || branches.isEmpty()) {
+                throw new AuraHandledException('La sucursal no pertenece al cliente seleccionado o no tienes acceso.');
+            }
+            input.commercialName = branches[0].Name;
+        }
         validateInput(input);
 
         if (!Precio_productos__c.SObjectType.getDescribe().isCreateable()) {
@@ -189,6 +237,16 @@ public with sharing class ALMEX_FormPricesController {
         }
         if (!Precio_productos__c.Tipo_consumo_toneladas__c.getDescribe().isCreateable()) {
             throw new AuraHandledException('No tienes permisos para registrar el tipo de consumo.');
+        }
+        for (Schema.SObjectField field : new List<Schema.SObjectField>{
+            Precio_productos__c.Tipo_operacion_comercial__c,
+            Precio_productos__c.Fecha_inicio_contrato__c,
+            Precio_productos__c.Fecha_fin_contrato__c,
+            Precio_productos__c.Producto_importado__c
+        }) {
+            if (!field.getDescribe().isCreateable()) {
+                throw new AuraHandledException('Falta acceso a los campos de operación comercial y contrato.');
+            }
         }
 
         Precio_productos__c record = new Precio_productos__c(
@@ -201,8 +259,12 @@ public with sharing class ALMEX_FormPricesController {
             Ciudad__c = input.city.trim(),
             Consumo_mensual__c = input.monthlyConsumption,
             Tipo_consumo_toneladas__c = String.isBlank(input.consumptionType)
-                ? 'M' : input.consumptionType.trim().toUpperCase(),
+                ? 'A' : input.consumptionType.trim().toUpperCase(),
+            Producto_importado__c = input.importedProduct == true,
             Precio_producto__c = input.price,
+            Tipo_operacion_comercial__c = input.commercialOperationType,
+            Fecha_inicio_contrato__c = input.commercialOperationType == 'Contrato' ? input.contractStartDate : null,
+            Fecha_fin_contrato__c = input.commercialOperationType == 'Contrato' ? input.contractEndDate : null,
             Unidad__c = input.unit.trim(),
             Tama_o_embarque__c = clean(input.shipmentSize),
             Proveedor__c = input.supplier.trim(),
@@ -248,7 +310,7 @@ public with sharing class ALMEX_FormPricesController {
         response.periodPersisted = periodPersisted;
         response.message = periodPersisted
             ? 'Precio registrado correctamente.'
-            : 'Precio registrado, pero el periodo no se guardó: faltan los campos de año/mes o permisos para editarlos.';
+            : 'Precio registrado, pero el año no se guardó: falta el campo o permiso para editarlo.';
         return response;
     }
 
@@ -258,6 +320,14 @@ public with sharing class ALMEX_FormPricesController {
         }
 
         requireText(input.productName, 'Tipo de producto');
+        if (!new Set<String>{ 'Contrato', 'Spot', 'Propuesta' }.contains(input.commercialOperationType)) {
+            throw new AuraHandledException('Selecciona Contrato, Spot o Propuesta.');
+        }
+        if (input.commercialOperationType == 'Contrato' &&
+            (input.contractStartDate == null || input.contractEndDate == null ||
+             input.contractEndDate < input.contractStartDate)) {
+            throw new AuraHandledException('El contrato requiere fechas De y A válidas; A no puede ser anterior a De.');
+        }
         requireText(input.commercialName, 'Nombre comercial / Razón social');
         requireText(input.state, 'Estado');
         requireText(input.municipality, 'Municipio');
@@ -273,13 +343,13 @@ public with sharing class ALMEX_FormPricesController {
         if (productKey == 'almidon' || productKey == 'azucar') {
             requireText(input.subproductType, 'Subproducto');
             Set<String> allowedSubproducts = productKey == 'almidon'
-                ? new Set<String>{ 'generico' }
+                ? new Set<String>{ '25 kilos', 'granel', 'super saco (100 kilos)', 'super saco (500 kilos)', 'super saco (1000 kilos)' }
                 : new Set<String>{ 'estandar', 'refinada', 'azucar liquida' };
             if (!allowedSubproducts.contains(normalizeProductKey(input.subproductType))) {
                 throw new AuraHandledException('Selecciona un subproducto válido para el producto.');
             }
         }
-        Boolean needsShipment = productKey.startsWith('glucosa') ||
+        Boolean needsShipment = productKey == 'almidon' || productKey.startsWith('glucosa') ||
             productKey.startsWith('fructosa') || productKey.startsWith('fructuosa') ||
             (productKey.startsWith('dextrosa') && productKey.contains('liquida')) ||
             productKey == 'dextrosa monohidratada' || productKey == 'krystar liquido' ||
@@ -287,7 +357,10 @@ public with sharing class ALMEX_FormPricesController {
         if (needsShipment) {
             requireText(input.shipmentSize, 'Tamaño de embarque');
             Set<String> allowedShipments = new Set<String>{ '10 Ton', '20 Ton', '30 Ton', '38 Ton', 'N/A' };
-            if (!allowedShipments.contains(input.shipmentSize.trim())) {
+            String shipment = input.shipmentSize.trim();
+            Boolean customShipment = Pattern.matches('^[0-9]+(?:\\.[0-9]{1,2})? Ton$', shipment) &&
+                Decimal.valueOf(shipment.substringBefore(' Ton')) > 0;
+            if (!allowedShipments.contains(shipment) && !customShipment) {
                 throw new AuraHandledException('Selecciona un tamaño de embarque válido.');
             }
         }
@@ -296,7 +369,7 @@ public with sharing class ALMEX_FormPricesController {
             throw new AuraHandledException('El consumo debe ser un valor igual o mayor que cero.');
         }
         String consumptionType = String.isBlank(input.consumptionType)
-            ? 'M' : input.consumptionType.trim().toUpperCase();
+            ? 'A' : input.consumptionType.trim().toUpperCase();
         if (consumptionType != 'M' && consumptionType != 'A') {
             throw new AuraHandledException('Selecciona consumo mensual o anual.');
         }
@@ -306,7 +379,7 @@ public with sharing class ALMEX_FormPricesController {
         if (input.periodYear == null || input.periodYear < 2000 || input.periodYear > 2100) {
             throw new AuraHandledException('Selecciona un año de periodo válido.');
         }
-        if (input.periodMonth == null || input.periodMonth < 1 || input.periodMonth > 12) {
+        if (input.periodMonth != null && (input.periodMonth < 1 || input.periodMonth > 12)) {
             throw new AuraHandledException('Selecciona un mes de periodo válido.');
         }
     }
@@ -334,8 +407,7 @@ public with sharing class ALMEX_FormPricesController {
 
     private static String buildRecordName(PriceInput input) {
         String recordName = input.productName.trim() + ' - ' + input.commercialName.trim() +
-            ' - ' + String.valueOf(input.periodYear) + '-' +
-            String.valueOf(input.periodMonth).leftPad(2, '0');
+            ' - ' + String.valueOf(input.periodYear);
         return recordName.length() > 80 ? recordName.substring(0, 80) : recordName;
     }
 
@@ -488,8 +560,7 @@ public with sharing class ALMEX_FormPricesController {
 
     private static Boolean supportsPeriodFields() {
         Map<String, Schema.SObjectField> fields = Precio_productos__c.SObjectType.getDescribe().fields.getMap();
-        return getFieldIgnoreCase(fields, PERIOD_YEAR_FIELD) != null &&
-            getFieldIgnoreCase(fields, PERIOD_MONTH_FIELD) != null;
+        return getFieldIgnoreCase(fields, PERIOD_YEAR_FIELD) != null;
     }
 
     private static Boolean putPeriodWhenAvailable(Precio_productos__c record, Integer year, Integer month) {
@@ -497,13 +568,12 @@ public with sharing class ALMEX_FormPricesController {
         Schema.SObjectField yearField = getFieldIgnoreCase(fields, PERIOD_YEAR_FIELD);
         Schema.SObjectField monthField = getFieldIgnoreCase(fields, PERIOD_MONTH_FIELD);
 
-        if (yearField == null || monthField == null ||
-            !yearField.getDescribe().isCreateable() || !monthField.getDescribe().isCreateable()) {
+        if (yearField == null || !yearField.getDescribe().isCreateable()) {
             return false;
         }
 
         record.put(yearField, year);
-        record.put(monthField, month);
+        if (month != null && monthField != null && monthField.getDescribe().isCreateable()) record.put(monthField, month);
         return true;
     }
 

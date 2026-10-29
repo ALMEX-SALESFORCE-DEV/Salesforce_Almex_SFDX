@@ -1,0 +1,5 @@
+.almex-contract-calendar { background-color: #ffffff; color: #193c70; font-family: "Salesforce Sans", Arial, sans-serif; border: 1px solid #b9cae0; box-shadow: 0 8px 24px rgba(25,60,112,.18); border-radius: 8px; }
+.almex-contract-calendar .flatpickr-day.selected, .almex-contract-calendar .flatpickr-day.startRange, .almex-contract-calendar .flatpickr-day.endRange { background: #0b4fa2; border-color: #0b4fa2; }
+.almex-contract-calendar .flatpickr-day:hover { background: #edf5ff; border-color: #b9cae0; }
+.almex-contract-calendar .flatpickr-months, .almex-contract-calendar .flatpickr-weekdays { color: #193c70; }
+.almex-contract-calendar .flatpickr-monthDropdown-months { border: 1px solid #b9cae0; border-radius: 5px; }

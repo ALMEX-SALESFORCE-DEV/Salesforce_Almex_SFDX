@@ -1,8 +1,12 @@
 import { LightningElement } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import MEXICO_LOCATIONS from '@salesforce/resourceUrl/ALMEX_MexicoLocations';
+import US_LOCATIONS from '@salesforce/resourceUrl/ALMEX_USLocations';
+import CONTRACT_CALENDAR from '@salesforce/resourceUrl/ALMEX_ContractCalendar';
+import { loadScript, loadStyle } from 'lightning/platformResourceLoader';
 import savePrice from '@salesforce/apex/ALMEX_FormPricesController.savePrice';
-import searchBranches from '@salesforce/apex/ALMEX_FormPricesController.searchBranches';
+import searchAccounts from '@salesforce/apex/ALMEX_FormPricesController.searchAccounts';
+import getBranchesForAccount from '@salesforce/apex/ALMEX_FormPricesController.getBranchesForAccount';
 
 const MAX_LOOKUP_RESULTS = 10;
 const CATALOG_ROOT = 'catalogmx/data/inegi';
@@ -41,7 +45,7 @@ const SUGAR_SUPPLIERS = [
 const PRODUCT_CATALOG = [
     {
         label: 'Almidón', value: 'Almidón', suppliers: CORN_DERIVATIVE_SUPPLIERS,
-        subproducts: [{ label: 'Genérico', value: 'Generico' }], requiresShipment: false
+        subproducts: ['25 kilos', 'Granel', 'Super saco (500 kilos)' ,'Super saco (1000 kilos)'].map(value => ({ label: value, value })), requiresShipment: true
     },
     {
         label: 'Azúcar', value: 'Azúcar', suppliers: SUGAR_SUPPLIERS,
@@ -80,25 +84,34 @@ const UNIT_OPTIONS = [
     { label: 'MXN 50 kg/bulto', value: 'MXN_50KG_BULTO' },
 ];
 
-const SHIPMENT_SIZE_OPTIONS = ['10 Ton', '20 Ton', '30 Ton', '38 Ton', 'N/A'].map((value) => ({
+const SHIPMENT_SIZE_OPTIONS = ['10 Ton', '20 Ton', '30 Ton', '38 Ton', 'N/A', 'Otro'].map((value) => ({
     label: value,
     value
 }));
 
-const MONTH_OPTIONS = [
-    'Enero',
-    'Febrero',
-    'Marzo',
-    'Abril',
-    'Mayo',
-    'Junio',
-    'Julio',
-    'Agosto',
-    'Septiembre',
-    'Octubre',
-    'Noviembre',
-    'Diciembre'
-].map((label, index) => ({ label, value: String(index + 1) }));
+const STARCH_SHIPMENT_SIZE_OPTIONS = ['3 Ton', '10 Ton', '25 Ton', 'N/A', 'Otro'].map((value) => ({
+    label: value,
+    value
+}));
+
+function parseContractDate(text) {
+    const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(String(text || '').trim());
+    if (!match) return undefined;
+    const [, day, month, year] = match.map(Number);
+    const date = new Date(year, month - 1, day);
+    return year >= 1900 && year <= 2100 && date.getFullYear() === year
+        && date.getMonth() + 1 === month && date.getDate() === day ? date : undefined;
+}
+
+function formatContractDateEntry(text, deleting) {
+    if (!/^[\d/]*$/.test(text)) return text;
+    const digits = text.replace(/\D/g, '').slice(0, 8);
+    const keepTrailingSlash = !deleting || text.endsWith('/');
+    const daySeparator = digits.length > 2 || (digits.length === 2 && keepTrailingSlash);
+    const monthSeparator = digits.length > 4 || (digits.length === 4 && keepTrailingSlash);
+    return digits.slice(0, 2) + (daySeparator ? '/' : '') + digits.slice(2, 4)
+        + (monthSeparator ? '/' : '') + digits.slice(4);
+}
 
 function emptyForm() {
     const today = new Date();
@@ -106,16 +119,20 @@ function emptyForm() {
         productName: '',
         subproductType: '',
         periodYear: String(today.getFullYear()),
-        periodMonth: String(today.getMonth() + 1),
         commercialName: '',
         state: '',
         municipality: '',
         city: '',
         monthlyConsumption: '',
-        consumptionType: 'M',
+        consumptionType: 'A',
+        importedProduct: false,
         price: '',
         unit: '',
         shipmentSize: '',
+        otherShipmentSize: '',
+        commercialOperationType: '',
+        contractStartDate: '',
+        contractEndDate: '',
         supplier: '',
         otherSupplier: '',
         factoryState: '',
@@ -135,6 +152,17 @@ export default class AlmexFormPrices extends LightningElement {
     isSearchingBranches = false;
     showBranchSuggestions = false;
     selectedBranchId;
+    accountSearch = '';
+    accountSuggestions = [];
+    selectedAccountId;
+    showAccountSuggestions = false;
+    accountSearchMessage = '';
+    accountSearchTimer;
+    accountSearchRequest = 0;
+    contractDateText = { contractStartDate: '', contractEndDate: '' };
+    datePickers = new Map();
+    calendarReady = false;
+    calendarLoading = false;
     branchSearchTimer;
     branchBlurTimer;
     branchSearchRequest = 0;
@@ -154,10 +182,14 @@ export default class AlmexFormPrices extends LightningElement {
     showMunicipalityResults = false;
     showFactoryStateResults = false;
     showFactoryCityResults = false;
+    handleViewportChange = () => this.positionFloatingMenus();
 
     connectedCallback() {
+        window.addEventListener('resize', this.handleViewportChange);
+        window.addEventListener('scroll', this.handleViewportChange, true);
         this.syncLocationSearches();
         this.loadLocations();
+        this.loadContractCalendar();
     }
 
     renderedCallback() {
@@ -167,19 +199,29 @@ export default class AlmexFormPrices extends LightningElement {
         if (supplier && supplier.value !== this.form.supplier) {
             supplier.value = this.form.supplier;
         }
+        this.syncContractCalendars();
+        this.positionFloatingMenus();
     }
 
     disconnectedCallback() {
+        window.removeEventListener('resize', this.handleViewportChange);
+        window.removeEventListener('scroll', this.handleViewportChange, true);
+        this.accountSearchRequest += 1;
+        this.branchSearchRequest += 1;
         clearTimeout(this.branchSearchTimer);
         clearTimeout(this.branchBlurTimer);
         clearTimeout(this.lookupBlurTimer);
+        clearTimeout(this.accountSearchTimer);
+        this.datePickers.forEach(picker => picker.destroy());
+        this.datePickers.clear();
     }
 
     async loadLocations() {
         try {
-            const [municipalityResponse, localityResponse] = await Promise.all([
+            const [municipalityResponse, localityResponse, usResponse] = await Promise.all([
                 fetch(`${MEXICO_LOCATIONS}/${CATALOG_ROOT}/municipios_completo.json`),
-                fetch(`${MEXICO_LOCATIONS}/${CATALOG_ROOT}/localidades.json`)
+                fetch(`${MEXICO_LOCATIONS}/${CATALOG_ROOT}/localidades.json`),
+                fetch(US_LOCATIONS).catch(() => null)
             ]);
             if (!municipalityResponse.ok || !localityResponse.ok) {
                 throw new Error(
@@ -191,11 +233,22 @@ export default class AlmexFormPrices extends LightningElement {
                 localityResponse.json()
             ]);
             this.states = this.buildLocationCatalog(municipalities, localities);
+            try {
+                if (!usResponse?.ok) throw new Error('US catalog unavailable');
+                const us = await usResponse.json();
+                this.states = [...this.states, ...this.buildUSLocationCatalog(us)];
+            } catch {
+                this.locationError = 'El catálogo de EE. UU. no está disponible; el catálogo de México sigue disponible.';
+            }
             this.form = {
                 ...this.form,
-                state: LEGACY_STATE_NAMES[this.form.state] || this.form.state,
-                factoryState: LEGACY_STATE_NAMES[this.form.factoryState] || this.form.factoryState
+                state: this.resolveStateName(LEGACY_STATE_NAMES[this.form.state] || this.form.state),
+                factoryState: this.resolveStateName(LEGACY_STATE_NAMES[this.form.factoryState] || this.form.factoryState)
             };
+            this.branchSuggestions = this.branchSuggestions.map(branch => {
+                const state = this.resolveStateName(branch.state);
+                return { ...branch, state, subtitle: [branch.city, state].filter(Boolean).join(' · ') };
+            });
             this.syncLocationSearches();
             // La búsqueda puede terminar antes de que el catálogo esté listo.
             if (this.selectedBranchId && !this.form.municipality) {
@@ -249,23 +302,242 @@ export default class AlmexFormPrices extends LightningElement {
     }
 
     get shipmentSizeOptions() {
-        return SHIPMENT_SIZE_OPTIONS;
+        return this.form.productName === 'Almidón' ? STARCH_SHIPMENT_SIZE_OPTIONS : SHIPMENT_SIZE_OPTIONS;
     }
 
-    get monthOptions() {
-        return MONTH_OPTIONS;
+    get commercialOperationOptions() {
+        return ['Contrato', 'Spot', 'Propuesta'].map(value => ({ label: value, value }));
     }
 
-    get consumptionTypeOptions() {
-        return [
-            { label: 'Mensual', value: 'M' },
-            { label: 'Anual', value: 'A' }
-        ];
+    get isContract() {
+        return this.form.commercialOperationType === 'Contrato';
+    }
+
+    get showOtherShipmentSize() {
+        return this.showShipmentSize && this.form.shipmentSize === 'Otro';
+    }
+
+    get shipmentFieldClass() {
+        return this.showOtherShipmentSize ? 'shipment-field shipment-field--other' : 'shipment-field';
+    }
+
+    get resolvedShipmentSize() {
+        if (!this.showShipmentSize) return null;
+        return this.showOtherShipmentSize
+            ? `${Number(this.form.otherShipmentSize)} Ton` : this.form.shipmentSize;
+    }
+
+    handleOtherShipmentInput(event) {
+        const control = event.target;
+        const value = control.value;
+        if (!/^[0-9]*$/.test(value)) {
+            control.value = this.form.otherShipmentSize;
+            return;
+        }
+        this.form = { ...this.form, otherShipmentSize: value };
+    }
+
+    get isNationalProduct() { return !this.form.importedProduct; }
+    get isImportedProduct() { return this.form.importedProduct; }
+    get nationalProductClass() {
+        return `product-origin-option${this.isNationalProduct ? ' product-origin-option--selected' : ''}`;
+    }
+    get importedProductClass() {
+        return `product-origin-option${this.isImportedProduct ? ' product-origin-option--selected' : ''}`;
+    }
+    get accountLookupClass() {
+        return `account-lookup client-account-lookup${this.showAccountSuggestions ? ' account-lookup--open' : ''}`;
+    }
+    get branchLookupClass() {
+        return `account-lookup branch-lookup${this.showBranchSuggestions ? ' account-lookup--open' : ''}`;
+    }
+    handleProductOriginChange(event) {
+        this.form = { ...this.form, importedProduct: event.target.dataset.origin === 'imported' };
+        // Exactamente una selección, también al pulsar la opción ya seleccionada.
+        event.target.checked = true;
+    }
+
+    async loadContractCalendar() {
+        if (this.calendarLoading || this.calendarReady) return;
+        this.calendarLoading = true;
+        try {
+            await Promise.all([
+                loadScript(this, `${CONTRACT_CALENDAR}/flatpickr.min.js`),
+                loadStyle(this, `${CONTRACT_CALENDAR}/flatpickr.min.css`),
+                loadStyle(this, `${CONTRACT_CALENDAR}/almex-theme.css`)
+            ]);
+            await loadScript(this, `${CONTRACT_CALENDAR}/es.js`);
+            this.calendarReady = true;
+            this.syncContractCalendars();
+        } catch {
+            // La captura manual dd/mm/aaaa sigue disponible sin el recurso.
+            this.calendarReady = false;
+        } finally { this.calendarLoading = false; }
+    }
+
+    get contractStartDateDisplay() { return this.contractDateText.contractStartDate; }
+    get contractEndDateDisplay() { return this.contractDateText.contractEndDate; }
+
+    syncContractCalendars() {
+        if (!this.isContract) {
+            this.datePickers.forEach(picker => picker.destroy());
+            this.datePickers.clear();
+            return;
+        }
+        if (!this.calendarReady || typeof window.flatpickr !== 'function') return;
+        this.template.querySelectorAll('.contract-date-input').forEach(input => {
+            const field = input.name;
+            if (this.datePickers.has(field)) return;
+            const calendar = this.template.querySelector(`[data-calendar="${field}"]`);
+            const picker = window.flatpickr(input, {
+                locale: 'es', dateFormat: 'd/m/Y', allowInput: true, disableMobile: true,
+                parseDate: parseContractDate, minDate: '01/01/1900', maxDate: '31/12/2100',
+                monthSelectorType: 'dropdown', clickOpens: false, appendTo: calendar,
+                // Document listeners see the LWC host when events cross its shadow boundary.
+                // Ignore that retargeted host; the form closes calendars on real outside interactions.
+                ignoredFocusElements: [this.hostElement],
+                position: instance => this.positionContractCalendar(field, instance),
+                onChange: (dates, text, instance) => {
+                    this.contractDateText = { ...this.contractDateText, [field]: text };
+                    this.form = { ...this.form, [field]: dates[0] ? instance.formatDate(dates[0], 'Y-m-d') : '' };
+                    input.setCustomValidity('');
+                }
+            });
+            picker.calendarContainer.classList.add('almex-contract-calendar');
+            // La librería crea este nodo fuera del CSS scoped de LWC.
+            // La superficie debe ser opaca aunque los estilos globales cambien.
+            picker.calendarContainer.style.setProperty('background-color', '#ffffff', 'important');
+            this.datePickers.set(field, picker);
+        });
+    }
+
+    handleContractDateInput(event) {
+        const input = event.target;
+        const field = input.name;
+        const raw = input.value;
+        const cursor = input.selectionStart ?? raw.length;
+        const deleting = String(event.inputType || '').startsWith('delete');
+        const text = formatContractDateEntry(raw, deleting);
+        let formattedCursor = cursor;
+        if (text !== raw) {
+            const digitsBeforeCursor = Math.min(raw.slice(0, cursor).replace(/\D/g, '').length, 8);
+            formattedCursor = digitsBeforeCursor + (digitsBeforeCursor > 2 ? 1 : 0)
+                + (digitsBeforeCursor > 4 ? 1 : 0);
+            if (text[formattedCursor] === '/' && (!deleting || raw.slice(0, cursor).endsWith('/')
+                || event.inputType === 'deleteContentForward')) formattedCursor++;
+            input.value = text;
+        }
+        this.contractDateText = { ...this.contractDateText, [field]: text };
+        const iso = parseContractDate(text) ? text.trim().split('/').reverse().join('-') : '';
+        this.form = { ...this.form, [field]: iso };
+        input.setCustomValidity(iso || !text ? '' : 'Escribe una fecha válida en formato dd/mm/aaaa.');
+        const picker = this.datePickers.get(field);
+        if (picker?.isOpen && (iso || !text)) picker.setDate(text, false, 'd/m/Y');
+        input.setSelectionRange(formattedCursor, formattedCursor);
+        // LWC vuelve a escribir value al renderizar; restaurar la posición después.
+        Promise.resolve().then(() => {
+            if (input.isConnected && input.value === text) input.setSelectionRange(formattedCursor, formattedCursor);
+        });
+    }
+
+    handleContractDateBlur(event) {
+        // Do not let the vendor redraw/remove the month selector while it is receiving focus.
+        if (event.target.closest('[data-contract-field]')?.contains(event.relatedTarget)) {
+            event.stopImmediatePropagation();
+        }
+    }
+
+    handleFormCalendarInteraction(event) {
+        const activeField = event.target.closest('[data-contract-field]')?.dataset.contractField;
+        this.datePickers.forEach((picker, field) => {
+            if (field !== activeField && picker.isOpen) picker.close();
+        });
+    }
+
+    openContractCalendar(event) {
+        const field = event.currentTarget.dataset.dateField;
+        const picker = this.datePickers.get(field);
+        if (picker) {
+            if (picker.isOpen) { picker.close(); return; }
+            this.datePickers.forEach((other, key) => { if (key !== field) other.close(); });
+            picker.setDate(this.contractDateText[field] || '', false, 'd/m/Y');
+            picker.open();
+        } else {
+            this.template.querySelector(`input[name="${field}"]`)?.focus();
+        }
+    }
+
+    getVisibleBounds(anchor) {
+        const viewport = window.visualViewport;
+        const bounds = {
+            top: (viewport?.offsetTop || 0) + 8,
+            bottom: (viewport ? viewport.offsetTop + viewport.height : window.innerHeight) - 8,
+            left: (viewport?.offsetLeft || 0) + 8,
+            right: (viewport ? viewport.offsetLeft + viewport.width : window.innerWidth) - 8
+        };
+        // Lightning pages often scroll inside a panel, not in window.
+        let parent = anchor.parentElement;
+        while (parent) {
+            const style = window.getComputedStyle(parent);
+            const rect = parent.getBoundingClientRect();
+            if (rect.height > 0 && /(auto|scroll|hidden|clip)/.test(style.overflowY)) {
+                bounds.top = Math.max(bounds.top, rect.top + 4);
+                bounds.bottom = Math.min(bounds.bottom, rect.bottom - 4);
+            }
+            if (rect.width > 0 && /(auto|scroll|hidden|clip)/.test(style.overflowX)) {
+                bounds.left = Math.max(bounds.left, rect.left + 4);
+                bounds.right = Math.min(bounds.right, rect.right - 4);
+            }
+            parent = parent.parentElement || parent.getRootNode()?.host;
+        }
+        return bounds;
+    }
+
+    positionFloatingMenus() {
+        this.template.querySelectorAll('.lookup, .account-lookup').forEach(container => {
+            const menu = container.querySelector('.lookup__menu, .account-lookup__menu');
+            container.classList.toggle('lookup--open', Boolean(menu));
+            if (!menu) return;
+            const rect = container.getBoundingClientRect();
+            const bounds = this.getVisibleBounds(container);
+            const below = Math.max(0, bounds.bottom - rect.bottom - 4);
+            const above = Math.max(0, rect.top - bounds.top - 4);
+            const desired = Math.min(224, menu.scrollHeight || 224);
+            const opensAbove = below < desired && above > below;
+            menu.dataset.placement = opensAbove ? 'above' : 'below';
+            menu.style.top = opensAbove ? 'auto' : 'calc(100% + 0.2rem)';
+            menu.style.bottom = opensAbove ? 'calc(100% + 0.2rem)' : 'auto';
+            menu.style.maxHeight = `${Math.max(32, Math.min(224, opensAbove ? above : below))}px`;
+        });
+        this.datePickers.forEach((picker, field) => {
+            if (picker.isOpen) this.positionContractCalendar(field, picker);
+        });
+    }
+
+    positionContractCalendar(field, picker) {
+        const input = this.template.querySelector(`input[name="${field}"]`);
+        const host = this.template.querySelector(`[data-calendar="${field}"]`);
+        if (!input || !host || !picker.calendarContainer) return;
+        const bounds = this.getVisibleBounds(input);
+        const rect = input.getBoundingClientRect();
+        const hostRect = host.getBoundingClientRect();
+        const calendar = picker.calendarContainer;
+        const height = calendar.offsetHeight || 310;
+        const width = calendar.offsetWidth || 308;
+        const below = bounds.bottom - rect.bottom - 4;
+        const above = rect.top - bounds.top - 4;
+        const opensAbove = below < height && above > below;
+        const left = Math.max(bounds.left, Math.min(rect.left, bounds.right - width));
+        calendar.style.top = `${opensAbove ? rect.top - hostRect.top - height - 4 : rect.bottom - hostRect.top + 4}px`;
+        calendar.style.left = `${left - hostRect.left}px`;
+        calendar.style.right = 'auto';
+        calendar.style.bottom = 'auto';
+        calendar.classList.toggle('arrowBottom', opensAbove);
+        calendar.classList.toggle('arrowTop', !opensAbove);
     }
 
     get consumptionLabel() {
-        return this.form.consumptionType === 'A'
-            ? 'Consumo anual (Ton)' : 'Consumo mensual (Ton)';
+        return 'Consumo anual (Ton)';
     }
 
     get yearOptions() {
@@ -370,10 +642,7 @@ export default class AlmexFormPrices extends LightningElement {
     }
 
     get periodSummary() {
-        const month = this.findLabel(MONTH_OPTIONS, this.form.periodMonth);
-        return month && this.form.periodYear
-            ? `${month} ${this.form.periodYear}`
-            : 'Sin seleccionar';
+        return this.form.periodYear || 'Sin seleccionar';
     }
 
     get unitSummary() {
@@ -398,10 +667,12 @@ export default class AlmexFormPrices extends LightningElement {
         const subproductType = event.detail.value;
         const isLiquidSugar =
             this.normalize(subproductType) === this.normalize(LIQUID_SUGAR_VALUE);
+        const requiresShipment = Boolean(this.selectedProductConfig?.requiresShipment) || isLiquidSugar;
         this.form = {
             ...this.form,
             subproductType,
-            shipmentSize: isLiquidSugar ? this.form.shipmentSize : ''
+            shipmentSize: requiresShipment ? this.form.shipmentSize : '',
+            otherShipmentSize: requiresShipment ? this.form.otherShipmentSize : ''
         };
     }
 
@@ -409,6 +680,11 @@ export default class AlmexFormPrices extends LightningElement {
         const { name } = event.target;
         const value = event.detail?.value ?? event.target.value;
         this.form = { ...this.form, [name]: value };
+        if (name === 'commercialOperationType' && value !== 'Contrato') {
+            this.form = { ...this.form, contractStartDate: '', contractEndDate: '' };
+            this.contractDateText = { contractStartDate: '', contractEndDate: '' };
+        }
+        if (name === 'shipmentSize') this.form = { ...this.form, otherShipmentSize: '' };
     }
 
     handleSupplierChange(event) {
@@ -511,6 +787,12 @@ export default class AlmexFormPrices extends LightningElement {
         }
 
         this.partyMode = partyMode;
+        this.accountSearch = '';
+        this.accountSuggestions = [];
+        this.selectedAccountId = undefined;
+        this.showAccountSuggestions = false;
+        this.accountSearchRequest += 1;
+        clearTimeout(this.accountSearchTimer);
         clearTimeout(this.branchSearchTimer);
         clearTimeout(this.branchBlurTimer);
         this.branchSearchRequest += 1;
@@ -531,70 +813,112 @@ export default class AlmexFormPrices extends LightningElement {
         this.closeLookups();
     }
 
-    handleBranchSearch(event) {
-        const searchTerm = event.target.value;
-        const trimmedTerm = searchTerm.trim();
-        this.branchSearch = searchTerm;
+    get selectedBranch() { return this.branchSuggestions.find(branch => branch.branchId === this.selectedBranchId); }
+    get branchSelectorDisabled() { return !this.selectedAccountId || this.isSearchingBranches; }
+    get branchSelectorLabel() { return this.selectedBranch?.name || (this.isSearchingBranches ? 'Cargando sucursales…' : 'Selecciona una sucursal'); }
+    get branchSelectorSubtitle() { return this.selectedBranch?.subtitle || ''; }
+    get branchOptions() { return this.branchSuggestions.map(branch => ({ ...branch, selected: branch.branchId === this.selectedBranchId })); }
+
+    handleAccountSearch(event) {
+        this.accountSearch = event.target.value;
+        this.branchSearchRequest += 1;
+        this.isSearchingBranches = false;
+        this.branchSearchMessage = '';
+        this.selectedAccountId = undefined;
         this.selectedBranchId = undefined;
         this.branchSuggestions = [];
         this.showBranchSuggestions = false;
-        this.form = {
-            ...this.form,
-            commercialName: '',
-            state: '',
-            municipality: '',
-            city: ''
-        };
-        clearTimeout(this.branchSearchTimer);
+        this.form = { ...this.form, commercialName: '', state: '', municipality: '', city: '' };
+        this.syncLocationSearches();
+        clearTimeout(this.accountSearchTimer);
+        const requestId = ++this.accountSearchRequest;
+        const term = this.accountSearch.trim();
+        this.accountSuggestions = [];
+        this.showAccountSuggestions = false;
+        if (term.length < 2) { this.accountSearchMessage = term ? 'Escribe al menos 2 caracteres.' : ''; return; }
+        this.accountSearchMessage = '';
+        // eslint-disable-next-line @lwc/lwc/no-async-operation
+        this.accountSearchTimer = setTimeout(async () => {
+            try {
+                const result = await searchAccounts({ searchTerm: term });
+                if (requestId !== this.accountSearchRequest) return;
+                this.accountSuggestions = result || [];
+                this.showAccountSuggestions = this.accountSuggestions.length > 0;
+                this.accountSearchMessage = this.accountSuggestions.length ? '' : 'No se encontraron clientes a los que tengas acceso.';
+            } catch (error) {
+                if (requestId === this.accountSearchRequest) this.accountSearchMessage = this.getErrorMessage(error);
+            }
+        }, BRANCH_SEARCH_DELAY);
+    }
 
-        if (trimmedTerm.length < 2) {
-            this.branchSearchRequest += 1;
-            this.isSearchingBranches = false;
-            this.branchSearchMessage = trimmedTerm
-                ? 'Escribe al menos 2 caracteres.'
-                : '';
+    handleAccountFocus() {
+        clearTimeout(this.branchBlurTimer);
+        this.showBranchSuggestions = false;
+        this.showAccountSuggestions = this.accountSuggestions.length > 0;
+    }
+    handleAccountBlur() {
+        // eslint-disable-next-line @lwc/lwc/no-async-operation
+        this.branchBlurTimer = setTimeout(() => { this.showAccountSuggestions = false; }, 150);
+    }
+
+    async selectAccount(event) {
+        const account = this.accountSuggestions.find(item => item.Id === event.currentTarget.dataset.id);
+        if (!account) return;
+        clearTimeout(this.branchBlurTimer);
+        this.selectedAccountId = account.Id;
+        this.accountSearch = account.Name;
+        this.showAccountSuggestions = false;
+        this.selectedBranchId = undefined;
+        this.branchSuggestions = [];
+        this.form = { ...this.form, commercialName: '', state: '', municipality: '', city: '' };
+        this.syncLocationSearches();
+        const requestId = ++this.branchSearchRequest;
+        this.isSearchingBranches = true;
+        this.branchSearchMessage = '';
+        try {
+            const branches = await getBranchesForAccount({ accountId: account.Id });
+            if (requestId !== this.branchSearchRequest || account.Id !== this.selectedAccountId) return;
+            this.branchSuggestions = (branches || []).map(branch => {
+                const state = this.resolveStateName(branch.state);
+                return { ...branch, state, subtitle: [branch.city, state].filter(Boolean).join(' · ') };
+            });
+            this.showBranchSuggestions = this.branchSuggestions.length > 0;
+            this.branchSearchMessage = this.branchSuggestions.length ? '' : 'Este cliente no tiene sucursales disponibles para tu usuario.';
+        } catch (error) {
+            if (requestId === this.branchSearchRequest) this.branchSearchMessage = this.getErrorMessage(error);
+        } finally {
+            if (requestId === this.branchSearchRequest) this.isSearchingBranches = false;
+        }
+    }
+
+    toggleBranchOptions() {
+        clearTimeout(this.branchBlurTimer);
+        this.showAccountSuggestions = false;
+        this.showBranchSuggestions = this.branchSuggestions.length > 0 && !this.showBranchSuggestions;
+    }
+
+    handleBranchKeyDown(event) {
+        if (!['ArrowDown', 'ArrowUp', 'Escape'].includes(event.key)) return;
+        event.preventDefault();
+        clearTimeout(this.branchBlurTimer);
+        this.showAccountSuggestions = false;
+        if (event.key === 'Escape') {
+            this.showBranchSuggestions = false;
+            this.template.querySelector('.branch-selector')?.focus();
             return;
         }
-
-        const requestId = ++this.branchSearchRequest;
-        this.branchSearchMessage = '';
-        // Debounce intencional; el temporizador se cancela al cambiar la búsqueda o desmontar el LWC.
-        // eslint-disable-next-line @lwc/lwc/no-async-operation
-        this.branchSearchTimer = setTimeout(
-            () => this.loadBranchSuggestions(trimmedTerm, requestId),
-            BRANCH_SEARCH_DELAY
-        );
-    }
-
-    async loadBranchSuggestions(searchTerm, requestId) {
-        this.isSearchingBranches = true;
-        try {
-            const results = await searchBranches({ searchTerm });
-            if (requestId !== this.branchSearchRequest) {
-                return;
-            }
-            this.branchSuggestions = results || [];
-            this.showBranchSuggestions = this.branchSuggestions.length > 0;
-            this.branchSearchMessage = this.branchSuggestions.length ? '' : 'No se encontraron sucursales.';
-        } catch (error) {
-            if (requestId === this.branchSearchRequest) {
-                this.branchSuggestions = [];
-                this.showBranchSuggestions = false;
-                this.branchSearchMessage = this.getErrorMessage(error);
-            }
-        } finally {
-            if (requestId === this.branchSearchRequest) {
-                this.isSearchingBranches = false;
-            }
-        }
-    }
-
-    handleBranchFocus() {
-        clearTimeout(this.branchBlurTimer);
         this.showBranchSuggestions = this.branchSuggestions.length > 0;
+        Promise.resolve().then(() => {
+            const options = [...this.template.querySelectorAll('.branch-lookup [role="option"]')];
+            const index = options.indexOf(event.target);
+            const next = index < 0 ? (event.key === 'ArrowDown' ? 0 : options.length - 1)
+                : (index + (event.key === 'ArrowDown' ? 1 : -1) + options.length) % options.length;
+            options[next]?.focus();
+        });
     }
 
-    handleBranchBlur() {
+    handleBranchBlur(event) {
+        if (event.currentTarget.contains(event.relatedTarget)) return;
         clearTimeout(this.branchBlurTimer);
         // Conserva la lista durante el clic y se cancela si el componente se desmonta.
         // eslint-disable-next-line @lwc/lwc/no-async-operation
@@ -617,17 +941,19 @@ export default class AlmexFormPrices extends LightningElement {
         this.selectedBranchId = branch.branchId;
         this.branchSearch = branch.name;
         this.showBranchSuggestions = false;
-        const municipality = this.resolveBranchMunicipality(branch.state, branch.city);
+        const state = this.resolveStateName(branch.state);
+        const municipality = this.resolveBranchMunicipality(state, branch.city);
         this.branchSearchMessage = branch.state && branch.city && municipality
             ? '' : 'Completa los datos de ubicación faltantes.';
         this.form = {
             ...this.form,
             commercialName: branch.name,
-            state: branch.state || '',
+            state,
             municipality,
             city: branch.city || ''
         };
         this.syncLocationSearches();
+        Promise.resolve().then(() => this.template.querySelector('.branch-selector')?.focus());
     }
 
     resolveBranchMunicipality(state, city) {
@@ -751,7 +1077,23 @@ export default class AlmexFormPrices extends LightningElement {
     }
 
     get stateOptions() {
-        return this.states.map(({ id, label, value }) => ({ id, label, value }));
+        return this.states.map(({ id, label, value, searchText }) => ({ id, label, value, searchText }));
+    }
+
+    resolveStateName(value) {
+        const normalized = this.normalize(value);
+        return this.states.find(state => this.normalize(state.value) === normalized
+            || (state.aliases || []).some(alias => this.normalize(alias) === normalized))?.value || value || '';
+    }
+
+    buildUSLocationCatalog(catalog) {
+        return (catalog?.states || []).map(state => ({
+            id: state.id, label: `${state.name} · EE. UU.`, value: state.name,
+            searchText: `${state.name} ${state.code} EE. UU. Estados Unidos USA`, aliases: [state.code],
+            places: state.cities.map(city => ({ id: `US${city.id}`, label: city.name, searchText: `${city.name} ${city.officialName}`,
+                municipality: city.name, city: city.name })),
+            cities: this.uniqueOptions(state.cities.map(city => ({ id: `US${city.id}`, label: city.name, value: city.name, searchText: city.name })), item => item.value)
+        }));
     }
 
     get clientMunicipalityOptions() {
@@ -918,13 +1260,18 @@ export default class AlmexFormPrices extends LightningElement {
             const requestInput = {
                 ...this.form,
                 periodYear: Number(this.form.periodYear),
-                periodMonth: Number(this.form.periodMonth),
+                consumptionType: 'A',
+                clientAccountId: this.isClientMode ? this.selectedAccountId : null,
+                branchId: this.isClientMode ? this.selectedBranchId : null,
                 monthlyConsumption: Number(this.form.monthlyConsumption),
                 price: Number(this.form.price),
-                shipmentSize: this.showShipmentSize ? this.form.shipmentSize : null,
+                shipmentSize: this.resolvedShipmentSize,
+                contractStartDate: this.isContract ? this.form.contractStartDate : null,
+                contractEndDate: this.isContract ? this.form.contractEndDate : null,
                 supplier: this.resolvedSupplier
             };
             delete requestInput.otherSupplier;
+            delete requestInput.otherShipmentSize;
             const response = await savePrice({
                 input: requestInput
             });
@@ -935,7 +1282,7 @@ export default class AlmexFormPrices extends LightningElement {
                 'Registro guardado',
                 response.message || (response.periodPersisted
                     ? 'La información se guardó correctamente.'
-                    : 'El registro se guardó, pero no se pudo guardar el periodo. Revisa los campos de año y mes y sus permisos.'),
+                    : 'El registro se guardó, pero no se pudo guardar el año. Revisa el campo y sus permisos.'),
                 response.periodPersisted ? 'success' : 'warning'
             );
             this.resetForm();
@@ -950,6 +1297,11 @@ export default class AlmexFormPrices extends LightningElement {
         this.template.querySelectorAll('lightning-input, lightning-combobox, select, input')
             .forEach(control => control.setCustomValidity(''));
         this.form = emptyForm();
+        this.contractDateText = { contractStartDate: '', contractEndDate: '' };
+        this.accountSearch = '';
+        this.accountSuggestions = [];
+        this.selectedAccountId = undefined;
+        this.showAccountSuggestions = false;
         clearTimeout(this.branchSearchTimer);
         clearTimeout(this.branchBlurTimer);
         this.branchSearchRequest += 1;
@@ -970,10 +1322,16 @@ export default class AlmexFormPrices extends LightningElement {
         const validations = {
             productName: Boolean(this.selectedProductConfig),
             subproductType: !this.showSubproduct || includes(this.subproductOptions, this.form.subproductType),
-            shipmentSize: !this.showShipmentSize || includes(SHIPMENT_SIZE_OPTIONS, this.form.shipmentSize),
+            shipmentSize: !this.showShipmentSize || includes(this.shipmentSizeOptions, this.form.shipmentSize),
             periodYear: includes(this.yearOptions, this.form.periodYear),
-            periodMonth: includes(MONTH_OPTIONS, this.form.periodMonth),
-            consumptionType: includes(this.consumptionTypeOptions, this.form.consumptionType),
+            clientAccount: !this.isClientMode || Boolean(this.selectedAccountId),
+            clientBranch: !this.isClientMode || Boolean(this.selectedBranchId),
+            commercialOperationType: includes(this.commercialOperationOptions, this.form.commercialOperationType),
+            contractStartDate: !this.isContract || Boolean(this.form.contractStartDate),
+            contractEndDate: !this.isContract || (Boolean(this.form.contractEndDate) &&
+                this.form.contractEndDate >= this.form.contractStartDate),
+            otherShipmentSize: !this.showOtherShipmentSize || (/^[0-9]+$/.test(this.form.otherShipmentSize) &&
+                Number(this.form.otherShipmentSize) > 0 && this.form.otherShipmentSize.length <= 10),
             unit: includes(UNIT_OPTIONS, this.form.unit),
             supplier: includes(this.supplierOptions, this.form.supplier),
             price: /^\d*(?:\.\d{1,2})?$/.test(this.form.price) &&

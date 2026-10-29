@@ -4,6 +4,23 @@ import HIGHMAPS from '@salesforce/resourceUrl/Highmaps';
 import MEXICO_STATES_MAP from '@salesforce/resourceUrl/MexicoStatesMap';
 import sheetjs from '@salesforce/resourceUrl/sheetjs';
 import getPrices from '@salesforce/apex/ALMEX_MapDataController.getPrices';
+import getExchangeRate from '@salesforce/apex/ALMEX_MapDataController.getExchangeRate';
+import USER_TIME_ZONE from '@salesforce/i18n/timeZone';
+
+function toExcelRegistrationDate(value) {
+    if (!value) return '';
+    const date = new Date(value);
+    if (!Number.isFinite(date.getTime())) return '';
+    const parts = Object.fromEntries(new Intl.DateTimeFormat('en-GB', {
+        timeZone: USER_TIME_ZONE,
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'
+    }).formatToParts(date).map(part => [part.type, part.value]));
+    // Excel no almacena zona horaria: conservar la fecha/hora local del usuario de Salesforce.
+    const localTime = Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day),
+        Number(parts.hour), Number(parts.minute), Number(parts.second));
+    return { t: 'n', v: (localTime - Date.UTC(1899, 11, 30)) / 86400000, z: 'dd/mm/yyyy hh:mm:ss' };
+}
 
 const PRICE_UNITS = Object.freeze({
     MXN_PER_KG: 'MXN_Kg',
@@ -152,6 +169,7 @@ function normalizeUnitKey(unit) {
 function getPriceUnitConfig(unit) {
     switch (normalizeUnitKey(unit)) {
         case 'MXN_KG':
+        case 'MXN_KLG':
         case 'MXN_KILO':
             return PRICE_UNIT_CONFIG[PRICE_UNITS.MXN_PER_KG];
 
@@ -180,15 +198,11 @@ function getPriceUnitConfig(unit) {
     }
 }
 
-function getRecordCurrency(record) {
-    return getPriceUnitConfig(record?.Unidad__c)?.currency || null;
-}
-
 function getRecordConsumptionType(record) {
     return String(record?.Tipo_consumo_toneladas__c || '').trim().toUpperCase() || 'M';
 }
 
-function normalizePricePerKg(price, unit) {
+function normalizePricePerTon(price, unit, mxnPerUsd) {
     const numericPrice = Number(price);
     const unitConfig = getPriceUnitConfig(unit);
 
@@ -196,7 +210,31 @@ function normalizePricePerKg(price, unit) {
         return null;
     }
 
-    return numericPrice / unitConfig.divisor;
+    const perTon = numericPrice / unitConfig.divisor * 1000;
+    if (unitConfig.currency === CURRENCIES.USD) return perTon;
+    return Number.isFinite(mxnPerUsd) && mxnPerUsd > 0 ? perTon / mxnPerUsd : null;
+}
+
+function normalizePeriodValue(value, record) {
+    return getRecordConsumptionType(record) === 'A' ? value : value * 12;
+}
+
+function normalizeConsumption(record) {
+    return normalizePeriodValue(Number(record.Consumo_mensual__c) || 0, record);
+}
+
+function normalizePeriodPrice(record, mxnPerUsd) {
+    const pricePerTon = normalizePricePerTon(record.Precio_producto__c, record.Unidad__c, mxnPerUsd);
+    // Regla comercial: homologar cada precio al periodo elegido ANTES de promediar.
+    // No redondear aquí ni modificar el precio registrado en Salesforce.
+    return pricePerTon === null ? null : normalizePeriodValue(pricePerTon, record);
+}
+
+function formatRegisteredPrice(price, unit) {
+    if (price === null || price === undefined || price === '' || !Number.isFinite(Number(price))) return '';
+    const amount = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(price));
+    const currency = getPriceUnitConfig(unit)?.currency;
+    return currency ? `${currency} ${amount}` : `${amount} (${unit || 'Sin unidad'})`;
 }
 
 function productUsesShipmentSize(product) {
@@ -207,6 +245,7 @@ function productUsesShipmentSize(product) {
         .trim();
 
     return (
+        normalizedProduct === 'almidon' ||
         normalizedProduct.includes('glucosa') ||
         normalizedProduct.includes('fructosa') ||
         normalizedProduct.includes('fructuosa') ||
@@ -219,23 +258,23 @@ function productUsesShipmentSize(product) {
     );
 }
 
+function getRecordYears(record) {
+    const period = getRecordPeriod(record);
+    return period ? [period.year] : [];
+}
+
 function getRecordPeriod(record) {
     const periodYear = Number(record?.Periodo_Anio__c);
-    const periodMonth = Number(record?.Periodo_Mes__c);
 
     if (
         Number.isInteger(periodYear) &&
         periodYear >= 2000 &&
-        periodYear <= 2100 &&
-        Number.isInteger(periodMonth) &&
-        periodMonth >= 1 &&
-        periodMonth <= 12
+        periodYear <= 2100
     ) {
         return {
             year: periodYear,
-            month: periodMonth,
-            key: periodYear * 100 + periodMonth,
-            label: `${String(periodMonth).padStart(2, '0')}/${periodYear}`
+            key: periodYear,
+            label: String(periodYear)
         };
     }
 
@@ -262,55 +301,122 @@ export default class MapaNacional extends LightningElement {
 
     selectedProvider = 'ALL';
     selectedMapProviders = [];
-    selectedCurrency = CURRENCIES.MXN;
-    selectedConsumptionType = 'M';
+    get selectedCurrency() { return CURRENCIES.USD; }
+    get selectedConsumptionType() { return 'A'; }
+    selectedPeriodYear = '';
+    exchangeRate;
+    exchangeRateError = '';
+    historyProvider = 'ALL';
     lastLegendClickProvider = '';
     lastLegendClickTime = 0;
 
-    get isMxnSelected() {
-        return this.selectedCurrency === CURRENCIES.MXN;
-    }
-
     get isUsdSelected() {
-        return this.selectedCurrency === CURRENCIES.USD;
-    }
-
-    get mxnCurrencyButtonClass() {
-        return this.isMxnSelected
-            ? 'currency-option currency-option-active'
-            : 'currency-option';
-    }
-
-    get usdCurrencyButtonClass() {
-        return this.isUsdSelected
-            ? 'currency-option currency-option-active'
-            : 'currency-option';
+        return true;
     }
 
     get currentPriceUnitLabel() {
-        return `${this.selectedCurrency}/Kg`;
+        return 'USD/Ton';
     }
 
-    get isMonthlyConsumption() {
-        return this.selectedConsumptionType === 'M';
+    get fxRate() { return Number(this.exchangeRate?.mxnPerUsd) || null; }
+
+    get exchangeRateLabel() {
+        return this.fxRate
+            ? `Banxico FIX · 1 USD = ${this.fxRate} MXN · Fecha ${this.exchangeRate.rateDate}`
+            : 'Sin tipo de cambio: los precios MXN no están convertidos';
     }
 
-    get isAnnualConsumption() {
-        return this.selectedConsumptionType === 'A';
+    get periodYearOptions() {
+        const years = new Set(this.prices.flatMap(getRecordYears));
+        return [{ label: 'Selecciona el año', value: '' }, ...[...years].sort((a, b) => b - a).map(y => ({ label: String(y), value: String(y) }))];
     }
 
-    get monthlyConsumptionButtonClass() {
-        return this.isMonthlyConsumption
-            ? 'currency-option currency-option-active' : 'currency-option';
+    get periodFilterLabel() {
+        return this.selectedPeriodYear ? `Año ${this.selectedPeriodYear}` : 'Todos los años';
     }
 
-    get annualConsumptionButtonClass() {
-        return this.isAnnualConsumption
-            ? 'currency-option currency-option-active' : 'currency-option';
+    matchesPeriod(record) {
+        return !this.selectedPeriodYear || getRecordYears(record).includes(Number(this.selectedPeriodYear));
+    }
+
+    get historyContextLabel() {
+        return `Solo propuestas · Vista anual · ${this.periodFilterLabel} · ${this.currentPriceUnitLabel}`;
+    }
+
+    handlePeriodChange(event) {
+        const value = event.detail?.value ?? event.target.value;
+        if (event.target.name === 'periodFilterYear') {
+            this.selectedPeriodYear = value;
+            if (this.selectedPeriodYear) this.selectedYear = this.selectedPeriodYear;
+        }
+        this.refreshProviderFilteredViews();
+    }
+
+    get hasPeriodFilter() { return Boolean(this.selectedPeriodYear); }
+
+    clearPeriodFilters() {
+        this.selectedPeriodYear = '';
+        this.refreshProviderFilteredViews();
+    }
+
+    get historyProviderOptions() {
+        return [{ label: 'Todos los proveedores', value: 'ALL' }, ...[...new Set(this.prices
+            .filter(p => p.Nombre_producto__c === this.selectedProduct && p.Tipo_operacion_comercial__c === 'Propuesta' && this.matchesPeriod(p) && this.matchesActiveProvider(p))
+            .map(p => normalizeProvider(p.Proveedor__c)))].sort().map(value => ({ label: value, value }))];
+    }
+
+    handleHistoryProviderChange(event) { this.historyProvider = event.detail?.value ?? event.target.value; }
+
+    get historyTableColumns() {
+        // Una propuesta no tiene vigencia contractual: esas columnas pertenecen al desglose.
+        return this.cityTableColumns.filter(column => ![
+            'operationType', 'contractStartDate', 'contractEndDate'
+        ].includes(column.fieldName));
+    }
+
+    tableColumnWidths = {};
+
+    getTableStyle(columns, key, selectable = false) {
+        const signature = columns.map(column => column.fieldName).join('|');
+        const resized = this.tableColumnWidths[key];
+        const columnsWidth = resized?.signature === signature ? resized.width : columns.reduce(
+            (total, column) => total + (column.fixedWidth || column.initialWidth || 150), 0
+        );
+        // La tabla debe caber completa en su host. Solo el div exterior desplaza.
+        const width = Math.ceil(columnsWidth) + (selectable ? 52 : 0) + 2;
+        return `width: ${width}px; min-width: 100%;`;
+    }
+
+    get summaryTableStyle() { return this.getTableStyle(this.summaryTableColumns, 'state', true); }
+    get cityTableStyle() { return this.getTableStyle(this.cityTableColumns, 'city'); }
+    get historyTableStyle() { return this.getTableStyle(this.historyTableColumns, 'history'); }
+    handleTableResize(event) {
+        if (!event.detail?.isUserTriggered || !Array.isArray(event.detail.columnWidths)) return;
+        const key = event.currentTarget.dataset.table;
+        const columns = key === 'state' || key === 'expandedState' ? this.summaryTableColumns
+            : key === 'history' ? this.historyTableColumns : this.cityTableColumns;
+        const widths = event.detail.columnWidths;
+        const selectable = key === 'state';
+        const dataWidths = selectable && widths.length === columns.length + 1 ? widths.slice(1) : widths;
+        if (dataWidths.length !== columns.length || dataWidths.some(width => !Number.isFinite(width) || width < 50)) return;
+        this.tableColumnWidths = { ...this.tableColumnWidths, [key]: {
+            signature: columns.map(column => column.fieldName).join('|'),
+            width: dataWidths.reduce((total, width) => total + width, 0)
+        } };
+    }
+
+    get historyTableData() {
+        return this.buildCityTableData(this.prices.filter(record => record.Nombre_producto__c === this.selectedProduct &&
+            record.Tipo_operacion_comercial__c === 'Propuesta' && this.matchesPeriod(record) && this.matchesActiveProvider(record) &&
+            (this.historyProvider === 'ALL' || normalizeProvider(record.Proveedor__c) === this.historyProvider)), this.selectedConsumptionType);
     }
 
     get consumptionPeriodLabel() {
-        return this.isAnnualConsumption ? 'anual' : 'mensual';
+        return 'anual';
+    }
+
+    get averagePriceTitle() {
+        return `Precio promedio ${this.consumptionPeriodLabel}`;
     }
 
     get mapSubtitle() {
@@ -321,11 +427,34 @@ export default class MapaNacional extends LightningElement {
         const numericPrice = Number(this.averagePrice) || 0;
         const prefix = this.isUsdSelected ? 'US$' : '$';
 
-        return `${prefix}${numericPrice.toFixed(2)}`;
+        return this.averagePrice === null ? '—' : `${prefix}${numericPrice.toFixed(2)}`;
     }
 
     get usesShipmentSize() {
         return productUsesShipmentSize(this.selectedProduct);
+    }
+
+    get hasSubproduct() {
+        return ['Almidón', 'Azúcar'].includes(this.selectedProduct);
+    }
+
+    get hasShipmentColumn() {
+        return this.usesShipmentSize || (this.selectedProduct === 'Azúcar' && this.prices.some(record =>
+            record.Nombre_producto__c === this.selectedProduct && this.matchesPeriod(record) &&
+            String(record.Tipo_subproducto__c || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase() === 'azucar liquida'
+        ));
+    }
+
+    get priceDataWarning() {
+        const excluded = this.getSelectedProductRecords().filter(record =>
+            normalizePricePerTon(record.Precio_producto__c, record.Unidad__c, this.fxRate) === null
+        ).length;
+        return excluded ? `${excluded} registro(s) sin precio unitario comparable (precio ausente o cero, unidad no reconocida o conversión no disponible). Se muestran en el detalle, pero no se incluyen en los promedios.` : '';
+    }
+
+    get cityContextLabel() {
+        const states = this.selectedStates.length ? `Estados seleccionados: ${this.selectedStates.join(', ')}` : 'Todos los estados';
+        return `${this.selectedProduct} · ${states} · Vista ${this.consumptionPeriodLabel} · ${this.currentPriceUnitLabel}`;
     }
 
     get summaryRowCount() {
@@ -368,7 +497,7 @@ export default class MapaNacional extends LightningElement {
     }
 
     get summaryContextLabel() {
-        return `${this.providerSelectionLabel} · ${this.currentPriceUnitLabel} · Consumo ${this.consumptionPeriodLabel}`;
+        return `${this.providerSelectionLabel} · ${this.currentPriceUnitLabel} · Vista ${this.consumptionPeriodLabel}`;
     }
 
     matchesActiveProvider(record) {
@@ -389,8 +518,7 @@ export default class MapaNacional extends LightningElement {
                         price =>
                             price.Nombre_producto__c ===
                                 this.selectedProduct &&
-                            this.isRecordInSelectedCurrency(price) &&
-                            getRecordConsumptionType(price) === this.selectedConsumptionType
+                            this.matchesPeriod(price)
                     )
                     .map(
                         price =>
@@ -419,6 +547,9 @@ export default class MapaNacional extends LightningElement {
     }
 
     expandedTable = null;
+    expandedColumnWidths = {};
+    expandedColumnDrag = null;
+    expandedTableTrigger;
 
     get isTableExpanded() {
         return this.expandedTable !== null;
@@ -428,8 +559,153 @@ export default class MapaNacional extends LightningElement {
         return this.expandedTable === 'state';
     }
 
-    get isCityTableExpanded() {
-        return this.expandedTable === 'city';
+    get expandedTableTitle() {
+        return this.isStateTableExpanded ? 'Resumen estatal' : 'Desglose por ciudad';
+    }
+
+    get expandedTableContext() {
+        const count = this.isStateTableExpanded ? this.summaryTableData.length : this.cityTableData.length;
+        return `${this.selectedProduct} · ${count} ${this.isStateTableExpanded ? 'estados' : 'registros'} · Vista ${this.consumptionPeriodLabel} · ${this.currentPriceUnitLabel}`;
+    }
+
+    get expandedTableColumns() {
+        const columns = this.isStateTableExpanded ? this.summaryTableColumns : this.cityTableColumns;
+        const widths = this.expandedColumnWidths[this.expandedTable] || {};
+        return columns.map(column => {
+            const width = widths[column.fieldName] || column.initialWidth || 150;
+            return { ...column, width, style: `width: ${width}px;`, resizeLabel: `Cambiar ancho de ${column.label}` };
+        });
+    }
+
+    get expandedTableStyle() {
+        const width = this.expandedTableColumns.reduce((total, column) => total + column.width, 0);
+        return `width: ${width}px; min-width: 100%;`;
+    }
+
+    get expandedTableRows() {
+        const rows = this.isStateTableExpanded ? this.summaryTableData : this.cityTableData;
+        return rows.map(row => ({
+            id: row.id,
+            cells: this.expandedTableColumns.map(column => ({
+                key: column.fieldName,
+                text: this.formatExpandedCell(row[column.fieldName], column),
+                className: column.type === 'currency' || column.type === 'number'
+                    || column.cellAttributes?.alignment === 'right' ? 'expanded-cell expanded-cell-number' : 'expanded-cell'
+            }))
+        }));
+    }
+
+    get expandedTableEmpty() {
+        return (this.isStateTableExpanded ? this.summaryTableData : this.cityTableData).length === 0;
+    }
+
+    get expandedColumnCount() {
+        return this.expandedTableColumns.length;
+    }
+
+    formatExpandedCell(value, column) {
+        if (value === null || value === undefined || value === '') return '';
+        if (column.type === 'currency' || column.type === 'number') {
+            const attributes = column.typeAttributes || {};
+            const options = {
+                minimumFractionDigits: attributes.minimumFractionDigits ?? 0,
+                maximumFractionDigits: attributes.maximumFractionDigits ?? 2
+            };
+            if (column.type === 'currency') {
+                Object.assign(options, { style: 'currency', currency: attributes.currencyCode || 'USD', currencyDisplay: 'code' });
+            }
+            return new Intl.NumberFormat('en-US', options).format(Number(value));
+        }
+        if (column.type === 'date-local') {
+            const date = new Date(`${String(value).slice(0, 10)}T00:00:00Z`);
+            return Number.isNaN(date.getTime()) ? String(value)
+                : new Intl.DateTimeFormat('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC' }).format(date);
+        }
+        return String(value);
+    }
+
+    setExpandedColumnWidth(field, width) {
+        if (!this.expandedTableColumns.some(column => column.fieldName === field)) return;
+        this.expandedColumnWidths = {
+            ...this.expandedColumnWidths,
+            [this.expandedTable]: {
+                ...this.expandedColumnWidths[this.expandedTable],
+                [field]: Math.max(90, Math.min(1000, Math.round(width)))
+            }
+        };
+    }
+
+    readExpandedColumnWidths() {
+        const columns = this.expandedTableColumns;
+        const headers = [...this.template.querySelectorAll('.expanded-native-table th')];
+        // Si la tabla se ha estirado al ancho del modal, partir del ancho REAL
+        // evita saltos y permite crecer sin encoger las columnas vecinas.
+        const widths = Object.fromEntries(columns.map((column, index) => [
+            column.fieldName, Math.round(headers[index]?.getBoundingClientRect().width || column.width)
+        ]));
+        this.expandedColumnWidths = { ...this.expandedColumnWidths, [this.expandedTable]: widths };
+        return widths;
+    }
+
+    handleExpandedResizeStart(event) {
+        if (event.button !== 0) return;
+        event.preventDefault();
+        event.stopPropagation();
+        const field = event.currentTarget.dataset.field;
+        const column = this.expandedTableColumns.find(item => item.fieldName === field);
+        if (!column) return;
+        const widths = this.readExpandedColumnWidths();
+        this.expandedColumnDrag = { field, startX: event.clientX, width: widths[field], pointerId: event.pointerId };
+        event.currentTarget.setPointerCapture?.(event.pointerId);
+    }
+
+    handleExpandedResizeMove(event) {
+        const drag = this.expandedColumnDrag;
+        if (!drag || event.pointerId !== drag.pointerId) return;
+        event.preventDefault();
+        this.setExpandedColumnWidth(drag.field, drag.width + event.clientX - drag.startX);
+    }
+
+    handleExpandedResizeEnd(event) {
+        const drag = this.expandedColumnDrag;
+        if (!drag || event.pointerId !== drag.pointerId) return;
+        this.expandedColumnDrag = null;
+        if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+        }
+    }
+
+    handleExpandedResizeKey(event) {
+        if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+        event.preventDefault();
+        event.stopPropagation();
+        const field = event.currentTarget.dataset.field;
+        const widths = this.readExpandedColumnWidths();
+        const step = event.shiftKey ? 50 : 20;
+        const width = event.key === 'Home' ? 90 : event.key === 'End' ? 1000
+            : widths[field] + (event.key === 'ArrowRight' ? step : -step);
+        this.setExpandedColumnWidth(field, width);
+    }
+
+    resetExpandedColumnWidths() {
+        this.expandedColumnWidths = { ...this.expandedColumnWidths, [this.expandedTable]: {} };
+    }
+
+    handleExpandedKeyDown(event) {
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            this.closeExpandedTable();
+        } else if (event.key === 'Tab') {
+            const controls = [...this.template.querySelector('.table-expanded').querySelectorAll('button, [tabindex="0"]')];
+            const index = controls.indexOf(event.target);
+            if (event.shiftKey && index === 0) {
+                event.preventDefault();
+                controls[controls.length - 1].focus();
+            } else if (!event.shiftKey && index === controls.length - 1) {
+                event.preventDefault();
+                controls[0].focus();
+            }
+        }
     }
 
     selectedYear = String(new Date().getFullYear());
@@ -445,8 +721,8 @@ export default class MapaNacional extends LightningElement {
     get yearOptions() {
         const years = [
             ...new Set(
-                this.getSelectedProductRecords()
-                    .map(record => getRecordPeriod(record)?.year)
+                this.prices.filter(record => record.Nombre_producto__c === this.selectedProduct && this.matchesActiveProvider(record))
+                    .flatMap(getRecordYears)
                     .filter(Number.isInteger)
             )
         ].sort((first, second) => second - first);
@@ -473,24 +749,22 @@ export default class MapaNacional extends LightningElement {
         return this.getCityTableColumns(this.selectedConsumptionType);
     }
 
-    getCityTableColumns(consumptionType) {
-        const productDetailColumn = this.usesShipmentSize
-            ? {
+    getCityTableColumns() {
+        const productDetailColumns = [];
+        if (this.hasSubproduct) productDetailColumns.push({
+                label: 'Subproducto', fieldName: 'subproduct', type: 'text', wrapText: true, initialWidth: 165
+            });
+        if (this.hasShipmentColumn) productDetailColumns.push({
                 label: 'Tamaño de embarque',
                 fieldName: 'shipmentSize',
                 type: 'text',
                 wrapText: true,
                 initialWidth: 165
-            }
-            : {
-                label: 'Subproducto',
-                fieldName: 'subproduct',
-                type: 'text',
-                wrapText: true,
-                initialWidth: 165
-            };
+            });
 
         return [
+            { label: 'Producto', fieldName: 'product', type: 'text', wrapText: true, initialWidth: 170 },
+            ...productDetailColumns,
             {
                 label: 'Estado',
                 fieldName: 'state',
@@ -510,7 +784,6 @@ export default class MapaNacional extends LightningElement {
                 wrapText: true,
                 initialWidth: 180
             },
-            productDetailColumn,
             {
                 label: 'Proveedor',
                 fieldName: 'provider',
@@ -518,7 +791,7 @@ export default class MapaNacional extends LightningElement {
                 initialWidth: 130
             },
             {
-                label: consumptionType === 'A' ? 'Consumo anual (Ton)' : 'Consumo mensual (Ton)',
+                label: 'Consumo anual (Ton)',
                 fieldName: 'consumption',
                 type: 'number',
                 typeAttributes: {
@@ -528,7 +801,7 @@ export default class MapaNacional extends LightningElement {
                 initialWidth: 155
             },
             {
-                label: `Precio registrado (${this.selectedCurrency})`,
+                label: 'Precio (USD/Ton)',
                 fieldName: 'price',
                 type: 'currency',
                 typeAttributes: {
@@ -537,14 +810,23 @@ export default class MapaNacional extends LightningElement {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2
                 },
-                initialWidth: 180
+                initialWidth: 220
+            },
+            {
+                label: 'Precio registrado', fieldName: 'registeredPrice', type: 'text', initialWidth: 160,
+                cellAttributes: { alignment: 'right' }
             },
             {
                 label: 'Unidad original',
                 fieldName: 'unit',
                 type: 'text',
                 initialWidth: 135
-            }
+            },
+            { label: 'Periodo', fieldName: 'period', initialWidth: 125 },
+            { label: 'Origen del producto', fieldName: 'productOrigin', initialWidth: 155 },
+            { label: 'Tipo de operación comercial', fieldName: 'operationType', wrapText: true, initialWidth: 190 },
+            { label: 'Contrato: De', fieldName: 'contractStartDate', type: 'date-local', initialWidth: 150 },
+            { label: 'Contrato: A', fieldName: 'contractEndDate', type: 'date-local', initialWidth: 150 }
         ];
     }
 
@@ -552,7 +834,7 @@ export default class MapaNacional extends LightningElement {
         return this.getSummaryTableColumns(this.selectedConsumptionType);
     }
 
-    getSummaryTableColumns(consumptionType) {
+    getSummaryTableColumns() {
         return [
             {
                 label: 'Estado',
@@ -561,7 +843,7 @@ export default class MapaNacional extends LightningElement {
                 initialWidth: 120
             },
             {
-                label: consumptionType === 'A' ? 'Consumo anual (Ton)' : 'Consumo mensual (Ton)',
+                label: 'Consumo anual (Ton)',
                 fieldName: 'consumption',
                 type: 'number',
                 typeAttributes: {
@@ -611,7 +893,8 @@ export default class MapaNacional extends LightningElement {
                 fieldName: 'period',
                 type: 'text',
                 initialWidth: 150
-            }
+            },
+            { label: 'Origen del producto', fieldName: 'productOrigin', type: 'text', wrapText: true, initialWidth: 180 }
         ];
     }
 
@@ -671,11 +954,19 @@ export default class MapaNacional extends LightningElement {
     }
 
 
-    loadPrices() {
+    async loadPrices() {
         this.dataLoadError = '';
-
-        getPrices()
-            .then(result => {
+        this.exchangeRateError = '';
+        const [priceResult, rateResult] = await Promise.allSettled([getPrices(), getExchangeRate()]);
+        if (rateResult.status === 'fulfilled' && Number(rateResult.value?.mxnPerUsd) > 0) {
+            this.exchangeRate = rateResult.value;
+        } else {
+            this.exchangeRate = null;
+            this.exchangeRateError = 'No se pudo consultar Banxico. Los precios MXN quedan sin conversión y no participan en los promedios; los precios USD siguen disponibles.';
+        }
+        try {
+                if (priceResult.status === 'rejected') throw priceResult.reason;
+                const result = priceResult.value;
                 const records = Array.isArray(result) ? result : [];
 
                 this.prices = records.map(record => ({
@@ -694,15 +985,15 @@ export default class MapaNacional extends LightningElement {
                 this.updateSummaryTable();
                 this.updateCityTable();
                 this.renderMap();
-            })
-            .catch(error => {
+                this.renderTrendChart();
+        } catch (error) {
                 console.error('Error obteniendo Registros:', error);
                 this.prices = [];
                 this.dataLoadError =
                     error?.body?.message ||
                     error?.message ||
                     'Salesforce no devolvió el detalle del error.';
-            });
+        }
     }
 
 
@@ -711,6 +1002,14 @@ export default class MapaNacional extends LightningElement {
     // ==============================
 
     renderedCallback() {
+        for (const [name, value] of [['periodFilterYear', this.selectedPeriodYear], ['providerFilter', this.selectedProvider]]) {
+            const periodSelect = this.template.querySelector(`select[name="${name}"]`);
+            if (periodSelect && periodSelect.value !== value) periodSelect.value = value;
+        }
+        const historyProviderSelect = this.template.querySelector('select[name="historyProvider"]');
+        if (historyProviderSelect && historyProviderSelect.value !== this.historyProvider) {
+            historyProviderSelect.value = this.historyProvider;
+        }
         const productSelect = this.template.querySelector('.product-select');
         if (productSelect && productSelect.value !== this.selectedProduct) {
             productSelect.value = this.selectedProduct;
@@ -765,8 +1064,7 @@ export default class MapaNacional extends LightningElement {
         const result = this.prices.filter(
             price =>
                 price.Nombre_producto__c === this.selectedProduct &&
-                this.isRecordInSelectedCurrency(price) &&
-                getRecordConsumptionType(price) === this.selectedConsumptionType
+                this.matchesPeriod(price)
         );
 
         const currencyPrefix = this.isUsdSelected ? 'US$' : '$';
@@ -825,8 +1123,8 @@ export default class MapaNacional extends LightningElement {
                 }
 
                 const feature = mapFeatures.find(
-                    feature =>
-                        feature.properties.name ===
+                    candidate =>
+                        candidate.properties.name ===
                             getHighmapsStateName(stateName)
                 );
 
@@ -889,6 +1187,16 @@ export default class MapaNacional extends LightningElement {
 
                 cursor: 'pointer',
 
+                point: {
+                    events: {
+                        click: event => {
+                            event?.originalEvent?.preventDefault?.();
+                            event?.originalEvent?.stopPropagation?.();
+                            this.handleMapProviderLegendClick(provider);
+                        }
+                    }
+                },
+
                 events: {
                     legendItemClick: event => {
                         event?.browserEvent?.preventDefault?.();
@@ -930,7 +1238,7 @@ export default class MapaNacional extends LightningElement {
                             <b>Proveedor líder:</b> ${pointProvider}<br>
                             <b>Consumo ${consumptionPeriodLabel}:</b>
                             ${consumption.toLocaleString('es-MX')} Ton<br>
-                            <b>Precio promedio del estado:</b>
+                            <b>Precio promedio ${consumptionPeriodLabel} del estado:</b>
                             ${averagePriceText}<br>
                             <b>Precio ALMEX:</b>
                             ${almexPriceText}
@@ -1128,8 +1436,7 @@ export default class MapaNacional extends LightningElement {
 
         const products = new Set(
             this.prices
-                .filter(price => this.isRecordInSelectedCurrency(price)
-                    && getRecordConsumptionType(price) === this.selectedConsumptionType)
+                .filter(price => this.matchesPeriod(price) && this.matchesActiveProvider(price))
                 .map(price => price.Nombre_producto__c)
                 .filter(product => product)
         );
@@ -1166,30 +1473,16 @@ export default class MapaNacional extends LightningElement {
         const filteredPrices = this.getSelectedProductRecords();
 
         const records = filteredPrices
-            .map(record => {
-                const price = Number(record.Precio_producto__c);
-                const unit = record.Unidad__c;
-
-                const pricePerKg = normalizePricePerKg(price, unit);
-
-                if (
-                    isNaN(price) ||
-                    pricePerKg === null
-                ) {
-                    return null;
-                }
-
-                return pricePerKg;
-            })
+            .map(record => normalizePeriodPrice(record, this.fxRate, this.selectedConsumptionType))
             .filter(record => record !== null);
 
         if (records.length === 0) {
-            this.averagePrice = 0;
+            this.averagePrice = null;
             return;
         }
 
         const totalPrice = records.reduce(
-            (sum, pricePerKg) => sum + pricePerKg,
+            (sum, pricePerTon) => sum + pricePerTon,
             0
         );
 
@@ -1222,18 +1515,13 @@ export default class MapaNacional extends LightningElement {
     // FILTRAR POR PRODUCTO
     // ==============================
 
-    getSelectedProductRecords(consumptionType = this.selectedConsumptionType) {
+    getSelectedProductRecords() {
         return this.prices.filter(
             price =>
                 price.Nombre_producto__c === this.selectedProduct &&
-                this.isRecordInSelectedCurrency(price) &&
-                getRecordConsumptionType(price) === consumptionType &&
+                this.matchesPeriod(price) &&
                 this.matchesActiveProvider(price)
         );
-    }
-
-    isRecordInSelectedCurrency(record) {
-        return getRecordCurrency(record) === this.selectedCurrency;
     }
 
 
@@ -1242,6 +1530,7 @@ export default class MapaNacional extends LightningElement {
     // ==============================
 
     handleProductChange(event) {
+        this.historyProvider = 'ALL';
         this.selectedProvider = 'ALL';
         this.selectedMapProviders = [];
         this.selectedStateRowIds = [];
@@ -1256,54 +1545,11 @@ export default class MapaNacional extends LightningElement {
         this.renderTrendChart();
     }
 
-    handleCurrencyChange(event) {
-        const currency = event.currentTarget.dataset.currency;
-
-        if (
-            !Object.values(CURRENCIES).includes(currency) ||
-            currency === this.selectedCurrency
-        ) {
-            return;
-        }
-
-        this.selectedCurrency = currency;
-        this.selectedProvider = 'ALL';
-        this.selectedMapProviders = [];
-        this.selectedStateRowIds = [];
-        this.selectedStates = [];
-
-        this.syncSelectedYear();
-        this.updateCards();
-        this.updateSummaryTable();
-        this.updateCityTable();
-        this.renderMap();
-        this.renderTrendChart();
-    }
-
-    handleConsumptionTypeChange(event) {
-        const consumptionType = event.currentTarget.dataset.consumptionType;
-        if (!['M', 'A'].includes(consumptionType)
-            || consumptionType === this.selectedConsumptionType) {
-            return;
-        }
-        this.selectedConsumptionType = consumptionType;
-        this.selectedProvider = 'ALL';
-        this.selectedMapProviders = [];
-        this.selectedStateRowIds = [];
-        this.selectedStates = [];
-        this.syncSelectedYear();
-        this.updateCards();
-        this.updateSummaryTable();
-        this.updateCityTable();
-        this.renderMap();
-        this.renderTrendChart();
-    }
-
      // ==============================
     // OBTENER PROVEEDORES LIDERES
     // ==============================
 
-    getLeadingProviders(result) {
+    getLeadingProviders(result, consumptionType = this.selectedConsumptionType) {
         const totalsByState = {};
 
         result.forEach(price => {
@@ -1311,10 +1557,7 @@ export default class MapaNacional extends LightningElement {
             const state = normalizeStateName(rawState);
             const provider = price.Proveedor__c;
             const consumption =
-                Number(price.Consumo_mensual__c) || 0;
-            const productPrice =
-                Number(price.Precio_producto__c) || 0;
-            const unit = price.Unidad__c;
+                normalizeConsumption(price, consumptionType);
 
             if (!state || !provider) {
                 return;
@@ -1342,13 +1585,10 @@ export default class MapaNacional extends LightningElement {
                 consumption;
 
             // ==============================
-            // CONVERSIÓN DE PRECIO A KG
+            // CONVERSIÓN DE PRECIO A USD/TON
             // ==============================
 
-            const normalizedPrice = normalizePricePerKg(
-                productPrice,
-                unit
-            );
+            const normalizedPrice = normalizePeriodPrice(price, this.fxRate, consumptionType);
 
             if (normalizedPrice !== null) {
                 totalsByState[state].prices.push(
@@ -1380,7 +1620,7 @@ export default class MapaNacional extends LightningElement {
                         (sum, price) => sum + price,
                         0
                     ) / prices.length
-                    : 0;
+                    : null;
 
                 const almexPrice =
                     stateData.almexPrices.length
@@ -1435,7 +1675,7 @@ export default class MapaNacional extends LightningElement {
     }
 
     renderMap() {
-        if (!this.mapData || !this.prices.length) {
+        if (!this.mapData) {
             return;
         }
 
@@ -1473,6 +1713,10 @@ export default class MapaNacional extends LightningElement {
     }
 
     refreshProviderFilteredViews() {
+        const availableProviders = new Set(this.providerOptions.map(option => option.value));
+        if (!availableProviders.has(this.selectedProvider)) this.selectedProvider = 'ALL';
+        this.selectedMapProviders = this.selectedMapProviders.filter(provider => availableProviders.has(provider));
+        if (!this.historyProviderOptions.some(option => option.value === this.historyProvider)) this.historyProvider = 'ALL';
         this.selectedStateRowIds = [];
         this.selectedStates = [];
         this.syncSelectedYear();
@@ -1495,7 +1739,14 @@ export default class MapaNacional extends LightningElement {
 
     buildSummaryTableData(result, consumptionType) {
 
-        const leadingProviders = this.getLeadingProviders(result);
+        const leadingProviders = this.getLeadingProviders(result, consumptionType);
+        const stateOrigins = {};
+        result.forEach(record => {
+            const state = normalizeStateName(record.Estado__c);
+            if (!state) return;
+            if (!stateOrigins[state]) stateOrigins[state] = new Set();
+            stateOrigins[state].add(record.Producto_importado__c ? 'Importado' : 'Nacional');
+        });
 
         const statePrices = {};
 
@@ -1508,21 +1759,15 @@ export default class MapaNacional extends LightningElement {
             const rawPrice =
                 Number(price.Precio_producto__c) || 0;
 
-            const unit = price.Unidad__c;
-
             if (!state || !provider || rawPrice <= 0) {
                 return;
             }
 
             // ==========================================
-            // NORMALIZAR A LA MONEDA SELECCIONADA POR KG
+            // NORMALIZAR A USD/TON, CONSERVANDO EL IMPORTE ORIGINAL
             // ==========================================
 
-            const normalizedPrice = normalizePricePerKg(rawPrice, unit);
-
-            if (normalizedPrice === null) {
-                return;
-            }
+            const normalizedPrice = normalizePeriodPrice(price, this.fxRate, consumptionType);
 
             // ==========================================
             // CREAR ESTRUCTURA DEL ESTADO
@@ -1541,11 +1786,11 @@ export default class MapaNacional extends LightningElement {
             // SEPARAR ALMEX DE COMPETENCIA
             // ==========================================
 
-            if (provider === 'ALMEX') {
+            if (normalizedPrice !== null && provider === 'ALMEX') {
                 statePrices[state].almex.push(
                     normalizedPrice
                 );
-            } else {
+            } else if (normalizedPrice !== null) {
                 statePrices[state].competition.push(
                     normalizedPrice
                 );
@@ -1601,7 +1846,7 @@ export default class MapaNacional extends LightningElement {
 
                 state: state,
 
-                consumption: stateData.consumption,
+                consumption: stateData.totalConsumption,
 
                 averagePrice: competitionAverage,
 
@@ -1611,7 +1856,10 @@ export default class MapaNacional extends LightningElement {
 
                 provider: stateData.provider,
 
-                period: prices.latestPeriod
+                period: prices.latestPeriod,
+                productOrigin: stateOrigins[state]?.size === 2
+                    ? 'Nacional e importado'
+                    : [...(stateOrigins[state] || [])][0] || '—'
             };
         });
     }
@@ -1637,11 +1885,20 @@ export default class MapaNacional extends LightningElement {
                 state: normalizedState,
                 city: price.Ciudad__c || '',
                 client: price.Nombre_comercial__c || '',
+                product: price.Nombre_producto__c || '',
                 subproduct: price.Tipo_subproducto__c || '',
                 shipmentSize: price.Tama_o_embarque__c || '—',
                 provider: normalizeProvider(price.Proveedor__c),
-                consumption: Number(price.Consumo_mensual__c) || 0,
-                price: Number(price.Precio_producto__c) || 0,
+                consumption: normalizeConsumption(price, consumptionType),
+                price: normalizePeriodPrice(price, this.fxRate, consumptionType),
+                originalPrice: price.Precio_producto__c ?? null,
+                registeredPrice: formatRegisteredPrice(price.Precio_producto__c, price.Unidad__c),
+                createdDate: price.CreatedDate || null,
+                period: getRecordPeriod(price)?.label || '',
+                productOrigin: price.Producto_importado__c ? 'Importado' : 'Nacional',
+                operationType: price.Tipo_operacion_comercial__c || '',
+                contractStartDate: price.Fecha_inicio_contrato__c || null,
+                contractEndDate: price.Fecha_fin_contrato__c || null,
                 unit: price.Unidad__c || ''
             };
         });
@@ -1682,8 +1939,8 @@ export default class MapaNacional extends LightningElement {
 
     handleYearChange(event) {
         this.selectedYear = event.detail.value;
-
-        this.renderTrendChart();
+        this.selectedPeriodYear = this.selectedYear;
+        this.refreshProviderFilteredViews();
     }
 
     renderTrendChart() {
@@ -1695,38 +1952,35 @@ export default class MapaNacional extends LightningElement {
             return;
         }
 
-        const selectedYear = Number(this.selectedYear);
-        const pricesByMonth = Array.from({ length: 12 }, () => []);
+        const annualPrices = new Map();
 
         (this.prices || []).forEach(record => {
-            const period = getRecordPeriod(record);
+            const recordYears = getRecordYears(record).filter(year =>
+                !this.selectedPeriodYear || year === Number(this.selectedPeriodYear));
 
             if (
                 record.Nombre_producto__c !== this.selectedProduct ||
-                !this.isRecordInSelectedCurrency(record) ||
-                getRecordConsumptionType(record) !== this.selectedConsumptionType ||
+                !this.matchesPeriod(record) ||
                 !this.matchesActiveProvider(record) ||
-                !period ||
-                period.year !== selectedYear
+                !recordYears.length
             ) {
                 return;
             }
 
-            const normalizedPrice = normalizePricePerKg(
-                record.Precio_producto__c,
-                record.Unidad__c
-            );
+            const normalizedPrice = normalizePeriodPrice(record, this.fxRate, this.selectedConsumptionType);
 
             if (normalizedPrice !== null) {
-                pricesByMonth[period.month - 1].push(normalizedPrice);
+                recordYears.forEach(year => {
+                    if (!annualPrices.has(year)) annualPrices.set(year, []);
+                    annualPrices.get(year).push(normalizedPrice);
+                });
             }
         });
 
-        const shortYear = String(selectedYear).slice(-2);
-        const categories = pricesByMonth.map((prices, index) =>
-            `${String(index + 1).padStart(2, '0')}/${shortYear}`
-        );
-        const monthlyAveragePrices = pricesByMonth.map(prices => {
+        const years = [...annualPrices.keys()].sort((a, b) => a - b);
+        const categories = years.map(String);
+        const annualAveragePrices = years.map(year => {
+            const prices = annualPrices.get(year);
             if (!prices.length) {
                 return null;
             }
@@ -1737,7 +1991,7 @@ export default class MapaNacional extends LightningElement {
 
             return Number(average.toFixed(2));
         });
-        const populatedMonths = monthlyAveragePrices.filter(
+        const populatedYears = annualAveragePrices.filter(
             price => price !== null
         ).length;
 
@@ -1761,7 +2015,7 @@ export default class MapaNacional extends LightningElement {
                 },
 
                 title: {
-                    text: `Tendencia mensual · ${selectedYear}`,
+                    text: 'Tendencia anual de precios',
                     align: 'left',
                     style: {
                         color: '#102a43',
@@ -1771,12 +2025,12 @@ export default class MapaNacional extends LightningElement {
                 },
 
                 subtitle: {
-                    text: populatedMonths
-                        ? `${this.selectedProduct} · ${this.providerSelectionLabel} · ${this.currentPriceUnitLabel} · Consumo ${this.consumptionPeriodLabel} · ${populatedMonths} meses con información`
-                        : `${this.selectedProduct} · ${this.providerSelectionLabel} · Sin registros con periodo para ${selectedYear}`,
+                    text: populatedYears
+                        ? `${this.selectedProduct} · ${this.providerSelectionLabel} · ${this.currentPriceUnitLabel} · ${populatedYears} años con información`
+                        : `${this.selectedProduct} · ${this.providerSelectionLabel} · Sin registros para el año seleccionado`,
                     align: 'left',
                     style: {
-                        color: populatedMonths ? '#5c6f84' : '#b54708',
+                        color: populatedYears ? '#5c6f84' : '#b54708',
                         fontSize: '12px'
                     }
                 },
@@ -1883,8 +2137,8 @@ export default class MapaNacional extends LightningElement {
 
                 series: [
                     {
-                        name: 'Precio promedio mensual',
-                        data: monthlyAveragePrices,
+                        name: this.averagePriceTitle,
+                        data: annualAveragePrices,
                         color: '#1769aa',
                         threshold: null,
                         fillColor: {
@@ -1923,22 +2177,38 @@ export default class MapaNacional extends LightningElement {
         }, 100);
     }
 
-    handleStateTableDoubleClick() {
+    handleStateTableDoubleClick(event) {
+        this.expandedTableTrigger = event.currentTarget;
         this.expandedTable = 'state';
+        this.focusExpandedTable();
     }
 
-    handleCityTableDoubleClick() {
+    handleCityTableDoubleClick(event) {
+        this.expandedTableTrigger = event.currentTarget;
         this.expandedTable = 'city';
+        this.focusExpandedTable();
+    }
+
+    focusExpandedTable() {
+        Promise.resolve().then(() => this.template.querySelector('.close-expanded-table')?.focus());
     }
 
     handleProviderChange(event) {
-        this.selectedProvider = event.detail.value;
+        this.selectedProvider = event.detail?.value ?? event.target.value;
+        this.selectedMapProviders = [];
+        this.refreshProviderFilteredViews();
+    }
+
+    clearProviderFilter() {
+        this.selectedProvider = 'ALL';
         this.selectedMapProviders = [];
         this.refreshProviderFilteredViews();
     }
 
     closeExpandedTable() {
+        this.expandedColumnDrag = null;
         this.expandedTable = null;
+        this.expandedTableTrigger?.focus();
     }
 
     getExcelTableData(data, columns) {
@@ -1955,6 +2225,7 @@ export default class MapaNacional extends LightningElement {
             ...data.map(row =>
                 exportColumns.map(column => {
                     const value = row[column.fieldName];
+                    if (column.type === 'datetime') return toExcelRegistrationDate(value);
 
                     return value === null || value === undefined
                         ? ''
@@ -1964,14 +2235,20 @@ export default class MapaNacional extends LightningElement {
         ];
     }
 
-    getExcelContextRows(sectionTitle, consumptionType) {
+    getExcelContextRows(sectionTitle) {
         return [
             [sectionTitle],
             ['Producto', this.selectedProduct],
             ['Proveedor(es)', this.providerSelectionLabel],
+            ['Estados', this.selectedStates.length ? this.selectedStates.join(', ') : 'Todos los estados'],
             ['Moneda', this.selectedCurrency],
-            ['Tipo de consumo', consumptionType === 'A' ? 'Anual' : 'Mensual'],
+            ['Vista de precios y consumo', 'Anual'],
             ['Unidad normalizada', this.currentPriceUnitLabel],
+            ['Zona horaria de fecha de registro', USER_TIME_ZONE],
+            ['Periodo seleccionado', this.periodFilterLabel],
+            ['Fuente de conversión', this.exchangeRateLabel],
+            ['Regla de precios', 'Mensual × 12; anual sin cambios; después se promedia.'],
+            ['Observaciones', this.exchangeRateError || 'Precios y consumos homologados al periodo de esta hoja; importes registrados originales conservados.'],
             []
         ];
     }
@@ -1998,17 +2275,19 @@ export default class MapaNacional extends LightningElement {
             const workbook = XLSXLibrary.utils.book_new();
 
             const selectedStateSet = new Set(this.selectedStates);
-            for (const consumptionType of ['M', 'A']) {
-                const periodLabel = consumptionType === 'A' ? 'anual' : 'mensual';
-                const sheetName = `Resumen por consumo ${periodLabel}`;
-                const records = this.getSelectedProductRecords(consumptionType).filter(
+            for (const consumptionType of ['A']) {
+                const sheetName = 'Resumen por consumo anual';
+                const records = this.getSelectedProductRecords().filter(
                     record => !selectedStateSet.size
                         || selectedStateSet.has(normalizeStateName(record.Estado__c))
                 );
                 const stateRows = this.buildSummaryTableData(records, consumptionType);
                 const cityRows = this.buildCityTableData(records, consumptionType);
                 const stateColumns = this.getSummaryTableColumns(consumptionType);
-                const cityColumns = this.getCityTableColumns(consumptionType);
+                const cityColumns = [
+                    ...this.getCityTableColumns(consumptionType),
+                    { label: 'Fecha de registro', fieldName: 'createdDate', type: 'datetime' }
+                ];
                 const contextRows = this.getExcelContextRows(sheetName, consumptionType);
                 const stateTable = this.getExcelTableData(stateRows, stateColumns);
                 const cityTitleRow = contextRows.length + 1 + stateTable.length + 2;
@@ -2024,7 +2303,7 @@ export default class MapaNacional extends LightningElement {
                 const worksheet = XLSXLibrary.utils.aoa_to_sheet(excelData);
                 const columnCount = Math.max(stateColumns.length, cityColumns.length);
                 worksheet['!cols'] = Array.from({ length: columnCount }, (_, columnIndex) => ({
-                    wch: Math.min(45, excelData.reduce(
+                    wch: cityColumns[columnIndex]?.type === 'datetime' ? 23 : Math.min(45, excelData.reduce(
                         (width, row) => Math.max(width, String(row[columnIndex] ?? '').length + 2), 18
                     ))
                 }));

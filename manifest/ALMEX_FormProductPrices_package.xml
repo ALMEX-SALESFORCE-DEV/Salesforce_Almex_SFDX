@@ -11,6 +11,8 @@
     </types>
     <types>
         <members>ALMEX_MexicoLocations</members>
+        <members>ALMEX_USLocations</members>
+        <members>ALMEX_ContractCalendar</members>
         <name>StaticResource</name>
     </types>
     <version>67.0</version>

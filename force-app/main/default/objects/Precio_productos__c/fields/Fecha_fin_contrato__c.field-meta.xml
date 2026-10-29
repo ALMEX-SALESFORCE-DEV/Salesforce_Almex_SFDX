@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Fecha_fin_contrato__c</fullName>
+    <description>Fin de vigencia del contrato; no puede preceder a su inicio.</description>
+    <label>Fecha de fin del contrato</label>
+    <required>false</required>
+    <type>Date</type>
+</CustomField>
