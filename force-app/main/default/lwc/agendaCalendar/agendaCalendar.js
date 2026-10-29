@@ -27,6 +27,8 @@ const ACTION_JUSTIFICATION_MAX_LENGTH = 1000;
 const EXCEPTION_JUSTIFICATION_MAX_LENGTH = 160;
 const NOTES_SPEECH_LANGUAGE = 'es-MX';
 const TEXT_IMPROVEMENT_INPUT_LIMIT = 6000;
+// Pausa temporal de la interfaz de IA; conserva la integracion y sus permisos.
+const TEXT_IMPROVEMENT_ENABLED = false;
 
 export default class AgendaCalendar extends LightningElement {
     // =========================================================
@@ -37,7 +39,7 @@ export default class AgendaCalendar extends LightningElement {
     enableFollowUpCompletionInterface = true;
     enableCallReplacementInterface = true;
     enableNotesSpeechRecognition = true;
-    enableTextImprovement = hasAgendaAiPermission === true;
+    enableTextImprovement = TEXT_IMPROVEMENT_ENABLED && hasAgendaAiPermission === true;
 
     calendar;
     calendarResizeObserver;
