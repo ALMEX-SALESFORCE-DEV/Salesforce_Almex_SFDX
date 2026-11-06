@@ -322,7 +322,7 @@ export default class MapaNacional extends LightningElement {
 
     get exchangeRateLabel() {
         return this.fxRate
-            ? `Banxico FIX · 1 USD = ${this.fxRate} MXN · Fecha ${this.exchangeRate.rateDate}`
+            ? `Banxico · 1 USD = ${this.fxRate} MXN · Fecha de aplicación ${this.exchangeRate.rateDate}`
             : 'Sin tipo de cambio: los precios MXN no están convertidos';
     }
 

@@ -1,6 +1,7 @@
 public with sharing class ALMEX_MapDataController {
 
     private static final String PERIOD_YEAR_FIELD = 'Periodo_Anio__c';
+    private static final String BANXICO_LIQUIDATION_SERIES = 'SF60653';
 
     public class ExchangeRate {
         @AuraEnabled public Decimal mxnPerUsd { get; set; }
@@ -8,10 +9,15 @@ public with sharing class ALMEX_MapDataController {
         @AuraEnabled public String source { get; set; }
     }
 
-    @AuraEnabled(cacheable=true)
+    @AuraEnabled
     public static ExchangeRate getExchangeRate() {
+        // La fecha de liquidación puede publicarse anticipadamente. Consultar
+        // el día de aplicación en México, no el último dato de /oportuno.
+        Date applicationDate = Date.valueOf(System.now().format('yyyy-MM-dd', 'America/Mexico_City'));
+        String isoDate = String.valueOf(applicationDate);
         HttpRequest request = new HttpRequest();
-        request.setEndpoint('callout:ALMEX_Banxico_API/SieAPIRest/service/v1/series/SF43718/datos/oportuno');
+        request.setEndpoint('callout:ALMEX_Banxico_API/SieAPIRest/service/v1/series/' +
+            BANXICO_LIQUIDATION_SERIES + '/datos/' + isoDate + '/' + isoDate);
         request.setMethod('GET');
         request.setHeader('Accept', 'application/json');
         request.setTimeout(20000);
@@ -24,8 +30,9 @@ public with sharing class ALMEX_MapDataController {
             Map<String, Object> bmx = (Map<String, Object>) root.get('bmx');
             List<Object> series = (List<Object>) bmx.get('series');
             Map<String, Object> seriesRow = (Map<String, Object>) series[0];
-            if ((String) seriesRow.get('idSerie') != 'SF43718') throw new CalloutException('Serie inesperada');
+            if ((String) seriesRow.get('idSerie') != BANXICO_LIQUIDATION_SERIES) throw new CalloutException('Serie inesperada');
             List<Object> observations = (List<Object>) seriesRow.get('datos');
+            if (observations == null || observations.size() != 1) throw new CalloutException('Dato diario no disponible');
             Map<String, Object> observation = (Map<String, Object>) observations[0];
             Decimal rate = Decimal.valueOf(((String) observation.get('dato')).replace(',', '').trim());
             if (rate <= 0) throw new CalloutException('Tasa inválida');
@@ -33,12 +40,12 @@ public with sharing class ALMEX_MapDataController {
             ExchangeRate result = new ExchangeRate();
             result.mxnPerUsd = rate;
             result.rateDate = Date.newInstance(Integer.valueOf(dateParts[2]), Integer.valueOf(dateParts[1]), Integer.valueOf(dateParts[0]));
-            if (result.rateDate > Date.today()) throw new CalloutException('Fecha futura');
-            result.source = 'Banco de México · FIX';
+            if (result.rateDate != applicationDate) throw new CalloutException('Fecha de aplicación inesperada');
+            result.source = 'Banco de México · Para solventar obligaciones';
             return result;
         } catch (Exception error) {
             // Nunca registrar ni devolver tokens, encabezados o cuerpos de autenticación.
-            throw new AuraHandledException('No se pudo obtener el FIX de Banxico. Revisa la conexión y el acceso a BanxicoPrincipal; no se convertirán precios MXN sin una tasa válida.');
+            throw new AuraHandledException('No se pudo obtener el tipo de cambio de Banxico para solventar obligaciones del día. Revisa la conexión y el acceso a BanxicoPrincipal; no se convertirán precios MXN sin una tasa válida.');
         }
     }
 
