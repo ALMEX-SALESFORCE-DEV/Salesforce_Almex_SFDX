@@ -79,7 +79,7 @@ public with sharing class ALMEX_AgendaDataController {
             return [
                 SELECT Id, Name, Titulo__c, Tipo_de_actividad__c, Ejecutivo__c,
                     Fecha__c, Estado__c, Ciudad__c, Prospecto__c,
-                    Sucursal__c, Sucursal__r.Name, Sucursal__r.Cuenta__r.Name,
+                    Cliente__c, Cliente__r.Name, Sucursal__c, Sucursal__r.Name,
                     Seguimiento__c, Notas__c, Cuenta_para_frecuencia__c,
                     Justificacion_de_excepcion__c,
                     Estatus__c, Justificacion__c, Actividad_Original__c,
@@ -94,7 +94,7 @@ public with sharing class ALMEX_AgendaDataController {
         return [
             SELECT Id, Name, Titulo__c, Tipo_de_actividad__c, Ejecutivo__c,
                 Fecha__c, Estado__c, Ciudad__c, Prospecto__c,
-                Sucursal__c, Sucursal__r.Name, Sucursal__r.Cuenta__r.Name,
+                Cliente__c, Cliente__r.Name, Sucursal__c, Sucursal__r.Name,
                 Seguimiento__c, Notas__c, Cuenta_para_frecuencia__c,
                 Justificacion_de_excepcion__c,
                 Estatus__c, Justificacion__c, Actividad_Original__c,
@@ -116,7 +116,7 @@ public with sharing class ALMEX_AgendaDataController {
         List<Actividad_de_Agenda__c> activities = [
             SELECT Id, Name, Titulo__c, Tipo_de_actividad__c, Ejecutivo__c,
                 Fecha__c, Estado__c, Ciudad__c, Prospecto__c,
-                Sucursal__c, Sucursal__r.Name, Sucursal__r.Cuenta__r.Name,
+                Cliente__c, Cliente__r.Name, Sucursal__c, Sucursal__r.Name,
                 Seguimiento__c, Notas__c, Cuenta_para_frecuencia__c,
                 Justificacion_de_excepcion__c,
                 Estatus__c, Justificacion__c, Actividad_Original__c,
@@ -284,7 +284,8 @@ public with sharing class ALMEX_AgendaDataController {
         String notes,
         Boolean countsTowardFrequency,
         String exceptionJustification,
-        String manualProspectName
+        String manualProspectName,
+        Id clientId
     ) {
         if (String.isBlank(title)) {
             throw new AuraHandledException('El título es obligatorio.');
@@ -313,7 +314,7 @@ public with sharing class ALMEX_AgendaDataController {
             );
         }
 
-        Boolean isClientActivity = branchId != null;
+        Boolean isClientActivity = clientId != null || branchId != null;
         Boolean isExistingProspectActivity = prospectId != null;
         Boolean isManualProspectActivity = normalizedManualProspectName != null;
         Boolean isProspectActivity =
@@ -327,13 +328,13 @@ public with sharing class ALMEX_AgendaDataController {
 
         if (isClientActivity == isProspectActivity) {
             throw new AuraHandledException(
-                'Debes seleccionar una sucursal o un prospecto, pero no ambos.'
+                'Debes seleccionar un cliente o un prospecto, pero no ambos.'
             );
         }
 
         User currentUser = getSessionUser();
         Boolean shouldCountTowardFrequency =
-            isClientActivity &&
+            branchId != null &&
             (
                 activityType == 'Visita' ||
                 (
@@ -376,28 +377,36 @@ public with sharing class ALMEX_AgendaDataController {
         String activityCity;
         String prospectName;
         Id selectedBranchId;
+        Id selectedClientId = clientId;
 
         if (isClientActivity) {
-            List<Sucursal__c> branches = [
-                SELECT Id, Name, Cuenta__c, Cuenta__r.Name, Estado__c, Ciudad__c
-                FROM Sucursal__c
-                WHERE Id = :branchId
-                AND OwnerId = :currentUser.Id
-                WITH USER_MODE
-                LIMIT 1
-            ];
+            if (branchId != null) {
+                List<Sucursal__c> branches = queryActivityBranches(currentUser, branchId, null);
 
-            if (branches.isEmpty()) {
-                throw new AuraHandledException(
-                    'La sucursal seleccionada no está asignada al usuario actual.'
-                );
+                if (branches.isEmpty()) {
+                    throw new AuraHandledException(
+                        hasManagementAccess(currentUser)
+                            ? 'La sucursal seleccionada no está disponible.'
+                            : 'La sucursal seleccionada no está asignada al usuario actual.'
+                    );
+                }
+
+                Sucursal__c selectedBranch = branches[0];
+                if (selectedBranch.Cuenta__c == null ||
+                    (clientId != null && selectedBranch.Cuenta__c != clientId)) {
+                    throw new AuraHandledException('La sucursal no pertenece al cliente seleccionado.');
+                }
+
+                // Compatibilidad con solicitudes anteriores que solo enviaban sucursal.
+                selectedClientId = selectedBranch.Cuenta__c;
+                selectedBranchId = selectedBranch.Id;
+                activityState = normalizeMexicanState(selectedBranch.Estado__c);
+                activityCity = selectedBranch.Ciudad__c;
+            } else {
+                activityState = normalizeMexicanState(state);
+                activityCity = String.isBlank(city) ? null : city.trim();
             }
-
-            Sucursal__c selectedBranch = branches[0];
-
-            selectedBranchId = selectedBranch.Id;
-            activityState = normalizeMexicanState(selectedBranch.Estado__c);
-            activityCity = selectedBranch.Ciudad__c;
+            validateActivityClient(currentUser, selectedClientId);
         } else {
             if (branchId != null) {
                 throw new AuraHandledException(
@@ -440,6 +449,7 @@ public with sharing class ALMEX_AgendaDataController {
             Estado__c = activityState,
             Ciudad__c = activityCity,
             Prospecto__c = prospectName,
+            Cliente__c = selectedClientId,
             Sucursal__c = selectedBranchId,
             Seguimiento__c = followUp == true,
             Notas__c = String.isBlank(notes) ? null : notes.trim(),
@@ -517,7 +527,24 @@ public with sharing class ALMEX_AgendaDataController {
         }
 
         activity.Seguimiento__c = followUp == true;
-        activity.Notas__c = String.isBlank(notes) ? null : notes.trim();
+        String normalizedNotes = String.isBlank(notes) ? null : notes.trim();
+        // La sucursal escrita libremente vive en Notas; se conserva al editar
+        // el texto visible, incluso si el usuario borra todas sus notas.
+        if (activity.Cliente__c != null && activity.Sucursal__c == null &&
+            activity.Notas__c != null &&
+            activity.Notas__c.startsWith('Sucursal (captura manual): ')) {
+            Integer lineEnd = activity.Notas__c.indexOf('\n');
+            String branchHeader = lineEnd < 0 ? activity.Notas__c :
+                activity.Notas__c.substring(0, lineEnd).trim();
+            if (normalizedNotes == null ||
+                !(normalizedNotes == branchHeader || normalizedNotes.startsWith(branchHeader + '\n'))) {
+                normalizedNotes = branchHeader + (normalizedNotes == null ? '' : '\n\n' + normalizedNotes);
+            }
+        }
+        if (normalizedNotes != null && normalizedNotes.length() > 32768) {
+            throw new AuraHandledException('Las notas y el nombre de la sucursal superan el límite de 32768 caracteres.');
+        }
+        activity.Notas__c = normalizedNotes;
         activity.Justificacion_de_excepcion__c =
             normalizedExceptionJustification;
 
@@ -741,7 +768,7 @@ public with sharing class ALMEX_AgendaDataController {
         }
 
         if (accountId != null) {
-            dataConditions.add('Sucursal__r.Cuenta__c = :accountId');
+            dataConditions.add('Cliente__c = :accountId');
             dataBinds.put('accountId', accountId);
         }
 
@@ -797,8 +824,8 @@ public with sharing class ALMEX_AgendaDataController {
 
         String dataQuery =
             'SELECT Id, Name, Fecha__c, Titulo__c, Tipo_de_actividad__c, ' +
-                'Ejecutivo__c, Prospecto__c, Sucursal__c, ' +
-                'Sucursal__r.Name, Sucursal__r.Cuenta__r.Name, ' +
+                'Ejecutivo__c, Prospecto__c, Cliente__c, Cliente__r.Name, Sucursal__c, ' +
+                'Sucursal__r.Name, ' +
                 'Estado__c, Ciudad__c, Seguimiento__c, ' +
                 'Notas__c, Estatus__c, Justificacion__c, ' +
                 'Cuenta_para_frecuencia__c, Justificacion_de_excepcion__c, ' +
@@ -897,7 +924,7 @@ public with sharing class ALMEX_AgendaDataController {
         return [
             SELECT Id, Name, Titulo__c, Tipo_de_actividad__c, Ejecutivo__c,
                 Fecha__c, Estado__c, Ciudad__c, Prospecto__c,
-                Sucursal__c, Seguimiento__c, Notas__c, Estatus__c,
+                Cliente__c, Sucursal__c, Seguimiento__c, Notas__c, Estatus__c,
                 Justificacion__c, Cuenta_para_frecuencia__c,
                 Justificacion_de_excepcion__c, Actividad_Original__c
             FROM Actividad_de_Agenda__c
@@ -1772,7 +1799,7 @@ public with sharing class ALMEX_AgendaDataController {
         return branches;
     }
 
-    /** Clientes con sucursales visibles; el filtro de actividades usa el Id de Cuenta. */
+    /** El filtro de actividades usa el Cliente guardado, con o sin sucursal. */
     @AuraEnabled(cacheable=true)
     public static List<Account> searchManagementClients(String searchTerm) {
         validateManagementAccess();
@@ -1785,9 +1812,7 @@ public with sharing class ALMEX_AgendaDataController {
         }
 
         List<String> tokens = normalizedSearch.split('\\s+');
-        List<String> conditions = new List<String>{
-            'Id IN (SELECT Cuenta__c FROM Sucursal__c WHERE Cuenta__c != null)'
-        };
+        List<String> conditions = new List<String>();
         Map<String, Object> binds = new Map<String, Object>();
         for (Integer index = 0; index < Math.min(tokens.size(), 6); index++) {
             String bindName = 'clientToken' + index;
@@ -1878,14 +1903,113 @@ public with sharing class ALMEX_AgendaDataController {
     }
 
     @AuraEnabled(cacheable=true)
+    public static List<Account> searchActivityClients(String searchTerm) {
+        String search = String.isBlank(searchTerm)
+            ? '' : searchTerm.trim().replace('%', '').replace('_', '');
+        if (search.length() < 2) {
+            return new List<Account>();
+        }
+        return queryActivityClients(getSessionUser(), search, null);
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static List<Sucursal__c> getActivityClientBranches(Id clientId) {
+        if (clientId == null) {
+            return new List<Sucursal__c>();
+        }
+        User currentUser = getSessionUser();
+        validateActivityClient(currentUser, clientId);
+        return queryActivityBranches(currentUser, null, clientId);
+    }
+
+    private static void validateActivityClient(User currentUser, Id clientId) {
+        if (clientId == null || queryActivityClients(currentUser, null, clientId).isEmpty()) {
+            throw new AuraHandledException('El cliente seleccionado no está disponible para el usuario actual.');
+        }
+    }
+
+    private static List<Account> queryActivityClients(User currentUser, String searchTerm, Id clientId) {
+        List<String> conditions = new List<String>();
+        Map<String, Object> binds = new Map<String, Object>();
+        if (!hasManagementAccess(currentUser)) {
+            Set<Id> assignedClientIds = new Set<Id>();
+            Id ownerId = currentUser.Id;
+            for (Sucursal__c branch : [
+                SELECT Cuenta__c FROM Sucursal__c
+                WHERE OwnerId = :ownerId AND Cuenta__c != null
+                WITH USER_MODE
+            ]) {
+                assignedClientIds.add(branch.Cuenta__c);
+            }
+            // Incluye cuentas propias sin sucursales y cuentas con sucursales asignadas.
+            conditions.add('(OwnerId = :ownerId OR Id IN :assignedClientIds)');
+            binds.put('ownerId', ownerId);
+            binds.put('assignedClientIds', assignedClientIds);
+        }
+        if (clientId != null) {
+            conditions.add('Id = :clientId');
+            binds.put('clientId', clientId);
+        }
+        if (!String.isBlank(searchTerm)) {
+            List<String> tokens = searchTerm.split('\\s+');
+            for (Integer index = 0; index < Math.min(tokens.size(), 6); index++) {
+                String bindName = 'clientToken' + index;
+                conditions.add('Name LIKE :' + bindName);
+                binds.put(bindName, '%' + tokens[index] + '%');
+            }
+        }
+        String clientQuery = 'SELECT Id, Name FROM Account';
+        if (!conditions.isEmpty()) {
+            clientQuery += ' WHERE ' + String.join(conditions, ' AND ');
+        }
+        clientQuery += ' ORDER BY Name, Id LIMIT 8';
+        return Database.queryWithBinds(clientQuery, binds, AccessLevel.USER_MODE);
+    }
+
+    @AuraEnabled(cacheable=true)
     public static List<Sucursal__c> getCurrentUserBranches() {
-        return [
-            SELECT Id, Name, Cuenta__c, Cuenta__r.Name, Estado__c, Ciudad__c
-            FROM Sucursal__c
-            WHERE OwnerId = :UserInfo.getUserId()
-            WITH USER_MODE
-            ORDER BY Name
-            LIMIT 1000
-        ];
+        return queryActivityBranches(getSessionUser(), null, null);
+    }
+
+    // Nueva actividad usa el mismo alcance al listar y al validar el guardado.
+    // Gerencia/Dirección y Administración no se restringen por asignación;
+    // USER_MODE conserva los permisos de lectura y campos de Salesforce.
+    private static List<Sucursal__c> queryActivityBranches(User currentUser, Id branchId, Id clientId) {
+        Boolean canSelectAnyBranch = hasManagementAccess(currentUser);
+        List<String> conditions = new List<String>();
+        Map<String, Object> queryBinds = new Map<String, Object>();
+
+        if (!canSelectAnyBranch) {
+            conditions.add('OwnerId = :ownerId');
+            queryBinds.put('ownerId', currentUser.Id);
+        }
+
+        if (branchId != null) {
+            conditions.add('Id = :branchId');
+            queryBinds.put('branchId', branchId);
+        }
+
+        if (clientId != null) {
+            conditions.add('Cuenta__c = :clientId');
+            queryBinds.put('clientId', clientId);
+        }
+
+        String branchQuery =
+            'SELECT Id, Name, Cuenta__c, Cuenta__r.Name, Estado__c, Ciudad__c ' +
+            'FROM Sucursal__c';
+
+        if (!conditions.isEmpty()) {
+            branchQuery += ' WHERE ' + String.join(conditions, ' AND ');
+        }
+
+        branchQuery += ' ORDER BY Name, Id';
+
+        if (branchId != null) {
+            branchQuery += ' LIMIT 1';
+        } else if (!canSelectAnyBranch) {
+            branchQuery += ' LIMIT 1000';
+        }
+
+        return Database.queryWithBinds(branchQuery, queryBinds, AccessLevel.USER_MODE);
     }
 }

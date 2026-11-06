@@ -97,7 +97,7 @@ private class ALMEX_AgendaDataControllerTest {
             'Notas iniciales',
             false,
             null,
-            null
+            null, null
         );
 
         ALMEX_AgendaDataController.updateActivityDetails(
@@ -161,7 +161,7 @@ private class ALMEX_AgendaDataControllerTest {
             'Primer acercamiento comercial.',
             false,
             null,
-            'Prospecto manual de prueba'
+            'Prospecto manual de prueba', null
         );
         Test.stopTest();
 
@@ -211,7 +211,7 @@ private class ALMEX_AgendaDataControllerTest {
             'Validar inventario',
             true,
             null,
-            null
+            null, null
         );
         ALMEX_AgendaDataController.VisitLogResponse visitLog =
             ALMEX_AgendaDataController.getCurrentUserVisitLog();
@@ -279,10 +279,10 @@ private class ALMEX_AgendaDataControllerTest {
         Id urgentId = ALMEX_AgendaDataController.createActivity(
             'Visita urgente', 'Visitas urgentes', Date.today(), 'Jalisco',
             'Guadalajara', null, branch.Id, false, 'Urgencia del cliente',
-            true, 'Solicitud urgente del cliente', null);
+            true, 'Solicitud urgente del cliente', null, null);
         Id meetingId = ALMEX_AgendaDataController.createActivity(
             'Reunión virtual', 'Reunión', Date.today(), 'Jalisco',
-            'Guadalajara', null, branch.Id, false, null, false, null, null);
+            'Guadalajara', null, branch.Id, false, null, false, null, null, null);
         ALMEX_AgendaDataController.VisitLogResponse visitLog =
             ALMEX_AgendaDataController.getCurrentUserVisitLog();
         if (ALMEX_AgendaDataController.canViewActivityBreakdown()) {
@@ -502,6 +502,267 @@ private class ALMEX_AgendaDataControllerTest {
                 'Ejecutivo comercial'
             )
         );
+    }
+
+    @IsTest
+    static void managementCanListAndCreateActivityForAnotherUsersBranch() {
+        Sucursal__c branch = [
+            SELECT Id, OwnerId
+            FROM Sucursal__c
+            WHERE Name = 'Sucursal Prueba Agenda'
+            LIMIT 1
+        ];
+        User manager = createBranchAccessTestUser('Gerencia y Dirección Comercial', 'gerencia');
+        insert manager;
+        manager = [SELECT Id, Name FROM User WHERE Id = :manager.Id];
+
+        System.assertNotEquals(manager.Id, branch.OwnerId);
+
+        System.runAs(manager) {
+            Test.startTest();
+            List<Sucursal__c> availableBranches =
+                ALMEX_AgendaDataController.getCurrentUserBranches();
+            Id activityId = ALMEX_AgendaDataController.createActivity(
+                'Visita de gerencia a sucursal de otro ejecutivo',
+                'Visita', Date.today(), null, null, null, branch.Id,
+                false, 'Prueba de acceso por perfil.', true, null, null, null
+            );
+            Test.stopTest();
+
+            System.assertEquals(1, availableBranches.size(),
+                'Gerencia debe poder elegir la sucursal aunque pertenezca a otro usuario.');
+            System.assertEquals(branch.Id, availableBranches[0].Id);
+            Actividad_de_Agenda__c created = [
+                SELECT Sucursal__c, OwnerId, Ejecutivo__c
+                FROM Actividad_de_Agenda__c
+                WHERE Id = :activityId
+            ];
+            System.assertEquals(branch.Id, created.Sucursal__c);
+            System.assertEquals(manager.Id, created.OwnerId,
+                'La actividad debe seguir siendo del usuario que la registró.');
+            System.assertEquals(manager.Name, created.Ejecutivo__c);
+        }
+
+        System.assertEquals(branch.OwnerId,
+            [SELECT OwnerId FROM Sucursal__c WHERE Id = :branch.Id].OwnerId,
+            'Registrar la actividad no debe reasignar la sucursal.');
+    }
+
+    @IsTest
+    static void sellersRemainRestrictedToTheirAssignedBranches() {
+        Sucursal__c foreignBranch = [
+            SELECT Id
+            FROM Sucursal__c
+            WHERE Name = 'Sucursal Prueba Agenda'
+            LIMIT 1
+        ];
+        User seller = createBranchAccessTestUser('Supervisor y Ejecutivo Comercial', 'vendedor');
+        insert seller;
+
+        System.runAs(seller) {
+            Account ownAccount = new Account(Name = 'Cuenta propia del ejecutivo', OwnerId = seller.Id);
+            insert as system ownAccount;
+            Sucursal__c ownBranch = new Sucursal__c(
+                Name = 'Sucursal propia del ejecutivo',
+                Cuenta__c = ownAccount.Id,
+                Frecuencia_visitas__c = '4'
+            );
+            insert as system ownBranch;
+
+            Test.startTest();
+            List<Sucursal__c> availableBranches =
+                ALMEX_AgendaDataController.getCurrentUserBranches();
+            System.assertEquals(1, availableBranches.size());
+            System.assertEquals(ownBranch.Id, availableBranches[0].Id,
+                'El ejecutivo solo debe ver sus sucursales asignadas.');
+
+            Boolean rejectedForeignBranch = false;
+            try {
+                ALMEX_AgendaDataController.createActivity(
+                    'Intento de visitar sucursal ajena', 'Visita', Date.today(),
+                    null, null, null, foreignBranch.Id, false, null, true, null, null, null
+                );
+            } catch (AuraHandledException expectedException) {
+                rejectedForeignBranch = true;
+            }
+            System.assertEquals(true, rejectedForeignBranch,
+                'Tampoco debe poder saltarse el filtro enviando un Id ajeno a Apex.');
+
+            Id activityId = ALMEX_AgendaDataController.createActivity(
+                'Visita a sucursal propia', 'Visita', Date.today(),
+                null, null, null, ownBranch.Id, false, null, true, null, null, null
+            );
+            Test.stopTest();
+            System.assertNotEquals(null, activityId);
+        }
+    }
+
+    @IsTest
+    static void createsClientOnlyActivityAndPreservesClientWhenRescheduled() {
+        Account client = new Account(Name = 'Cliente sin sucursales Agenda', OwnerId = UserInfo.getUserId());
+        insert as system client;
+
+        Test.startTest();
+        System.assertEquals(client.Id,
+            ALMEX_AgendaDataController.searchActivityClients('Cliente sin sucursales')[0].Id);
+        System.assertEquals(0, ALMEX_AgendaDataController.searchActivityClients('C').size());
+        System.assertEquals(0, ALMEX_AgendaDataController.getActivityClientBranches(client.Id).size());
+        System.assertEquals(0, ALMEX_AgendaDataController.getActivityClientBranches(null).size());
+
+        Id activityId = ALMEX_AgendaDataController.createActivity(
+            'Comida de trabajo con el cliente', 'Visita', Date.today(),
+            'JA', 'Guadalajara', null, null, false, 'Revisión comercial.', true, null, null, client.Id
+        );
+        Actividad_de_Agenda__c detail = ALMEX_AgendaDataController.getActivityDetail(activityId);
+        Id replacementId = ALMEX_AgendaDataController.rescheduleActivity(
+            activityId, Date.today().addDays(2), 'Cambio solicitado por el cliente.'
+        );
+        Actividad_de_Agenda__c replacement = ALMEX_AgendaDataController.getActivityDetail(replacementId);
+        Test.stopTest();
+
+        System.assertEquals(client.Id, detail.Cliente__c);
+        System.assertEquals(client.Name, detail.Cliente__r.Name);
+        System.assertEquals(null, detail.Sucursal__c);
+        System.assertEquals(false, detail.Cuenta_para_frecuencia__c,
+            'Una actividad sin sucursal no debe descontar su frecuencia anual.');
+        System.assertEquals('Jalisco', detail.Estado__c);
+        System.assertEquals(client.Id, replacement.Cliente__c);
+        System.assertEquals(null, replacement.Sucursal__c);
+        System.assertEquals(activityId, replacement.Actividad_Original__c);
+    }
+
+    @IsTest
+    static void preservesManualBranchInNotesWithoutNewFields() {
+        Account client = new Account(Name = 'Cliente sucursal libre Agenda', OwnerId = UserInfo.getUserId());
+        insert as system client;
+        String header = 'Sucursal (captura manual): Oficina regional';
+        Test.startTest();
+        Id activityId = ALMEX_AgendaDataController.createActivity(
+            'Visita a oficina', 'Visita', Date.today(), 'JA', 'Guadalajara',
+            null, null, false, header + '\n\nNotas originales.', true, null, null, client.Id
+        );
+        ALMEX_AgendaDataController.updateActivityDetails(activityId, false, 'Notas actualizadas.', null);
+        Actividad_de_Agenda__c edited = ALMEX_AgendaDataController.getActivityDetail(activityId);
+        System.assertEquals(header + '\n\nNotas actualizadas.', edited.Notas__c);
+        ALMEX_AgendaDataController.updateActivityDetails(activityId, false, null, null);
+        System.assertEquals(header, ALMEX_AgendaDataController.getActivityDetail(activityId).Notas__c);
+        Id replacementId = ALMEX_AgendaDataController.rescheduleActivity(
+            activityId, Date.today().addDays(1), 'Cambio solicitado.'
+        );
+        Actividad_de_Agenda__c replacement = ALMEX_AgendaDataController.getActivityDetail(replacementId);
+        Test.stopTest();
+        System.assertEquals(header, replacement.Notas__c);
+        System.assertEquals(client.Id, replacement.Cliente__c);
+        System.assertEquals(null, replacement.Sucursal__c);
+        System.assertEquals(false, replacement.Cuenta_para_frecuencia__c);
+    }
+
+    @IsTest
+    static void storesClientAndRejectsBranchesFromAnotherAccount() {
+        Sucursal__c branch = [SELECT Id, Cuenta__c FROM Sucursal__c
+            WHERE Name = 'Sucursal Prueba Agenda' LIMIT 1];
+        Account anotherClient = new Account(Name = 'Cuenta incompatible Agenda', OwnerId = UserInfo.getUserId());
+        insert as system anotherClient;
+
+        Test.startTest();
+        System.assertEquals(branch.Id,
+            ALMEX_AgendaDataController.getActivityClientBranches(branch.Cuenta__c)[0].Id);
+        Id activityId = ALMEX_AgendaDataController.createActivity(
+            'Visita con cliente y sucursal', 'Visita', Date.today(), null, null,
+            null, branch.Id, false, null, false, null, null, branch.Cuenta__c
+        );
+        Actividad_de_Agenda__c detail = ALMEX_AgendaDataController.getActivityDetail(activityId);
+        Boolean rejectedMismatch = false;
+        try {
+            ALMEX_AgendaDataController.createActivity(
+                'Sucursal de otro cliente', 'Visita', Date.today(), null, null,
+                null, branch.Id, false, null, false, null, null, anotherClient.Id
+            );
+        } catch (AuraHandledException expectedException) {
+            rejectedMismatch = true;
+        }
+        Boolean rejectedMixedTarget = false;
+        try {
+            ALMEX_AgendaDataController.createActivity(
+                'Cliente y prospecto', 'Visita', Date.today(), null, null,
+                null, null, false, null, false, null, 'Prospecto manual', anotherClient.Id
+            );
+        } catch (AuraHandledException expectedException) {
+            rejectedMixedTarget = true;
+        }
+        Test.stopTest();
+
+        System.assertEquals(branch.Cuenta__c, detail.Cliente__c);
+        System.assertEquals(branch.Id, detail.Sucursal__c);
+        System.assertEquals(true, detail.Cuenta_para_frecuencia__c);
+        System.assertEquals(true, rejectedMismatch);
+        System.assertEquals(true, rejectedMixedTarget);
+    }
+
+    @IsTest
+    static void sellersCannotSelectUnassignedClients() {
+        Account foreignClient = [SELECT Id FROM Account WHERE Name = 'Cuenta Prueba Agenda' LIMIT 1];
+        User seller = createBranchAccessTestUser('Supervisor y Ejecutivo Comercial', 'vendedor');
+        insert seller;
+        System.runAs(seller) {
+            Account ownClient = new Account(Name = 'Cuenta propia sin sucursal', OwnerId = seller.Id);
+            insert as system ownClient;
+            Test.startTest();
+            System.assertEquals(0, ALMEX_AgendaDataController.searchActivityClients('Cuenta Prueba Agenda').size());
+            System.assertEquals(ownClient.Id,
+                ALMEX_AgendaDataController.searchActivityClients('Cuenta propia sin sucursal')[0].Id);
+            Boolean rejectedForeignClient = false;
+            try {
+                ALMEX_AgendaDataController.createActivity(
+                    'Cuenta ajena', 'Reunión Teams', Date.today(), null, null,
+                    null, null, false, null, false, null, null, foreignClient.Id
+                );
+            } catch (AuraHandledException expectedException) {
+                rejectedForeignClient = true;
+            }
+            System.assertEquals(true, rejectedForeignClient);
+            Id ownActivity = ALMEX_AgendaDataController.createActivity(
+                'Reunión con cliente propio', 'Reunión Teams', Date.today(), null, null,
+                null, null, false, null, false, null, null, ownClient.Id
+            );
+            Test.stopTest();
+            System.assertNotEquals(null, ownActivity);
+        }
+    }
+
+    @IsTest
+    static void managementUsesStoredClientIncludingActivitiesWithoutBranch() {
+        Sucursal__c branch = [SELECT Id, Cuenta__c FROM Sucursal__c
+            WHERE Name = 'Sucursal Prueba Agenda' LIMIT 1];
+        Id originalClientId = branch.Cuenta__c;
+        Account anotherClient = new Account(Name = 'Cuenta reasignada Agenda', OwnerId = UserInfo.getUserId());
+        insert as system anotherClient;
+        Id activityId = ALMEX_AgendaDataController.createActivity(
+            'Visita con cuenta histórica', 'Visita', Date.today(), null, null,
+            null, branch.Id, false, null, false, null, null, originalClientId
+        );
+        Id withoutBranchId = ALMEX_AgendaDataController.createActivity(
+            'Comida sin sucursal', 'Otro', Date.today(), null, null,
+            null, null, false, null, false, null, null, originalClientId
+        );
+        branch.Cuenta__c = anotherClient.Id;
+        update as system branch;
+
+        Test.startTest();
+        ALMEX_AgendaDataController.ManagementActivityPage page =
+            ALMEX_AgendaDataController.getManagementActivities(
+                Date.today(), Date.today(), null, null, null, null, null,
+                null, null, null, null, null, 50, originalClientId
+            );
+        Test.stopTest();
+        System.assertEquals(2, page.totalRecords,
+            'El cliente guardado debe ser independiente de la Cuenta actual de la sucursal.');
+        System.assert(containsActivity(page.records, activityId));
+        System.assert(containsActivity(page.records, withoutBranchId));
+        for (Actividad_de_Agenda__c activity : page.records) {
+            System.assertEquals(originalClientId, activity.Cliente__c);
+            System.assertEquals('Cuenta Prueba Agenda', activity.Cliente__r.Name);
+        }
     }
 
     /**
@@ -1071,6 +1332,23 @@ private class ALMEX_AgendaDataControllerTest {
     // 8. FÁBRICA DE REGISTROS DE PRUEBA Y FUNCIONES AUXILIARES
     // =====================================================================
 
+    private static User createBranchAccessTestUser(String profileName, String alias) {
+        Profile userProfile = [SELECT Id FROM Profile WHERE Name = :profileName LIMIT 1];
+        return new User(
+            FirstName = 'Prueba',
+            LastName = alias,
+            Alias = alias,
+            Email = alias + '@example.com',
+            Username = alias + '.' + UserInfo.getOrganizationId() + '.' +
+                String.valueOf(DateTime.now().getTime()) + '@agenda.example.com',
+            ProfileId = userProfile.Id,
+            TimeZoneSidKey = 'America/Mexico_City',
+            LocaleSidKey = 'es_MX',
+            EmailEncodingKey = 'UTF-8',
+            LanguageLocaleKey = 'es_MX'
+        );
+    }
+
     /**
      * Inserta rápidamente una actividad Programada que pueda ser usada por
      * las pruebas de completar, cancelar o reagendar.
@@ -1108,6 +1386,8 @@ private class ALMEX_AgendaDataControllerTest {
             Estado__c = 'Jalisco',
             Ciudad__c = 'Guadalajara',
             Prospecto__c = prospectName,
+            Cliente__c = branchId == null ? null :
+                [SELECT Cuenta__c FROM Sucursal__c WHERE Id = :branchId].Cuenta__c,
             Sucursal__c = branchId,
             Seguimiento__c = false,
             Notas__c = 'Registro de prueba',
@@ -1159,19 +1439,19 @@ private class ALMEX_AgendaDataControllerTest {
             if (actionName == 'CREATE_WITHOUT_TARGET') {
                 return ALMEX_AgendaDataController.createActivity(
                     'Sin destino', 'Visita', Date.today(), null, null,
-                    null, null, false, null, false, null, null
+                    null, null, false, null, false, null, null, null
                 );
             }
             if (actionName == 'CREATE_WITH_TWO_TARGETS') {
                 return ALMEX_AgendaDataController.createActivity(
                     'Dos destinos', 'Visita', Date.today(), null, null,
-                    prospectId, branchId, false, null, false, null, null
+                    prospectId, branchId, false, null, false, null, null, null
                 );
             }
             if (actionName == 'CALL_WITHOUT_JUSTIFICATION') {
                 return ALMEX_AgendaDataController.createActivity(
                     'Llamada', 'Llamada', Date.today(), null, null,
-                    null, branchId, false, null, true, null, null
+                    null, branchId, false, null, true, null, null, null
                 );
             }
             if (actionName == 'COMPLETE_WITHOUT_RESOLUTION') {

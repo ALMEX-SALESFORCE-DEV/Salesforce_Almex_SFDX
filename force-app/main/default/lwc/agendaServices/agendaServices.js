@@ -8,6 +8,8 @@ import getActivityDetailApex from '@salesforce/apex/ALMEX_AgendaDataController.g
 import getManagementActivitiesApex from '@salesforce/apex/ALMEX_AgendaDataController.getManagementActivities';
 import getAlmexSupplyAgreementsApex from '@salesforce/apex/ALMEX_AgendaDataController.getAlmexSupplyAgreements';
 import getCurrentUserBranchesApex from '@salesforce/apex/ALMEX_AgendaDataController.getCurrentUserBranches';
+import searchActivityClientsApex from '@salesforce/apex/ALMEX_AgendaDataController.searchActivityClients';
+import getActivityClientBranchesApex from '@salesforce/apex/ALMEX_AgendaDataController.getActivityClientBranches';
 import searchCurrentUserProspectsApex from '@salesforce/apex/ALMEX_AgendaDataController.searchCurrentUserProspects';
 import searchManagementBranchesApex from '@salesforce/apex/ALMEX_AgendaDataController.searchManagementBranches';
 import searchManagementClientsApex from '@salesforce/apex/ALMEX_AgendaDataController.searchManagementClients';
@@ -18,6 +20,7 @@ import { normalizeAgendaActivityType } from 'c/agendaUtils';
 
 // Solo metadatos de modelos en memoria; nunca se cachean notas ni propuestas.
 const AI_CATALOG_TTL_MS = 15 * 60 * 1000;
+const MANUAL_BRANCH_NOTES_PREFIX = 'Sucursal (captura manual): ';
 let aiCatalogPromise;
 let aiCatalogExpiresAt = 0;
 
@@ -43,13 +46,32 @@ function getCachedAgendaAiCandidates() {
 }
 
 function normalizeActivityRecord(record) {
-    return record ? {
+    if (!record) return record;
+    const normalized = {
         ...record,
         Tipo_de_actividad__c: normalizeAgendaActivityType(record.Tipo_de_actividad__c)
-    } : record;
+    };
+    // La captura libre se conserva en Notas, sin modificar el lookup ni el objeto.
+    const notes = String(record.Notas__c || '');
+    if (record.Cliente__c && !record.Sucursal__c && notes.startsWith(MANUAL_BRANCH_NOTES_PREFIX)) {
+        const lines = notes.split(/\r?\n/);
+        normalized.manualBranchName = lines.shift().slice(MANUAL_BRANCH_NOTES_PREFIX.length);
+        normalized.Notas__c = lines.join('\n').replace(/^\n/, '');
+    }
+    return normalized;
 }
 
 export function createAgendaActivity(formData) {
+    const manualBranchName = formData.clientId && !formData.branchId
+        ? String(formData.manualBranchName || '').replace(/[\r\n]+/g, ' ').trim()
+        : '';
+    let notes = String(formData.notes || '').trim();
+    if (manualBranchName) {
+        notes = `${MANUAL_BRANCH_NOTES_PREFIX}${manualBranchName}${notes ? `\n\n${notes}` : ''}`;
+    }
+    if (notes.length > 32768) {
+        throw new Error('Las notas y el nombre de la sucursal superan el límite de 32768 caracteres.');
+    }
     return runApex(createActivityApex, {
         title: formData.title,
         activityType: formData.activityType,
@@ -58,8 +80,9 @@ export function createAgendaActivity(formData) {
         city: formData.city || null,
         prospectId: formData.prospectId || null,
         branchId: formData.branchId || null,
+        clientId: formData.clientId || null,
         followUp: Boolean(formData.followUp),
-        notes: formData.notes || null,
+        notes: notes || null,
         countsTowardFrequency: Boolean(formData.countsTowardFrequency),
         exceptionJustification: formData.exceptionJustification || null,
         manualProspectName: formData.manualProspectName || null
@@ -203,6 +226,14 @@ export async function getAssignedBranches() {
     const branches = await runApex(getCurrentUserBranchesApex);
 
     return branches || [];
+}
+
+export async function searchActivityClients(searchTerm) {
+    return (await runApex(searchActivityClientsApex, { searchTerm })) || [];
+}
+
+export async function getActivityClientBranches(clientId) {
+    return (await runApex(getActivityClientBranchesApex, { clientId })) || [];
 }
 
 export async function searchAssignedProspects(searchTerm) {

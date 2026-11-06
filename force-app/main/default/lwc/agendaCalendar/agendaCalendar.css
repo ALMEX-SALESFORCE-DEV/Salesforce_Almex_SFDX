@@ -1409,6 +1409,131 @@
     position: relative;
 }
 
+.optional-field-label {
+    color: #706e6b;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.branch-search-container {
+    position: relative;
+}
+
+.branch-search-container input {
+    min-height: 54px;
+    padding-left: 56px;
+    padding-right: 78px;
+    border-color: #b8c6df;
+    font-weight: 600;
+}
+
+.branch-search-container input::placeholder {
+    color: #657087;
+    font-weight: 400;
+}
+
+.branch-search-container input::-webkit-search-cancel-button {
+    display: none;
+}
+
+.branch-location-icon {
+    display: inline-flex;
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #6559e8;
+    --slds-c-icon-color-foreground-default: #ffffff;
+    --sds-c-icon-color-foreground-default: #ffffff;
+}
+
+.branch-input-icon {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.branch-input-actions {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    display: flex;
+    gap: 2px;
+    transform: translateY(-50%);
+}
+
+.branch-input-button {
+    display: inline-flex;
+    width: 30px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    cursor: pointer;
+    --slds-c-icon-color-foreground-default: #657087;
+}
+
+.branch-input-button:hover:not(:disabled),
+.branch-input-button:focus-visible {
+    background: #f0edff;
+    outline: 2px solid #6559e8;
+    outline-offset: -2px;
+}
+
+.branch-input-button:disabled {
+    opacity: 0.45;
+    cursor: default;
+}
+
+.account-results.branch-results {
+    border-color: #b8c6df;
+    box-shadow: 0 8px 20px rgba(28, 45, 76, 0.12);
+}
+
+.branch-results .branch-result {
+    min-height: 66px;
+    padding: 12px 14px;
+    gap: 14px;
+}
+
+.branch-results .branch-result.is-active,
+.branch-results .branch-result:focus-visible {
+    background: #f2efff;
+    outline: 2px solid #6559e8;
+    outline-offset: -2px;
+}
+
+.branch-results .branch-result-information strong,
+.branch-results .branch-result-information small {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.4;
+}
+
+.branch-results .branch-result-information strong {
+    color: #183459;
+    font-size: 13px;
+}
+
+.branch-results .branch-result-information small,
+.branch-selected-location {
+    color: #62728c;
+    font-size: 12px;
+}
+
+.branch-selected-location {
+    display: block;
+    margin-top: 6px;
+    padding-left: 12px;
+}
+
 .account-search-container {
     position: relative;
 }
