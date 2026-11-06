@@ -357,15 +357,63 @@
                         </div>
 
                         <div class="activity-field activity-field-full">
-                            <label for="follow-up-completion-summary">
-                                Resumen de resolución
-                                <span class="required-indicator">*</span>
-                            </label>
+                            <div class="notes-field-header">
+                                <label for="follow-up-completion-summary">
+                                    Resumen de resolución
+                                    <span class="required-indicator">*</span>
+                                </label>
 
-                            <textarea id="follow-up-completion-summary" value={followUpCompletionSummary}
+                                <div class="notes-field-actions">
+                                    <template lwc:if={showNotesSpeechControl}>
+                                        <button type="button" class={notesSpeechButtonClass}
+                                            onclick={handleToggleFollowUpResolutionDictation}
+                                            disabled={isActivityActionSpeechButtonDisabled}
+                                            title="Dictar el resumen de resolución utilizando el micrófono"
+                                            aria-pressed={isDictatingNotes}>
+                                            <template lwc:if={showSpeechMicrophoneIcon}>
+                                                <svg class="speech-microphone-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                                    <path d="M12 15.25a3.75 3.75 0 0 0 3.75-3.75V6.25a3.75 3.75 0 0 0-7.5 0v5.25A3.75 3.75 0 0 0 12 15.25Zm-1.75-9a1.75 1.75 0 0 1 3.5 0v5.25a1.75 1.75 0 0 1-3.5 0V6.25Zm7.5 4.75a1 1 0 0 1 2 0v.5a7.75 7.75 0 0 1-6.75 7.68V21h2a1 1 0 1 1 0 2H9a1 1 0 1 1 0-2h2v-1.82a7.75 7.75 0 0 1-6.75-7.68V11a1 1 0 1 1 2 0v.5a5.75 5.75 0 0 0 11.5 0V11Z"></path>
+                                                </svg>
+                                            </template>
+                                            <template lwc:else>
+                                                <lightning-icon icon-name={notesSpeechIconName} size="xx-small"
+                                                    alternative-text=""></lightning-icon>
+                                            </template>
+                                            <span>{notesSpeechButtonLabel}</span>
+                                        </button>
+                                    </template>
+
+                                    <template lwc:if={showTextImprovementControl}>
+                                        <button type="button" class="notes-improve-button"
+                                            data-target="followUpResolution" onclick={handleImproveText}
+                                            disabled={isFollowUpResolutionImproveButtonDisabled}
+                                            title="Mejorar la redacción sin cambiar la información">
+                                            <svg class="text-sparkles-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                                <path d="M12 2 13.35 5.65 17 7l-3.65 1.35L12 12l-1.35-3.65L7 7l3.65-1.35L12 2Zm6 9 1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2ZM6.5 12l1.55 3.95L12 17.5l-3.95 1.55L6.5 23l-1.55-3.95L1 17.5l3.95-1.55L6.5 12Z"></path>
+                                            </svg>
+                                            <template lwc:if={isImprovingText}>
+                                                <span>Mejorando...</span>
+                                            </template>
+                                            <template lwc:else>
+                                                <span>Mejorar texto</span>
+                                            </template>
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <textarea id="follow-up-completion-summary"
+                                data-element="follow-up-resolution"
                                 placeholder="Describe acuerdos, entregables y puntos concluidos..."
-                                oninput={handleFollowUpCompletionInput} maxlength="1000" required>
+                                oninput={handleFollowUpCompletionInput} maxlength="1000"
+                                readonly={isFollowUpResolutionInputReadOnly} required>
                             </textarea>
+
+                            <template lwc:if={showFollowUpResolutionDictationStatus}>
+                                <p class={notesDictationStatusClass} role="status" aria-live="polite">
+                                    {notesDictationStatus}
+                                </p>
+                            </template>
                         </div>
 
                         <section class="follow-up-completion-result" aria-label="Resultado del cierre">
@@ -389,7 +437,7 @@
                                 Volver
                             </button>
 
-                            <button type="submit" class="activity-save-button">
+                            <button type="submit" class="activity-save-button" disabled={isActivityActionButtonDisabled}>
                                 Completar actividad
                             </button>
                         </footer>
@@ -694,7 +742,7 @@
                         <section class="extraordinary-visit-notice activity-field-full">
                             <strong>Visitas urgentes</strong>
                             <span>
-                                Se registrará en la agenda y en la bitácora, pero no aumentará
+                                Se registrará en la agenda y, si eliges sucursal, en la bitácora, pero no aumentará
                                 el avance de la frecuencia anual.
                             </span>
                         </section>
@@ -742,7 +790,7 @@
 
                         <div class="activity-field activity-field-full">
                             <label>
-                                ¿La actividad es en una sucursal o con un prospecto?
+                                ¿La actividad es con un cliente o con un prospecto?
                             </label>
 
                             <div class="activity-target-selector">
@@ -750,11 +798,11 @@
                                 <button type="button" class={clientTargetButtonClass} data-type="client"
                                     onclick={handleActivityTargetChange}>
 
-                                    <lightning-icon icon-name="standard:location" size="x-small"
-                                        alternative-text="Sucursal">
+                                    <lightning-icon icon-name="standard:account" size="x-small"
+                                        alternative-text="Cliente">
                                     </lightning-icon>
 
-                                    Sucursal
+                                    Cliente
                                 </button>
 
                                 <button type="button" class={prospectTargetButtonClass} data-type="prospect"
@@ -770,12 +818,13 @@
                             </div>
                         </div>
 
-                        <!-- BUSCADOR DE SUCURSALES ASIGNADAS -->
+                        <!-- CLIENTE PRIMERO; SUCURSAL OPCIONAL Y DEPENDIENTE -->
                         <template lwc:if={isClientTarget}>
 
-                            <div class="activity-field activity-field-full account-picker branch-picker">
-                                <label for="activity-branch-search">
-                                    Sucursal asignada
+                            <div class="activity-field activity-field-full account-picker client-picker"
+                                data-lookup="client" onclick={handleLookupClick} onfocusout={handleClientBlur}>
+                                <label for="activity-client-search">
+                                    Nombre del cliente
                                 </label>
 
                                 <div class="account-search-container">
@@ -783,65 +832,114 @@
                                     <lightning-icon icon-name="utility:search" size="x-small" alternative-text="">
                                     </lightning-icon>
 
-                                    <input id="activity-branch-search" type="search" value={branchSearch}
-                                        placeholder="Escribe la sucursal o el cliente..." autocomplete="off"
-                                        disabled={isBranchInputDisabled} oninput={handleBranchSearch}
-                                        onfocus={handleBranchFocus} onblur={handleBranchBlur}>
+                                    <input id="activity-client-search" type="search" value={clientSearch}
+                                        placeholder="Busca y selecciona un cliente..." autocomplete="off"
+                                        oninput={handleClientSearch} onfocus={handleClientFocus}
+                                        role="combobox" aria-autocomplete="list" aria-expanded={showClientResults}
+                                        aria-controls="activity-client-results" required>
 
                                 </div>
 
-                                <template lwc:if={isLoadingBranches}>
-                                    <span class="account-loading">
-                                        Cargando sucursales...
-                                    </span>
-                                </template>
+                                <template lwc:if={showClientResults}>
 
-                                <template lwc:if={showBranchResults}>
-
-                                    <div class="account-results">
-
-                                        <template lwc:if={hasFilteredBranches}>
-
-                                            <template for:each={filteredBranches} for:item="branch">
-
-                                                <button key={branch.id} type="button" class="account-result"
-                                                    data-branch-id={branch.id} onclick={handleBranchSelect}>
-
-                                                    <span class="account-result-icon">
-                                                        <lightning-icon icon-name="standard:location" size="small"
-                                                            alternative-text="">
-                                                        </lightning-icon>
-                                                    </span>
-
-                                                    <span class="account-result-information">
-                                                        <strong>{branch.name}</strong>
-                                                        <small>{branch.client} · {branch.city} · {branch.state}</small>
-                                                    </span>
-
-                                                </button>
-
-                                            </template>
-
+                                    <div id="activity-client-results" class="account-results" role="listbox">
+                                        <template lwc:if={isSearchingClients}>
+                                            <div class="account-empty">Buscando clientes...</div>
                                         </template>
-
                                         <template lwc:else>
-                                            <div class="account-empty">
-                                                No se encontraron sucursales asignadas.
-                                            </div>
+                                            <template lwc:if={hasClientResults}>
+                                                <template for:each={clientResults} for:item="client">
+                                                    <button key={client.id} type="button" class="account-result"
+                                                        data-client-id={client.id} onmousedown={handleClientOptionMouseDown}
+                                                        onclick={handleClientSelect} role="option" aria-selected="false">
+                                                        <span class="account-result-icon">
+                                                            <lightning-icon icon-name="standard:account" size="small"
+                                                                alternative-text="Cliente"></lightning-icon>
+                                                        </span>
+                                                        <span class="account-result-information">
+                                                            <strong>{client.name}</strong>
+                                                        </span>
+                                                    </button>
+                                                </template>
+                                            </template>
+                                            <template lwc:else>
+                                                <div class="account-empty">{clientEmptyMessage}</div>
+                                            </template>
                                         </template>
-
                                     </div>
-
                                 </template>
-
                             </div>
 
+                            <div class="activity-field activity-field-full account-picker branch-picker"
+                                data-lookup="branch" onclick={handleLookupClick} onfocusout={handleBranchBlur}>
+                                <label for="activity-branch-search">
+                                    Sucursal del cliente <span class="optional-field-label">(opcional)</span>
+                                </label>
+                                <div class="branch-search-container">
+                                    <span class="branch-location-icon branch-input-icon" aria-hidden="true">
+                                        <lightning-icon icon-name="utility:company" size="x-small"
+                                            alternative-text=""></lightning-icon>
+                                    </span>
+                                    <input id="activity-branch-search" data-element="activity-branch-search"
+                                        type="search" value={branchSearch} placeholder="Busca o escribe una sucursal..."
+                                        autocomplete="off" disabled={isBranchInputDisabled}
+                                        oninput={handleBranchSearch} onfocus={handleBranchFocus} onclick={handleBranchFocus}
+                                        onkeydown={handleBranchKeyDown} role="combobox" aria-autocomplete="list"
+                                        aria-expanded={showBranchResults} aria-controls="activity-branch-results"
+                                        aria-activedescendant={activeBranchOptionId}>
+                                    <div class="branch-input-actions">
+                                        <template lwc:if={hasBranchSearchText}>
+                                            <button type="button" class="branch-input-button" data-element="clear-branch"
+                                                onclick={handleClearBranch} title="Quitar sucursal" aria-label="Quitar sucursal">
+                                                <lightning-icon icon-name="utility:close" size="xx-small"
+                                                    alternative-text=""></lightning-icon>
+                                            </button>
+                                        </template>
+                                        <button type="button" class="branch-input-button" onclick={handleToggleBranchResults}
+                                            disabled={isBranchInputDisabled} aria-label="Mostrar sucursales del cliente"
+                                            aria-expanded={showBranchResults} aria-controls="activity-branch-results">
+                                            <lightning-icon icon-name="utility:chevrondown" size="x-small"
+                                                alternative-text=""></lightning-icon>
+                                        </button>
+                                    </div>
+                                    <template lwc:if={showBranchResults}>
+                                        <div id="activity-branch-results" class="account-results branch-results" role="listbox"
+                                            aria-label="Sucursales del cliente">
+                                            <template lwc:if={hasFilteredBranches}>
+                                                <template for:each={filteredBranches} for:item="branch">
+                                                    <button key={branch.id} id={branch.optionId} type="button"
+                                                        class={branch.optionClass} data-branch-id={branch.id}
+                                                        onmousedown={handleBranchOptionMouseDown} onclick={handleBranchSelect}
+                                                        role="option" aria-selected={branch.selected}>
+                                                        <span class="branch-location-icon" aria-hidden="true">
+                                                            <lightning-icon icon-name="utility:company" size="x-small"
+                                                                alternative-text=""></lightning-icon>
+                                                        </span>
+                                                        <span class="account-result-information branch-result-information">
+                                                            <strong>{branch.name}</strong>
+                                                            <small>{branch.location}</small>
+                                                        </span>
+                                                    </button>
+                                                </template>
+                                            </template>
+                                            <template lwc:else>
+                                                <div class="account-empty">Sin coincidencias. Puedes guardar el nombre escrito o dejar el campo vacío.</div>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </div>
+                                <template lwc:if={hasSelectedBranch}>
+                                    <span class="branch-selected-location">{selectedBranchLocation}</span>
+                                </template>
+                                <span class="prospect-helper" role="status">{branchSelectionMessage}</span>
+                            </div>
                         </template>
 
                         <!-- BUSCADOR DE PROSPECTOS ASIGNADOS -->
                         <template lwc:if={isProspectTarget}>
 
-                            <div class="activity-field activity-field-full account-picker prospect-picker">
+                            <div class="activity-field activity-field-full account-picker prospect-picker"
+                                data-lookup="prospect" onclick={handleLookupClick}>
                                 <label for="activity-prospect-search">
                                     Prospecto
                                 </label>
@@ -929,7 +1027,7 @@
 
                         <template lwc:else>
                             <select id="activity-state-select" name="state" value={activityForm.state}
-                                onchange={handleActivityInputChange} required>
+                                onchange={handleActivityInputChange} required={isProspectTarget}>
 
                                 <option value="">
                                     Selecciona un estado

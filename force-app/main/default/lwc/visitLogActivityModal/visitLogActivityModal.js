@@ -48,8 +48,9 @@ export default class VisitLogActivityModal extends LightningElement {
     }
 
     mapActivityDetail(record) {
-        const branchName = record?.Sucursal__r?.Name || '';
-        const clientName = record?.Sucursal__r?.Cuenta__r?.Name || '';
+        const branchName = record?.Sucursal__r?.Name || record?.manualBranchName || '';
+        const clientName = record?.Cliente__r?.Name || '';
+        const isClientActivity = Boolean(record?.Cliente__c || record?.Sucursal__c);
         const prospectName = record?.Prospecto__c || '';
 
         return {
@@ -57,8 +58,8 @@ export default class VisitLogActivityModal extends LightningElement {
             activityType: record?.Tipo_de_actividad__c || 'Actividad',
             executiveName: record?.Ejecutivo__c || '',
             dateValue: record?.Fecha__c || '',
-            relationshipLabel: branchName ? 'Cliente' : 'Prospecto',
-            relationshipName: branchName ? clientName : prospectName,
+            relationshipLabel: isClientActivity ? 'Cliente' : 'Prospecto',
+            relationshipName: isClientActivity ? clientName : prospectName,
             branchName,
             state: resolveMexicanState(record?.Estado__c),
             city: record?.Ciudad__c || '',

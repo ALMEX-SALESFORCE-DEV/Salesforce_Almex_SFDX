@@ -9,7 +9,8 @@ import {
     cancelAgendaActivity,
     rescheduleAgendaActivity,
     getAgendaActivities,
-    getAssignedBranches,
+    searchActivityClients,
+    getActivityClientBranches,
     searchAssignedProspects,
     improveAgendaText
 } from 'c/agendaServices';
@@ -27,6 +28,8 @@ const ACTION_JUSTIFICATION_MAX_LENGTH = 1000;
 const EXCEPTION_JUSTIFICATION_MAX_LENGTH = 160;
 const NOTES_SPEECH_LANGUAGE = 'es-MX';
 const TEXT_IMPROVEMENT_INPUT_LIMIT = 6000;
+// Pausa temporal de la interfaz de IA; conserva la integracion y sus permisos.
+const TEXT_IMPROVEMENT_ENABLED = false;
 
 export default class AgendaCalendar extends LightningElement {
     // =========================================================
@@ -37,7 +40,7 @@ export default class AgendaCalendar extends LightningElement {
     enableFollowUpCompletionInterface = true;
     enableCallReplacementInterface = true;
     enableNotesSpeechRecognition = true;
-    enableTextImprovement = hasAgendaAiPermission === true;
+    enableTextImprovement = TEXT_IMPROVEMENT_ENABLED && hasAgendaAiPermission === true;
 
     calendar;
     calendarResizeObserver;
@@ -47,10 +50,21 @@ export default class AgendaCalendar extends LightningElement {
 
     selectedBranchId = '';
     assignedBranches = [];
-    filteredBranches = [];
     branchSearch = '';
     isBranchDropdownOpen = false;
+    activeBranchIndex = -1;
     isLoadingBranches = false;
+    branchLoadRequest = 0;
+    branchLoadError = '';
+
+    selectedClientId = '';
+    clientSearch = '';
+    clientResults = [];
+    isClientDropdownOpen = false;
+    isSearchingClients = false;
+    clientSearchError = '';
+    clientSearchTimer;
+    clientSearchRequest = 0;
 
     selectedProspectId = '';
     prospectSearch = '';
@@ -151,6 +165,7 @@ export default class AgendaCalendar extends LightningElement {
             state: '',
             city: '',
             client: '',
+            clientId: '',
             prospect: '',
             prospectId: '',
             prospectCompany: '',
@@ -518,8 +533,8 @@ export default class AgendaCalendar extends LightningElement {
         const executiveName = record.Ejecutivo__c || '';
         const status = record.Estatus__c || 'Programada';
         const palette = this.getExecutivePalette(executiveName);
-        const isClientActivity = Boolean(record.Sucursal__c);
-        const client = record.Sucursal__r?.Cuenta__r?.Name || '';
+        const isClientActivity = Boolean(record.Cliente__c || record.Sucursal__c);
+        const client = record.Cliente__r?.Name || '';
         const prospect = record.Prospecto__c || '';
         const activityContent = this.normalizeStoredActivityContent(
             activityType,
@@ -549,6 +564,7 @@ export default class AgendaCalendar extends LightningElement {
                 state: resolveMexicanState(record.Estado__c),
                 city: record.Ciudad__c || '',
                 client,
+                clientId: record.Cliente__c || '',
                 prospect,
                 partyName: isClientActivity
                     ? client || record.Sucursal__r?.Name || ''
@@ -559,17 +575,17 @@ export default class AgendaCalendar extends LightningElement {
                         ? 'Prospecto'
                         : '',
                 branchId: record.Sucursal__c || '',
-                branchName: record.Sucursal__r?.Name || '',
+                branchName: record.Sucursal__r?.Name || record.manualBranchName || '',
                 followUp: Boolean(record.Seguimiento__c),
                 notes: activityContent.notes,
                 exceptionJustification:
                     activityContent.exceptionJustification,
                 countsTowardFrequency:
-                    activityType === 'Visita' ||
+                    Boolean(record.Sucursal__c) && (activityType === 'Visita' ||
                     (
                         activityType === 'Llamada' &&
                         record.Cuenta_para_frecuencia__c === true
-                    ),
+                    )),
                 status,
                 justification: record.Justificacion__c || '',
                 originalId: record.Actividad_Original__c || '',
@@ -583,6 +599,9 @@ export default class AgendaCalendar extends LightningElement {
     async renderedCallback() {
         // Los textarea nativos usan la propiedad .value, también durante el dictado.
         this.syncNotesInputValue();
+        if (this.showBranchResults && this.activeBranchIndex >= 0) {
+            this.template.querySelector('.branch-result.is-active')?.scrollIntoView?.({ block: 'nearest' });
+        }
 
         if (this.isViewingActivity) {
             [
@@ -1032,10 +1051,9 @@ export default class AgendaCalendar extends LightningElement {
         };
 
         this.activityTargetType = 'client';
+        this.resetClientSelection();
         this.resetBranchSelection();
         this.resetProspectSelection();
-
-        this.loadAssignedBranches();
 
         this.isViewingActivity = false;
         this.isActivityModalOpen = true;
@@ -1048,6 +1066,7 @@ export default class AgendaCalendar extends LightningElement {
         this.isActivityModalOpen = false;
         this.isViewingActivity = false;
         this.selectedActivityId = '';
+        this.resetClientSelection();
         this.resetBranchSelection();
         this.resetProspectSelection();
         this.activityAction = '';
@@ -1105,6 +1124,19 @@ export default class AgendaCalendar extends LightningElement {
 
     get isActionJustificationImproveButtonDisabled() {
         return this.isTextImprovementDisabled('actionJustification');
+    }
+
+    get isFollowUpResolutionImproveButtonDisabled() {
+        return this.isTextImprovementDisabled('followUpResolution');
+    }
+
+    get isFollowUpResolutionInputReadOnly() {
+        return (
+            this.isDictatingTarget('followUpResolution') ||
+            this.isStoppingTarget('followUpResolution') ||
+            this.isImprovingText ||
+            this.isProcessingActivityAction
+        );
     }
 
     get isNotesSpeechButtonDisabled() {
@@ -1223,6 +1255,10 @@ export default class AgendaCalendar extends LightningElement {
         return this.shouldShowDictationStatusFor('actionJustification');
     }
 
+    get showFollowUpResolutionDictationStatus() {
+        return this.shouldShowDictationStatusFor('followUpResolution');
+    }
+
     get notesDictationStatusClass() {
         return this.isDictatingNotes
             ? 'notes-dictation-status is-listening'
@@ -1239,6 +1275,10 @@ export default class AgendaCalendar extends LightningElement {
 
     handleToggleActivityActionJustificationDictation() {
         this.handleToggleSpeechDictation('actionJustification');
+    }
+
+    handleToggleFollowUpResolutionDictation() {
+        this.handleToggleSpeechDictation('followUpResolution');
     }
 
     handleToggleSpeechDictation(target) {
@@ -1439,7 +1479,7 @@ export default class AgendaCalendar extends LightningElement {
     }
 
     syncNotesInputValue() {
-        ['notes', 'exceptionJustification', 'actionJustification']
+        ['notes', 'exceptionJustification', 'actionJustification', 'followUpResolution']
             .map(target => this.getSpeechTargetConfig(target))
             .forEach(config => {
                 const field = this.template.querySelector(config.selector);
@@ -1466,6 +1506,11 @@ export default class AgendaCalendar extends LightningElement {
                 selector: '[data-element="activity-action-justification"]',
                 value: this.activityActionForm.justification,
                 maxLength: ACTION_JUSTIFICATION_MAX_LENGTH
+            },
+            followUpResolution: {
+                selector: '[data-element="follow-up-resolution"]',
+                value: this.followUpCompletionSummary,
+                maxLength: ACTION_JUSTIFICATION_MAX_LENGTH
             }
         };
 
@@ -1473,6 +1518,11 @@ export default class AgendaCalendar extends LightningElement {
     }
 
     setSpeechTargetValue(target, value) {
+        if (target === 'followUpResolution') {
+            this.followUpCompletionSummary = value;
+            return;
+        }
+
         if (target === 'actionJustification') {
             this.activityActionForm = {
                 ...this.activityActionForm,
@@ -1502,7 +1552,7 @@ export default class AgendaCalendar extends LightningElement {
             return true;
         }
 
-        if (target === 'actionJustification') {
+        if (['actionJustification', 'followUpResolution'].includes(target)) {
             return this.isProcessingActivityAction;
         }
 
@@ -1628,7 +1678,7 @@ export default class AgendaCalendar extends LightningElement {
     }
 
     isSpeechTargetDisabled(target) {
-        if (target === 'actionJustification') {
+        if (['actionJustification', 'followUpResolution'].includes(target)) {
             return this.isActivityActionSpeechButtonDisabled;
         }
         if (target === 'exceptionJustification') {
@@ -1837,6 +1887,7 @@ export default class AgendaCalendar extends LightningElement {
         if (
             this.enableCallReplacementInterface &&
             this.isClientTarget &&
+            this.hasSelectedBranch &&
             activity === 'Llamada' &&
             !this.activityForm.callReplacement
         ) {
@@ -1885,10 +1936,10 @@ export default class AgendaCalendar extends LightningElement {
             return;
         }
 
-        if (this.isClientTarget && !this.hasSelectedBranch) {
+        if (this.isClientTarget && !this.selectedClientId) {
             this.showToast(
-                'Selecciona una sucursal',
-                'Debes seleccionar una sucursal asignada.',
+                'Selecciona un cliente',
+                'Busca y selecciona un cliente de la lista. La sucursal es opcional.',
                 'warning'
             );
 
@@ -1930,6 +1981,10 @@ export default class AgendaCalendar extends LightningElement {
                         : null,
                 branchId: this.isClientTarget
                     ? this.selectedBranchId
+                    : null,
+                clientId: this.isClientTarget ? this.selectedClientId : null,
+                manualBranchName: this.isClientTarget && !this.hasSelectedBranch
+                    ? this.branchSearch.trim() || null
                     : null,
                 followUp,
                 notes,
@@ -2089,11 +2144,13 @@ export default class AgendaCalendar extends LightningElement {
     get myActivityRows() {
         return this.filteredMyActivityEvents.map(event => {
             const details = event.extendedProps;
-            const context = details.branchId
+            const context = details.branchName
                 ? [details.branchName, details.client]
                     .filter(Boolean)
                     .join(' - ')
-                : details.prospect
+                : details.client
+                    ? details.client
+                    : details.prospect
                     ? `Prospecto - ${details.prospect}`
                     : 'Sin relación comercial';
             const location = [details.state, details.city]
@@ -2155,27 +2212,22 @@ export default class AgendaCalendar extends LightningElement {
     }
 
     countActivitiesByStatus(events, status) {
-        if (status === 'Todas') {
-            return events.length;
-        }
-
-        if (status === 'Seguimiento') {
-            return events.filter(event => event.extendedProps.followUp).length;
-        }
-
-        return events.filter(event => event.extendedProps.status === status).length;
+        return events.filter(event =>
+            this.matchesMyActivityStatusFilter(event, status)
+        ).length;
     }
 
-    matchesMyActivityStatusFilter(event) {
-        if (this.myActivityStatusFilter === 'Todas') {
+    matchesMyActivityStatusFilter(event, status = this.myActivityStatusFilter) {
+        if (status === 'Todas') {
             return true;
         }
 
-        if (this.myActivityStatusFilter === 'Seguimiento') {
-            return event.extendedProps.followUp === true;
+        if (status === 'Seguimiento') {
+            return event.extendedProps.followUp === true &&
+                event.extendedProps.status !== 'Reagendada';
         }
 
-        return event.extendedProps.status === this.myActivityStatusFilter;
+        return event.extendedProps.status === status;
     }
 
     isActivityInSelectedPeriod(dateValue) {
@@ -2295,6 +2347,7 @@ export default class AgendaCalendar extends LightningElement {
             this.enableCallReplacementInterface &&
             !this.isViewingActivity &&
             this.isClientTarget &&
+            this.hasSelectedBranch &&
             this.activityForm.activity === 'Llamada'
         );
     }
@@ -2352,7 +2405,7 @@ export default class AgendaCalendar extends LightningElement {
     }
 
     get shouldCountActivityForFrequency() {
-        if (!this.isClientTarget) {
+        if (!this.isClientTarget || !this.hasSelectedBranch) {
             return false;
         }
 
@@ -2452,19 +2505,63 @@ export default class AgendaCalendar extends LightningElement {
             : 'activity-target-button';
     }
 
+    get showClientResults() {
+        return this.isClientDropdownOpen && normalizeAgendaSearchText(this.clientSearch).length >= 2;
+    }
+
+    get hasClientResults() {
+        return this.clientResults.length > 0;
+    }
+
+    get clientEmptyMessage() {
+        return this.clientSearchError || 'No se encontraron clientes disponibles.';
+    }
+
+    get isBranchInputDisabled() {
+        return !this.selectedClientId || this.isLoadingBranches;
+    }
+
+    get filteredBranches() {
+        const search = this.hasSelectedBranch ? '' : normalizeAgendaSearchText(this.branchSearch);
+        return this.assignedBranches
+            .filter(branch => !search || normalizeAgendaSearchText(`${branch.name} ${branch.location}`).includes(search))
+            .map((branch, index) => ({
+                ...branch,
+                optionId: `agenda-branch-${branch.id}`,
+                optionClass: index === this.activeBranchIndex
+                    ? 'account-result branch-result is-active'
+                    : 'account-result branch-result',
+                selected: index === this.activeBranchIndex || branch.id === this.selectedBranchId
+            }));
+    }
+
     get showBranchResults() {
-        return (
-            this.isBranchDropdownOpen &&
-            !this.isLoadingBranches
-        );
+        return this.isBranchDropdownOpen && !this.isBranchInputDisabled;
     }
 
     get hasFilteredBranches() {
         return this.filteredBranches.length > 0;
     }
 
-    get isBranchInputDisabled() {
-        return this.isLoadingBranches;
+    get hasBranchSearchText() {
+        return Boolean(this.branchSearch);
+    }
+
+    get activeBranchOptionId() {
+        return this.filteredBranches[this.activeBranchIndex]?.optionId || null;
+    }
+
+    get selectedBranchLocation() {
+        return this.assignedBranches.find(branch => branch.id === this.selectedBranchId)?.location || '';
+    }
+
+    get branchSelectionMessage() {
+        if (!this.selectedClientId) return 'Selecciona primero un cliente.';
+        if (this.isLoadingBranches) return 'Cargando sucursales del cliente...';
+        if (this.branchLoadError) return this.branchLoadError;
+        return this.assignedBranches.length
+            ? 'Selecciona una sugerencia, escribe el nombre de la sucursal o deja el campo vacío.'
+            : 'Puedes escribir el nombre de la sucursal o dejar el campo vacío.';
     }
 
     get showProspectResults() {
@@ -2484,11 +2581,11 @@ export default class AgendaCalendar extends LightningElement {
     }
 
     get hasActivityClient() {
-        return Boolean(this.activityForm.branchId);
+        return Boolean(this.activityForm.clientId || this.activityForm.branchId);
     }
 
     get isLocationReadOnly() {
-        return this.isViewingActivity || this.isClientTarget;
+        return this.isViewingActivity || (this.isClientTarget && this.hasSelectedBranch);
     }
 
     get isActivityActionOpen() {
@@ -2619,7 +2716,7 @@ export default class AgendaCalendar extends LightningElement {
         this.selectedActivityId = selectedActivity.id;
         this.activityAction = '';
         this.isViewingActivity = true;
-        this.activityTargetType = details.branchId
+        this.activityTargetType = (details.clientId || details.branchId)
             ? 'client'
             : 'prospect';
 
@@ -2631,6 +2728,7 @@ export default class AgendaCalendar extends LightningElement {
             state: details.state,
             city: details.city,
             client: details.client,
+            clientId: details.clientId,
             prospect: details.prospect,
             prospectId: '',
             prospectCompany: '',
@@ -2687,6 +2785,7 @@ export default class AgendaCalendar extends LightningElement {
 
     returnToActivityDetails() {
         this.disposeNotesSpeechRecognition();
+        this.resetTextImprovementState();
         this.activityAction = '';
         this.followUpCompletionSummary = '';
         this.activityActionForm = {
@@ -2774,11 +2873,21 @@ export default class AgendaCalendar extends LightningElement {
     // Valida y guarda la resolución antes de completar la actividad.
     // =========================================================
     handleFollowUpCompletionInput(event) {
+        if (
+            this.speechDictationTarget === 'followUpResolution' &&
+            (this.isDictatingNotes || this.isStoppingNotesDictation)
+        ) {
+            this.disposeNotesSpeechRecognition();
+        }
         this.followUpCompletionSummary = event.target.value;
     }
 
     async handleCompleteFollowUp(event) {
         event.preventDefault();
+
+        if (this.isActivityActionButtonDisabled) {
+            return;
+        }
 
         const followUpResolution =
             this.followUpCompletionSummary.trim();
@@ -2972,64 +3081,136 @@ export default class AgendaCalendar extends LightningElement {
         }
     }
 
-    async loadAssignedBranches() {
+    async loadAssignedBranches(clientId) {
+        const requestId = ++this.branchLoadRequest;
         this.isLoadingBranches = true;
+        this.branchLoadError = '';
 
         try {
-            const records = await getAssignedBranches();
+            const records = await getActivityClientBranches(clientId);
+            if (requestId !== this.branchLoadRequest || clientId !== this.selectedClientId) return;
 
             this.assignedBranches = records.map(branch => ({
                 id: branch.Id,
                 name: branch.Name,
-                client: branch.Cuenta__r?.Name || '',
                 city: branch.Ciudad__c || '',
-                state: resolveMexicanState(branch.Estado__c)
+                state: resolveMexicanState(branch.Estado__c),
+                location: [branch.Ciudad__c, resolveMexicanState(branch.Estado__c)]
+                    .filter(Boolean).join(' · ') || 'Sin ubicación registrada'
             }));
-
-            this.filterAssignedBranches('');
         } catch (error) {
-            console.error('Error cargando sucursales asignadas:', error);
-
-            this.showToast(
-                'Error',
-                'No fue posible cargar las sucursales asignadas.',
-                'error'
-            );
+            if (requestId !== this.branchLoadRequest) return;
+            this.assignedBranches = [];
+            this.branchLoadError = error?.message ||
+                'No fue posible cargar las sucursales. Vuelve a seleccionar el cliente para reintentar.';
         } finally {
-            this.isLoadingBranches = false;
+            if (requestId === this.branchLoadRequest) this.isLoadingBranches = false;
         }
     }
 
-    filterAssignedBranches(searchTerm) {
-        const search = normalizeAgendaSearchText(searchTerm);
+    handleClientSearch(event) {
+        this.clientSearch = event.target.value;
+        this.selectedClientId = '';
+        this.resetBranchSelection();
+        this.activityForm = {
+            ...this.activityForm, client: '', clientId: '', branchId: '', branchName: '',
+            state: '', city: '', callReplacement: '', callExceptionReason: '', exceptionJustification: ''
+        };
+        this.scheduleClientSearch(this.clientSearch);
+    }
 
-        this.filteredBranches = this.assignedBranches
-            .filter(branch =>
-                !search ||
-                normalizeAgendaSearchText(
-                    `${branch.name} ${branch.client}`
-                ).includes(search)
-            )
-            .slice(0, 8);
+    handleClientFocus() {
+        if (!this.selectedClientId) this.scheduleClientSearch(this.clientSearch);
+    }
+
+    handleClientBlur(event) {
+        if (event.relatedTarget?.closest('.client-picker')) return;
+        this.isClientDropdownOpen = false;
+    }
+
+    scheduleClientSearch(searchTerm) {
+        this.resetClientAutocomplete();
+        if (normalizeAgendaSearchText(searchTerm).length < 2) return;
+        const requestId = this.clientSearchRequest;
+        this.isClientDropdownOpen = true;
+        this.isSearchingClients = true;
+        this.clientSearchTimer = setTimeout(() => {
+            this.clientSearchTimer = undefined;
+            this.searchClientOptions(searchTerm, requestId);
+        }, 300);
+    }
+
+    async searchClientOptions(searchTerm, requestId) {
+        try {
+            const records = await searchActivityClients(searchTerm);
+            if (requestId !== this.clientSearchRequest) return;
+            this.clientResults = records.map(client => ({ id: client.Id, name: client.Name }));
+        } catch (error) {
+            if (requestId !== this.clientSearchRequest) return;
+            this.clientResults = [];
+            this.clientSearchError = error?.message || 'No fue posible buscar clientes.';
+        } finally {
+            if (requestId === this.clientSearchRequest) this.isSearchingClients = false;
+        }
+    }
+
+    handleClientOptionMouseDown(event) {
+        event.preventDefault();
+        this.handleClientSelect(event);
+    }
+
+    handleClientSelect(event) {
+        const client = this.clientResults.find(item => item.id === event.currentTarget.dataset.clientId);
+        if (!client) return;
+        this.resetClientAutocomplete();
+        this.resetBranchSelection();
+        this.selectedClientId = client.id;
+        this.clientSearch = client.name;
+        this.activityForm = {
+            ...this.activityForm, client: client.name, clientId: client.id,
+            prospect: '', prospectId: '', prospectCompany: '', branchId: '', branchName: '',
+            state: '', city: '', callReplacement: '', callExceptionReason: '', exceptionJustification: ''
+        };
+        this.loadAssignedBranches(client.id);
+    }
+
+    resetClientAutocomplete() {
+        clearTimeout(this.clientSearchTimer);
+        this.clientSearchTimer = undefined;
+        this.clientSearchRequest += 1;
+        this.clientResults = [];
+        this.clientSearchError = '';
+        this.isSearchingClients = false;
+        this.isClientDropdownOpen = false;
+    }
+
+    resetClientSelection() {
+        this.resetClientAutocomplete();
+        this.selectedClientId = '';
+        this.clientSearch = '';
     }
 
     resetBranchSelection() {
+        this.branchLoadRequest += 1;
         this.selectedBranchId = '';
         this.assignedBranches = [];
-        this.filteredBranches = [];
         this.branchSearch = '';
         this.isBranchDropdownOpen = false;
+        this.activeBranchIndex = -1;
         this.isLoadingBranches = false;
+        this.branchLoadError = '';
     }
 
     handleActivityTargetChange(event) {
         this.activityTargetType = event.currentTarget.dataset.type;
+        this.resetClientSelection();
         this.resetBranchSelection();
         this.resetProspectSelection();
 
         this.activityForm = {
             ...this.activityForm,
             client: '',
+            clientId: '',
             prospect: '',
             prospectId: '',
             prospectCompany: '',
@@ -3048,65 +3229,91 @@ export default class AgendaCalendar extends LightningElement {
             };
         }
 
-        if (this.isClientTarget) {
-            this.loadAssignedBranches();
-        }
+    }
+
+    clearBranchValue() {
+        this.selectedBranchId = '';
+        this.activeBranchIndex = -1;
+        this.activityForm = {
+            ...this.activityForm,
+            branchId: '', branchName: '', state: '', city: '',
+            callReplacement: '', callExceptionReason: '', exceptionJustification: ''
+        };
     }
 
     handleBranchSearch(event) {
         this.branchSearch = event.target.value;
-        this.selectedBranchId = '';
+        this.clearBranchValue();
         this.isBranchDropdownOpen = true;
-
-        this.activityForm = {
-            ...this.activityForm,
-            client: '',
-            branchId: '',
-            branchName: '',
-            state: '',
-            city: ''
-        };
-
-        this.filterAssignedBranches(this.branchSearch);
     }
 
     handleBranchFocus() {
-        this.filterAssignedBranches(this.branchSearch);
-        this.isBranchDropdownOpen = true;
+        if (!this.isBranchInputDisabled) this.isBranchDropdownOpen = true;
     }
 
-    handleBranchBlur() {
-        setTimeout(() => {
-            this.isBranchDropdownOpen = false;
-        }, 150);
+    handleBranchBlur(event) {
+        if (event.relatedTarget?.closest('.branch-picker')) return;
+        this.isBranchDropdownOpen = false;
+        this.activeBranchIndex = -1;
+    }
+
+    handleToggleBranchResults() {
+        this.isBranchDropdownOpen = !this.isBranchDropdownOpen;
+        this.activeBranchIndex = -1;
+    }
+
+    handleClearBranch() {
+        this.branchSearch = '';
+        this.clearBranchValue();
+        this.isBranchDropdownOpen = !this.isBranchInputDisabled;
+    }
+
+    handleBranchOptionMouseDown(event) {
+        event.preventDefault();
+        this.handleBranchSelect(event);
     }
 
     handleBranchSelect(event) {
-        const branchId = event.currentTarget.dataset.branchId;
+        this.selectBranchById(event.currentTarget.dataset.branchId);
+    }
 
-        const branch = this.assignedBranches.find(
-            item => item.id === branchId
-        );
-
-        if (!branch) {
-            return;
-        }
-
+    selectBranchById(branchId) {
+        const branch = this.assignedBranches.find(item => item.id === branchId);
+        if (!branch) return;
         this.selectedBranchId = branch.id;
         this.branchSearch = branch.name;
         this.isBranchDropdownOpen = false;
-
+        this.activeBranchIndex = -1;
         this.activityForm = {
             ...this.activityForm,
-            client: branch.client,
-            prospect: '',
-            prospectId: '',
-            prospectCompany: '',
-            branchId: branch.id,
-            branchName: branch.name,
-            state: branch.state,
-            city: branch.city
+            branchId: branch.id, branchName: branch.name,
+            state: branch.state, city: branch.city,
+            callReplacement: '', callExceptionReason: '', exceptionJustification: ''
         };
+    }
+
+    handleBranchKeyDown(event) {
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            this.isBranchDropdownOpen = false;
+            this.activeBranchIndex = -1;
+            return;
+        }
+        const branches = this.filteredBranches;
+        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            event.preventDefault();
+            this.isBranchDropdownOpen = true;
+            if (branches.length) {
+                const direction = event.key === 'ArrowDown' ? 1 : -1;
+                this.activeBranchIndex = this.activeBranchIndex < 0
+                    ? (direction > 0 ? 0 : branches.length - 1)
+                    : (this.activeBranchIndex + direction + branches.length) % branches.length;
+            }
+        } else if (event.key === 'Enter' && this.showBranchResults) {
+            event.preventDefault();
+            const branch = branches[this.activeBranchIndex >= 0 ? this.activeBranchIndex : 0];
+            if (branch) this.selectBranchById(branch.id);
+        }
     }
 
     handleProspectSearch(event) {
@@ -3231,8 +3438,29 @@ export default class AgendaCalendar extends LightningElement {
         this.resetProspectAutocomplete();
     }
 
+    handleLookupClick(event) {
+        // No inspeccionar nodos privados desde document: Salesforce retargetea
+        // los eventos que cruzan el Shadow DOM. El límite se maneja localmente.
+        event.stopPropagation();
+        const lookup = event.currentTarget.dataset.lookup;
+        if (lookup !== 'client') this.isClientDropdownOpen = false;
+        if (lookup !== 'prospect') this.isProspectDropdownOpen = false;
+        const clickedBranchControl = lookup === 'branch' &&
+            this.template.querySelector('.branch-search-container')?.contains(event.target);
+        if (!clickedBranchControl) {
+            // La etiqueta y el espacio del campo deben cerrar la lista. Cancela
+            // también la activación nativa del label para que no reabra el input.
+            if (lookup === 'branch') event.preventDefault();
+            this.isBranchDropdownOpen = false;
+            this.activeBranchIndex = -1;
+        }
+    }
+
     handleDocumentClick() {
         this.isProspectDropdownOpen = false;
+        this.isClientDropdownOpen = false;
+        this.isBranchDropdownOpen = false;
+        this.activeBranchIndex = -1;
     }
 
     disconnectedCallback() {
@@ -3255,6 +3483,8 @@ export default class AgendaCalendar extends LightningElement {
         }
 
         this.prospectSearchRequest += 1;
+        this.resetClientAutocomplete();
+        this.branchLoadRequest += 1;
 
         if (this.calendar) {
             this.calendar.destroy();

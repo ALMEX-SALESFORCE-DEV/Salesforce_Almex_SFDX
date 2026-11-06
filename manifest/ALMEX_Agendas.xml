@@ -29,6 +29,7 @@
         <name>CustomObject</name>
     </types>
     <types>
+        <members>Actividad_de_Agenda__c.Cliente__c</members>
         <members>Sucursal__c.Frecuencia_visitas__c</members>
         <name>CustomField</name>
     </types>
