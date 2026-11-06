@@ -25,7 +25,7 @@
                 </div>
 
                 <div class="stat-content">
-                    <span class="stat-title">Productos Monitoreados</span>
+                    <span class="stat-title" title="Productos distintos disponibles según los filtros de proveedor y periodo. No es el número de registros del producto seleccionado.">Productos Monitoreados</span>
                     <span class="stat-value">{monitoredProducts}</span>
                 </div>
             </div>
@@ -62,7 +62,7 @@
 
                 <div class="stat-content">
                     <div class="stat-title-row">
-                        <span class="stat-title">Precio Promedio</span>
+                        <span class="stat-title" title="Promedio anual: primero se convierte a USD/Ton y se multiplican por 12 los valores de registros mensuales; los anuales se conservan.">{averagePriceTitle}</span>
                         <template lwc:if={hasActiveProviderSelection}>
                             <span class="provider-context-separator">—</span>
                             <template for:each={selectedProviderBadges} for:item="provider">
@@ -107,7 +107,7 @@
             <div class="product-filter">
                 <label for="product">Producto</label>
 
-                <select id="product" class="product-select" value={selectedProduct} onchange={handleProductChange}>
+                <select id="product" class="product-select" onchange={handleProductChange}>
                     <option value="Azúcar">Azúcar</option>
                     <option value="Almidón">Almidón</option>
                     <option value="Glucosa 43">Glucosa 43</option>
@@ -123,48 +123,51 @@
                 </select>
             </div>
 
-            <div class="currency-filter">
-                <span id="currency-label" class="filter-caption">Moneda</span>
-
-                <div class="currency-switch" role="group" aria-labelledby="currency-label">
-                    <button
-                        type="button"
-                        class={mxnCurrencyButtonClass}
-                        data-currency="MXN"
-                        aria-pressed={isMxnSelected}
-                        onclick={handleCurrencyChange}>
-                        MXN
-                    </button>
-                    <button
-                        type="button"
-                        class={usdCurrencyButtonClass}
-                        data-currency="USD"
-                        aria-pressed={isUsdSelected}
-                        onclick={handleCurrencyChange}>
-                        USD
-                    </button>
-                </div>
+            <div class="period-filter">
+                <label for="period-year">Año</label>
+                <select id="period-year" name="periodFilterYear" class="product-select period-select" onchange={handlePeriodChange}
+                    title="Filtra por el Año capturado en el registro de mapeo, sin usar las fechas del contrato.">
+                    <template for:each={periodYearOptions} for:item="option">
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                    </template>
+                </select>
             </div>
-
-            <div class="currency-filter">
-                <span id="consumption-label" class="filter-caption">Consumo</span>
-                <div class="currency-switch" role="group" aria-labelledby="consumption-label">
-                    <button type="button" class={monthlyConsumptionButtonClass}
-                        data-consumption-type="M" aria-pressed={isMonthlyConsumption}
-                        onclick={handleConsumptionTypeChange}>Mensual</button>
-                    <button type="button" class={annualConsumptionButtonClass}
-                        data-consumption-type="A" aria-pressed={isAnnualConsumption}
-                        onclick={handleConsumptionTypeChange}>Anual</button>
-                </div>
+            <div class="period-filter map-provider-filter">
+                <label for="map-provider">Proveedor</label>
+                <select id="map-provider" name="providerFilter" class="product-select" onchange={handleProviderChange}>
+                    <template for:each={providerOptions} for:item="option">
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                    </template>
+                </select>
             </div>
+            <template lwc:if={hasActiveProviderSelection}>
+                <button type="button" class="period-clear provider-clear" onclick={clearProviderFilter}>
+                    <lightning-icon icon-name="utility:clear" size="xx-small"></lightning-icon>Limpiar proveedor
+                </button>
+            </template>
+            <template lwc:if={hasPeriodFilter}>
+                <button type="button" class="period-clear" onclick={clearPeriodFilters}>
+                    <lightning-icon icon-name="utility:clear" size="xx-small"></lightning-icon>
+                    Limpiar periodo
+                </button>
+            </template>
+
 
             <div class="filter-summary" aria-live="polite">
-                <span>Consumo {consumptionPeriodLabel} ·</span>
+                <span>Vista {consumptionPeriodLabel} ·</span>
                 <span>Visualizando precios en</span>
                 <strong>{currentPriceUnitLabel}</strong>
             </div>
 
         </div>
+
+        <div class="exchange-rate-context" aria-live="polite">{exchangeRateLabel}</div>
+        <template lwc:if={priceDataWarning}>
+            <div class="period-data-warning" role="status">{priceDataWarning}</div>
+        </template>
+        <template lwc:if={exchangeRateError}>
+            <div class="slds-notify slds-notify_alert slds-alert_warning" role="alert">{exchangeRateError}</div>
+        </template>
 
 
         <!-- ==================== TABSET PRINCIPAL ==================== -->
@@ -210,16 +213,6 @@
                             </div>
 
                             <div class="summary-actions">
-                                <lightning-combobox
-                                    class="provider-filter"
-                                    name="providerFilter"
-                                    label="Proveedor"
-                                    variant="label-hidden"
-                                    value={selectedProvider}
-                                    options={providerOptions}
-                                    onchange={handleProviderChange}>
-                                </lightning-combobox>
-
                                 <lightning-button
                                     label="Descargar Excel"
                                     icon-name="utility:download"
@@ -233,9 +226,11 @@
                         <!-- RESUMEN ESTATAL -->
                         <div
                             class="table-wrapper summary-state-table datatable-scroll"
+                            tabindex="-1"
                             ondblclick={handleStateTableDoubleClick}>
 
                             <lightning-datatable
+                                class="market-datatable" style={summaryTableStyle} data-table="state" onresize={handleTableResize}
                                 key-field="id"
                                 data={summaryTableData}
                                 columns={summaryTableColumns}
@@ -253,16 +248,18 @@
                                     <div class="panel-title">Desglose por ciudad</div>
                                     <span class="count-badge">{cityRowCount} registros</span>
                                 </div>
-                                <div class="panel-subtitle">Detalle de clientes, proveedores y precios registrados</div>
+                                <div class="panel-subtitle" title="Las casillas del resumen estatal limitan este desglose y el Excel; no cambian los indicadores generales.">{cityContextLabel}</div>
                             </div>
                         </div>
 
                         <!-- RESUMEN CIUDADES -->
                         <div
                             class="table-wrapper summary-city-table datatable-scroll"
+                            tabindex="-1"
                             ondblclick={handleCityTableDoubleClick}>
 
                             <lightning-datatable
+                                class="market-datatable" style={cityTableStyle} data-table="city" onresize={handleTableResize}
                                 key-field="id"
                                 data={cityTableData}
                                 columns={cityTableColumns}
@@ -280,6 +277,37 @@
             </lightning-tab>
 
 
+            <lightning-tab label="Historial de propuestas" value="historial">
+                <section class="panel history-panel">
+                    <div class="panel-heading">
+                        <div>
+                            <div class="panel-title">Historial de propuestas</div>
+                            <div class="panel-subtitle">{historyContextLabel}</div>
+                        </div>
+                        <div class="history-filters">
+                            <div class="history-product-context">
+                                <span class="filter-caption">Producto seleccionado</span>
+                                <span class="history-product-badge">{selectedProduct}</span>
+                            </div>
+                            <div class="period-filter history-provider-filter">
+                                <label for="history-provider">Proveedor del historial</label>
+                                <select id="history-provider" name="historyProvider" class="product-select"
+                                    onchange={handleHistoryProviderChange}>
+                                    <template for:each={historyProviderOptions} for:item="option">
+                                        <option key={option.value} value={option.value}>{option.label}</option>
+                                    </template>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="history-table datatable-scroll">
+                        <lightning-datatable class="market-datatable" style={historyTableStyle} data-table="history" onresize={handleTableResize}
+                            key-field="id" data={historyTableData} columns={historyTableColumns}
+                            column-widths-mode="fixed" wrap-text-max-lines="2" hide-checkbox-column></lightning-datatable>
+                    </div>
+                </section>
+            </lightning-tab>
+
             <!-- ==================== TAB: GRÁFICAS ==================== -->
 
             <lightning-tab label="Gráficas" value="graficas" onactive={handleChartsTabActive}>
@@ -289,17 +317,9 @@
                     <div class="charts-header">
                         <div>
                             <div class="panel-title">Tendencia de precios</div>
-                            <div class="panel-subtitle">Evolución mensual según el periodo comercial registrado · {currentPriceUnitLabel}</div>
+                            <div class="panel-subtitle">Serie por año del periodo comercial · {currentPriceUnitLabel}</div>
                         </div>
 
-                        <div class="chart-filters">
-                            <div class="chart-filter">
-                                <lightning-combobox name="year" label="Año" value={selectedYear} options={yearOptions}
-                                    onchange={handleYearChange}>
-                                </lightning-combobox>
-                            </div>
-
-                        </div>
                     </div>
 
                     <div class="chart-wrapper">
@@ -319,30 +339,58 @@
 
         <div class="table-modal-backdrop" onclick={closeExpandedTable}>
         </div>
-        <div class="table-expanded" role="dialog" aria-modal="true">
-            <button class="close-expanded-table" onclick={closeExpandedTable} title="Cerrar">
-
-                <lightning-icon icon-name="utility:close" size="small" alternative-text="Cerrar">
-                </lightning-icon>
-
-            </button>
-
-            <div class="table-expanded-content">
-
-                <template if:true={isStateTableExpanded}>
-                    <lightning-datatable class="expanded-state-datatable" key-field="id" data={summaryTableData}
-                        columns={summaryTableColumns} column-widths-mode="fixed" wrap-text-max-lines="2"
-                        hide-checkbox-column>
-                    </lightning-datatable>
-                </template>
-
-                <template if:true={isCityTableExpanded}>
-                    <lightning-datatable class="expanded-city-datatable" key-field="id" data={cityTableData}
-                        columns={cityTableColumns} column-widths-mode="fixed" wrap-text-max-lines="2"
-                        hide-checkbox-column>
-                    </lightning-datatable>
-                </template>
+        <section class="table-expanded" role="dialog" aria-modal="true" aria-labelledby="expanded-table-title"
+            onkeydown={handleExpandedKeyDown}>
+            <header class="table-expanded-header">
+                <div>
+                    <h2 id="expanded-table-title">{expandedTableTitle}</h2>
+                    <p>{expandedTableContext}</p>
+                </div>
+                <div class="table-expanded-actions">
+                    <button type="button" class="reset-column-widths" onclick={resetExpandedColumnWidths}>Restablecer columnas</button>
+                    <button type="button" class="close-expanded-table" onclick={closeExpandedTable} title="Cerrar" aria-label="Cerrar tabla ampliada">
+                        <lightning-icon icon-name="utility:close" size="small" alternative-text="Cerrar"></lightning-icon>
+                    </button>
+                </div>
+            </header>
+            <!-- Un solo propietario del desplazamiento: sin otro datatable/scroll dentro. -->
+            <div class="table-expanded-content" tabindex="0" role="region" aria-label="Tabla ampliada desplazable">
+                <table class="expanded-native-table" style={expandedTableStyle} aria-label={expandedTableTitle}>
+                    <colgroup>
+                        <template for:each={expandedTableColumns} for:item="column">
+                            <col key={column.fieldName} style={column.style}>
+                        </template>
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <template for:each={expandedTableColumns} for:item="column">
+                                <th key={column.fieldName} scope="col">
+                                    <span class="expanded-column-label">{column.label}</span>
+                                    <span class="expanded-column-resizer" role="separator" tabindex="0" aria-orientation="vertical"
+                                        aria-label={column.resizeLabel} aria-valuemin="90" aria-valuemax="1000" aria-valuenow={column.width}
+                                        title={column.resizeLabel} data-field={column.fieldName}
+                                        onpointerdown={handleExpandedResizeStart} onpointermove={handleExpandedResizeMove}
+                                        onpointerup={handleExpandedResizeEnd} onpointercancel={handleExpandedResizeEnd}
+                                        onlostpointercapture={handleExpandedResizeEnd} onkeydown={handleExpandedResizeKey}>
+                                    </span>
+                                </th>
+                            </template>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={expandedTableRows} for:item="row">
+                            <tr key={row.id}>
+                                <template for:each={row.cells} for:item="cell">
+                                    <td key={cell.key} class={cell.className} title={cell.text}>{cell.text}</td>
+                                </template>
+                            </tr>
+                        </template>
+                        <template lwc:if={expandedTableEmpty}>
+                            <tr><td class="expanded-table-empty" colspan={expandedColumnCount}>No hay registros para los filtros seleccionados.</td></tr>
+                        </template>
+                    </tbody>
+                </table>
             </div>
-        </div>
+        </section>
     </template>
 </template>
