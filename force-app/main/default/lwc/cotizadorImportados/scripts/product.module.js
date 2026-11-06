@@ -64,6 +64,8 @@ export class PlantProduct {
 		// console.log("===========+++++++++++++++++++++++++++++===========");
 		// console.log(qli);
 		// console.log("===========+++++++++++++++++++++++++++++===========");
+		this.priceComplement = qli.Complemento_de_precio__c ? qli.Complemento_de_precio__c : 0;
+
 		this.literOutput = qli.literOutput__c;
 		this.volume = qli.Volumen__c;
 		this.storage = qli.Almacen_de_Recibo_Almex__c;
@@ -84,11 +86,13 @@ export class PlantProduct {
 		this.storageDry = qli.Costos_Operativos_almacenaje_seco__c;
 		this.finantialCostRate = qli.Financial_Costs_Rate__c;
 		this.incrementalCost = qli.Incremental_Costs_Rebate_Porcentage__c;
-		this.productCostInput = qli.Total_Costo_de_Producto__c;
+
+		// Total
+		this.productCostInput = qli.Total_Costo_de_Producto__c - this.priceComplement;
+
 		this.movement = qli.Movimiento__c;
 		this.currentCurrency = qli.Moneda__c.toLowerCase();
 		this.convertionCurrency = qli.Precio_dolar__c;
-		this.priceComplement = qli.Complemento_de_precio__c ? qli.Complemento_de_precio__c : 0;
 		if (qli.Densidad_Merk_20C__c) {
 			this.densidadMark20C = qli.Densidad_Merk_20C__c;
 		}
@@ -105,6 +109,7 @@ export class PlantProduct {
 		if (qli.systemDeliveryCost__c) {
 			this.systemDeliveryCost = qli.systemDeliveryCost__c;
 		}
+		console.log("debug: ", qli);
 	}
 
 	get id() {

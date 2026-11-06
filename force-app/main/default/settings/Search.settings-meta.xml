@@ -1,22 +1,17 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <SearchSettings xmlns="http://soap.sforce.com/2006/04/metadata">
     <documentContentSearchEnabled>true</documentContentSearchEnabled>
-    <enableAdvancedSearchInAlohaSidebar
-  >false</enableAdvancedSearchInAlohaSidebar>
-    <enableEinsteinSearchAssistantDialog
-  >true</enableEinsteinSearchAssistantDialog>
+    <enableAdvancedSearchInAlohaSidebar>false</enableAdvancedSearchInAlohaSidebar>
+    <enableEinsteinSearchAssistantDialog>true</enableEinsteinSearchAssistantDialog>
     <enableEinsteinSearchEs4kPilot>false</enableEinsteinSearchEs4kPilot>
     <enableEinsteinSearchNLSFilters>false</enableEinsteinSearchNLSFilters>
-    <enableEinsteinSearchNaturalLanguage
-  >true</enableEinsteinSearchNaturalLanguage>
-    <enableEinsteinSearchPersonalization
-  >true</enableEinsteinSearchPersonalization>
+    <enableEinsteinSearchNaturalLanguage>true</enableEinsteinSearchNaturalLanguage>
+    <enableEinsteinSearchPersonalization>true</enableEinsteinSearchPersonalization>
     <enablePersonalTagging>false</enablePersonalTagging>
     <enablePublicTagging>false</enablePublicTagging>
     <enableSetupSearch>true</enableSetupSearch>
     <optimizeSearchForCJKEnabled>false</optimizeSearchForCJKEnabled>
-    <recentlyViewedUsersForBlankLookupEnabled
-  >true</recentlyViewedUsersForBlankLookupEnabled>
+    <recentlyViewedUsersForBlankLookupEnabled>true</recentlyViewedUsersForBlankLookupEnabled>
     <searchSettingsByObject>
         <searchSettingsByObject>
             <enhancedLookupEnabled>true</enhancedLookupEnabled>
@@ -705,9 +700,7 @@
     </searchSettingsByObject>
     <sidebarAutoCompleteEnabled>true</sidebarAutoCompleteEnabled>
     <sidebarDropDownListEnabled>true</sidebarDropDownListEnabled>
-    <sidebarLimitToItemsIOwnCheckboxEnabled
-  >true</sidebarLimitToItemsIOwnCheckboxEnabled>
+    <sidebarLimitToItemsIOwnCheckboxEnabled>true</sidebarLimitToItemsIOwnCheckboxEnabled>
     <singleSearchResultShortcutEnabled>true</singleSearchResultShortcutEnabled>
-    <spellCorrectKnowledgeSearchEnabled
-  >false</spellCorrectKnowledgeSearchEnabled>
+    <spellCorrectKnowledgeSearchEnabled>false</spellCorrectKnowledgeSearchEnabled>
 </SearchSettings>
