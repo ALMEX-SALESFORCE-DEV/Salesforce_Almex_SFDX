@@ -1298,6 +1298,8 @@
         <members>TimeSlot</members>
         <members>Topic</members>
         <members>TopicAssignment</members>
+        <members>UiPageAuthoringConv</members>
+        <members>UiPageAuthoringConvTurn</members>
         <members>UnitOfMeasure</members>
         <members>UnstructuredStorageSpace</members>
         <members>UnstructuredStorageSpaceLayer</members>
@@ -3525,6 +3527,7 @@
         <members>TableauHostMapping</members>
         <members>TenantConsumptionAlert</members>
         <members>TodayGoal</members>
+        <members>UiPageAuthoringConv</members>
         <members>UnitOfMeasure</members>
         <members>UnstructuredStorageSpace</members>
         <members>User</members>

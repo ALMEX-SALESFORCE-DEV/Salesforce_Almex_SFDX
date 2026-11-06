@@ -87,15 +87,15 @@
     </columns>
     <columns>
         <aggregateTypes>Sum</aggregateTypes>
-        <field>SalesAgreement.SalesAgreementProduct.SalesAgreementProductSchedule$PlannedQuantity</field>
+        <field>SalesAgreement.SalesAgreementProduct.SalesAgreementProductSchedule$PlannedQuantityValue</field>
     </columns>
     <columns>
         <aggregateTypes>Sum</aggregateTypes>
-        <field>SalesAgreement.SalesAgreementProduct.SalesAgreementProductSchedule$ForecastedQuantity</field>
+        <field>SalesAgreement.SalesAgreementProduct.SalesAgreementProductSchedule$ForecastedQuantityValue</field>
     </columns>
     <columns>
         <aggregateTypes>Sum</aggregateTypes>
-        <field>SalesAgreement.SalesAgreementProduct.SalesAgreementProductSchedule$ActualQuantity</field>
+        <field>SalesAgreement.SalesAgreementProduct.SalesAgreementProductSchedule$ActualQuantityValue</field>
     </columns>
     <columns>
         <field>SalesAgreement.SalesAgreementProduct.SalesAgreementProductSchedule$Id</field>

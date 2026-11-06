@@ -577,7 +577,7 @@ export default class CotizadorAceites extends LightningElement {
 				const column = evt.target.closest(".quoter-column").getAttribute("aria-id");
 				this.items = this.items.map((i) => {
 					if (i.id === column) {
-						if (name === "profitMarginPercentage" || name !== "totalProductCost") {
+						if (name !== "totalProductCost" && name !== "priceComplement") {
 							i.productCostInput = 0;
 						}
 						if (name === "tons") {

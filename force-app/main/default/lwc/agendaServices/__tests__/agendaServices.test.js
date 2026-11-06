@@ -1,5 +1,8 @@
 import getManagementActivitiesApex from "@salesforce/apex/ALMEX_AgendaDataController.getManagementActivities";
-import { getManagementActivities } from "c/agendaServices";
+import { getManagementActivities, createAgendaActivity, searchActivityClients, getActivityClientBranches } from "c/agendaServices";
+import createActivityApex from '@salesforce/apex/ALMEX_AgendaDataController.createActivity';
+import searchActivityClientsApex from '@salesforce/apex/ALMEX_AgendaDataController.searchActivityClients';
+import getActivityClientBranchesApex from '@salesforce/apex/ALMEX_AgendaDataController.getActivityClientBranches';
 import improveAgendaTextApex from '@salesforce/apex/ALMEX_AgendaDataController.improveAgendaText';
 import getAgendaAiCandidatesApex from '@salesforce/apex/ALMEX_AgendaDataController.getAgendaAiCandidates';
 import { improveAgendaText } from 'c/agendaServices';
@@ -12,6 +15,51 @@ jest.mock(
 
 jest.mock('@salesforce/apex/ALMEX_AgendaDataController.improveAgendaText', () => ({ default: jest.fn() }), { virtual: true });
 jest.mock('@salesforce/apex/ALMEX_AgendaDataController.getAgendaAiCandidates', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock('@salesforce/apex/ALMEX_AgendaDataController.createActivity', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock('@salesforce/apex/ALMEX_AgendaDataController.searchActivityClients', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock('@salesforce/apex/ALMEX_AgendaDataController.getActivityClientBranches', () => ({ default: jest.fn() }), { virtual: true });
+
+describe('Cliente y sucursal opcional', () => {
+  afterEach(() => jest.clearAllMocks());
+  it('envía el Id de Cuenta al guardar, incluso sin sucursal', async () => {
+    await createAgendaActivity({ title: 'Comida', activityType: 'Otro', date: '2026-11-04', clientId: '001cliente' });
+    expect(createActivityApex).toHaveBeenCalledWith(expect.objectContaining({
+      clientId: '001cliente', branchId: null, prospectId: null
+    }));
+  });
+  it('consulta clientes por texto y sucursales por Cuenta', async () => {
+    searchActivityClientsApex.mockResolvedValue([{ Id: '001cliente', Name: 'Cliente' }]);
+    getActivityClientBranchesApex.mockResolvedValue([]);
+    expect(await searchActivityClients('Cliente')).toHaveLength(1);
+    expect(searchActivityClientsApex).toHaveBeenCalledWith({ searchTerm: 'Cliente' });
+    expect(await getActivityClientBranches('001cliente')).toEqual([]);
+    expect(getActivityClientBranchesApex).toHaveBeenCalledWith({ clientId: '001cliente' });
+  });
+  it('conserva el nombre manual en Notas sin enviar campos nuevos a Apex', async () => {
+    await createAgendaActivity({
+      title: 'Visita', clientId: '001cliente', manualBranchName: '  Oficina regional  ', notes: 'Acuerdos de la visita.'
+    });
+    expect(createActivityApex).toHaveBeenCalledWith(expect.objectContaining({
+      clientId: '001cliente', branchId: null,
+      notes: 'Sucursal (captura manual): Oficina regional\n\nAcuerdos de la visita.'
+    }));
+    expect(createActivityApex.mock.calls[0][0]).not.toHaveProperty('manualBranchName');
+  });
+  it('separa la sucursal manual de las notas al recuperar la tabla', async () => {
+    getManagementActivitiesApex.mockResolvedValue({ records: [{
+      Cliente__c: '001cliente', Sucursal__c: null,
+      Notas__c: 'Sucursal (captura manual): Oficina regional\n\nNotas conservadas.'
+    }] });
+    const result = await getManagementActivities({});
+    expect(result.records[0]).toEqual(expect.objectContaining({
+      manualBranchName: 'Oficina regional', Notas__c: 'Notas conservadas.'
+    }));
+  });
+  it('la selección de una sucursal existente tiene prioridad sobre el texto manual', async () => {
+    await createAgendaActivity({ clientId: '001cliente', branchId: 'sucursal', manualBranchName: 'Ignorar', notes: 'Notas.' });
+    expect(createActivityApex).toHaveBeenCalledWith(expect.objectContaining({ branchId: 'sucursal', notes: 'Notas.' }));
+  });
+});
 
 describe('IA: catálogo temporal y un solo envío del texto', () => {
   let now = 1000000000000;

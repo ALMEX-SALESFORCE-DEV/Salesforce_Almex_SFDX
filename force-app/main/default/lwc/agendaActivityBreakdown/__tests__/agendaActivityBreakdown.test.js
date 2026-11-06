@@ -492,4 +492,26 @@ describe("Consulta de actividades: filtros múltiples asíncronos", () => {
     await apply();
     expect(getManagementActivities).toHaveBeenCalledTimes(1);
   });
+
+  it('muestra Cliente guardado, no la Cuenta actual de la sucursal', async () => {
+    getManagementActivities.mockResolvedValue({ ...page(), totalRecords: 1, records: [{
+      ...record('visita', 'Visita'), Cliente__c: '001original', Cliente__r: { Name: 'Cliente guardado' },
+      Sucursal__c: 'sucursal', Sucursal__r: { Name: 'Sucursal A', Cuenta__r: { Name: 'Cuenta distinta' } }
+    }] });
+    const element = await mount();
+    const rows = root(element).querySelector('c-activity-breakdown-datatable').data;
+    expect(rows[0].partyName).toBe('Cliente guardado');
+    expect(rows[0].branchName).toBe('Sucursal A');
+  });
+
+  it('incluye el cliente sin sucursal como Cliente, no como Prospecto', async () => {
+    getManagementActivities.mockResolvedValue({ ...page(), totalRecords: 1, records: [{
+      ...record('comida', 'Comida'), Cliente__c: '001cliente', Cliente__r: { Name: 'Cliente sin sucursal' }
+    }] });
+    const element = await mount();
+    const rows = root(element).querySelector('c-activity-breakdown-datatable').data;
+    expect(rows[0].partyName).toBe('Cliente sin sucursal');
+    expect(rows[0].partyType).toBe('Cliente');
+    expect(rows[0].branchName).toBe('');
+  });
 });

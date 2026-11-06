@@ -201,6 +201,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Actividad_de_Agenda__c.Cliente__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Actividad_de_Agenda__c.Cuenta_para_frecuencia__c</field>
         <readable>true</readable>
     </fieldPermissions>

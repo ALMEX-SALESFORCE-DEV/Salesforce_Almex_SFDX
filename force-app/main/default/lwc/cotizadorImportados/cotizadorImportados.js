@@ -649,7 +649,10 @@ export default class CotizadorImportados extends NavigationMixin(LightningElemen
 				const column = evt.target.closest(".quoter-column").getAttribute("aria-id");
 				this.items = this.items.map((i) => {
 					if (i.id === column) {
-						if (name === "profitMarginPercentage" || name !== "totalProductCost") {
+						// if (name === "profitMarginPercentage" || name !== "totalProductCost") {
+						// 	i.productCostInput = 0;
+						// }
+						if (name !== "totalProductCost" && name !== "priceComplement") {
 							i.productCostInput = 0;
 						}
 						if (name === "tons") {

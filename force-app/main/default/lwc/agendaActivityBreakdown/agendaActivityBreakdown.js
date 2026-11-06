@@ -1627,8 +1627,8 @@ export default class AgendaActivityBreakdown extends LightningElement {
         const activityPresentation =
             this.getActivityTypePresentation(activityType);
 
-        const isClientActivity = Boolean(record.Sucursal__c);
-        const client = record.Sucursal__r?.Cuenta__r?.Name || '';
+        const isClientActivity = Boolean(record.Cliente__c || record.Sucursal__c);
+        const client = record.Cliente__r?.Name || '';
         const prospect = record.Prospecto__c || '';
 
         return {
@@ -1642,6 +1642,7 @@ export default class AgendaActivityBreakdown extends LightningElement {
             activityPillStyle: activityPresentation.pillStyle,
             activityIconStyle: activityPresentation.iconStyle,
             client,
+            clientId: record.Cliente__c || '',
             prospect,
             partyName: isClientActivity
                 ? client || record.Sucursal__r?.Name || ''
@@ -1652,7 +1653,7 @@ export default class AgendaActivityBreakdown extends LightningElement {
                     ? 'Prospecto'
                     : '',
             branchId: record.Sucursal__c || '',
-            branchName: record.Sucursal__r?.Name || '',
+            branchName: record.Sucursal__r?.Name || record.manualBranchName || '',
             state: resolveMexicanState(record.Estado__c),
             city: record.Ciudad__c || '',
             followUp: record.Seguimiento__c === true,

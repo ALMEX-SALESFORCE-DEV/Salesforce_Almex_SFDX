@@ -9,4 +9,11 @@
         <value>Precio productos</value>
     </caseValues>
     <gender>Feminine</gender>
+    <layouts>
+        <layout>Precio productos Layout</layout>
+        <sections>
+            <label><!-- Custom Links --></label>
+            <section>Custom Links</section>
+        </sections>
+    </layouts>
 </CustomObjectTranslation>
