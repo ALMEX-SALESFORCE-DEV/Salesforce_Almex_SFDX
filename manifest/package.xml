@@ -969,6 +969,8 @@
         <members>ApprovalSubmission</members>
         <members>ApprovalSubmissionDetail</members>
         <members>ApprovalWorkItem</members>
+        <members>AssessmentIndDefinedValue</members>
+        <members>AssessmentIndValue</members>
         <members>AssessmentIndicatorDefinition</members>
         <members>AssessmentTask</members>
         <members>AssessmentTaskContentDocument</members>
@@ -1965,6 +1967,8 @@
         <members>Address-Formato Dirección</members>
         <members>ApprovalSubmission-Formato Envío de aprobación</members>
         <members>ApprovalSubmissionDetail-Formato Detalle de envío de aprobación</members>
+        <members>AssessmentIndDefinedValue-%5F%5FMISSING LABEL%5F%5F PropertyFile - val AssessmentIndDefinedValue not found in section StandardLayouts</members>
+        <members>AssessmentIndValue-Formato de Valor de indicador de evaluación</members>
         <members>AssessmentIndicatorDefinition-Formato de Definición de indicador de evaluación</members>
         <members>AssessmentTask-Formato de Tarea de evaluación</members>
         <members>AssessmentTaskContentDocument-Formato de Documento de contenido de tarea de evaluación</members>
@@ -3344,6 +3348,7 @@
         <members>AiJobRun</members>
         <members>AnalyticsUserAttrFuncTkn</members>
         <members>ApprovalSubmission</members>
+        <members>AssessmentIndValue</members>
         <members>AssessmentIndicatorDefinition</members>
         <members>AssessmentTask</members>
         <members>AssessmentTaskDefinition</members>
