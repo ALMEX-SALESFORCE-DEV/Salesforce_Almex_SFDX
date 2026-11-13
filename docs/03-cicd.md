@@ -23,10 +23,10 @@ Dos workflows en [`.github/workflows/`](../.github/workflows).
 
 | Trigger | Destino | Requisito |
 |---------|---------|-----------|
-| Push a `dev` | Sandbox | Secret `SF_AUTH_URL_SANDBOX` |
+| Push a `dev` | Sandbox **QA** | Secret `SF_AUTH_URL_QA` |
 | Ejecución **manual** (`workflow_dispatch`) | **Producción** | Escribir `DEPLOY` para confirmar + secret `SF_AUTH_URL_PROD` |
 
-- Sandbox: si el secret no existe, el job termina en verde y solo avisa (no falla).
+- Sandbox QA: si el secret no existe, el job termina en verde y solo avisa (no falla).
 - Producción: valida con `--dry-run` y luego despliega. **No es automático** — alguien debe lanzarlo manualmente desde la pestaña *Actions*.
 
 ## Secrets necesarios
@@ -35,14 +35,29 @@ Configúralos en **Settings → Secrets and variables → Actions**:
 
 | Secret | Cómo obtenerlo |
 |--------|----------------|
-| `SF_AUTH_URL_SANDBOX` | `sf org display --target-org cpsandbox --verbose --json` → campo `sfdxAuthUrl` |
-| `SF_AUTH_URL_PROD` | `sf org display --target-org ALMEX-Production --verbose --json` → campo `sfdxAuthUrl` |
+| `SF_AUTH_URL_QA` | Sandbox **qa**: PR/push a `dev`. Ver "Renovar el secret de QA" abajo |
+| `SF_AUTH_URL_RELEASE` | Release / PreProd: PR/push a `main` |
+| `SF_AUTH_URL_PROD` | `sf org auth show-sfdx-auth-url -o ALMEX-Production --json` → campo `result.sfdxAuthUrl` |
+| ~~`SF_AUTH_URL_SANDBOX`~~ | **Legado, sin uso.** Era ambiguo (apuntaba a `cpsandbox`) y su token venció. Se puede eliminar |
+
+### Renovar el secret de QA
+
+Los refresh tokens de las auth URL pueden vencer; si el check **"Validar deploy del delta"** falla en
+*Autenticar org objetivo* con `RefreshTokenAuthError: expired access/refresh token`, renueva el secret:
 
 ```bash
-# Ejemplo para setear el secret de sandbox con gh CLI:
-$url = (sf org display --target-org cpsandbox --verbose --json | ConvertFrom-Json).result.sfdxAuthUrl
-gh secret set SF_AUTH_URL_SANDBOX --body $url --repo ALMEX-SALESFORCE-DEV/Salesforce_Almex_SFDX
+# 1. Autenticar el sandbox qa (abre el navegador); omitir si ya esta autenticado
+sf org login web --alias qa --instance-url https://force-app-5145--qa.sandbox.my.salesforce.com
+
+# 2. Guardar la auth URL como secret SIN imprimirla (requiere permiso de escritura de secrets en el repo)
+sf org auth show-sfdx-auth-url -o qa --json \
+  | python3 -c "import json,sys; sys.stdout.write(json.load(sys.stdin)['result']['sfdxAuthUrl'])" \
+  | gh secret set SF_AUTH_URL_QA --repo ALMEX-SALESFORCE-DEV/Salesforce_Almex_SFDX
 ```
+
+> `sf org display --verbose` **enmascara** el `sfdxAuthUrl` (`[REDACTED]`) en la CLI 2.150+; usa
+> `sf org auth show-sfdx-auth-url`. Si el secret no existe, el check se omite en verde con un aviso: un verde sin
+> el secret **no** significa que el deploy se validó.
 
 > 🔐 El `sfdxAuthUrl` es una credencial completa de la org. **Nunca** lo pongas en el código ni en un commit — solo como secret de GitHub.
 
