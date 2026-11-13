@@ -19,14 +19,34 @@ Dos workflows en [`.github/workflows/`](../.github/workflows).
 
 ## `deploy.yml` — Despliegue
 
-> ⚠️ Solo despliega el bundle **`lwc/cotizadorManufacturados`** (`-d`). **Nunca toca otros componentes de la org.**
+> ⚠️ Las descripciones anteriores de este archivo sobre "solo `cotizadorManufacturados`" corresponden al esquema viejo.
+> Hoy los despliegues a **QA** y **Release** son por **delta** (solo lo que cambió en el push).
 
 | Trigger | Destino | Requisito |
 |---------|---------|-----------|
-| Push a `dev` | Sandbox **QA** | Secret `SF_AUTH_URL_QA` |
+| Push/merge a `dev` | Sandbox **QA** — **automático** (delta) | Secret `SF_AUTH_URL_QA` |
+| Push/merge a `main` | **Release / PreProd** — automático (delta) | Secret `SF_AUTH_URL_RELEASE` |
 | Ejecución **manual** (`workflow_dispatch`) | **Producción** | Escribir `DEPLOY` para confirmar + secret `SF_AUTH_URL_PROD` |
 
-- Sandbox QA: si el secret no existe, el job termina en verde y solo avisa (no falla).
+### Despliegue automático a QA (push a `dev`)
+
+1. Corren las pruebas Jest (gate) y se calcula el **delta** del push (`sfdx-git-delta`, de `github.event.before` a `github.sha`).
+2. El delta se convierte a formato mdapi y se despliega con `sf project deploy start --metadata-dir ... -o qa --verbose`.
+3. **Dónde ver qué se desplegó:** en GitHub → *Actions* → run **Deploy** → job *Deploy delta a QA*:
+   - **Log del paso "Desplegar delta a QA"**: salida completa de SF CLI (estado, Deploy ID, enlace a la org y tabla de componentes
+     con `Created` / `Changed` / `Unchanged`).
+   - **Summary del run** (pestaña *Summary*): commit, cuántos tipos de componente y la misma salida de SF CLI.
+4. Los despliegues a QA van **en serie** (`concurrency: deploy-qa`): si hay dos merges seguidos, el segundo espera al primero.
+
+Qué hay que saber:
+- Sin pruebas Apex: usa el nivel predeterminado de sandbox. Las pruebas Jest siguen como gate previo.
+- Si el commit **borra** componentes del repo, el delta los borra también en QA (`destructiveChangesPost`).
+- Si el push no contiene metadata de Salesforce (solo docs/workflows o archivos en `.forceignore`), el job termina en verde y lo
+  indica en el Summary ("no se desplegó nada").
+- Si falla la autenticación (`RefreshTokenAuthError`), renueva el secret (ver "Renovar el secret de QA").
+- QA puede tener cambios que aún no están en `dev` (por ejemplo, ramas en pruebas desplegadas a mano). El delta solo toca lo que
+  cambia en cada merge, pero un componente editado en QA y luego modificado en `dev` se **sobrescribe**.
+- Si el secret no existe, el job termina en verde y solo avisa (no falla).
 - Producción: valida con `--dry-run` y luego despliega. **No es automático** — alguien debe lanzarlo manualmente desde la pestaña *Actions*.
 
 ## Secrets necesarios
