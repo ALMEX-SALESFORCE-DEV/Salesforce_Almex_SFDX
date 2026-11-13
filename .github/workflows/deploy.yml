@@ -1,6 +1,6 @@
 name: Deploy
 
-# Sandbox QA (push a dev): delta a qa — DESHABILITADO (deploy manual desde terminal).
+# Sandbox QA (push a dev): delta a qa — ACTIVO (metodo mdapi; la salida de SF CLI queda en el log y en el Summary del run).
 # PreProd/Release (push a main): delta a Release — ACTIVO (metodo mdapi).
 # Prod: manual (workflow_dispatch + escribir "DEPLOY"). Activo pero SOLO manual,
 #       nunca se dispara solo; sigue desplegando el bundle cotizadorManufacturados.
@@ -19,9 +19,13 @@ env:
 
 jobs:
   sandbox:
-    name: Deploy delta a Sandbox
+    name: Deploy delta a QA
     # Solo en push a dev (no en push a main, que lo maneja el job release).
     if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+    # Un solo despliegue a QA a la vez; los pushes siguientes esperan en cola (no se cancelan).
+    concurrency:
+      group: deploy-qa
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -62,11 +66,11 @@ jobs:
         if: steps.guard.outputs.ready == 'true'
         run: echo y | sf plugins install sfdx-git-delta
 
-      - name: Autenticar Sandbox (SFDX Auth URL)
+      - name: Autenticar QA (SFDX Auth URL)
         if: steps.guard.outputs.ready == 'true'
         run: |
           printf '%s' "${{ secrets.SF_AUTH_URL_QA }}" > "$RUNNER_TEMP/sfauth"
-          sf org login sfdx-url --sfdx-url-file "$RUNNER_TEMP/sfauth" --alias sandbox --set-default
+          sf org login sfdx-url --sfdx-url-file "$RUNNER_TEMP/sfauth" --alias qa --set-default
           rm -f "$RUNNER_TEMP/sfauth"
 
       - name: Calcular delta (solo lo modificado)
@@ -86,24 +90,49 @@ jobs:
           echo "----- destructiveChanges.xml (a borrar) -----"
           cat delta/destructiveChanges/destructiveChanges.xml 2>/dev/null || echo "(sin borrados)"
 
-      - name: Desplegar delta a Sandbox (DESHABILITADO)
+      - name: Desplegar delta a QA (metodo mdapi)
         if: steps.guard.outputs.ready == 'true'
         run: |
+          set -o pipefail
           HAS_TYPES=$(grep -c "<types>" delta/package/package.xml 2>/dev/null || true); HAS_TYPES=${HAS_TYPES:-0}
           HAS_DESTRUCT=$(grep -c "<types>" delta/destructiveChanges/destructiveChanges.xml 2>/dev/null || true); HAS_DESTRUCT=${HAS_DESTRUCT:-0}
-          echo "::notice::Deploy automatico a Sandbox DESHABILITADO. Deploy manual desde terminal."
-          echo "Delta calculado (constructive types=$HAS_TYPES, destructive=$HAS_DESTRUCT)."
-          # --- DEPLOY REAL COMENTADO (se deploya manual desde terminal) ---
-          # Para reactivar, descomentar (metodo mdapi robusto):
-          #   rm -rf mdout
-          #   if [ "$HAS_TYPES" -gt 0 ]; then
-          #     sf project convert source --root-dir delta/force-app --output-dir mdout
-          #   elif [ "$HAS_DESTRUCT" -gt 0 ]; then
-          #     mkdir -p mdout
-          #     printf '<?xml version="1.0" encoding="UTF-8"?>\n<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n    <version>67.0</version>\n</Package>\n' > mdout/package.xml
-          #   fi
-          #   [ "$HAS_DESTRUCT" -gt 0 ] && cp delta/destructiveChanges/destructiveChanges.xml mdout/destructiveChangesPost.xml
-          #   [ -d mdout ] && sf project deploy start --metadata-dir mdout -o sandbox --ignore-conflicts
+          rm -rf mdout
+          if [ "$HAS_TYPES" -gt 0 ]; then
+            sf project convert source --root-dir delta/force-app --output-dir mdout
+          elif [ "$HAS_DESTRUCT" -gt 0 ]; then
+            mkdir -p mdout
+            printf '<?xml version="1.0" encoding="UTF-8"?>\n<Package xmlns="http://soap.sforce.com/2006/04/metadata">\n    <version>67.0</version>\n</Package>\n' > mdout/package.xml
+          fi
+          if [ "$HAS_DESTRUCT" -gt 0 ]; then
+            cp delta/destructiveChanges/destructiveChanges.xml mdout/destructiveChangesPost.xml
+          fi
+          MDOUT_TYPES=$(grep -c "<types>" mdout/package.xml 2>/dev/null || true); MDOUT_TYPES=${MDOUT_TYPES:-0}
+
+          {
+            echo "## Deploy a QA"
+            echo ""
+            echo "- Commit: \`${GITHUB_SHA::7}\` en \`dev\`"
+            echo "- Componentes a desplegar: $MDOUT_TYPES tipos | Borrados: $HAS_DESTRUCT tipos"
+            echo ""
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$MDOUT_TYPES" -gt 0 ] || [ -f mdout/destructiveChangesPost.xml ]; then
+            echo "Desplegando delta a QA..."
+            # La salida de SF CLI se ve en el log del paso y se copia al Summary del run.
+            # --verbose lista cada componente desplegado; pipefail conserva el codigo de salida de sf.
+            DEPLOY_STATUS=0
+            sf project deploy start --metadata-dir mdout -o qa --ignore-conflicts --verbose 2>&1 | tee deploy-qa.log || DEPLOY_STATUS=$?
+            {
+              echo "### Salida de SF CLI"
+              echo '```'
+              sed 's/\x1b\[[0-9;]*m//g' deploy-qa.log
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit $DEPLOY_STATUS
+          else
+            echo "Sin metadata desplegable tras convert (posible .forceignore); nada que desplegar."
+            echo "Sin metadata desplegable en este push (por ejemplo, solo docs/workflows o archivos en .forceignore); no se desplego nada." >> "$GITHUB_STEP_SUMMARY"
+          fi
 
   # PreProd (Release): auto-deploy del delta al hacer push/merge a main. ACTIVO.
   # Metodo mdapi (convert source -> --metadata-dir). Guard no-bloqueante si falta el secret.
