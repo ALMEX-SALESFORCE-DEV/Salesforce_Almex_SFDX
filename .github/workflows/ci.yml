@@ -56,21 +56,21 @@ jobs:
           cache: npm
 
       # Org objetivo segun la rama BASE del PR:
-      #   base dev  -> cpsandbox (SF_AUTH_URL_SANDBOX)
+      #   base dev  -> qa (SF_AUTH_URL_QA)
       #   base main -> Release/PreProd (SF_AUTH_URL_RELEASE)
       # Guard no-bloqueante: si falta el secret, avisa y se omite.
       - name: Determinar org objetivo y credenciales
         id: guard
         env:
           SECRET_RELEASE: ${{ secrets.SF_AUTH_URL_RELEASE }}
-          SECRET_SANDBOX: ${{ secrets.SF_AUTH_URL_SANDBOX }}
+          SECRET_QA: ${{ secrets.SF_AUTH_URL_QA }}
         run: |
           if [ "${{ github.base_ref }}" = "main" ]; then
             ORG_LABEL="Release (PreProd)"
             SECRET="$SECRET_RELEASE"
           else
-            ORG_LABEL="cpsandbox"
-            SECRET="$SECRET_SANDBOX"
+            ORG_LABEL="qa"
+            SECRET="$SECRET_QA"
           fi
           echo "org_label=$ORG_LABEL" >> "$GITHUB_OUTPUT"
           if [ -z "$SECRET" ]; then
@@ -94,12 +94,12 @@ jobs:
         if: steps.guard.outputs.ready == 'true'
         env:
           SECRET_RELEASE: ${{ secrets.SF_AUTH_URL_RELEASE }}
-          SECRET_SANDBOX: ${{ secrets.SF_AUTH_URL_SANDBOX }}
+          SECRET_QA: ${{ secrets.SF_AUTH_URL_QA }}
         run: |
           if [ "${{ github.base_ref }}" = "main" ]; then
             printf '%s' "$SECRET_RELEASE" > "$RUNNER_TEMP/sfauth"
           else
-            printf '%s' "$SECRET_SANDBOX" > "$RUNNER_TEMP/sfauth"
+            printf '%s' "$SECRET_QA" > "$RUNNER_TEMP/sfauth"
           fi
           sf org login sfdx-url --sfdx-url-file "$RUNNER_TEMP/sfauth" --alias target --set-default
           rm -f "$RUNNER_TEMP/sfauth"
