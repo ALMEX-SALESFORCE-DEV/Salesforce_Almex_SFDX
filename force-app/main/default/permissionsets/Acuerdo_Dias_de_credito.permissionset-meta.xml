@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
-    <description>Permite ver y editar el plazo de pago (Días de crédito) del Acuerdo de suministro. Asignar a Finanzas y Comercial.</description>
+    <description>Permite ver y EDITAR el plazo de pago (Días de crédito) del Acuerdo de suministro. Asignar SOLO al perfil Datos maestros (Rogelio Paredes) y a los administradores del sistema; nadie más debe poder editar este campo.</description>
     <fieldPermissions>
         <editable>true</editable>
         <field>SalesAgreement.Dias_de_credito__c</field>

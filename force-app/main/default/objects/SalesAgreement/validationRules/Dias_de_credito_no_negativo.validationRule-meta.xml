@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Dias_de_credito_no_negativo</fullName>
+    <active>true</active>
+    <description>Los días de crédito del acuerdo deben ser 0 o mayores (dominio: entero positivo o cero).</description>
+    <errorConditionFormula>AND(NOT(ISBLANK(Dias_de_credito__c)), Dias_de_credito__c &lt; 0)</errorConditionFormula>
+    <errorDisplayField>Dias_de_credito__c</errorDisplayField>
+    <errorMessage>Los días de crédito deben ser 0 o un número positivo.</errorMessage>
+</ValidationRule>

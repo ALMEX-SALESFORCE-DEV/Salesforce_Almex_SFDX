@@ -42,8 +42,9 @@ trigger ETC_LinkQuoteToSalesAgreement on SalesAgreement(before insert, before up
 
 						// marcar Quote
 						Quote q = quoteMap.get(qId);
-						// copiar el plazo pactado al acuerdo, sin pisar uno ya capturado
-						if (sa.Dias_de_credito__c == null && q.Dias_de_credito__c != null) {
+						// copiar el plazo pactado al acuerdo, sin pisar uno ya capturado y solo si es 0 o positivo
+						// (la regla de validacion del acuerdo rechaza negativos)
+						if (sa.Dias_de_credito__c == null && q.Dias_de_credito__c != null && q.Dias_de_credito__c >= 0) {
 							sa.Dias_de_credito__c = q.Dias_de_credito__c;
 						}
 						q.Acuerdo_de_suministro__c = sa.Id;

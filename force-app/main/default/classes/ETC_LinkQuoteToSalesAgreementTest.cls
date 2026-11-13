@@ -44,4 +44,33 @@ public with sharing class ETC_LinkQuoteToSalesAgreementTest {
 		sa = [SELECT Dias_de_credito__c FROM SalesAgreement WHERE Id = :sa.Id];
 		System.assertEquals(null, sa.Dias_de_credito__c);
 	}
+
+	@IsTest
+	static void noCopiaUnPlazoNegativoDeLaCotizacion() {
+		makeData(-5);
+		SalesAgreement sa = TestFactory.getSalesAgreement(true, 12, 'sa', null, newPricebook.Id, newAccount.Id);
+		sa = [SELECT Cotizacion__c, Dias_de_credito__c FROM SalesAgreement WHERE Id = :sa.Id];
+		System.assertEquals(newQuote.Id, sa.Cotizacion__c, 'Debe vincular la cotizacion');
+		System.assertEquals(null, sa.Dias_de_credito__c, 'No debe copiar un plazo negativo');
+	}
+
+	@IsTest
+	static void rechazaPlazoNegativoCapturado() {
+		makeData(30);
+		SalesAgreement sa = TestFactory.getSalesAgreement(false, 12, 'sa', null, newPricebook.Id, newAccount.Id);
+		sa.Dias_de_credito__c = -1;
+		Database.SaveResult result = Database.insert(sa, false);
+		System.assert(!result.isSuccess(), 'Debe rechazar dias de credito negativos');
+		System.assert(result.getErrors()[0].getMessage().contains('0 o un número positivo'));
+	}
+
+	@IsTest
+	static void aceptaCero() {
+		makeData(30);
+		SalesAgreement sa = TestFactory.getSalesAgreement(false, 12, 'sa', null, newPricebook.Id, newAccount.Id);
+		sa.Dias_de_credito__c = 0;
+		insert sa;
+		sa = [SELECT Dias_de_credito__c FROM SalesAgreement WHERE Id = :sa.Id];
+		System.assertEquals(0, sa.Dias_de_credito__c, 'El cero es valido y no se reemplaza');
+	}
 }
