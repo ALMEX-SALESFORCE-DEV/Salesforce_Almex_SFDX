@@ -1,6 +1,6 @@
 name: Deploy
 
-# Sandbox (push a dev): delta a cpsandbox — DESHABILITADO (deploy manual desde terminal).
+# Sandbox QA (push a dev): delta a qa — DESHABILITADO (deploy manual desde terminal).
 # PreProd/Release (push a main): delta a Release — ACTIVO (metodo mdapi).
 # Prod: manual (workflow_dispatch + escribir "DEPLOY"). Activo pero SOLO manual,
 #       nunca se dispara solo; sigue desplegando el bundle cotizadorManufacturados.
@@ -37,8 +37,8 @@ jobs:
       - name: Verificar credenciales
         id: guard
         run: |
-          if [ -z "${{ secrets.SF_AUTH_URL_SANDBOX }}" ]; then
-            echo "::warning::SF_AUTH_URL_SANDBOX no configurado; se omite el deploy."
+          if [ -z "${{ secrets.SF_AUTH_URL_QA }}" ]; then
+            echo "::warning::SF_AUTH_URL_QA no configurado; se omite el deploy."
             echo "ready=false" >> "$GITHUB_OUTPUT"
           else
             echo "ready=true" >> "$GITHUB_OUTPUT"
@@ -65,7 +65,7 @@ jobs:
       - name: Autenticar Sandbox (SFDX Auth URL)
         if: steps.guard.outputs.ready == 'true'
         run: |
-          printf '%s' "${{ secrets.SF_AUTH_URL_SANDBOX }}" > "$RUNNER_TEMP/sfauth"
+          printf '%s' "${{ secrets.SF_AUTH_URL_QA }}" > "$RUNNER_TEMP/sfauth"
           sf org login sfdx-url --sfdx-url-file "$RUNNER_TEMP/sfauth" --alias sandbox --set-default
           rm -f "$RUNNER_TEMP/sfauth"
 
