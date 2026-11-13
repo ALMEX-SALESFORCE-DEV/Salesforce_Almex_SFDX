@@ -23,7 +23,7 @@ trigger ETC_LinkQuoteToSalesAgreement on SalesAgreement(before insert, before up
 				// 3. Consultar Quotes relacionados por Cotizacion__c
 				Map<Id, Quote> quoteMap = new Map<Id, Quote>();
 				for (Quote q : [
-					SELECT Id, Acuerdo_de_suministro__c
+					SELECT Id, Acuerdo_de_suministro__c, Dias_de_credito__c
 					FROM Quote
 					WHERE Id IN :pbToQuoteId.values()
 				]) {
@@ -42,6 +42,10 @@ trigger ETC_LinkQuoteToSalesAgreement on SalesAgreement(before insert, before up
 
 						// marcar Quote
 						Quote q = quoteMap.get(qId);
+						// copiar el plazo pactado al acuerdo, sin pisar uno ya capturado
+						if (sa.Dias_de_credito__c == null && q.Dias_de_credito__c != null) {
+							sa.Dias_de_credito__c = q.Dias_de_credito__c;
+						}
 						q.Acuerdo_de_suministro__c = sa.Id;
 						quotesToUpdate.add(q);
 					}

@@ -79,6 +79,10 @@
                 <field>Cotizacion__c</field>
             </layoutItems>
             <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Dias_de_credito__c</field>
+            </layoutItems>
+            <layoutItems>
                 <behavior>Readonly</behavior>
                 <field>Volumen_total__c</field>
             </layoutItems>
