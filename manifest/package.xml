@@ -969,6 +969,8 @@
         <members>ApprovalSubmission</members>
         <members>ApprovalSubmissionDetail</members>
         <members>ApprovalWorkItem</members>
+        <members>AssessmentIndDefinedValue</members>
+        <members>AssessmentIndValue</members>
         <members>AssessmentIndicatorDefinition</members>
         <members>AssessmentTask</members>
         <members>AssessmentTaskContentDocument</members>
@@ -1776,6 +1778,7 @@
         <members>Oportunidad_Actualizaci_n_de_propietario</members>
         <members>Oportunidad_Relacion_lista_de_precios</members>
         <members>PFDEV01_Update_Status_When_Set_Status_Cerrado</members>
+        <members>ProductoDelAcuerdo_Actualizaci_n_Forecast</members>
         <members>ProductoDelAcuerdo_Actualizar_valores</members>
         <members>ProductoDelAcuerdo_Cantidad_en_decimales</members>
         <members>Prospecto_Envio_de_correo_Legal</members>
@@ -1852,6 +1855,7 @@
         <members>Oportunidad_Actualizaci_n_de_propietario</members>
         <members>Oportunidad_Relacion_lista_de_precios</members>
         <members>PFDEV01_Update_Status_When_Set_Status_Cerrado</members>
+        <members>ProductoDelAcuerdo_Actualizaci_n_Forecast</members>
         <members>ProductoDelAcuerdo_Actualizar_valores</members>
         <members>ProductoDelAcuerdo_Cantidad_en_decimales</members>
         <members>Prospecto_Envio_de_correo_Legal</members>
@@ -1965,6 +1969,8 @@
         <members>Address-Formato Dirección</members>
         <members>ApprovalSubmission-Formato Envío de aprobación</members>
         <members>ApprovalSubmissionDetail-Formato Detalle de envío de aprobación</members>
+        <members>AssessmentIndDefinedValue-%5F%5FMISSING LABEL%5F%5F PropertyFile - val AssessmentIndDefinedValue not found in section StandardLayouts</members>
+        <members>AssessmentIndValue-Formato de Valor de indicador de evaluación</members>
         <members>AssessmentIndicatorDefinition-Formato de Definición de indicador de evaluación</members>
         <members>AssessmentTask-Formato de Tarea de evaluación</members>
         <members>AssessmentTaskContentDocument-Formato de Documento de contenido de tarea de evaluación</members>
@@ -3019,6 +3025,7 @@
         <members>Usuariosdecomunidades/Reporte_de_usuario_de_comunidades_iyn</members>
         <members>unfiled$public/</members>
         <members>unfiled$public/Acuerdos_Forecast_Venta_Vencidos_Cancel</members>
+        <members>unfiled$public/Forecast_de_Clientes1</members>
         <members>unfiled$public/New_Acuerdos_por_programacion_Report</members>
         <members>unfiled$public/Oportunidades_por_Ejecutivo_MA_5ks</members>
         <members>unfiled$public/Opportunity_Amount_by_Stage_Sample</members>
@@ -3344,6 +3351,7 @@
         <members>AiJobRun</members>
         <members>AnalyticsUserAttrFuncTkn</members>
         <members>ApprovalSubmission</members>
+        <members>AssessmentIndValue</members>
         <members>AssessmentIndicatorDefinition</members>
         <members>AssessmentTask</members>
         <members>AssessmentTaskDefinition</members>
@@ -3923,6 +3931,7 @@
         <members>Oportunidad_Actualizaci_n_de_propietario</members>
         <members>Oportunidad_Relacion_lista_de_precios</members>
         <members>PFDEV01_Update_Status_When_Set_Status_Cerrado</members>
+        <members>ProductoDelAcuerdo_Actualizaci_n_Forecast</members>
         <members>ProductoDelAcuerdo_Actualizar_valores</members>
         <members>ProductoDelAcuerdo_Cantidad_en_decimales</members>
         <members>Prospecto_Envio_de_correo_Legal</members>

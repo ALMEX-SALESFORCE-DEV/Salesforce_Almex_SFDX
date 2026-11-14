@@ -23,6 +23,7 @@
         <isSaveTranscriptEnabled>false</isSaveTranscriptEnabled>
         <maxFileSize>5</maxFileSize>
     </embeddedConfig>
+    <isAgentMessageResetInactivityEnabled>false</isAgentMessageResetInactivityEnabled>
     <isEstimatedWaitTimeEnabled>false</isEstimatedWaitTimeEnabled>
     <isFeedbackEnabled>false</isFeedbackEnabled>
     <isQueuePositionEnabled>false</isQueuePositionEnabled>
