@@ -6,6 +6,8 @@ public with sharing class ETC_ControllerAcuertdoPdf {
 	public String endDate { get; set; }
 	public Decimal tonsPerMonth { get; set; }
 	public Integer tolerance { get; set; }
+	public String plazoAlmex { get; set; }
+	public String plazoPromer { get; set; }
 
 	public ETC_ControllerAcuertdoPdf(ApexPages.StandardController controller) {
 		Id recordId = System.currentPageReference().getParameters().get('id');
@@ -13,6 +15,7 @@ public with sharing class ETC_ControllerAcuertdoPdf {
 			SELECT
 				Folio__c,
 				Cotizacion__c,
+				Dias_de_credito__c,
 				Unidad_de_negocio__c,
 				Account.Raz_n_social__c,
 				Account.Representante_legal__c,
@@ -28,6 +31,7 @@ public with sharing class ETC_ControllerAcuertdoPdf {
 				SELECT
 					Id,
 					QuoteNumber,
+					Dias_de_credito__c,
 					Fecha_de_inicio__c,
 					ExpirationDate,
 					Opportunity.Producto__r.Name,
@@ -60,6 +64,25 @@ public with sharing class ETC_ControllerAcuertdoPdf {
 			this.today = getDate(System.today());
 			this.initDate = getDate(this.q.Fecha_de_inicio__c);
 			this.endDate = getDate(this.q.ExpirationDate);
+		}
+		this.resolvePlazos();
+	}
+
+	/**
+	 * Plazo de pago que imprime el PDF. Prioridad: el del acuerdo, el de la cotizacion
+	 * y, en ultimo caso, el de la cuenta (campo de cada empresa).
+	 */
+	private void resolvePlazos() {
+		Decimal days = this.sa.Dias_de_credito__c;
+		if (days == null && this.q != null) {
+			days = this.q.Dias_de_credito__c;
+		}
+		if (days != null) {
+			this.plazoAlmex = String.valueOf(days.intValue());
+			this.plazoPromer = this.plazoAlmex;
+		} else {
+			this.plazoAlmex = this.sa.Account.Condicion_de_pago__c;
+			this.plazoPromer = this.sa.Account.Condicion_de_pago_PROMER__c;
 		}
 	}
 
