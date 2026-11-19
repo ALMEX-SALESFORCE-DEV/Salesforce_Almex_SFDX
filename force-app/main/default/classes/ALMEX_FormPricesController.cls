@@ -6,7 +6,6 @@
  */
 public with sharing class ALMEX_FormPricesController {
     private static final String PERIOD_YEAR_FIELD = 'Periodo_Anio__c';
-    private static final String PERIOD_MONTH_FIELD = 'Periodo_Mes__c';
     private static final String NOT_APPLICABLE_SUPPLIER = 'N/A';
     private static final Map<String, String> MEXICAN_STATES_BY_ALIAS =
         buildMexicanStatesByAlias();
@@ -42,7 +41,6 @@ public with sharing class ALMEX_FormPricesController {
         @AuraEnabled public String productName { get; set; }
         @AuraEnabled public String subproductType { get; set; }
         @AuraEnabled public Integer periodYear { get; set; }
-        @AuraEnabled public Integer periodMonth { get; set; }
         @AuraEnabled public String commercialName { get; set; }
         @AuraEnabled public String state { get; set; }
         @AuraEnabled public String municipality { get; set; }
@@ -276,7 +274,7 @@ public with sharing class ALMEX_FormPricesController {
                 : clean(input.factoryCity)
         );
 
-        Boolean periodPersisted = putPeriodWhenAvailable(record, input.periodYear, input.periodMonth);
+        Boolean periodPersisted = putPeriodWhenAvailable(record, input.periodYear);
         SObjectAccessDecision accessDecision = Security.stripInaccessible(
             AccessType.CREATABLE,
             new List<Precio_productos__c>{ record }
@@ -378,9 +376,6 @@ public with sharing class ALMEX_FormPricesController {
         }
         if (input.periodYear == null || input.periodYear < 2000 || input.periodYear > 2100) {
             throw new AuraHandledException('Selecciona un año de periodo válido.');
-        }
-        if (input.periodMonth != null && (input.periodMonth < 1 || input.periodMonth > 12)) {
-            throw new AuraHandledException('Selecciona un mes de periodo válido.');
         }
     }
 
@@ -563,17 +558,15 @@ public with sharing class ALMEX_FormPricesController {
         return getFieldIgnoreCase(fields, PERIOD_YEAR_FIELD) != null;
     }
 
-    private static Boolean putPeriodWhenAvailable(Precio_productos__c record, Integer year, Integer month) {
+    private static Boolean putPeriodWhenAvailable(Precio_productos__c record, Integer year) {
         Map<String, Schema.SObjectField> fields = Precio_productos__c.SObjectType.getDescribe().fields.getMap();
         Schema.SObjectField yearField = getFieldIgnoreCase(fields, PERIOD_YEAR_FIELD);
-        Schema.SObjectField monthField = getFieldIgnoreCase(fields, PERIOD_MONTH_FIELD);
 
         if (yearField == null || !yearField.getDescribe().isCreateable()) {
             return false;
         }
 
         record.put(yearField, year);
-        if (month != null && monthField != null && monthField.getDescribe().isCreateable()) record.put(monthField, month);
         return true;
     }
 
