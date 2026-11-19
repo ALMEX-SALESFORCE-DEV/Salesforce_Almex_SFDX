@@ -1,7 +1,7 @@
 public with sharing class ALMEX_AgendaDataController {
 
-    private static final String MANAGER_SYSTEM_PROFILE_NAME =
-        'Gerencia y Dirección Comercial';
+    private static Map<Id, Boolean> managementAccessByProfileId =
+        new Map<Id, Boolean>();
 
     private static final Map<String, String> MEXICAN_STATES_BY_CODE =
         new Map<String, String>{
@@ -977,14 +977,46 @@ public with sharing class ALMEX_AgendaDataController {
 
     @TestVisible
     private static Boolean hasManagementAccess(User userRecord) {
-        return userRecord != null &&
-            userRecord.Profile != null &&
-            (
-                // Permiso del perfil: independiente del idioma o su etiqueta.
-                userRecord.Profile.PermissionsModifyAllData == true ||
-                (!String.isBlank(userRecord.Profile.Name) &&
-                    userRecord.Profile.Name.trim().equalsIgnoreCase(MANAGER_SYSTEM_PROFILE_NAME))
-            );
+        if (userRecord == null || userRecord.Profile == null) {
+            return false;
+        }
+        if (userRecord.Profile.PermissionsModifyAllData == true) {
+            return true;
+        }
+        Id profileId = userRecord.ProfileId;
+        if (profileId == null) {
+            return false;
+        }
+        if (!managementAccessByProfileId.containsKey(profileId)) {
+            // Profile no tiene DeveloperName. Consultar por su Id evita depender
+            // del idioma, cambios de nombre o identificadores propios de QA.
+            // IsOwnedByProfile excluye los permission sets asignados al usuario.
+            List<ObjectPermissions> profilePermissions = [
+                SELECT PermissionsRead, PermissionsCreate, PermissionsEdit,
+                    PermissionsViewAllRecords
+                FROM ObjectPermissions
+                WHERE Parent.ProfileId = :profileId
+                    AND Parent.IsOwnedByProfile = true
+                    AND SobjectType = 'Actividad_de_Agenda__c'
+                WITH SYSTEM_MODE
+                LIMIT 1
+            ];
+            managementAccessByProfileId.put(profileId,
+                !profilePermissions.isEmpty() &&
+                grantsManagementAccess(profilePermissions[0]));
+        }
+        return managementAccessByProfileId.get(profileId);
+    }
+
+    @TestVisible
+    private static Boolean grantsManagementAccess(ObjectPermissions profilePermissions) {
+        // Gerencia ya tiene estos permisos en su perfil. Exigir edición y alta
+        // evita dar funciones gerenciales a perfiles de integración de solo lectura.
+        return profilePermissions != null &&
+            profilePermissions.PermissionsRead == true &&
+            profilePermissions.PermissionsCreate == true &&
+            profilePermissions.PermissionsEdit == true &&
+            profilePermissions.PermissionsViewAllRecords == true;
     }
 
     private static void validateManagementAccess(User userRecord) {
@@ -1041,7 +1073,7 @@ public with sharing class ALMEX_AgendaDataController {
 
     private static User getSessionUser() {
         return [
-            SELECT Id, Name, FirstName, LastName, Profile.Name, Profile.PermissionsModifyAllData
+            SELECT Id, Name, FirstName, LastName, ProfileId, Profile.PermissionsModifyAllData
             FROM User
             WHERE Id = :UserInfo.getUserId()
             LIMIT 1

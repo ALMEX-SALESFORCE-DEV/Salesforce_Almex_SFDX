@@ -662,7 +662,7 @@ private class ALMEX_AgendaDataControllerTest {
 
     /**
      * Confirma qué perfiles pueden abrir el Desglose de actividades.
-     * El acceso del administrador depende del permiso del perfil, no de su etiqueta.
+     * El acceso depende del Id y permisos del perfil, nunca de su etiqueta.
      */
     @IsTest
     static void recognizesProfilesWithManagementAccess() {
@@ -672,16 +672,50 @@ private class ALMEX_AgendaDataControllerTest {
             User admin = new User(Profile = new Profile(Name = label, PermissionsModifyAllData = true));
             System.assertEquals(true, ALMEX_AgendaDataController.hasManagementAccess(admin));
         }
-        User manager = new User(Profile = new Profile(
-            Name = ' Gerencia y Dirección comercial ', PermissionsModifyAllData = false));
+        User manager = createBranchAccessTestUser(true, 'etiqueta');
+        manager.Profile = new Profile(
+            Name = 'Dirección renombrada / Commercial Management', PermissionsModifyAllData = false);
         System.assertEquals(true, ALMEX_AgendaDataController.hasManagementAccess(manager));
-        User seller = new User(Profile = new Profile(
-            Name = 'Supervisor y Ejecutivo Comercial', PermissionsModifyAllData = false));
+        User seller = createBranchAccessTestUser(false, 'etiqueta');
+        // Una etiqueta que imite a Gerencia no debe elevar al vendedor.
+        seller.Profile = new Profile(Name = 'Gerencia y Dirección Comercial', PermissionsModifyAllData = false);
         System.assertEquals(false, ALMEX_AgendaDataController.hasManagementAccess(seller));
         System.assertEquals(false, ALMEX_AgendaDataController.hasManagementAccess(null));
         System.assertEquals(false, ALMEX_AgendaDataController.hasManagementAccess(new User()));
         System.assertEquals(false, ALMEX_AgendaDataController.hasManagementAccess(
             new User(Profile = new Profile(PermissionsModifyAllData = false))));
+    }
+
+    @IsTest
+    static void managementRequiresExistingProfileCapabilities() {
+        ObjectPermissions permissions = new ObjectPermissions(
+            PermissionsRead = true, PermissionsCreate = true,
+            PermissionsEdit = true, PermissionsViewAllRecords = true);
+        System.assertEquals(true, ALMEX_AgendaDataController.grantsManagementAccess(permissions));
+        for (String field : new List<String>{'PermissionsRead', 'PermissionsCreate',
+            'PermissionsEdit', 'PermissionsViewAllRecords'}) {
+            ObjectPermissions restricted = permissions.clone(false, false, false, false);
+            restricted.put(field, false);
+            System.assertEquals(false, ALMEX_AgendaDataController.grantsManagementAccess(restricted),
+                'No debe elevar privilegios si falta ' + field);
+        }
+        System.assertEquals(false, ALMEX_AgendaDataController.grantsManagementAccess(null));
+        System.assertEquals(false, ALMEX_AgendaDataController.grantsManagementAccess(new ObjectPermissions()));
+    }
+
+    @IsTest
+    static void profileAccessLookupIsCachedAndFailsClosed() {
+        User manager = createBranchAccessTestUser(true, 'cache');
+        manager.Profile = new Profile(PermissionsModifyAllData = false);
+        Integer beforeQueries = Limits.getQueries();
+        System.assertEquals(true, ALMEX_AgendaDataController.hasManagementAccess(manager));
+        System.assertEquals(true, ALMEX_AgendaDataController.hasManagementAccess(manager));
+        System.assertEquals(beforeQueries + 1, Limits.getQueries(),
+            'Consultar dos veces el mismo perfil no debe duplicar la consulta de permisos.');
+        User unknown = new User(ProfileId = Id.valueOf('00e000000000001'),
+            Profile = new Profile(PermissionsModifyAllData = false));
+        System.assertEquals(false, ALMEX_AgendaDataController.hasManagementAccess(unknown),
+            'Un perfil sin permisos de Agendas nunca debe recibir acceso gerencial.');
     }
 
     @IsTest
@@ -692,7 +726,7 @@ private class ALMEX_AgendaDataControllerTest {
             WHERE Name = 'Sucursal Prueba Agenda'
             LIMIT 1
         ];
-        User manager = createBranchAccessTestUser('Gerencia y Dirección Comercial', 'gerencia');
+        User manager = createBranchAccessTestUser(true, 'gerencia');
         insert manager;
         manager = [SELECT Id, Name FROM User WHERE Id = :manager.Id];
 
@@ -736,7 +770,7 @@ private class ALMEX_AgendaDataControllerTest {
             WHERE Name = 'Sucursal Prueba Agenda'
             LIMIT 1
         ];
-        User seller = createBranchAccessTestUser('Supervisor y Ejecutivo Comercial', 'vendedor');
+        User seller = createBranchAccessTestUser(false, 'vendedor');
         insert seller;
 
         System.runAs(seller) {
@@ -882,7 +916,7 @@ private class ALMEX_AgendaDataControllerTest {
     @IsTest
     static void sellersCannotSelectUnassignedClients() {
         Account foreignClient = [SELECT Id FROM Account WHERE Name = 'Cuenta Prueba Agenda' LIMIT 1];
-        User seller = createBranchAccessTestUser('Supervisor y Ejecutivo Comercial', 'vendedor');
+        User seller = createBranchAccessTestUser(false, 'vendedor');
         insert seller;
         System.runAs(seller) {
             Account ownClient = new Account(Name = 'Cuenta propia sin sucursal', OwnerId = seller.Id);
@@ -912,7 +946,7 @@ private class ALMEX_AgendaDataControllerTest {
 
     @IsTest
     static void managementUsesStoredClientIncludingActivitiesWithoutBranch() {
-        User manager = createBranchAccessTestUser('Gerencia y Dirección Comercial', 'clihist');
+        User manager = createBranchAccessTestUser(true, 'clihist');
         insert manager;
 
         // La consulta gerencial no debe depender del perfil de quien lanza la suite.
@@ -1222,8 +1256,22 @@ private class ALMEX_AgendaDataControllerTest {
     // 8. FÁBRICA DE REGISTROS DE PRUEBA Y FUNCIONES AUXILIARES
     // =====================================================================
 
-    private static User createBranchAccessTestUser(String profileName, String alias) {
-        Profile userProfile = [SELECT Id FROM Profile WHERE Name = :profileName LIMIT 1];
+    private static User createBranchAccessTestUser(Boolean managementAccess, String alias) {
+        List<ObjectPermissions> availableProfiles = [
+            SELECT Parent.ProfileId
+            FROM ObjectPermissions
+            WHERE Parent.IsOwnedByProfile = true
+                AND Parent.PermissionsModifyAllData = false
+                AND SobjectType = 'Actividad_de_Agenda__c'
+                AND PermissionsRead = true
+                AND PermissionsCreate = true
+                AND PermissionsEdit = true
+                AND PermissionsViewAllRecords = :managementAccess
+            ORDER BY Parent.ProfileId
+            LIMIT 1
+        ];
+        System.assertEquals(1, availableProfiles.size(),
+            'Falta un perfil comercial con los permisos de Agendas requeridos por la prueba.');
         return new User(
             FirstName = 'Prueba',
             LastName = alias,
@@ -1231,7 +1279,7 @@ private class ALMEX_AgendaDataControllerTest {
             Email = alias + '@example.com',
             Username = alias + '.' + UserInfo.getOrganizationId() + '.' +
                 String.valueOf(DateTime.now().getTime()) + '@agenda.example.com',
-            ProfileId = userProfile.Id,
+            ProfileId = availableProfiles[0].Parent.ProfileId,
             TimeZoneSidKey = 'America/Mexico_City',
             LocaleSidKey = 'es_MX',
             EmailEncodingKey = 'UTF-8',
