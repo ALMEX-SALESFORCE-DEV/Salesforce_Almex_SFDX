@@ -185,10 +185,6 @@
         <enabled>false</enabled>
     </classAccesses>
     <custom>true</custom>
-    <customPermissions>
-        <enabled>true</enabled>
-        <name>ALMEX_Agendas_IA</name>
-    </customPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>Actividad_de_Agenda__c.Actividad_Original__c</field>
@@ -10439,6 +10435,14 @@
         <recordType>Quote.Venta_Spot</recordType>
         <visible>false</visible>
     </recordTypeVisibilities>
+    <tabVisibilities>
+        <tab>ALMEX_Agendas</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>Actividad_de_Agenda__c</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
     <tabVisibilities>
         <tab>ALMEX_FormPrices</tab>
         <visibility>DefaultOn</visibility>

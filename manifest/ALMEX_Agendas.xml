@@ -34,8 +34,14 @@
         <name>CustomField</name>
     </types>
     <types>
-        <members>ALMEX_Agendas_IA</members>
-        <name>CustomPermission</name>
+        <members>ALMEX_Agendas</members>
+        <members>Actividad_de_Agenda__c</members>
+        <name>CustomTab</name>
+    </types>
+    <types>
+        <members>Gerencia y Dirección Comercial</members>
+        <members>Supervisor y Ejecutivo Comercial</members>
+        <name>Profile</name>
     </types>
     <version>67.0</version>
 </Package>

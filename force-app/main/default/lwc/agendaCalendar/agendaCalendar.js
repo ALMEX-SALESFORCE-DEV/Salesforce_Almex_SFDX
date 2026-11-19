@@ -11,8 +11,7 @@ import {
     getAgendaActivities,
     searchActivityClients,
     getActivityClientBranches,
-    searchAssignedProspects,
-    improveAgendaText
+    searchAssignedProspects
 } from 'c/agendaServices';
 import {
     buildExecutivePalette,
@@ -21,15 +20,11 @@ import {
 } from 'c/agendaUtils';
 import agendaCalendarStyles from '@salesforce/resourceUrl/agendaCalendarStyles';
 import fullCalendarResource from '@salesforce/resourceUrl/fullCalendar';
-import hasAgendaAiPermission from '@salesforce/customPermission/ALMEX_Agendas_IA';
 
 const NOTES_MAX_LENGTH = 32768;
 const ACTION_JUSTIFICATION_MAX_LENGTH = 1000;
 const EXCEPTION_JUSTIFICATION_MAX_LENGTH = 160;
 const NOTES_SPEECH_LANGUAGE = 'es-MX';
-const TEXT_IMPROVEMENT_INPUT_LIMIT = 6000;
-// Pausa temporal de la interfaz de IA; conserva la integracion y sus permisos.
-const TEXT_IMPROVEMENT_ENABLED = false;
 
 export default class AgendaCalendar extends LightningElement {
     // =========================================================
@@ -40,7 +35,6 @@ export default class AgendaCalendar extends LightningElement {
     enableFollowUpCompletionInterface = true;
     enableCallReplacementInterface = true;
     enableNotesSpeechRecognition = true;
-    enableTextImprovement = TEXT_IMPROVEMENT_ENABLED && hasAgendaAiPermission === true;
 
     calendar;
     calendarResizeObserver;
@@ -99,14 +93,7 @@ export default class AgendaCalendar extends LightningElement {
     notesDictationHasText = false;
     speechDictationTarget = 'notes';
 
-    isImprovingText = false;
-    isTextImprovementPreviewOpen = false;
-    textImprovementTarget = '';
-    textImprovementOriginal = '';
-    textImprovementSuggestion = '';
-    textImprovementRequest = 0;
-
-    currentUserId = '';
+currentUserId = '';
     currentUserName = '';
     currentUserExecutiveAliases = [];
     isViewingActivity = false;
@@ -356,6 +343,7 @@ export default class AgendaCalendar extends LightningElement {
             return;
         }
 
+        // eslint-disable-next-line @lwc/lwc/no-async-operation -- FullCalendar necesita el contenedor visible antes de medirlo.
         requestAnimationFrame(() => {
             this.calendar?.updateSize();
         });
@@ -733,6 +721,7 @@ export default class AgendaCalendar extends LightningElement {
                                     information.view
                                 );
 
+                            // eslint-disable-next-line @lwc/lwc/no-async-operation -- Medir después del render del nuevo mes.
                             requestAnimationFrame(
                                 () => {
                                     this.calendar
@@ -780,6 +769,7 @@ export default class AgendaCalendar extends LightningElement {
                     this.calendarResizeFrame = undefined;
                 }
                 if (width > 0 && height > 0) {
+                    // eslint-disable-next-line @lwc/lwc/no-async-operation -- Agrupar cambios del ResizeObserver en un solo cuadro.
                     this.calendarResizeFrame = requestAnimationFrame(() => {
                         this.calendarResizeFrame = undefined;
                         this.calendar?.updateSize();
@@ -789,6 +779,7 @@ export default class AgendaCalendar extends LightningElement {
             this.calendarResizeObserver.observe(container);
         }
 
+        // eslint-disable-next-line @lwc/lwc/no-async-operation -- Ajustar FullCalendar una vez montado.
         requestAnimationFrame(() => {
             this.calendar?.updateSize();
         });
@@ -1061,7 +1052,6 @@ export default class AgendaCalendar extends LightningElement {
 
     closeActivityModal() {
         this.disposeNotesSpeechRecognition();
-        this.resetTextImprovementState();
 
         this.isActivityModalOpen = false;
         this.isViewingActivity = false;
@@ -1110,31 +1100,10 @@ export default class AgendaCalendar extends LightningElement {
         );
     }
 
-    get showTextImprovementControl() {
-        return this.enableTextImprovement;
-    }
-
-    get isNotesImproveButtonDisabled() {
-        return this.isTextImprovementDisabled('notes');
-    }
-
-    get isExceptionJustificationImproveButtonDisabled() {
-        return this.isTextImprovementDisabled('exceptionJustification');
-    }
-
-    get isActionJustificationImproveButtonDisabled() {
-        return this.isTextImprovementDisabled('actionJustification');
-    }
-
-    get isFollowUpResolutionImproveButtonDisabled() {
-        return this.isTextImprovementDisabled('followUpResolution');
-    }
-
-    get isFollowUpResolutionInputReadOnly() {
+get isFollowUpResolutionInputReadOnly() {
         return (
             this.isDictatingTarget('followUpResolution') ||
             this.isStoppingTarget('followUpResolution') ||
-            this.isImprovingText ||
             this.isProcessingActivityAction
         );
     }
@@ -1153,8 +1122,7 @@ export default class AgendaCalendar extends LightningElement {
         return (
             this.isActivityDetailReadOnly ||
             this.isDictatingNotes ||
-            this.isStoppingNotesDictation ||
-            this.isImprovingText
+            this.isStoppingNotesDictation
         );
     }
 
@@ -1169,8 +1137,7 @@ export default class AgendaCalendar extends LightningElement {
     get isExceptionJustificationInputReadOnly() {
         return (
             this.isDictatingTarget('exceptionJustification') ||
-            this.isStoppingTarget('exceptionJustification') ||
-            this.isImprovingText
+            this.isStoppingTarget('exceptionJustification')
         );
     }
 
@@ -1185,8 +1152,7 @@ export default class AgendaCalendar extends LightningElement {
     get isActivityActionJustificationInputReadOnly() {
         return (
             this.isDictatingTarget('actionJustification') ||
-            this.isStoppingTarget('actionJustification') ||
-            this.isImprovingText
+            this.isStoppingTarget('actionJustification')
         );
     }
 
@@ -1194,8 +1160,7 @@ export default class AgendaCalendar extends LightningElement {
         return (
             this.isProcessingActivityAction ||
             this.isDictatingNotes ||
-            this.isStoppingNotesDictation ||
-            this.isImprovingText
+            this.isStoppingNotesDictation
         );
     }
 
@@ -1540,136 +1505,7 @@ export default class AgendaCalendar extends LightningElement {
         };
     }
 
-    isTextImprovementDisabled(target) {
-        const targetConfig = this.getSpeechTargetConfig(target);
-        const hasText = Boolean(String(targetConfig?.value || '').trim());
-
-        if (!this.enableTextImprovement || !hasText || this.isImprovingText) {
-            return true;
-        }
-
-        if (this.isDictatingNotes || this.isStoppingNotesDictation) {
-            return true;
-        }
-
-        if (['actionJustification', 'followUpResolution'].includes(target)) {
-            return this.isProcessingActivityAction;
-        }
-
-        if (target === 'exceptionJustification') {
-            return this.isSavingActivity;
-        }
-
-        return (
-            this.isActivityDetailReadOnly ||
-            this.isSavingActivity ||
-            this.isUpdatingActivityDetails
-        );
-    }
-
-    async handleImproveText(event) {
-        const target = event.currentTarget.dataset.target;
-        const targetConfig = this.getSpeechTargetConfig(target);
-        const originalText = String(targetConfig?.value || '').trim();
-
-        if (!targetConfig || !originalText) {
-            this.showToast(
-                'Texto requerido',
-                'Escribe o dicta un texto antes de solicitar la mejora.',
-                'warning'
-            );
-            return;
-        }
-
-        if (originalText.length > TEXT_IMPROVEMENT_INPUT_LIMIT) {
-            this.showToast(
-                'Texto demasiado largo',
-                `La mejora admite hasta ${TEXT_IMPROVEMENT_INPUT_LIMIT} caracteres.`,
-                'warning'
-            );
-            return;
-        }
-
-        const requestId = ++this.textImprovementRequest;
-        this.isImprovingText = true;
-        this.textImprovementTarget = target;
-
-        try {
-            const suggestion = String(
-                await improveAgendaText(originalText, target) || ''
-            ).trim();
-
-            if (
-                requestId !== this.textImprovementRequest ||
-                !this.isActivityModalOpen
-            ) {
-                return;
-            }
-
-            if (!suggestion) {
-                throw new Error(
-                    'El servicio no devolvió una propuesta de texto.'
-                );
-            }
-
-            if (suggestion.length > targetConfig.maxLength) {
-                throw new Error(
-                    'La propuesta supera el tamaño permitido para este campo.'
-                );
-            }
-
-            this.textImprovementOriginal = originalText;
-            this.textImprovementSuggestion = suggestion;
-            this.isTextImprovementPreviewOpen = true;
-        } catch (error) {
-            if (requestId !== this.textImprovementRequest) {
-                return;
-            }
-
-            this.showToast(
-                'No fue posible mejorar el texto',
-                error?.message || 'Inténtalo nuevamente.',
-                'error'
-            );
-        } finally {
-            if (requestId === this.textImprovementRequest) {
-                this.isImprovingText = false;
-            }
-        }
-    }
-
-    handleUseImprovedText() {
-        const targetConfig = this.getSpeechTargetConfig(
-            this.textImprovementTarget
-        );
-
-        if (!targetConfig || !this.textImprovementSuggestion) {
-            this.closeTextImprovementPreview();
-            return;
-        }
-
-        this.setSpeechTargetValue(
-            this.textImprovementTarget,
-            this.textImprovementSuggestion
-        );
-        this.syncNotesInputValue();
-        this.closeTextImprovementPreview();
-    }
-
-    closeTextImprovementPreview() {
-        this.isTextImprovementPreviewOpen = false;
-        this.textImprovementOriginal = '';
-        this.textImprovementSuggestion = '';
-        this.textImprovementTarget = '';
-    }
-
-    resetTextImprovementState() {
-        this.textImprovementRequest += 1;
-        this.isImprovingText = false;
-        this.closeTextImprovementPreview();
-    }
-
-    isDictatingTarget(target) {
+isDictatingTarget(target) {
         return this.isDictatingNotes && this.speechDictationTarget === target;
     }
 
@@ -2621,8 +2457,7 @@ export default class AgendaCalendar extends LightningElement {
         return (
             this.isProcessingActivityAction ||
             this.isDictatingNotes ||
-            this.isStoppingNotesDictation ||
-            this.isImprovingText
+            this.isStoppingNotesDictation
         );
     }
 
@@ -2657,8 +2492,7 @@ export default class AgendaCalendar extends LightningElement {
             !this.canEditActivityDetails ||
             this.isUpdatingActivityDetails ||
             this.isDictatingNotes ||
-            this.isStoppingNotesDictation ||
-            this.isImprovingText
+            this.isStoppingNotesDictation
         );
     }
 
@@ -2666,8 +2500,7 @@ export default class AgendaCalendar extends LightningElement {
         return (
             this.isSavingActivity ||
             this.isDictatingNotes ||
-            this.isStoppingNotesDictation ||
-            this.isImprovingText
+            this.isStoppingNotesDictation
         );
     }
 
@@ -2785,7 +2618,6 @@ export default class AgendaCalendar extends LightningElement {
 
     returnToActivityDetails() {
         this.disposeNotesSpeechRecognition();
-        this.resetTextImprovementState();
         this.activityAction = '';
         this.followUpCompletionSummary = '';
         this.activityActionForm = {
@@ -3134,6 +2966,7 @@ export default class AgendaCalendar extends LightningElement {
         const requestId = this.clientSearchRequest;
         this.isClientDropdownOpen = true;
         this.isSearchingClients = true;
+        // eslint-disable-next-line @lwc/lwc/no-async-operation -- Debounce cancelable para no consultar Apex por cada tecla.
         this.clientSearchTimer = setTimeout(() => {
             this.clientSearchTimer = undefined;
             this.searchClientOptions(searchTerm, requestId);
@@ -3346,6 +3179,7 @@ export default class AgendaCalendar extends LightningElement {
     }
 
     handleProspectBlur() {
+        // eslint-disable-next-line @lwc/lwc/no-async-operation -- Permitir seleccionar una sugerencia antes de cerrar el listado.
         setTimeout(() => {
             this.isProspectDropdownOpen = false;
         }, 180);
@@ -3362,6 +3196,7 @@ export default class AgendaCalendar extends LightningElement {
 
         this.isProspectDropdownOpen = true;
         this.isSearchingProspects = true;
+        // eslint-disable-next-line @lwc/lwc/no-async-operation -- Debounce cancelable del buscador de prospectos.
         this.prospectSearchTimer = setTimeout(() => {
             this.prospectSearchTimer = undefined;
             this.searchProspectOptions(searchTerm, requestId);

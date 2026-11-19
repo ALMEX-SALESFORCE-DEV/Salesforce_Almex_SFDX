@@ -14,36 +14,9 @@ import searchCurrentUserProspectsApex from '@salesforce/apex/ALMEX_AgendaDataCon
 import searchManagementBranchesApex from '@salesforce/apex/ALMEX_AgendaDataController.searchManagementBranches';
 import searchManagementClientsApex from '@salesforce/apex/ALMEX_AgendaDataController.searchManagementClients';
 import searchManagementProspectsApex from '@salesforce/apex/ALMEX_AgendaDataController.searchManagementProspects';
-import improveAgendaTextApex from '@salesforce/apex/ALMEX_AgendaDataController.improveAgendaText';
-import getAgendaAiCandidatesApex from '@salesforce/apex/ALMEX_AgendaDataController.getAgendaAiCandidates';
 import { normalizeAgendaActivityType } from 'c/agendaUtils';
 
-// Solo metadatos de modelos en memoria; nunca se cachean notas ni propuestas.
-const AI_CATALOG_TTL_MS = 15 * 60 * 1000;
 const MANUAL_BRANCH_NOTES_PREFIX = 'Sucursal (captura manual): ';
-let aiCatalogPromise;
-let aiCatalogExpiresAt = 0;
-
-function getCachedAgendaAiCandidates() {
-    if (aiCatalogPromise && Date.now() < aiCatalogExpiresAt) {
-        return aiCatalogPromise;
-    }
-    aiCatalogExpiresAt = Date.now() + AI_CATALOG_TTL_MS;
-    const pending = runApex(getAgendaAiCandidatesApex).then(candidates => {
-        if (!Array.isArray(candidates) || candidates.length === 0) {
-            throw new Error('No hay modelos gratuitos con la privacidad requerida disponibles.');
-        }
-        return candidates;
-    }).catch(error => {
-        if (aiCatalogPromise === pending) {
-            aiCatalogPromise = undefined;
-            aiCatalogExpiresAt = 0;
-        }
-        throw error;
-    });
-    aiCatalogPromise = pending;
-    return pending;
-}
 
 function normalizeActivityRecord(record) {
     if (!record) return record;
@@ -181,23 +154,6 @@ export async function getAlmexSupplyAgreements() {
     const agreements = await runApex(getAlmexSupplyAgreementsApex);
 
     return agreements || [];
-}
-
-export async function improveAgendaText(originalText, context) {
-    const candidateModels = await getCachedAgendaAiCandidates();
-    try {
-        return await runApex(improveAgendaTextApex, {
-            originalText,
-            context,
-            candidateModels
-        });
-    } catch (error) {
-        // Un catálogo obsoleto no queda fijado: el siguiente clic lo renueva.
-        // No se reenvía automáticamente el texto tras un error de cuota.
-        aiCatalogPromise = undefined;
-        aiCatalogExpiresAt = 0;
-        throw error;
-    }
 }
 
 async function runApex(action, parameters) {
