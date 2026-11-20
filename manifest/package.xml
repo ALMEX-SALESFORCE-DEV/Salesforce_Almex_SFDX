@@ -582,7 +582,6 @@
         <members>Precio_productos__c.Nombre_comercial__c</members>
         <members>Precio_productos__c.Nombre_producto__c</members>
         <members>Precio_productos__c.Periodo_Anio__c</members>
-        <members>Precio_productos__c.Periodo_Mes__c</members>
         <members>Precio_productos__c.Precio_producto__c</members>
         <members>Precio_productos__c.Proveedor__c</members>
         <members>Precio_productos__c.Tama_o_embarque__c</members>

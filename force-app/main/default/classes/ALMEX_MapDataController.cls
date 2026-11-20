@@ -1,12 +1,59 @@
 public with sharing class ALMEX_MapDataController {
 
     private static final String PERIOD_YEAR_FIELD = 'Periodo_Anio__c';
-    private static final String PERIOD_MONTH_FIELD = 'Periodo_Mes__c';
+    private static final String BANXICO_LIQUIDATION_SERIES = 'SF60653';
+
+    public class ExchangeRate {
+        @AuraEnabled public Decimal mxnPerUsd { get; set; }
+        @AuraEnabled public Date rateDate { get; set; }
+        @AuraEnabled public String source { get; set; }
+    }
+
+    @AuraEnabled
+    public static ExchangeRate getExchangeRate() {
+        // La fecha de liquidación puede publicarse anticipadamente. Consultar
+        // el día de aplicación en México, no el último dato de /oportuno.
+        Date applicationDate = Date.valueOf(System.now().format('yyyy-MM-dd', 'America/Mexico_City'));
+        String isoDate = String.valueOf(applicationDate);
+        HttpRequest request = new HttpRequest();
+        request.setEndpoint('callout:ALMEX_Banxico_API/SieAPIRest/service/v1/series/' +
+            BANXICO_LIQUIDATION_SERIES + '/datos/' + isoDate + '/' + isoDate);
+        request.setMethod('GET');
+        request.setHeader('Accept', 'application/json');
+        request.setTimeout(20000);
+        try {
+            HttpResponse response = new Http().send(request);
+            if (response.getStatusCode() != 200) {
+                throw new CalloutException('HTTP ' + response.getStatusCode());
+            }
+            Map<String, Object> root = (Map<String, Object>) JSON.deserializeUntyped(response.getBody());
+            Map<String, Object> bmx = (Map<String, Object>) root.get('bmx');
+            List<Object> series = (List<Object>) bmx.get('series');
+            Map<String, Object> seriesRow = (Map<String, Object>) series[0];
+            if ((String) seriesRow.get('idSerie') != BANXICO_LIQUIDATION_SERIES) throw new CalloutException('Serie inesperada');
+            List<Object> observations = (List<Object>) seriesRow.get('datos');
+            if (observations == null || observations.size() != 1) throw new CalloutException('Dato diario no disponible');
+            Map<String, Object> observation = (Map<String, Object>) observations[0];
+            Decimal rate = Decimal.valueOf(((String) observation.get('dato')).replace(',', '').trim());
+            if (rate <= 0) throw new CalloutException('Tasa inválida');
+            List<String> dateParts = ((String) observation.get('fecha')).split('/');
+            ExchangeRate result = new ExchangeRate();
+            result.mxnPerUsd = rate;
+            result.rateDate = Date.newInstance(Integer.valueOf(dateParts[2]), Integer.valueOf(dateParts[1]), Integer.valueOf(dateParts[0]));
+            if (result.rateDate != applicationDate) throw new CalloutException('Fecha de aplicación inesperada');
+            result.source = 'Banco de México · Para solventar obligaciones';
+            return result;
+        } catch (Exception error) {
+            // Nunca registrar ni devolver tokens, encabezados o cuerpos de autenticación.
+            throw new AuraHandledException('No se pudo obtener el tipo de cambio de Banxico para solventar obligaciones del día. Revisa la conexión y el acceso a BanxicoPrincipal; no se convertirán precios MXN sin una tasa válida.');
+        }
+    }
 
     @AuraEnabled(cacheable=true)
     public static List<Precio_productos__c> getPrices() {
         List<String> selectedFields = new List<String>{
             'Id',
+            'CreatedDate',
             'Ciudad__c',
             'Consumo_mensual__c',
             'Tipo_consumo_toneladas__c',
@@ -23,16 +70,19 @@ public with sharing class ALMEX_MapDataController {
 
         Map<String, Schema.SObjectField> priceFields =
             Schema.SObjectType.Precio_productos__c.fields.getMap();
-        Boolean canReadPeriod = isFieldAccessible(priceFields, PERIOD_YEAR_FIELD) &&
-            isFieldAccessible(priceFields, PERIOD_MONTH_FIELD);
+        for (String commercialField : new List<String>{
+            'Tipo_operacion_comercial__c', 'Fecha_inicio_contrato__c', 'Fecha_fin_contrato__c', 'Producto_importado__c'
+        }) {
+            if (isFieldAccessible(priceFields, commercialField)) selectedFields.add(commercialField);
+        }
+        Boolean canReadPeriod = isFieldAccessible(priceFields, PERIOD_YEAR_FIELD);
 
         if (canReadPeriod) {
             selectedFields.add(PERIOD_YEAR_FIELD);
-            selectedFields.add(PERIOD_MONTH_FIELD);
         }
 
         String orderByClause = canReadPeriod
-            ? PERIOD_YEAR_FIELD + ' DESC, ' + PERIOD_MONTH_FIELD + ' DESC'
+            ? PERIOD_YEAR_FIELD + ' DESC, CreatedDate DESC'
             : 'CreatedDate DESC';
         String queryText = 'SELECT ' + String.join(selectedFields, ', ') +
             ' FROM Precio_productos__c WITH USER_MODE ORDER BY ' + orderByClause;
