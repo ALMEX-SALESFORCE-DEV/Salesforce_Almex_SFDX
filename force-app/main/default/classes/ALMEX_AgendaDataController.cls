@@ -1,5 +1,12 @@
 public with sharing class ALMEX_AgendaDataController {
 
+    // Id de perfil compartidos por QA y PROD para el Desglose de actividades.
+    private static final Set<Id> ACTIVITY_BREAKDOWN_PROFILE_IDS = new Set<Id>{
+        '00eHu000003O3hMIAS', // System Administrator
+        '00eV5000004e0QQIAY', // Gerencia y Dirección Comercial
+        '00eV5000004eIYbIAM'  // Analista Comercial
+    };
+
     private static Map<Id, Boolean> managementAccessByProfileId =
         new Map<Id, Boolean>();
 
@@ -51,7 +58,7 @@ public with sharing class ALMEX_AgendaDataController {
 
     @AuraEnabled(cacheable=true)
     public static Boolean canViewActivityBreakdown() {
-        return hasManagementAccess(getSessionUser());
+        return ACTIVITY_BREAKDOWN_PROFILE_IDS.contains(UserInfo.getProfileId());
     }
 
     @AuraEnabled
@@ -628,7 +635,7 @@ public with sharing class ALMEX_AgendaDataController {
 
     @AuraEnabled
     public static List<SalesAgreement> getAlmexSupplyAgreements() {
-        validateManagementAccess();
+        validateActivityBreakdownAccess();
 
         Date periodStart = Date.newInstance(2025, 1, 1);
         Date periodEnd = Date.newInstance(2026, 12, 31);
@@ -662,8 +669,7 @@ public with sharing class ALMEX_AgendaDataController {
         Integer pageSize,
         Id accountId
     ) {
-        User currentUser = getSessionUser();
-        validateManagementAccess(currentUser);
+        validateActivityBreakdownAccess();
 
         if (dateTo != null && dateFrom == null) {
             throw new AuraHandledException(
@@ -1019,16 +1025,12 @@ public with sharing class ALMEX_AgendaDataController {
             profilePermissions.PermissionsViewAllRecords == true;
     }
 
-    private static void validateManagementAccess(User userRecord) {
-        if (!hasManagementAccess(userRecord)) {
+    private static void validateActivityBreakdownAccess() {
+        if (!canViewActivityBreakdown()) {
             throw new AuraHandledException(
                 'No tienes permisos para consultar el desglose de actividades.'
             );
         }
-    }
-
-    private static void validateManagementAccess() {
-        validateManagementAccess(getSessionUser());
     }
 
     // Compatibilidad de lectura/filtros: no requiere migrar registros históricos.
@@ -1094,7 +1096,7 @@ public with sharing class ALMEX_AgendaDataController {
     public static List<Sucursal__c> searchManagementBranches(
         String searchTerm
     ) {
-        validateManagementAccess();
+        validateActivityBreakdownAccess();
 
         String normalizedSearch = String.isBlank(searchTerm)
             ? ''
@@ -1150,7 +1152,7 @@ public with sharing class ALMEX_AgendaDataController {
     /** El filtro de actividades usa el Cliente guardado, con o sin sucursal. */
     @AuraEnabled(cacheable=true)
     public static List<Account> searchManagementClients(String searchTerm) {
-        validateManagementAccess();
+        validateActivityBreakdownAccess();
 
         String normalizedSearch = String.isBlank(searchTerm)
             ? ''
@@ -1189,7 +1191,7 @@ public with sharing class ALMEX_AgendaDataController {
     public static List<Lead> searchManagementProspects(
         String searchTerm
     ) {
-        validateManagementAccess();
+        validateActivityBreakdownAccess();
 
         return searchProspects(searchTerm, null);
     }
