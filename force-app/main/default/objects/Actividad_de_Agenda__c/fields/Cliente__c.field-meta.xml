@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cliente__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Cuenta con la que se realiza la actividad, con o sin sucursal.</description>
+    <label>Cliente</label>
+    <referenceTo>Account</referenceTo>
+    <relationshipLabel>Actividades de Agenda del cliente</relationshipLabel>
+    <relationshipName>Actividades_de_Agenda_Cliente</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>
