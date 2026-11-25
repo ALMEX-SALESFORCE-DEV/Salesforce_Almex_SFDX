@@ -1,107 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <actionCalls>
-        <name>Copia_1_de_Copia_2_de_EnviarEmail</name>
-        <label>Copia 3 de EnviarEmail</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <actionName>emailSimple</actionName>
-        <actionType>emailSimple</actionType>
-        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
-        <inputParameters>
-            <name>recipientAddresses</name>
-            <value>
-                <collectionElements>
-                    <stringValue>yuli.becerra@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>blanca.peraza@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>facturacion@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>alertas.integraciones@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>itzia.anaya@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>lilien.carpio@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>jesus.nuno@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>braulio.huerta@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>gladys.castillo@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>sandra.mendoza@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>juan.gutierrez@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>laura.cedeno@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>sarahi.hernandez@almidones.com.mx</stringValue>
-                </collectionElements>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>senderType</name>
-            <value>
-                <inputConfiguratorMode>Custom</inputConfiguratorMode>
-                <stringValue>OrgWideEmailAddress</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>senderAddress</name>
-            <value>
-                <inputConfiguratorMode>Custom</inputConfiguratorMode>
-                <stringValue>admin.apps@almidones.com.mx</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>composeEmailContent</name>
-            <value>
-                <stringValue>True</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>emailSubject</name>
-            <value>
-                <elementReference>AsuntoParaCorreo</elementReference>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>emailBody</name>
-            <value>
-                <elementReference>Cuerpoparamensaje</elementReference>
-                <inputConfiguratorMode>Resource</inputConfiguratorMode>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>sendRichBody</name>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>useLineBreaks</name>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </inputParameters>
-        <nameSegment>emailSimple</nameSegment>
-        <offset>0</offset>
-        <versionString>2.0.1</versionString>
-    </actionCalls>
-    <actionCalls>
         <name>Copia_1_de_EnviarEmail</name>
         <label>Copia 1 de EnviarEmail</label>
         <locationX>0</locationX>
@@ -113,144 +12,7 @@
             <name>recipientAddresses</name>
             <value>
                 <collectionElements>
-                    <stringValue>yuli.becerra@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>blanca.peraza@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>polvos_sac@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>facturacion@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>itzia.anaya@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>lilien.carpio@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>laura.cedeno@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>sarahi.hernandez@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>jesus.nuno@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>braulio.huerta@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>juan.gutierrez@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>gladys.castillo@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>sandra.mendoza@almidones.com.mx</stringValue>
-                </collectionElements>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>senderType</name>
-            <value>
-                <inputConfiguratorMode>Custom</inputConfiguratorMode>
-                <stringValue>OrgWideEmailAddress</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>senderAddress</name>
-            <value>
-                <inputConfiguratorMode>Custom</inputConfiguratorMode>
-                <stringValue>admin.apps@almidones.com.mx</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>composeEmailContent</name>
-            <value>
-                <stringValue>True</stringValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>emailSubject</name>
-            <value>
-                <elementReference>AsuntoParaCorreo</elementReference>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>emailBody</name>
-            <value>
-                <elementReference>Cuerpoparamensaje</elementReference>
-                <inputConfiguratorMode>Resource</inputConfiguratorMode>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>sendRichBody</name>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>useLineBreaks</name>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </inputParameters>
-        <nameSegment>emailSimple</nameSegment>
-        <offset>0</offset>
-        <versionString>2.0.1</versionString>
-    </actionCalls>
-    <actionCalls>
-        <name>Copia_2_de_Copia_2_de_EnviarEmail</name>
-        <label>Copia 4 de EnviarEmail</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <actionName>emailSimple</actionName>
-        <actionType>emailSimple</actionType>
-        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
-        <inputParameters>
-            <name>recipientAddresses</name>
-            <value>
-                <collectionElements>
-                    <stringValue>yuli.becerra@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>blanca.peraza@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>facturacion@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>alertas.integraciones@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>itzia.anaya@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>lilien.carpio@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>jesus.nuno@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>braulio.huerta@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>gladys.castillo@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>sandra.mendoza@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>juan.gutierrez@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>laura.cedeno@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>sarahi.hernandez@almidones.com.mx</stringValue>
+                    <stringValue>alan.castillo@etcloudmx.com</stringValue>
                 </collectionElements>
             </value>
         </inputParameters>
@@ -315,43 +77,7 @@
             <name>recipientAddresses</name>
             <value>
                 <collectionElements>
-                    <stringValue>yuli.becerra@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>blanca.peraza@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>facturacion@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>alertas.integraciones@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>itzia.anaya@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>lilien.carpio@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>jesus.nuno@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>braulio.huerta@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>gladys.castillo@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>sandra.mendoza@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>juan.gutierrez@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>laura.cedeno@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>sarahi.hernandez@almidones.com.mx</stringValue>
+                    <stringValue>alan.castillo@etcloudmx.com</stringValue>
                 </collectionElements>
             </value>
         </inputParameters>
@@ -416,43 +142,7 @@
             <name>recipientAddresses</name>
             <value>
                 <collectionElements>
-                    <stringValue>yuli.becerra@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>blanca.peraza@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>jarabes_sac@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>facturacion@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>itzia.anaya@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>lilien.carpio@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>jesus.nuno@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>braulio.huerta@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>gladys.castillo@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>sandra.mendoza@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>juan.gutierrez@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>laura.cedeno@almidones.com.mx</stringValue>
-                </collectionElements>
-                <collectionElements>
-                    <stringValue>sarahi.hernandez@almidones.com.mx</stringValue>
+                    <stringValue>alan.castillo@etcloudmx.com</stringValue>
                 </collectionElements>
             </value>
         </inputParameters>
@@ -513,7 +203,7 @@
         <locationX>0</locationX>
         <locationY>0</locationY>
         <assignmentItems>
-            <assignToReference>LineasDeCorreo</assignToReference>
+            <assignToReference>LineasDeCorreo_v2</assignToReference>
             <operator>Add</operator>
             <value>
                 <elementReference>ValoresDeLaLinea</elementReference>
@@ -581,104 +271,6 @@
                     <stringValue>GLUCOSA 44 BE PNC</stringValue>
                 </rightValue>
             </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALTA FRUCTOSA 55 R|GRANEL</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALTA FRUCTOSA 42 M|GRANEL</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>GLUCOSA 43 BE M|GRANEL</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>GLUCOSA 43 BE M|GRANEL V</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALTA MALTOSA M|GRANEL</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>GLUCOSA 44 BE M|GRANEL</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALTA FRUCTOSA 42 R|GRANEL</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>GLUCOSA SWEETOSE R|GRANEL</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>GLUCOSA 43 BE R|GRANEL</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALTA MALTOSA R|GRANEL</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>BARREDURA NO APTO PARA CONSUMO HUMANO (EDULCORANTES R)</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALTA FRUCTOSA 55 R PNC</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALTA FRUCTOSA 42 M PNC</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALTA FRUCTOSA 42 R PNC</stringValue>
-                </rightValue>
-            </conditions>
             <connector>
                 <targetReference>EnviarEmail</targetReference>
             </connector>
@@ -729,188 +321,6 @@
                     <stringValue>FRUCTOSA CRISTALINA BP</stringValue>
                 </rightValue>
             </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>DEXTROSA SIX M|GRANEL C</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>DEXTROSA SIX M|GRANEL</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALMIDON DE MAIZ M|BP 25 KG C</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALMIDON DE MAIZ M|BP 25 KG</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALMIDON DE MAIZ C106 R|SS1T</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALMIDON DE MAIZ M|GRANEL C</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALMIDON DE MAIZ M|SS1T K2</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALMIDON DE MAIZ M|SS1T K3</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALMIDON DE MAIZ C106 R|GRANEL</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALMIDON DE MAIZ C185 R|GRANEL</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALMIDON DE MAIZ M|SS1T K1</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALMIDON DE MAIZ M|GRANEL</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALMIDON DE MAIZ C185 R|BP 25 KG</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALMIDON DE MAIZ C106 RD|SS1T</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALMIDON DE MAIZ M|BP 25 KG K</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALMIDON DE MAIZ M|GRANEL K</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALMIDON MODIFICADO DE MAIZ C277 R|BP 22.68 KG</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALMIDON DE MAIZ M|SS 500 KG</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>BARREDURA NO APTO PARA CONSUMO HUMANO (ALMIDONES M)</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALMIDON MODIFICADO DE MAIZ C430 R|GRANEL</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALMIDON DE MAIZ MM|SS1T</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALMIDON DE MAIZ MM|BP 25 KG</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALMIDON DE MAIZ PEARL R|GRANEL</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALMIDON DE MAIZ C185 R|SS1T</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALMIDON DE MAIZ PEARL R|SS1T</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>DEXTROSA CIX M|GRANEL</stringValue>
-                </rightValue>
-            </conditions>
             <connector>
                 <targetReference>Copia_1_de_EnviarEmail</targetReference>
             </connector>
@@ -926,180 +336,10 @@
                     <stringValue>N/A</stringValue>
                 </rightValue>
             </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALCOHOL EITILICO 96 GNS R</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>KRYSTAR 300 R|BP 22.68 KG</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>KRYSTAR LIQUID FRUCTOSE R|GRANEL</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>CLINTOSE DEXTROSE A R|BP 22.68 KG</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ALCOHOL ETILICO 95 SDA 40B R</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>KRYSTAR 300 SPK01 R|BP 25 KG</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ANCHOR LR R|BP 22.68 KG</stringValue>
-                </rightValue>
-            </conditions>
             <connector>
                 <targetReference>Copia_2_de_EnviarEmail</targetReference>
             </connector>
             <label>N/A</label>
-        </rules>
-        <rules>
-            <name>Promer</name>
-            <conditionLogic>or</conditionLogic>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ACEITE REFINADO|BIDON 20 L</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ACEITE REFINADO|CAJA 12 BOTELLA 800 ML</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ACEITE REFINADO|GRANEL</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>PASTA DE GERMEN DE MAIZ RESIDUO DEL PROCESO DE EXTRACCION DE ACEITE</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ACEITE REFINADO|TOTE</stringValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Copia_1_de_Copia_2_de_EnviarEmail</targetReference>
-            </connector>
-            <label>Promer</label>
-        </rules>
-        <rules>
-            <name>Coproductos</name>
-            <conditionLogic>or</conditionLogic>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>SALVADO DE MAIZ HUMEDO PRODUCTO NO CONFORME</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>GLUTEN DE MAIZ SECO COPRODUCTO DE LA MOLIENDA MIN 60 % DE PROTEINA</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>GERMEN DE MAIZ</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>MAIZ QUEBRADO</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>AGUA DE COCIMIENTO DL</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>AGUA DE COCIMIENTO CONCENTRADA</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>BARREDURA NO APTO PARA CONSUMO HUMANO (COPRODUCTOS)</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>BARREDURA NO APTO PARA CONSUMO HUMANO (ESPECIALIDADES)</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>COMPOSTA</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>ObtenerCotizaci_n.Opportunity.Familia_de_productos__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>SALVADO DE MAIZ SECO MIN 18 % DE PROTEINA MIN 60 DE GRANULOMETRIA Y HUMEDAD MAXIMA DE 12</stringValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Copia_2_de_Copia_2_de_EnviarEmail</targetReference>
-            </connector>
-            <label>Coproductos</label>
         </rules>
     </decisions>
     <environments>Default</environments>
@@ -1242,18 +482,112 @@
     </textTemplates>
     <textTemplates>
         <name>Cuerpoparamensaje</name>
-        <isViewedAsPlainText>false</isViewedAsPlainText>
-        <text>&lt;p&gt;&lt;strong&gt;Unidad de negocio: &lt;/strong&gt;{!ObtenerCotizaci_n.Opportunity.Unidad_de_negocio_Picklist__c}&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Cliente:&lt;/strong&gt; {!ObtenerCotizaci_n.Opportunity.Account.Name}&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Vigencia Inicio:&lt;/strong&gt; {!ObtenerListaDePrecios.Fecha_de_inicio__c}&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Vigencia Fin:&lt;/strong&gt; {!ObtenerListaDePrecios.Fecha_de_Fin__c}&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Código de producto:&lt;/strong&gt; {!ObtenerCotizaci_n.Opportunity.Producto__r.ProductCode}&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Nombre de producto:&lt;/strong&gt; {!ObtenerCotizaci_n.Opportunity.Name}&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Monedad: &lt;/strong&gt;{!ObtenerCotizaci_n.Moneda__c}&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Unidad de medida: &lt;/strong&gt;{!ObtenerCotizaci_n.Unidad_de_medida__c}&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Precios: &lt;/strong&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;{!LineasDeCorreo}&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Volumen: &lt;/strong&gt;{!ObtenerCotizaci_n.Volumen_total__c}&lt;/p&gt;</text>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>&lt;table width=&quot;100%&quot; border=&quot;0&quot; cellspacing=&quot;0&quot; cellpadding=&quot;0&quot; style=&quot;background-color: #f4f7f6; padding: 20px; font-family: &apos;Segoe UI&apos;, Tahoma, Geneva, Verdana, sans-serif; color: #333333;&quot;&gt;
+    &lt;tr&gt;
+        &lt;td align=&quot;center&quot;&gt;
+            &lt;table width=&quot;600&quot; border=&quot;0&quot; cellspacing=&quot;0&quot; cellpadding=&quot;0&quot; style=&quot;background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);&quot;&gt;
+                &lt;!-- CABECERA DE IMAGEN --&gt;
+                &lt;tr&gt;
+                    &lt;td style=&quot;width: 100%; text-align: center; vertical-align: top; background-color: #ffffff;&quot;&gt;
+                        &lt;img src=&quot;https://force-app-5145--almexdev.sandbox.file.force.com/sfc/dist/version/renditionDownload?rendition=ORIGINAL_Png&amp;versionId=068Dy000002aYnN&amp;operationContext=DELIVERY&amp;contentId=05TDy000006stHe&amp;page=0&amp;d=/a/RL000003hEM9/T8FHbWlgW4w6.cWV28vk_m0fkmIJbg1kjvZkIHp0JU8&amp;oid=00DDy0000008sSJ&amp;dpt=null&amp;viewId=&quot; alt=&quot;Activación de Precio&quot; style=&quot;width: 100%; max-width: 600px; height: auto; display: block; margin: 0 auto;&quot; /&gt;
+                    &lt;/td&gt;
+                &lt;/tr&gt;
+
+                &lt;tr&gt;
+                    &lt;td style=&quot;padding: 35px 30px;&quot;&gt;
+                        &lt;p style=&quot;font-size: 16px; margin-top: 0; margin-bottom: 20px; color: #2c3e50;&quot;&gt;Se ha registrado una nueva &lt;strong&gt;activación de precio&lt;/strong&gt; con los siguientes detalles:&lt;/p&gt;   
+                        &lt;!-- TABLA DE DATOS GENERALES --&gt;
+                        &lt;table width=&quot;100%&quot; border=&quot;0&quot; cellspacing=&quot;0&quot; cellpadding=&quot;0&quot; style=&quot;font-size: 14px; margin-bottom: 25px;&quot;&gt;
+                            &lt;tr&gt;
+                                &lt;td width=&quot;35%&quot; style=&quot;padding: 12px 10px; border-bottom: 1px solid #f0f0f0; font-weight: 600; color: #555555;&quot;&gt;Unidad de negocio:&lt;/td&gt;
+                                &lt;td width=&quot;65%&quot; style=&quot;padding: 12px 10px; border-bottom: 1px solid #f0f0f0; color: #222222;&quot;&gt;{!ObtenerCotizaci_n.Opportunity.Unidad_de_negocio_Picklist__c}&lt;/td&gt;
+                            &lt;/tr&gt;
+                            &lt;tr&gt;
+                                &lt;td style=&quot;padding: 12px 10px; border-bottom: 1px solid #f0f0f0; font-weight: 600; color: #555555;&quot;&gt;Cliente:&lt;/td&gt;
+                                &lt;td style=&quot;padding: 12px 10px; border-bottom: 1px solid #f0f0f0; color: #222222;&quot;&gt;{!ObtenerCotizaci_n.Opportunity.Account.Name}&lt;/td&gt;
+                            &lt;/tr&gt;
+                            &lt;tr&gt;
+                                &lt;td style=&quot;padding: 12px 10px; border-bottom: 1px solid #f0f0f0; font-weight: 600; color: #555555;&quot;&gt;Vigencia:&lt;/td&gt;
+                                &lt;td style=&quot;padding: 12px 10px; border-bottom: 1px solid #f0f0f0; color: #222222;&quot;&gt;{!ObtenerListaDePrecios.Fecha_de_inicio__c} al {!ObtenerListaDePrecios.Fecha_de_Fin__c}&lt;/td&gt;
+                            &lt;/tr&gt;
+                            &lt;tr&gt;
+                                &lt;td style=&quot;padding: 12px 10px; border-bottom: 1px solid #f0f0f0; font-weight: 600; color: #555555;&quot;&gt;Código de producto:&lt;/td&gt;
+                                &lt;td style=&quot;padding: 12px 10px; border-bottom: 1px solid #f0f0f0; color: #222222;&quot;&gt;{!ObtenerCotizaci_n.Opportunity.Producto__r.ProductCode}&lt;/td&gt;
+                            &lt;/tr&gt;
+                            &lt;tr&gt;
+                                &lt;td style=&quot;padding: 12px 10px; border-bottom: 1px solid #f0f0f0; font-weight: 600; color: #555555;&quot;&gt;Nombre de producto:&lt;/td&gt;
+                                &lt;td style=&quot;padding: 12px 10px; border-bottom: 1px solid #f0f0f0; color: #222222;&quot;&gt;{!ObtenerCotizaci_n.Opportunity.Producto__r.Name}&lt;/td&gt;
+                            &lt;/tr&gt;
+                            &lt;tr&gt;
+                                &lt;td style=&quot;padding: 12px 10px; border-bottom: 1px solid #f0f0f0; font-weight: 600; color: #555555;&quot;&gt;Moneda:&lt;/td&gt;
+                                &lt;td style=&quot;padding: 12px 10px; border-bottom: 1px solid #f0f0f0; color: #222222;&quot;&gt;{!ObtenerCotizaci_n.Moneda__c}&lt;/td&gt;
+                            &lt;/tr&gt;
+                            &lt;tr&gt;
+                                &lt;td style=&quot;padding: 12px 10px; border-bottom: 1px solid #f0f0f0; font-weight: 600; color: #555555;&quot;&gt;Unidad de medida:&lt;/td&gt;
+                                &lt;td style=&quot;padding: 12px 10px; border-bottom: 1px solid #f0f0f0; color: #222222;&quot;&gt;{!ObtenerCotizaci_n.Unidad_de_medida__c}&lt;/td&gt;
+                            &lt;/tr&gt;
+                        &lt;/table&gt;
+                        &lt;!-- SECCIÓN DE PRECIOS MODIFICADA --&gt;
+                        &lt;div style=&quot;margin-top: 30px; margin-bottom: 15px; font-weight: 600; color: #2c3e50; font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px;&quot;&gt;Detalle de Precios&lt;/div&gt;
+                        &lt;table width=&quot;100%&quot; border=&quot;0&quot; cellspacing=&quot;0&quot; cellpadding=&quot;0&quot; style=&quot;font-size: 13px; border: 1px solid #e0e0e0; border-radius: 4px; overflow: hidden;&quot;&gt;
+&lt;thead&gt;
+    &lt;tr style=&quot;background-color: #f8f9fa;&quot;&gt;
+        &lt;th width=&quot;20%&quot; style=&quot;padding: 12px 10px; border-bottom: 2px solid #dcdcdc; text-align: left; color: #444444; font-weight: 600;&quot;&gt;Ship to&lt;/th&gt;
+        &lt;th width=&quot;45%&quot; style=&quot;padding: 12px 10px; border-bottom: 2px solid #dcdcdc; text-align: left; color: #444444; font-weight: 600;&quot;&gt;Nombre de sitio&lt;/th&gt;
+        &lt;th width=&quot;15%&quot; style=&quot;padding: 12px 10px; border-bottom: 2px solid #dcdcdc; text-align: center; color: #444444; font-weight: 600;&quot;&gt;Unidad de medida&lt;/th&gt;
+        &lt;th width=&quot;20%&quot; style=&quot;padding: 12px 10px; border-bottom: 2px solid #dcdcdc; text-align: right; color: #444444; font-weight: 600;&quot;&gt;Precio&lt;/th&gt;
+    &lt;/tr&gt;
+&lt;/thead&gt;
+                            &lt;tbody&gt;
+                                {!LineasDeCorreo_v2}
+                            &lt;/tbody&gt;
+                        &lt;/table&gt;
+                        
+                        &lt;!-- SECCIÓN DE VOLUMEN (MOVIDA AL FINAL) --&gt;
+                        &lt;table width=&quot;100%&quot; border=&quot;0&quot; cellspacing=&quot;0&quot; cellpadding=&quot;0&quot; style=&quot;font-size: 14px; margin-top: 25px;&quot;&gt;
+                            &lt;tr&gt;
+                                &lt;td width=&quot;35%&quot; style=&quot;padding: 12px 10px; border-top: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0; font-weight: 600; color: #555555;&quot;&gt;Volumen total:&lt;/td&gt;
+                                &lt;td width=&quot;65%&quot; style=&quot;padding: 12px 10px; border-top: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0; color: #222222;&quot;&gt;{!ObtenerCotizaci_n.Volumen_total__c}&lt;/td&gt;
+                            &lt;/tr&gt;
+                        &lt;/table&gt;
+                        &lt;p style=&quot;font-size: 13px; margin-top: 30px; color: #666666; text-align: center;&quot;&gt;
+                            Puede revisar los detalles de la cotización completa directamente en &lt;strong&gt;Salesforce&lt;/strong&gt;.
+                        &lt;/p&gt;
+                    &lt;/td&gt;
+                &lt;/tr&gt;
+
+                &lt;tr&gt;
+                    &lt;td style=&quot;background-color: #f1f4f6; padding: 25px; text-align: justify; border-top: 1px solid #e0e0e0;&quot;&gt;
+                        &lt;p style=&quot;margin: 0 0 12px 0; font-size: 10px; color: #777777; line-height: 1.5;&quot;&gt;
+                            Almidones Mexicanos, S.A. de C.V. es responsable del manejo de sus datos personales de acuerdo con la legislación aplicable, puede acceder a nuestro Aviso de Privacidad en la siguiente liga: &lt;a href=&quot;https://www.almidones.com.mx/Docum/Aviso_de_Privacidad_Clientes_Almex_.pdf&quot; style=&quot;color: #0056b3; text-decoration: none; font-weight: 600;&quot; target=&quot;_blank&quot;&gt;Aviso de Privacidad&lt;/a&gt;. Este mensaje y cualquier archivo anexo son de carácter privado, para uso exclusivo del destinatario referenciado.
+                        &lt;/p&gt;
+                        &lt;p style=&quot;margin: 0; font-size: 10px; color: #777777; line-height: 1.5;&quot;&gt;
+                            Almidones Mexicanos, S.A. de C.V. is responsible for handling your personal data in accordance to applicable legislation, you can access our Privacy Notice through the following link: &lt;a href=&quot;https://www.almidones.com.mx/Docum/Aviso_de_Privacidad_Clientes_Almex_Ingles.pdf&quot; style=&quot;color: #0056b3; text-decoration: none; font-weight: 600;&quot; target=&quot;_blank&quot;&gt;Privacy Notice&lt;/a&gt;.
+                        &lt;/p&gt;
+                    &lt;/td&gt;
+                &lt;/tr&gt;
+            &lt;/table&gt;
+        &lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;</text>
     </textTemplates>
     <textTemplates>
         <name>ValoresDeLaLinea</name>
-        <isViewedAsPlainText>false</isViewedAsPlainText>
-        <text>&lt;p&gt;{!AgregarPartidasDePresupuesto.Customer_Site_Name__r.N_mero_de_sitio__c}  -  {!AgregarPartidasDePresupuesto.Customer_Site_Name__r.Name} - {!ObtenerCotizaci_n.Unidad_de_Medida_Oracle__c} - $  {!AgregarPartidasDePresupuesto.Precio_facturado__c} - {!AgregarPartidasDePresupuesto.Moneda__c}&lt;/p&gt;</text>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>&lt;tr style=&quot;background-color: #ffffff;&quot;&gt;&lt;td width=&quot;20%&quot; style=&quot;padding: 10px; border-bottom: 1px solid #eeeeee; font-size: 13px; text-align: left; color: #444444; vertical-align: middle;&quot;&gt;{!AgregarPartidasDePresupuesto.Customer_Site_Name__r.N_mero_de_sitio__c}&lt;/td&gt;&lt;td width=&quot;45%&quot; style=&quot;padding: 10px; border-bottom: 1px solid #eeeeee; font-size: 13px; text-align: left; color: #444444; vertical-align: middle;&quot;&gt;{!AgregarPartidasDePresupuesto.Customer_Site_Name__r.Name}&lt;/td&gt;&lt;td width=&quot;15%&quot; style=&quot;padding: 10px; border-bottom: 1px solid #eeeeee; font-size: 13px; text-align: center; color: #444444; vertical-align: middle;&quot;&gt;{!ObtenerCotizaci_n.Unidad_de_Medida_Oracle__c}&lt;/td&gt;&lt;td width=&quot;20%&quot; style=&quot;padding: 10px; border-bottom: 1px solid #eeeeee; font-size: 13px; font-weight: bold; color: #00732c; text-align: right; vertical-align: middle;&quot;&gt;$&amp;nbsp;{!AgregarPartidasDePresupuesto.Precio_facturado__c}&lt;/td&gt;&lt;/tr&gt;</text>
     </textTemplates>
     <variables>
         <name>LineasDeCorreo</name>
         <dataType>String</dataType>
         <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>LineasDeCorreo_v2</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
         <isInput>false</isInput>
         <isOutput>false</isOutput>
     </variables>

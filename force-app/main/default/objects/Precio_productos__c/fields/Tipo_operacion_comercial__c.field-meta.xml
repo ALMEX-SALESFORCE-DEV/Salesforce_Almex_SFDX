@@ -4,14 +4,27 @@
     <description>Clasifica el precio como contrato, spot o propuesta. Sin valor en registros históricos.</description>
     <label>Tipo de operación comercial</label>
     <required>false</required>
+    <trackTrending>false</trackTrending>
     <type>Picklist</type>
     <valueSet>
         <restricted>true</restricted>
         <valueSetDefinition>
             <sorted>false</sorted>
-            <value><fullName>Contrato</fullName><default>false</default><label>Contrato</label></value>
-            <value><fullName>Spot</fullName><default>false</default><label>Spot</label></value>
-            <value><fullName>Propuesta</fullName><default>false</default><label>Propuesta</label></value>
+            <value>
+                <fullName>Contrato</fullName>
+                <default>false</default>
+                <label>Contrato</label>
+            </value>
+            <value>
+                <fullName>Spot</fullName>
+                <default>false</default>
+                <label>Spot</label>
+            </value>
+            <value>
+                <fullName>Propuesta</fullName>
+                <default>false</default>
+                <label>Propuesta</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

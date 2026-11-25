@@ -140,7 +140,6 @@ private class ALMEX_MapDataControllerTest {
                 Producto_importado__c = true,
                 Precio_producto__c = 25,
                 Periodo_Anio__c = 2026,
-                Periodo_Mes__c = 9,
                 Unidad__c = 'MXN_Kg'
             );
             insert testPrice;

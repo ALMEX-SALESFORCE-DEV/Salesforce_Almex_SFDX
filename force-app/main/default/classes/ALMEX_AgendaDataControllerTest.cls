@@ -247,6 +247,188 @@ private class ALMEX_AgendaDataControllerTest {
         System.assertEquals(1, assignedBranches.size());
     }
 
+    /**
+     * Verifica los 16 campos personalizados contra las respuestas reales del
+     * controlador. La edición y la reprogramación deben conservar el cliente,
+     * la sucursal y la justificación de excepción, además de sus demás datos.
+     */
+    @IsTest
+    static void preservesEveryBranchFieldAcrossReadsEditsAndRescheduling() {
+        Sucursal__c branch = [
+            SELECT Id, Cuenta__c
+            FROM Sucursal__c
+            WHERE Name = 'Sucursal Prueba Agenda'
+            LIMIT 1
+        ];
+        Date activityDate = Date.today();
+        Date replacementDate = activityDate.addDays(1);
+
+        Test.startTest();
+        Id activityId = ALMEX_AgendaDataController.createActivity(
+            '  Llamada de auditoría  ', 'Llamada', activityDate,
+            'NL', 'Monterrey', null, branch.Id, true,
+            '  Confirmar entrega  ', true,
+            '  El cliente solicita sustituir la visita  ', null, branch.Cuenta__c
+        );
+        Actividad_de_Agenda__c created =
+            ALMEX_AgendaDataController.getActivityDetail(activityId);
+        Map<Id, Actividad_de_Agenda__c> calendarRecords =
+            new Map<Id, Actividad_de_Agenda__c>(
+                ALMEX_AgendaDataController.getCurrentUserActivities(activityDate)
+            );
+
+        ALMEX_AgendaDataController.updateActivityDetails(
+            activityId, false, '  Entrega confirmada  ',
+            '  El cliente confirma la atención telefónica  '
+        );
+        Actividad_de_Agenda__c edited =
+            ALMEX_AgendaDataController.getActivityDetail(activityId);
+        Id replacementId = ALMEX_AgendaDataController.rescheduleActivity(
+            activityId, replacementDate, '  Cambio solicitado por el cliente  '
+        );
+        Actividad_de_Agenda__c original =
+            ALMEX_AgendaDataController.getActivityDetail(activityId);
+        Actividad_de_Agenda__c replacement =
+            ALMEX_AgendaDataController.getActivityDetail(replacementId);
+        Test.stopTest();
+
+        Map<String, Object> expected = new Map<String, Object>{
+            'Titulo__c' => 'Llamada de auditoría',
+            'Tipo_de_actividad__c' => 'Llamada',
+            'Ejecutivo__c' => UserInfo.getName(),
+            'Fecha__c' => activityDate,
+            // La sucursal de prueba no tiene dirección: no se debe guardar
+            // en su lugar la ubicación que haya enviado el formulario.
+            'Estado__c' => null,
+            'Ciudad__c' => null,
+            'Prospecto__c' => null,
+            'Cliente__c' => branch.Cuenta__c,
+            'Sucursal__c' => branch.Id,
+            'Seguimiento__c' => true,
+            'Notas__c' => 'Confirmar entrega',
+            'Cuenta_para_frecuencia__c' => true,
+            'Justificacion_de_excepcion__c' => 'El cliente solicita sustituir la visita',
+            'Estatus__c' => 'Programada',
+            'Justificacion__c' => null,
+            'Actividad_Original__c' => null
+        };
+        System.assertEquals(activityId, created.Id);
+        System.assert(!String.isBlank(created.Name), 'La actividad debe tener folio.');
+        assertActivityFieldValues(created, expected, 'Detalle al crear');
+        assertActivityFieldValues(calendarRecords.get(activityId), expected, 'Calendario');
+
+        expected.put('Seguimiento__c', false);
+        expected.put('Notas__c', 'Entrega confirmada');
+        expected.put('Justificacion_de_excepcion__c', 'El cliente confirma la atención telefónica');
+        assertActivityFieldValues(edited, expected, 'Detalle después de editar');
+
+        expected.put('Estatus__c', 'Reagendada');
+        expected.put('Justificacion__c', 'Cambio solicitado por el cliente');
+        assertActivityFieldValues(original, expected, 'Registro histórico');
+
+        expected.put('Fecha__c', replacementDate);
+        expected.put('Estatus__c', 'Programada');
+        expected.put('Justificacion__c', null);
+        expected.put('Actividad_Original__c', activityId);
+        System.assertNotEquals(activityId, replacementId);
+        assertActivityFieldValues(replacement, expected, 'Actividad reprogramada');
+    }
+
+    /**
+     * Comprueba los valores de prospecto y ubicación, la resolución del
+     * seguimiento y su recuperación desde el calendario después del cierre.
+     */
+    @IsTest
+    static void preservesProspectFieldsAndFollowUpResolutionInCalendar() {
+        Date activityDate = Date.today();
+
+        Test.startTest();
+        Id activityId = ALMEX_AgendaDataController.createActivity(
+            '  Seguimiento al prospecto  ', 'Visita', activityDate,
+            'JA', '  Guadalajara  ', null, null, true,
+            '  Enviar propuesta comercial  ', true, null,
+            '  Prospecto auditoría de campos  ', null
+        );
+        Actividad_de_Agenda__c created =
+            ALMEX_AgendaDataController.getActivityDetail(activityId);
+        ALMEX_AgendaDataController.completeActivity(
+            activityId, '  Propuesta enviada y recibida  '
+        );
+        Actividad_de_Agenda__c completed =
+            ALMEX_AgendaDataController.getActivityDetail(activityId);
+        Map<Id, Actividad_de_Agenda__c> calendarRecords =
+            new Map<Id, Actividad_de_Agenda__c>(
+                ALMEX_AgendaDataController.getCurrentUserActivities(activityDate)
+            );
+        Test.stopTest();
+
+        Map<String, Object> expected = new Map<String, Object>{
+            'Titulo__c' => 'Seguimiento al prospecto',
+            'Tipo_de_actividad__c' => 'Visita',
+            'Ejecutivo__c' => UserInfo.getName(),
+            'Fecha__c' => activityDate,
+            'Estado__c' => 'Jalisco',
+            'Ciudad__c' => 'Guadalajara',
+            'Prospecto__c' => 'Prospecto auditoría de campos',
+            'Cliente__c' => null,
+            'Sucursal__c' => null,
+            'Seguimiento__c' => true,
+            'Notas__c' => 'Enviar propuesta comercial',
+            'Cuenta_para_frecuencia__c' => false,
+            'Justificacion_de_excepcion__c' => null,
+            'Estatus__c' => 'Programada',
+            'Justificacion__c' => null,
+            'Actividad_Original__c' => null
+        };
+        assertActivityFieldValues(created, expected, 'Prospecto al crear');
+
+        expected.put('Seguimiento__c', false);
+        expected.put('Estatus__c', 'Completada');
+        expected.put('Justificacion__c', 'Propuesta enviada y recibida');
+        assertActivityFieldValues(completed, expected, 'Prospecto completado');
+        assertActivityFieldValues(calendarRecords.get(activityId), expected, 'Prospecto en calendario');
+    }
+
+    /**
+     * La bandera de frecuencia debe cambiar el resultado de la bitácora:
+     * dos llamadas a la misma sucursal no necesariamente cuentan igual.
+     */
+    @IsTest
+    static void frequencyFlagChangesCallContributionToVisitLog() {
+        Sucursal__c branch = [
+            SELECT Id, Cuenta__c
+            FROM Sucursal__c
+            WHERE Name = 'Sucursal Prueba Agenda'
+            LIMIT 1
+        ];
+
+        Test.startTest();
+        Id countedId = ALMEX_AgendaDataController.createActivity(
+            'Llamada que sustituye visita', 'Llamada', Date.today(),
+            null, null, null, branch.Id, false, null, true,
+            'Atención telefónica acordada con el cliente', null, branch.Cuenta__c
+        );
+        Id ordinaryId = ALMEX_AgendaDataController.createActivity(
+            'Llamada ordinaria', 'Llamada', Date.today(),
+            null, null, null, branch.Id, false, null, false,
+            null, null, branch.Cuenta__c
+        );
+        ALMEX_AgendaDataController.VisitLogResponse visitLog =
+            ALMEX_AgendaDataController.getCurrentUserVisitLog();
+        Test.stopTest();
+
+        Map<Id, ALMEX_AgendaDataController.VisitActivity> activitiesById =
+            new Map<Id, ALMEX_AgendaDataController.VisitActivity>();
+        for (ALMEX_AgendaDataController.VisitBranch visitBranch : visitLog.branches) {
+            for (ALMEX_AgendaDataController.VisitActivity activity : visitBranch.activities) {
+                activitiesById.put(activity.activityId, activity);
+            }
+        }
+        System.assertEquals(2, activitiesById.size());
+        System.assertEquals(true, activitiesById.get(countedId).countsTowardFrequency);
+        System.assertEquals(false, activitiesById.get(ordinaryId).countsTowardFrequency);
+    }
+
     // =====================================================================
     // 4. CAMBIOS DE ESTATUS: CANCELACIÓN Y REAGENDAMIENTO
     // =====================================================================
@@ -480,28 +662,60 @@ private class ALMEX_AgendaDataControllerTest {
 
     /**
      * Confirma qué perfiles pueden abrir el Desglose de actividades.
-     * La comparación ignora diferencias de mayúsculas y espacios externos.
+     * El acceso depende del Id y permisos del perfil, nunca de su etiqueta.
      */
     @IsTest
     static void recognizesProfilesWithManagementAccess() {
-        System.assertEquals(
-            true,
-            ALMEX_AgendaDataController.isManagementProfileName(
-                'Administrador del sistema'
-            )
-        );
-        System.assertEquals(
-            true,
-            ALMEX_AgendaDataController.isManagementProfileName(
-                ' Gerencia y Dirección comercial '
-            )
-        );
-        System.assertEquals(
-            false,
-            ALMEX_AgendaDataController.isManagementProfileName(
-                'Ejecutivo comercial'
-            )
-        );
+        for (String label : new List<String>{
+            'Administrador del sistema', 'System Administrator', 'Administrador renombrado'
+        }) {
+            User admin = new User(Profile = new Profile(Name = label, PermissionsModifyAllData = true));
+            System.assertEquals(true, ALMEX_AgendaDataController.hasManagementAccess(admin));
+        }
+        User manager = createBranchAccessTestUser(true, 'etiqueta');
+        manager.Profile = new Profile(
+            Name = 'Dirección renombrada / Commercial Management', PermissionsModifyAllData = false);
+        System.assertEquals(true, ALMEX_AgendaDataController.hasManagementAccess(manager));
+        User seller = createBranchAccessTestUser(false, 'etiqueta');
+        // Una etiqueta que imite a Gerencia no debe elevar al vendedor.
+        seller.Profile = new Profile(Name = 'Gerencia y Dirección Comercial', PermissionsModifyAllData = false);
+        System.assertEquals(false, ALMEX_AgendaDataController.hasManagementAccess(seller));
+        System.assertEquals(false, ALMEX_AgendaDataController.hasManagementAccess(null));
+        System.assertEquals(false, ALMEX_AgendaDataController.hasManagementAccess(new User()));
+        System.assertEquals(false, ALMEX_AgendaDataController.hasManagementAccess(
+            new User(Profile = new Profile(PermissionsModifyAllData = false))));
+    }
+
+    @IsTest
+    static void managementRequiresExistingProfileCapabilities() {
+        ObjectPermissions permissions = new ObjectPermissions(
+            PermissionsRead = true, PermissionsCreate = true,
+            PermissionsEdit = true, PermissionsViewAllRecords = true);
+        System.assertEquals(true, ALMEX_AgendaDataController.grantsManagementAccess(permissions));
+        for (String field : new List<String>{'PermissionsRead', 'PermissionsCreate',
+            'PermissionsEdit', 'PermissionsViewAllRecords'}) {
+            ObjectPermissions restricted = permissions.clone(false, false, false, false);
+            restricted.put(field, false);
+            System.assertEquals(false, ALMEX_AgendaDataController.grantsManagementAccess(restricted),
+                'No debe elevar privilegios si falta ' + field);
+        }
+        System.assertEquals(false, ALMEX_AgendaDataController.grantsManagementAccess(null));
+        System.assertEquals(false, ALMEX_AgendaDataController.grantsManagementAccess(new ObjectPermissions()));
+    }
+
+    @IsTest
+    static void profileAccessLookupIsCachedAndFailsClosed() {
+        User manager = createBranchAccessTestUser(true, 'cache');
+        manager.Profile = new Profile(PermissionsModifyAllData = false);
+        Integer beforeQueries = Limits.getQueries();
+        System.assertEquals(true, ALMEX_AgendaDataController.hasManagementAccess(manager));
+        System.assertEquals(true, ALMEX_AgendaDataController.hasManagementAccess(manager));
+        System.assertEquals(beforeQueries + 1, Limits.getQueries(),
+            'Consultar dos veces el mismo perfil no debe duplicar la consulta de permisos.');
+        User unknown = new User(ProfileId = Id.valueOf('00e000000000001'),
+            Profile = new Profile(PermissionsModifyAllData = false));
+        System.assertEquals(false, ALMEX_AgendaDataController.hasManagementAccess(unknown),
+            'Un perfil sin permisos de Agendas nunca debe recibir acceso gerencial.');
     }
 
     @IsTest
@@ -512,7 +726,7 @@ private class ALMEX_AgendaDataControllerTest {
             WHERE Name = 'Sucursal Prueba Agenda'
             LIMIT 1
         ];
-        User manager = createBranchAccessTestUser('Gerencia y Dirección Comercial', 'gerencia');
+        User manager = createBranchAccessTestUser(true, 'gerencia');
         insert manager;
         manager = [SELECT Id, Name FROM User WHERE Id = :manager.Id];
 
@@ -556,7 +770,7 @@ private class ALMEX_AgendaDataControllerTest {
             WHERE Name = 'Sucursal Prueba Agenda'
             LIMIT 1
         ];
-        User seller = createBranchAccessTestUser('Supervisor y Ejecutivo Comercial', 'vendedor');
+        User seller = createBranchAccessTestUser(false, 'vendedor');
         insert seller;
 
         System.runAs(seller) {
@@ -702,7 +916,7 @@ private class ALMEX_AgendaDataControllerTest {
     @IsTest
     static void sellersCannotSelectUnassignedClients() {
         Account foreignClient = [SELECT Id FROM Account WHERE Name = 'Cuenta Prueba Agenda' LIMIT 1];
-        User seller = createBranchAccessTestUser('Supervisor y Ejecutivo Comercial', 'vendedor');
+        User seller = createBranchAccessTestUser(false, 'vendedor');
         insert seller;
         System.runAs(seller) {
             Account ownClient = new Account(Name = 'Cuenta propia sin sucursal', OwnerId = seller.Id);
@@ -732,36 +946,43 @@ private class ALMEX_AgendaDataControllerTest {
 
     @IsTest
     static void managementUsesStoredClientIncludingActivitiesWithoutBranch() {
-        Sucursal__c branch = [SELECT Id, Cuenta__c FROM Sucursal__c
-            WHERE Name = 'Sucursal Prueba Agenda' LIMIT 1];
-        Id originalClientId = branch.Cuenta__c;
-        Account anotherClient = new Account(Name = 'Cuenta reasignada Agenda', OwnerId = UserInfo.getUserId());
-        insert as system anotherClient;
-        Id activityId = ALMEX_AgendaDataController.createActivity(
-            'Visita con cuenta histórica', 'Visita', Date.today(), null, null,
-            null, branch.Id, false, null, false, null, null, originalClientId
-        );
-        Id withoutBranchId = ALMEX_AgendaDataController.createActivity(
-            'Comida sin sucursal', 'Otro', Date.today(), null, null,
-            null, null, false, null, false, null, null, originalClientId
-        );
-        branch.Cuenta__c = anotherClient.Id;
-        update as system branch;
+        User manager = createBranchAccessTestUser(true, 'clihist');
+        insert manager;
 
-        Test.startTest();
-        ALMEX_AgendaDataController.ManagementActivityPage page =
-            ALMEX_AgendaDataController.getManagementActivities(
-                Date.today(), Date.today(), null, null, null, null, null,
-                null, null, null, null, null, 50, originalClientId
+        // La consulta gerencial no debe depender del perfil de quien lanza la suite.
+        System.runAs(manager) {
+            Sucursal__c branch = [SELECT Id, Cuenta__c FROM Sucursal__c
+                WHERE Name = 'Sucursal Prueba Agenda' LIMIT 1];
+            Id originalClientId = branch.Cuenta__c;
+            Account anotherClient = new Account(Name = 'Cuenta reasignada Agenda', OwnerId = UserInfo.getUserId());
+            insert as system anotherClient;
+            Id activityId = ALMEX_AgendaDataController.createActivity(
+                'Visita con cuenta histórica', 'Visita', Date.today(), null, null,
+                null, branch.Id, false, null, false, null, null, originalClientId
             );
-        Test.stopTest();
-        System.assertEquals(2, page.totalRecords,
-            'El cliente guardado debe ser independiente de la Cuenta actual de la sucursal.');
-        System.assert(containsActivity(page.records, activityId));
-        System.assert(containsActivity(page.records, withoutBranchId));
-        for (Actividad_de_Agenda__c activity : page.records) {
-            System.assertEquals(originalClientId, activity.Cliente__c);
-            System.assertEquals('Cuenta Prueba Agenda', activity.Cliente__r.Name);
+            Id withoutBranchId = ALMEX_AgendaDataController.createActivity(
+                'Comida sin sucursal', 'Otro', Date.today(), null, null,
+                null, null, false, null, false, null, null, originalClientId
+            );
+            branch.Cuenta__c = anotherClient.Id;
+            update as system branch;
+
+            Test.startTest();
+            System.assertEquals(true, ALMEX_AgendaDataController.canViewActivityBreakdown());
+            ALMEX_AgendaDataController.ManagementActivityPage page =
+                ALMEX_AgendaDataController.getManagementActivities(
+                    Date.today(), Date.today(), null, null, null, null, null,
+                    null, null, null, null, null, 50, originalClientId
+                );
+            Test.stopTest();
+            System.assertEquals(2, page.totalRecords,
+                'El cliente guardado debe ser independiente de la Cuenta actual de la sucursal.');
+            System.assert(containsActivity(page.records, activityId));
+            System.assert(containsActivity(page.records, withoutBranchId));
+            for (Actividad_de_Agenda__c activity : page.records) {
+                System.assertEquals(originalClientId, activity.Cliente__c);
+                System.assertEquals('Cuenta Prueba Agenda', activity.Cliente__r.Name);
+            }
         }
     }
 
@@ -1032,308 +1253,25 @@ private class ALMEX_AgendaDataControllerTest {
     }
 
     // =====================================================================
-    // 7. INTEGRACIÓN DE MEJORA DE TEXTO CON OPENROUTER
-    // =====================================================================
-
-    /**
-     * CUATRO ESCENARIOS de IA con HttpCalloutMock: no consumen solicitudes
-     * reales ni necesitan exponer la API key de la credencial nombrada.
-     */
-    @IsTest
-    static void discoversFreeTextZdrModelsDynamically() {
-        ALMEX_AgendaDataController.bypassAiPermissionCheck = true;
-        OpenRouterAiMock mock = new OpenRouterAiMock('success', 200);
-        Test.setMock(HttpCalloutMock.class, mock);
-        Test.startTest();
-        List<String> candidates = ALMEX_AgendaDataController.getAgendaAiCandidates();
-        Test.stopTest();
-        System.assertEquals(new List<String>{
-            'mock/beta:free', 'mock/alpha:free', 'mock/gamma:free'
-        }, candidates, 'Ordena por disponibilidad y latencia, elimina duplicados y limita a tres.');
-        System.assertEquals(2, mock.catalogCalls);
-        System.assertEquals(0, mock.inferenceCalls, 'Descubrir modelos no envía notas.');
-    }
-
-    @IsTest
-    static void sendsModelFallbacksWithStrictPrivacyInOnePost() {
-        ALMEX_AgendaDataController.bypassAiPermissionCheck = true;
-        OpenRouterAiMock mock = new OpenRouterAiMock('success', 200);
-        Test.setMock(HttpCalloutMock.class, mock);
-        Test.startTest();
-        String improved = ALMEX_AgendaDataController.improveAgendaText(
-            'visitamos al cliente y quedo pendiente la cotizacion', 'notes', null);
-        String resolution = ALMEX_AgendaDataController.improveAgendaText(
-            'visitamos al cliente y quedo pendiente la cotizacion',
-            'followUpResolution', new List<String>{
-                'openrouter/free', 'mock/beta:free', 'mock/beta:free',
-                'mock/alpha:free', 'mock/gamma:free', 'mock/delta:free'
-            });
-        Test.stopTest();
-        System.assertEquals('Visitamos al cliente y quedó pendiente la cotización.', improved);
-        System.assertEquals(improved, resolution);
-        System.assertEquals(2, mock.catalogCalls, 'El plan del navegador evita consultar el catálogo otra vez.');
-        System.assertEquals(2, mock.inferenceCalls, 'Un POST por cada clic, sin reenviar a ciegas.');
-        System.assert(mock.lastBody.contains('resumen de resolución'));
-        System.assert(mock.lastBody.contains('1000 caracteres'));
-    }
-
-    @IsTest
-    static void failsClosedWhenCatalogHasNoEligibleModelsOrIsUnavailable() {
-        ALMEX_AgendaDataController.bypassAiPermissionCheck = true;
-        Test.startTest();
-        for (String scenario : new List<String>{'empty', 'malformed', 'catalogError', 'catalogTimeout'}) {
-            OpenRouterAiMock mock = new OpenRouterAiMock(scenario, 200);
-            Test.setMock(HttpCalloutMock.class, mock);
-            Boolean rejected = false;
-            try {
-                ALMEX_AgendaDataController.improveAgendaText(
-                    'visitamos al cliente y quedo pendiente la cotizacion', 'notes', null);
-            } catch (AuraHandledException expected) {
-                rejected = true;
-            }
-            System.assert(rejected, 'No debe inferir si el catálogo es inválido o no hay candidatos.');
-            System.assertEquals(0, mock.inferenceCalls);
-        }
-        Test.stopTest();
-    }
-
-    @IsTest
-    static void handlesInferenceErrorsWithoutMultiplyingRequests() {
-        ALMEX_AgendaDataController.bypassAiPermissionCheck = true;
-        Test.startTest();
-        for (Integer code : new List<Integer>{404, 429, 503, 408, 401, 403, 402, 200}) {
-            // El 200 incluye un error 429 en JSON; no debe tratarse como éxito.
-            OpenRouterAiMock mock = new OpenRouterAiMock('failure', code);
-            Test.setMock(HttpCalloutMock.class, mock);
-            Boolean rejected = false;
-            try {
-                ALMEX_AgendaDataController.improveAgendaText(
-                    'visitamos al cliente y quedo pendiente la cotizacion', 'notes',
-                    new List<String>{'mock/beta:free', 'mock/alpha:free', 'mock/gamma:free'});
-            } catch (AuraHandledException expected) {
-                rejected = true;
-            }
-            System.assert(rejected);
-            System.assertEquals(1, mock.inferenceCalls, 'Los respaldos son internos a OpenRouter.');
-            System.assertEquals(0, mock.catalogCalls);
-        }
-        for (String scenario : new List<String>{'blank', 'tooLong', 'truncated', 'inferenceTimeout'}) {
-            OpenRouterAiMock mock = new OpenRouterAiMock(scenario, 200);
-            Test.setMock(HttpCalloutMock.class, mock);
-            Boolean rejected = false;
-            try {
-                ALMEX_AgendaDataController.improveAgendaText(
-                    'visitamos al cliente y quedo pendiente la cotizacion',
-                    'exceptionJustification', new List<String>{'mock/alpha:free'});
-            } catch (AuraHandledException expected) {
-                rejected = true;
-            }
-            System.assert(rejected, 'No acepta respuestas vacías, demasiado largas o desconexiones.');
-            System.assertEquals(1, mock.inferenceCalls);
-        }
-        Test.stopTest();
-    }
-
-    private class OpenRouterAiMock implements HttpCalloutMock {
-        String scenario;
-        Integer responseCode;
-        Integer catalogCalls = 0;
-        Integer inferenceCalls = 0;
-        String lastBody;
-
-        OpenRouterAiMock(String scenario, Integer responseCode) {
-            this.scenario = scenario;
-            this.responseCode = responseCode;
-        }
-
-        public HttpResponse respond(HttpRequest request) {
-            HttpResponse response = new HttpResponse();
-            response.setHeader('Content-Type', 'application/json');
-            response.setStatusCode(200);
-            if (request.getMethod() == 'GET') {
-                catalogCalls++;
-                System.assert(String.isBlank(request.getBody()), 'El catálogo nunca recibe notas.');
-                if (scenario == 'catalogTimeout') { throw new CalloutException('Simulated timeout'); }
-                if (scenario == 'catalogError') {
-                    response.setStatusCode(429);
-                    response.setBody('{"error":{"code":429}}');
-                } else if (scenario == 'malformed') {
-                    response.setBody('{"data":{}}');
-                } else if (request.getEndpoint().endsWith('/api/v1/endpoints/zdr')) {
-                    response.setBody(JSON.serialize(new Map<String, Object>{
-                        'data' => scenario == 'empty' ? new List<Object>() : buildAiEndpointCatalog()
-                    }));
-                } else {
-                    System.assert(request.getEndpoint().endsWith('/api/v1/models'));
-                    response.setBody(JSON.serialize(new Map<String, Object>{'data' => buildAiModelCatalog()}));
-                }
-                return response;
-            }
-            inferenceCalls++;
-            System.assertEquals('POST', request.getMethod());
-            System.assert(request.getEndpoint().endsWith('/api/v1/chat/completions'));
-            lastBody = request.getBody();
-            Map<String, Object> body = (Map<String, Object>) JSON.deserializeUntyped(lastBody);
-            List<Object> models = (List<Object>) body.get('models');
-            System.assert(models.size() > 0 && models.size() <= 3);
-            System.assertEquals(models.size(), new Set<Object>(models).size(), 'No repite candidatos.');
-            System.assertEquals(false, body.containsKey('model'), 'No utiliza el router aleatorio.');
-            Map<String, Object> provider = (Map<String, Object>) body.get('provider');
-            System.assertEquals(true, provider.get('zdr'));
-            System.assertEquals('deny', provider.get('data_collection'));
-            System.assertEquals(true, provider.get('allow_fallbacks'));
-            Map<String, Object> prices = (Map<String, Object>) provider.get('max_price');
-            for (String key : new List<String>{'prompt', 'completion', 'request'}) {
-                System.assertEquals(0, prices.get(key), 'Nunca permite pago ni al cambiar de modelo.');
-            }
-            System.assertEquals(false, provider.containsKey('only'));
-            System.assertEquals(false, body.get('stream'));
-            System.assertEquals(0.1, body.get('temperature'));
-            Map<String, Object> format = (Map<String, Object>) body.get('response_format');
-            System.assertEquals('json_schema', format.get('type'));
-            Map<String, Object> jsonSchema = (Map<String, Object>) format.get('json_schema');
-            System.assertEquals(true, jsonSchema.get('strict'));
-            Map<String, Object> schema = (Map<String, Object>) jsonSchema.get('schema');
-            System.assertEquals(false, schema.get('additionalProperties'));
-            System.assertEquals(new List<Object>{'texto'}, schema.get('required'));
-            System.assert(lastBody.contains('TRES toneladas solicitadas ahora y CINCO de la compra anterior'));
-            System.assert(lastBody.contains('la ficha sigue PENDIENTE'));
-            System.assert(lastBody.contains('No describas, evalúes ni justifiques'));
-            System.assert(lastBody.contains('visitamos al cliente y quedo pendiente la cotizacion'));
-            System.assert(lastBody.contains('No inventes información'));
-            if (scenario == 'inferenceTimeout') { throw new CalloutException('Simulated timeout'); }
-            response.setStatusCode(responseCode);
-            if (scenario == 'failure') {
-                response.setBody(JSON.serialize(new Map<String, Object>{
-                    'error' => new Map<String, Object>{'code' => responseCode == 200 ? 429 : responseCode}
-                }));
-            } else {
-                String content = scenario == 'blank' ? ' ' :
-                    scenario == 'tooLong' ? 'X'.repeat(161) :
-                    'Visitamos al cliente y quedó pendiente la cotización.';
-                response.setBody(JSON.serialize(new Map<String, Object>{
-                    'model' => models[models.size() - 1],
-                    'choices' => new List<Object>{new Map<String, Object>{
-                        'finish_reason' => scenario == 'truncated' ? 'length' : 'stop',
-                        'message' => new Map<String, Object>{
-                            'content' => JSON.serialize(new Map<String, Object>{'texto' => content})
-                        }
-                    }}
-                }));
-            }
-            return response;
-        }
-    }
-
-    /**
-     * Regresión del caso reportado: ningún análisis, encabezado ni explicación
-     * debe alcanzar la vista previa, incluso si viene dentro de un JSON válido.
-     * Solo prueba el validador local; no realiza callouts ni consume cuota.
-     */
-    @IsTest
-    static void rejectsEditorialAnalysisAndUnresolvedDictation() {
-        List<String> invalidOutputs = new List<String>{
-            'Revisé el texto y lo he mejorado en los siguientes puntos:\n' +
-                '- Corregí errores tipográficos.\n- La cantidad correcta es cinco toneladas.\n\n' +
-                'Texto mejorado:\nHoy fui con Laura. Necesitan cinco toneladas... no, perdón, tres.',
-            '{"texto":"Revisé el texto y lo he mejorado en los siguientes puntos: correcciones."}',
-            '{"texto":"Hoy fui con Laura.\\n\\nTexto mejorado:\\nEl cliente solicita tres toneladas."}',
-            '{"texto":"El cliente necesita cinco toneladas... no, perdón, tres."}',
-            '{"texto":"Nota correcta.","explicacion":"Corregí la gramática."}',
-            '{"texto":["No es un texto"]}',
-            '{"texto":"   "}',
-            '```json\n{"texto":"No debe extraer fragmentos de Markdown."}\n```'
-        };
-        for (String content : invalidOutputs) {
-            Boolean rejected = false;
-            try {
-                ALMEX_AgendaDataController.validateAgendaAiTextOutput(content, 6000);
-            } catch (AuraHandledException expected) {
-                rejected = true;
-            }
-            System.assert(rejected, 'Una respuesta fuera del contrato no debe mostrarse.');
-        }
-    }
-
-    @IsTest
-    static void extractsOnlyTheCorrectedCommercialNote() {
-        String note = 'Durante la visita a Laura, de Compras de Alimentos del Centro, ' +
-            'se solicitó una cotización de tres toneladas de glucosa para el 12 de noviembre. ' +
-            'La compra anterior fue de cinco toneladas. El pedido aún no está confirmado. ' +
-            'El último embarque tuvo dos días de retraso y afectó la producción. ' +
-            'Quedó pendiente revisar la incidencia con Logística, enviar la cotización mañana ' +
-            'y enviar la ficha técnica. No se acordó descuento ni se cerró la venta. ' +
-            'Se acordó hablar el viernes.';
-        String content = JSON.serialize(new Map<String, Object>{'texto' => '  ' + note + '  '});
-        System.assertEquals(note,
-            ALMEX_AgendaDataController.validateAgendaAiTextOutput(content, 6000));
-        System.assertEquals('X'.repeat(160),
-            ALMEX_AgendaDataController.validateAgendaAiTextOutput(
-                JSON.serialize(new Map<String, Object>{
-                    'texto' => 'X'.repeat(160)
-                }), 160));
-    }
-
-    private static Map<String, Object> buildAiModel(String modelId, String output, String promptPrice) {
-        return new Map<String, Object>{
-            'id' => modelId,
-            'pricing' => new Map<String, Object>{'prompt' => promptPrice, 'completion' => '0'},
-            'architecture' => new Map<String, Object>{
-                'input_modalities' => new List<String>{'text'},
-                'output_modalities' => new List<String>{output}
-            }
-        };
-    }
-
-    private static List<Object> buildAiModelCatalog() {
-        List<Object> models = new List<Object>();
-        for (String name : new List<String>{'alpha', 'beta', 'gamma', 'delta', 'small', 'noParams', 'requestFee'}) {
-            models.add(buildAiModel('mock/' + name + ':free', 'text', '0'));
-        }
-        models.add(buildAiModel('mock/paid', 'text', '0.1'));
-        models.add(buildAiModel('mock/image', 'image', '0'));
-        models.add(buildAiModel('openrouter/free', 'text', '0'));
-        Map<String, Object> reasoner = buildAiModel('mock/reasoner', 'text', '0');
-        reasoner.put('reasoning', new Map<String, Object>{'mandatory' => true});
-        models.add(reasoner);
-        return models;
-    }
-
-    private static List<Object> buildAiEndpointCatalog() {
-        List<Object> endpoints = new List<Object>();
-        Integer index = 0;
-        for (String name : new List<String>{
-            'alpha', 'beta', 'gamma', 'delta', 'paid', 'image',
-            'reasoner', 'small', 'noParams', 'requestFee'
-        }) {
-            index++;
-            endpoints.add(new Map<String, Object>{
-                'model_id' => 'mock/' + name +
-                    (new Set<String>{'paid', 'image', 'reasoner'}.contains(name) ? '' : ':free'),
-                'pricing' => new Map<String, Object>{
-                    'prompt' => '0', 'completion' => '0', 'request' => name == 'requestFee' ? '0.01' : '0'
-                },
-                'context_length' => name == 'small' ? 4096 : 32768,
-                'max_completion_tokens' => 2000,
-                'supported_parameters' => name == 'noParams' ?
-                    new List<String>() : new List<String>{'temperature', 'max_tokens'},
-                'uptime_last_30m' => index < 3 ? 100 : 100 - index,
-                'latency_last_30m' => name == 'beta' ? 1 : 2,
-                'native_tools' => new Map<String, Object>{'extra' => new List<Object>{true, null}},
-                'supports_tool_choice' => new Map<String, Object>{'none' => true, 'auto' => true},
-                'future_metadata' => new Map<String, Object>{'nested' => new Map<String, Object>{'value' => 1}}
-            });
-        }
-        endpoints.add(endpoints[0]); // Un mismo modelo con dos endpoints no se duplica.
-        return endpoints;
-    }
-
-    // =====================================================================
     // 8. FÁBRICA DE REGISTROS DE PRUEBA Y FUNCIONES AUXILIARES
     // =====================================================================
 
-    private static User createBranchAccessTestUser(String profileName, String alias) {
-        Profile userProfile = [SELECT Id FROM Profile WHERE Name = :profileName LIMIT 1];
+    private static User createBranchAccessTestUser(Boolean managementAccess, String alias) {
+        List<ObjectPermissions> availableProfiles = [
+            SELECT Parent.ProfileId
+            FROM ObjectPermissions
+            WHERE Parent.IsOwnedByProfile = true
+                AND Parent.PermissionsModifyAllData = false
+                AND SobjectType = 'Actividad_de_Agenda__c'
+                AND PermissionsRead = true
+                AND PermissionsCreate = true
+                AND PermissionsEdit = true
+                AND PermissionsViewAllRecords = :managementAccess
+            ORDER BY Parent.ProfileId
+            LIMIT 1
+        ];
+        System.assertEquals(1, availableProfiles.size(),
+            'Falta un perfil comercial con los permisos de Agendas requeridos por la prueba.');
         return new User(
             FirstName = 'Prueba',
             LastName = alias,
@@ -1341,7 +1279,7 @@ private class ALMEX_AgendaDataControllerTest {
             Email = alias + '@example.com',
             Username = alias + '.' + UserInfo.getOrganizationId() + '.' +
                 String.valueOf(DateTime.now().getTime()) + '@agenda.example.com',
-            ProfileId = userProfile.Id,
+            ProfileId = availableProfiles[0].Parent.ProfileId,
             TimeZoneSidKey = 'America/Mexico_City',
             LocaleSidKey = 'es_MX',
             EmailEncodingKey = 'UTF-8',
@@ -1394,6 +1332,20 @@ private class ALMEX_AgendaDataControllerTest {
             Cuenta_para_frecuencia__c = true,
             Estatus__c = 'Programada'
         );
+    }
+
+    private static void assertActivityFieldValues(
+        Actividad_de_Agenda__c actual,
+        Map<String, Object> expected,
+        String scenario
+    ) {
+        System.assertNotEquals(null, actual, scenario + ': falta la actividad.');
+        for (String fieldName : expected.keySet()) {
+            System.assertEquals(
+                expected.get(fieldName), actual.get(fieldName),
+                scenario + ': valor inesperado en ' + fieldName
+            );
+        }
     }
 
     /**

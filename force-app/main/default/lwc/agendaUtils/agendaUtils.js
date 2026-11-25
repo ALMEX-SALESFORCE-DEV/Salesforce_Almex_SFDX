@@ -176,4 +176,3 @@ export function normalizeAgendaActivityType(value) {
     }
     return type;
 }
-

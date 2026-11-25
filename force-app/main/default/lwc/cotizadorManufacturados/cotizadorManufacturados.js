@@ -413,6 +413,9 @@ export default class CotizadorManufacturados extends LightningElement {
 					quoteId,
 					newQuoteItemList
 				});
+				if (quoteUrl.startsWith("ERROR:")) {
+					throw new Error(quoteUrl.slice(6));
+				}
 				if (quoteUrl) {
 					this.link = quoteUrl;
 				}
@@ -420,6 +423,8 @@ export default class CotizadorManufacturados extends LightningElement {
 		} catch (error) {
 			this.showToast({
 				message:
+					error?.body?.message ||
+					error?.message ||
 					"Por favor revise que todos los datos fueron rellenados correctamente, datos como precios definitivos, fechas, sucursales y uso del maíz son necesarias.",
 				title: "No fue posible realizar esta operación",
 				variant: "danger"

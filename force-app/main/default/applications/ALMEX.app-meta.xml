@@ -1554,6 +1554,8 @@
     <tabs>Precio_productos__c</tabs>
     <tabs>ALMEX_FormPrices</tabs>
     <tabs>Mapeo_de_mercado</tabs>
+    <tabs>ALMEX_Agendas</tabs>
+    <tabs>Actividad_de_Agenda__c</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>ALMEX_UtilityBar</utilityBar>
 </CustomApplication>

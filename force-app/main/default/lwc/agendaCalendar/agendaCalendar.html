@@ -383,23 +383,7 @@
                                         </button>
                                     </template>
 
-                                    <template lwc:if={showTextImprovementControl}>
-                                        <button type="button" class="notes-improve-button"
-                                            data-target="followUpResolution" onclick={handleImproveText}
-                                            disabled={isFollowUpResolutionImproveButtonDisabled}
-                                            title="Mejorar la redacción sin cambiar la información">
-                                            <svg class="text-sparkles-icon" viewBox="0 0 24 24" aria-hidden="true">
-                                                <path d="M12 2 13.35 5.65 17 7l-3.65 1.35L12 12l-1.35-3.65L7 7l3.65-1.35L12 2Zm6 9 1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2ZM6.5 12l1.55 3.95L12 17.5l-3.95 1.55L6.5 23l-1.55-3.95L1 17.5l3.95-1.55L6.5 12Z"></path>
-                                            </svg>
-                                            <template lwc:if={isImprovingText}>
-                                                <span>Mejorando...</span>
-                                            </template>
-                                            <template lwc:else>
-                                                <span>Mejorar texto</span>
-                                            </template>
-                                        </button>
-                                    </template>
-                                </div>
+</div>
                             </div>
 
                             <textarea id="follow-up-completion-summary"
@@ -526,23 +510,7 @@
                                             <span>{justificationSpeechButtonLabel}</span>
                                         </button>
 
-                                        <template lwc:if={showTextImprovementControl}>
-                                            <button type="button" class="notes-improve-button"
-                                                data-target="actionJustification" onclick={handleImproveText}
-                                                disabled={isActionJustificationImproveButtonDisabled}
-                                                title="Mejorar la redacción sin cambiar la información">
-                                                <svg class="text-sparkles-icon" viewBox="0 0 24 24" aria-hidden="true">
-                                                    <path d="M12 2 13.35 5.65 17 7l-3.65 1.35L12 12l-1.35-3.65L7 7l3.65-1.35L12 2Zm6 9 1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2ZM6.5 12l1.55 3.95L12 17.5l-3.95 1.55L6.5 23l-1.55-3.95L1 17.5l3.95-1.55L6.5 12Z"></path>
-                                                </svg>
-                                                <template lwc:if={isImprovingText}>
-                                                    <span>Mejorando...</span>
-                                                </template>
-                                                <template lwc:else>
-                                                    <span>Mejorar texto</span>
-                                                </template>
-                                            </button>
-                                        </template>
-                                    </div>
+</div>
                                 </template>
                             </div>
 
@@ -1145,23 +1113,7 @@
                                             <span>{justificationSpeechButtonLabel}</span>
                                         </button>
 
-                                        <template lwc:if={showTextImprovementControl}>
-                                            <button type="button" class="notes-improve-button"
-                                                data-target="exceptionJustification" onclick={handleImproveText}
-                                                disabled={isExceptionJustificationImproveButtonDisabled}
-                                                title="Mejorar la redacción sin cambiar la información">
-                                                <svg class="text-sparkles-icon" viewBox="0 0 24 24" aria-hidden="true">
-                                                    <path d="M12 2 13.35 5.65 17 7l-3.65 1.35L12 12l-1.35-3.65L7 7l3.65-1.35L12 2Zm6 9 1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2ZM6.5 12l1.55 3.95L12 17.5l-3.95 1.55L6.5 23l-1.55-3.95L1 17.5l3.95-1.55L6.5 12Z"></path>
-                                                </svg>
-                                                <template lwc:if={isImprovingText}>
-                                                    <span>Mejorando...</span>
-                                                </template>
-                                                <template lwc:else>
-                                                    <span>Mejorar texto</span>
-                                                </template>
-                                            </button>
-                                        </template>
-                                    </div>
+</div>
                                 </template>
                             </div>
 
@@ -1205,22 +1157,7 @@
                                             <span>{notesSpeechButtonLabel}</span>
                                         </button>
 
-                                        <template lwc:if={showTextImprovementControl}>
-                                            <button type="button" class="notes-improve-button" data-target="notes"
-                                                onclick={handleImproveText} disabled={isNotesImproveButtonDisabled}
-                                                title="Mejorar la redacción sin cambiar la información">
-                                                <svg class="text-sparkles-icon" viewBox="0 0 24 24" aria-hidden="true">
-                                                    <path d="M12 2 13.35 5.65 17 7l-3.65 1.35L12 12l-1.35-3.65L7 7l3.65-1.35L12 2Zm6 9 1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2ZM6.5 12l1.55 3.95L12 17.5l-3.95 1.55L6.5 23l-1.55-3.95L1 17.5l3.95-1.55L6.5 12Z"></path>
-                                                </svg>
-                                                <template lwc:if={isImprovingText}>
-                                                    <span>Mejorando...</span>
-                                                </template>
-                                                <template lwc:else>
-                                                    <span>Mejorar texto</span>
-                                                </template>
-                                            </button>
-                                        </template>
-                                    </div>
+</div>
                                 </template>
                             </div>
 
@@ -1327,53 +1264,6 @@
 
         </section>
 
-    </template>
-
-    <template lwc:if={isTextImprovementPreviewOpen}>
-        <div class="text-improvement-backdrop" onclick={closeTextImprovementPreview}></div>
-
-        <section class="text-improvement-modal" role="dialog" aria-modal="true"
-            aria-labelledby="text-improvement-title">
-            <header class="text-improvement-header">
-                <div class="text-improvement-heading">
-                    <span class="text-improvement-icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M12 2 13.35 5.65 17 7l-3.65 1.35L12 12l-1.35-3.65L7 7l3.65-1.35L12 2Zm6 9 1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2ZM6.5 12l1.55 3.95L12 17.5l-3.95 1.55L6.5 23l-1.55-3.95L1 17.5l3.95-1.55L6.5 12Z"></path>
-                        </svg>
-                    </span>
-                    <div>
-                        <h2 id="text-improvement-title">Revisar texto mejorado</h2>
-                        <p>La propuesta no se aplicará hasta que la confirmes.</p>
-                    </div>
-                </div>
-
-                <button type="button" class="text-improvement-close" onclick={closeTextImprovementPreview}
-                    title="Cerrar vista previa" aria-label="Cerrar vista previa">
-                    &times;
-                </button>
-            </header>
-
-            <div class="text-improvement-body">
-                <article class="text-improvement-panel">
-                    <h3>Texto original</h3>
-                    <div class="text-improvement-copy">{textImprovementOriginal}</div>
-                </article>
-
-                <article class="text-improvement-panel text-improvement-panel-proposal">
-                    <h3>Propuesta mejorada</h3>
-                    <div class="text-improvement-copy">{textImprovementSuggestion}</div>
-                </article>
-            </div>
-
-            <footer class="text-improvement-actions">
-                <button type="button" class="activity-cancel-button" onclick={closeTextImprovementPreview}>
-                    Conservar original
-                </button>
-                <button type="button" class="activity-save-button" onclick={handleUseImprovedText}>
-                    Usar texto mejorado
-                </button>
-            </footer>
-        </section>
     </template>
 
 </template>
