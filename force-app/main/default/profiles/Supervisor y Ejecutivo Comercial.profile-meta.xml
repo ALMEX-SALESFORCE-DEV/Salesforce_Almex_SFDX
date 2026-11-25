@@ -5237,11 +5237,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Precio_productos__c.Periodo_Mes__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Precio_productos__c.Precio_producto__c</field>
         <readable>true</readable>
     </fieldPermissions>

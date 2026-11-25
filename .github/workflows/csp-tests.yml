@@ -1,0 +1,25 @@
+name: CSP - Mapeo de mercado
+
+on:
+  pull_request:
+    branches: [main, dev, feature/SaFo-28-proyecto-agendas]
+    paths:
+      - "force-app/main/default/lwc/mapaNacional/**"
+      - "force-app/main/default/lwc/almex_FormProductPrices/**"
+      - "jest*.js"
+      - "package*.json"
+      - ".github/workflows/csp-tests.yml"
+  push:
+    branches: [feature/SaFo-50-csp-propuestas-valor-cambio]
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm ci
+      - run: npm run test:unit:csp -- --coverage
