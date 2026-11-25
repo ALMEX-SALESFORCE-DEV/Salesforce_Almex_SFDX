@@ -1,5 +1,6 @@
 <template>
-    <div class="page-shell">
+    <div class="page-shell" onmousedown={handleFormCalendarInteraction}
+        onfocusin={handleFormCalendarInteraction} ontouchstart={handleFormCalendarInteraction}>
         <header class="hero">
             <div class="hero__identity">
                 <span class="hero__icon" aria-hidden="true">
@@ -40,7 +41,7 @@
             </div>
         </template>
 
-        <form onsubmit={handleSubmit} novalidate>
+        <form onsubmit={handleSubmit} autocomplete="off" novalidate>
             <section class="form-card form-card--product" aria-labelledby="product-section-title">
                 <div class="section-heading">
                     <span class="section-number">1</span>
@@ -51,27 +52,33 @@
                 </div>
 
                 <div class={productGridClass}>
-                    <lightning-combobox
-                        name="productName"
-                        label="Tipo de producto"
-                        value={form.productName}
-                        options={productOptions}
-                        placeholder="Selecciona un producto"
-                        onchange={handleProductChange}
-                        required>
-                    </lightning-combobox>
+                    <div class="form-field">
+                        <span class="native-field__label" aria-hidden="true"><span aria-hidden="true">*</span> Tipo de producto</span>
+                        <lightning-combobox variant="label-hidden"
+                            name="productName"
+                            label="Tipo de producto"
+                            value={form.productName}
+                            options={productOptions}
+                            placeholder="Selecciona un producto"
+                            onchange={handleProductChange}
+                            required>
+                        </lightning-combobox>
+                    </div>
 
                     <template lwc:if={showSubproduct}>
                         <div class="field-with-help">
-                            <lightning-combobox
-                                name="subproductType"
-                                label="Subproducto"
-                                value={form.subproductType}
-                                options={subproductOptions}
-                                placeholder="Selecciona un subproducto"
-                                onchange={handleSubproductChange}
-                                required>
-                            </lightning-combobox>
+                            <div class="form-field">
+                                <span class="native-field__label" aria-hidden="true"><span aria-hidden="true">*</span> Subproducto</span>
+                                <lightning-combobox variant="label-hidden"
+                                    name="subproductType"
+                                    label="Subproducto"
+                                    value={form.subproductType}
+                                    options={subproductOptions}
+                                    placeholder="Selecciona un subproducto"
+                                    onchange={handleSubproductChange}
+                                    required>
+                                </lightning-combobox>
+                            </div>
                             <p class="field-help">
                                 <lightning-icon icon-name="utility:info" size="xx-small"></lightning-icon>
                                 <span>El subproducto se actualiza según el tipo de producto seleccionado.</span>
@@ -80,34 +87,99 @@
                     </template>
 
                     <template lwc:if={showShipmentSize}>
+                        <div class={shipmentFieldClass}>
+                        <div class="shipment-select">
+                        <span class="native-field__label"><span>*</span> Tamaño de embarque</span>
                         <lightning-combobox
                             name="shipmentSize"
                             label="Tamaño de embarque"
+                            variant="label-hidden"
                             value={form.shipmentSize}
                             options={shipmentSizeOptions}
                             placeholder="Selecciona un tamaño"
                             onchange={handleFieldChange}
                             required>
                         </lightning-combobox>
+                        </div>
+                        <template lwc:if={showOtherShipmentSize}>
+                            <div class="custom-shipment">
+                                <label class="native-field__label" for="other-shipment"><span>*</span> Cantidad</label>
+                                <div class="custom-shipment__control">
+                                    <input id="other-shipment" class="slds-input" data-field="otherShipmentSize"
+                                        autocomplete="off"
+                                        aria-label="Otro tamaño de embarque en toneladas"
+                                        type="text" inputmode="numeric" pattern="[0-9]+" maxlength="10"
+                                        value={form.otherShipmentSize} oninput={handleOtherShipmentInput} required />
+                                    <span class="custom-shipment__unit">Ton</span>
+                                </div>
+                            </div>
+                        </template>
+                        </div>
                     </template>
 
-                    <lightning-combobox
-                        name="periodYear"
-                        label="Año"
-                        value={form.periodYear}
-                        options={yearOptions}
-                        onchange={handleFieldChange}
-                        required>
-                    </lightning-combobox>
+                    <div class="form-field">
+                        <span class="native-field__label" aria-hidden="true"><span aria-hidden="true">*</span> Año</span>
+                        <lightning-combobox variant="label-hidden"
+                            name="periodYear"
+                            label="Año"
+                            value={form.periodYear}
+                            options={yearOptions}
+                            onchange={handleFieldChange}
+                            required>
+                        </lightning-combobox>
+                    </div>
 
-                    <lightning-combobox
-                        name="periodMonth"
-                        label="Mes"
-                        value={form.periodMonth}
-                        options={monthOptions}
-                        onchange={handleFieldChange}
-                        required>
-                    </lightning-combobox>
+                </div>
+
+                <div class="field-grid field-grid--operation slds-m-top_medium">
+                    <div class="form-field">
+                        <span class="native-field__label" aria-hidden="true"><span aria-hidden="true">*</span> Tipo de operación comercial</span>
+                        <lightning-combobox variant="label-hidden" name="commercialOperationType" label="Tipo de operación comercial"
+                            value={form.commercialOperationType} options={commercialOperationOptions}
+                            placeholder="Selecciona Contrato, Spot o Propuesta" onchange={handleFieldChange} required>
+                        </lightning-combobox>
+                    </div>
+                    <template lwc:if={isContract}>
+                        <div class="contract-date-field" data-contract-field="contractStartDate">
+                            <label class="native-field__label" for="contract-start"><span>*</span> De</label>
+                            <div class="contract-date-control">
+                                <input id="contract-start" class="contract-date-input slds-input" type="text" name="contractStartDate"
+                                    autocomplete="off" inputmode="numeric" placeholder="dd/mm/aaaa" maxlength="10"
+                                    value={contractStartDateDisplay} oninput={handleContractDateInput} onblur={handleContractDateBlur} required />
+                                <button type="button" class="calendar-button" data-date-field="contractStartDate" onclick={openContractCalendar} aria-label="Elegir fecha de inicio">
+                                    <lightning-icon icon-name="utility:event" size="x-small"></lightning-icon>
+                                </button>
+                            </div>
+                            <div class="contract-calendar-host" data-calendar="contractStartDate" lwc:dom="manual"></div>
+                        </div>
+                        <div class="contract-date-field" data-contract-field="contractEndDate">
+                            <label class="native-field__label" for="contract-end"><span>*</span> A</label>
+                            <div class="contract-date-control">
+                                <input id="contract-end" class="contract-date-input slds-input" type="text" name="contractEndDate"
+                                    autocomplete="off" inputmode="numeric" placeholder="dd/mm/aaaa" maxlength="10"
+                                    value={contractEndDateDisplay} oninput={handleContractDateInput} onblur={handleContractDateBlur} required />
+                                <button type="button" class="calendar-button" data-date-field="contractEndDate" onclick={openContractCalendar} aria-label="Elegir fecha de fin">
+                                    <lightning-icon icon-name="utility:event" size="x-small"></lightning-icon>
+                                </button>
+                            </div>
+                            <div class="contract-calendar-host" data-calendar="contractEndDate" lwc:dom="manual"></div>
+                        </div>
+                    </template>
+                    <div class="product-origin" role="group" aria-label="Origen del producto">
+                        <span class="native-field__label">Origen del producto</span>
+                        <div class="product-origin-options">
+                            <label class={nationalProductClass}>
+                                <input type="checkbox" autocomplete="off" data-origin="national"
+                                    checked={isNationalProduct} onchange={handleProductOriginChange} />
+                                <span>Producto nacional</span>
+                            </label>
+                            <label class={importedProductClass}>
+                                <input type="checkbox" autocomplete="off" data-origin="imported"
+                                    checked={isImportedProduct} onchange={handleProductOriginChange} />
+                                <span>Producto importado</span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
             </section>
@@ -117,7 +189,7 @@
                     <span class="section-number">2</span>
                     <div>
                         <h2 id="commercial-section-title">Información comercial</h2>
-                        <p>Datos del cliente o razón social.</p>
+                        <p>Selecciona el cliente y su sucursal o registra un prospecto.</p>
                     </div>
                 </div>
 
@@ -143,17 +215,36 @@
                 </div>
 
                 <template lwc:if={isClientMode}>
-                    <div class="account-lookup">
-                        <lightning-input
-                            type="search"
-                            label="Sucursal del cliente"
-                            value={branchSearch}
-                            placeholder="Escribe el nombre de la sucursal..."
-                            onchange={handleBranchSearch}
-                            onfocus={handleBranchFocus}
-                            onblur={handleBranchBlur}
-                            autocomplete="off">
-                        </lightning-input>
+                    <div class={accountLookupClass}>
+                        <div class="form-field">
+                            <span class="native-field__label" aria-hidden="true"><span aria-hidden="true">*</span> Nombre del cliente</span>
+                            <lightning-input variant="label-hidden" type="search" name="clientAccount" label="Nombre del cliente"
+                                value={accountSearch} placeholder="Escribe el nombre de la cuenta..." autocomplete="off"
+                                onchange={handleAccountSearch} onfocus={handleAccountFocus} onblur={handleAccountBlur} required>
+                            </lightning-input>
+                        </div>
+                        <template lwc:if={showAccountSuggestions}>
+                            <div class="account-lookup__menu" role="listbox" aria-label="Clientes encontrados">
+                                <template for:each={accountSuggestions} for:item="account">
+                                    <button key={account.Id} type="button" class="account-lookup__option" data-id={account.Id}
+                                        onmousedown={handleLookupOptionMouseDown} onclick={selectAccount} role="option">
+                                        <lightning-icon icon-name="standard:account" size="small"></lightning-icon>
+                                        <span class="account-lookup__copy"><strong>{account.Name}</strong></span>
+                                    </button>
+                                </template>
+                            </div>
+                        </template>
+                        <template lwc:if={accountSearchMessage}><p class="account-lookup__message">{accountSearchMessage}</p></template>
+                    </div>
+                    <div class={branchLookupClass} onfocusout={handleBranchBlur} onkeydown={handleBranchKeyDown}>
+                        <span id="client-branch-label" class="native-field__label"><span>*</span> Sucursal del cliente</span>
+                        <button type="button" class="branch-selector" role="combobox" aria-labelledby="client-branch-label"
+                            aria-expanded={showBranchSuggestions} aria-haspopup="listbox" disabled={branchSelectorDisabled}
+                            onclick={toggleBranchOptions}>
+                            <lightning-icon icon-name="standard:account" size="small"></lightning-icon>
+                            <span class="account-lookup__copy"><strong>{branchSelectorLabel}</strong><small>{branchSelectorSubtitle}</small></span>
+                            <lightning-icon class="branch-selector-chevron" icon-name="utility:chevrondown" size="xx-small"></lightning-icon>
+                        </button>
                         <template lwc:if={isSearchingBranches}>
                             <lightning-spinner
                                 class="account-lookup__spinner"
@@ -163,7 +254,7 @@
                         </template>
                         <template lwc:if={showBranchSuggestions}>
                             <div class="account-lookup__menu" role="listbox" aria-label="Sucursales encontradas">
-                                <template for:each={branchSuggestions} for:item="branch">
+                                <template for:each={branchOptions} for:item="branch">
                                     <button
                                         key={branch.branchId}
                                         type="button"
@@ -171,6 +262,7 @@
                                         data-id={branch.branchId}
                                         onmousedown={handleLookupOptionMouseDown}
                                         onclick={selectBranch}
+                                        aria-selected={branch.selected}
                                         role="option">
                                         <lightning-icon icon-name="standard:account" size="small"></lightning-icon>
                                         <span class="account-lookup__copy">
@@ -189,70 +281,93 @@
 
                 <template lwc:if={isClientMode}>
                     <div class="field-grid field-grid--commercial">
-                        <lightning-input
-                            data-field="commercialName"
-                            label="Nombre comercial / Razón social"
-                            value={form.commercialName}
-                            onchange={handleTextChange}
-                            read-only
-                            maxlength="255"
-                            required>
-                        </lightning-input>
+                        <div class="form-field">
+                            <span class="native-field__label" aria-hidden="true"><span aria-hidden="true">*</span> Nombre comercial / Razón social</span>
+                            <lightning-input variant="label-hidden"
+                                data-field="commercialName"
+                                autocomplete="off"
+                                label="Nombre comercial / Razón social"
+                                value={form.commercialName}
+                                onchange={handleTextChange}
+                                read-only
+                                maxlength="255"
+                                required>
+                            </lightning-input>
+                        </div>
 
-                        <lightning-input
-                            data-field="state"
-                            label="Estado"
-                            value={form.state}
-                            onchange={handleTextChange}
-                            maxlength="255"
-                            required>
-                        </lightning-input>
+                        <div class="form-field">
+                            <span class="native-field__label" aria-hidden="true"><span aria-hidden="true">*</span> Estado</span>
+                            <lightning-input variant="label-hidden"
+                                data-field="state"
+                                autocomplete="off"
+                                label="Estado"
+                                value={form.state}
+                                onchange={handleTextChange}
+                                maxlength="255"
+                                required>
+                            </lightning-input>
+                        </div>
 
-                        <lightning-input
-                            data-field="municipality"
-                            label="Municipio"
-                            value={form.municipality}
-                            onchange={handleTextChange}
-                            maxlength="255"
-                            required>
-                        </lightning-input>
+                        <div class="form-field">
+                            <span class="native-field__label" aria-hidden="true"><span aria-hidden="true">*</span> Municipio</span>
+                            <lightning-input variant="label-hidden"
+                                data-field="municipality"
+                                autocomplete="off"
+                                label="Municipio"
+                                value={form.municipality}
+                                onchange={handleTextChange}
+                                maxlength="255"
+                                required>
+                            </lightning-input>
+                        </div>
 
-                        <lightning-input
-                            data-field="city"
-                            label="Ciudad"
-                            value={form.city}
-                            onchange={handleTextChange}
-                            maxlength="255"
-                            required>
-                        </lightning-input>
+                        <div class="form-field">
+                            <span class="native-field__label" aria-hidden="true"><span aria-hidden="true">*</span> Ciudad</span>
+                            <lightning-input variant="label-hidden"
+                                data-field="city"
+                                autocomplete="off"
+                                label="Ciudad"
+                                value={form.city}
+                                onchange={handleTextChange}
+                                maxlength="255"
+                                required>
+                            </lightning-input>
+                        </div>
                     </div>
                 </template>
 
                 <template lwc:if={isProspectMode}>
                     <div class="field-grid field-grid--commercial">
-                        <lightning-input
-                            data-field="commercialName"
-                            label="Nombre comercial / Razón social"
-                            value={form.commercialName}
-                            onchange={handleTextChange}
-                            maxlength="255"
-                            required>
-                        </lightning-input>
-
-                        <div class="lookup">
-                            <lightning-input
-                                data-location="state"
-                                type="search"
-                                label="Estado"
-                                value={clientStateSearch}
-                                placeholder="Escribe para buscar"
-                                onchange={handleClientStateSearch}
-                                onfocus={handleClientStateFocus}
-                                onblur={handleLookupBlur}
+                        <div class="form-field">
+                            <span class="native-field__label" aria-hidden="true"><span aria-hidden="true">*</span> Nombre comercial / Razón social</span>
+                            <lightning-input variant="label-hidden"
+                                data-field="commercialName"
                                 autocomplete="off"
-                                disabled={isLocationDisabled}
+                                label="Nombre comercial / Razón social"
+                                value={form.commercialName}
+                                onchange={handleTextChange}
+                                maxlength="255"
                                 required>
                             </lightning-input>
+                        </div>
+
+                        <div class="lookup">
+                            <div class="form-field">
+                                <span class="native-field__label" aria-hidden="true"><span aria-hidden="true">*</span> Estado</span>
+                                <lightning-input variant="label-hidden"
+                                    data-location="state"
+                                    type="search"
+                                    label="Estado"
+                                    value={clientStateSearch}
+                                    placeholder="Escribe para buscar"
+                                    onchange={handleClientStateSearch}
+                                    onfocus={handleClientStateFocus}
+                                    onblur={handleLookupBlur}
+                                    autocomplete="off"
+                                    disabled={isLocationDisabled}
+                                    required>
+                                </lightning-input>
+                            </div>
                             <template lwc:if={showClientStateResults}>
                                 <div class="lookup__menu" role="listbox" aria-label="Estados disponibles">
                                     <template for:each={clientStateMatches} for:item="option">
@@ -272,19 +387,22 @@
                         </div>
 
                         <div class="lookup">
-                            <lightning-input
-                                data-location="municipality"
-                                type="search"
-                                label="Municipio"
-                                value={municipalitySearch}
-                                placeholder="Busca un municipio o ciudad"
-                                onchange={handleMunicipalitySearch}
-                                onfocus={handleMunicipalityFocus}
-                                onblur={handleLookupBlur}
-                                autocomplete="off"
-                                disabled={isMunicipalityDisabled}
-                                required>
-                            </lightning-input>
+                            <div class="form-field">
+                                <span class="native-field__label" aria-hidden="true"><span aria-hidden="true">*</span> Municipio</span>
+                                <lightning-input variant="label-hidden"
+                                    data-location="municipality"
+                                    type="search"
+                                    label="Municipio"
+                                    value={municipalitySearch}
+                                    placeholder="Busca un municipio o ciudad"
+                                    onchange={handleMunicipalitySearch}
+                                    onfocus={handleMunicipalityFocus}
+                                    onblur={handleLookupBlur}
+                                    autocomplete="off"
+                                    disabled={isMunicipalityDisabled}
+                                    required>
+                                </lightning-input>
+                            </div>
                             <template lwc:if={showMunicipalityResults}>
                                 <div class="lookup__menu" role="listbox" aria-label="Municipios y ciudades disponibles">
                                     <template for:each={municipalityMatches} for:item="option">
@@ -304,13 +422,17 @@
                             </template>
                         </div>
 
-                        <lightning-input
-                            data-field="city"
-                            label="Ciudad"
-                            value={form.city}
-                            read-only
-                            required>
-                        </lightning-input>
+                        <div class="form-field">
+                            <span class="native-field__label" aria-hidden="true"><span aria-hidden="true">*</span> Ciudad</span>
+                            <lightning-input variant="label-hidden"
+                                data-field="city"
+                                autocomplete="off"
+                                label="Ciudad"
+                                value={form.city}
+                                read-only
+                                required>
+                            </lightning-input>
+                        </div>
                     </div>
                 </template>
             </section>
@@ -324,33 +446,30 @@
                     </div>
                 </div>
 
-                <div class="field-grid field-grid--four">
-                    <lightning-combobox
-                        name="consumptionType"
-                        label="Tipo de consumo"
-                        value={form.consumptionType}
-                        options={consumptionTypeOptions}
-                        onchange={handleFieldChange}
-                        required>
-                    </lightning-combobox>
-                    <lightning-input
-                        data-field="monthlyConsumption"
-                        type="number"
-                        label={consumptionLabel}
-                        value={form.monthlyConsumption}
-                        onchange={handleTextChange}
-                        min="0"
-                        step="0.01"
-                        required>
-                    </lightning-input>
+                <div class="field-grid field-grid--price">
+                    <div class="form-field">
+                        <span class="native-field__label" aria-hidden="true"><span aria-hidden="true">*</span> {consumptionLabel}</span>
+                        <lightning-input variant="label-hidden"
+                            data-field="monthlyConsumption"
+                            autocomplete="off"
+                            type="number"
+                            label={consumptionLabel}
+                            value={form.monthlyConsumption}
+                            onchange={handleTextChange}
+                            min="0"
+                            step="0.01"
+                            required>
+                        </lightning-input>
+                    </div>
 
                     <div class="native-field slds-form-element">
-                        <label class="slds-form-element__label" for="price-input">
-                            <abbr class="slds-required" title="obligatorio">*</abbr> Precio
+                        <label class="native-field__label" for="price-input">
+                            <span aria-hidden="true">*</span> Precio
                         </label>
                         <div class="slds-form-element__control">
                             <input
                                 id="price-input"
+                                autocomplete="off"
                                 class="slds-input native-price"
                                 data-field="price"
                                 type="text"
@@ -367,15 +486,18 @@
                         </div>
                     </div>
 
-                    <lightning-combobox
-                        name="unit"
-                        label="Unidad"
-                        value={form.unit}
-                        options={unitOptions}
-                        placeholder="Selecciona una unidad"
-                        onchange={handleFieldChange}
-                        required>
-                    </lightning-combobox>
+                    <div class="form-field">
+                        <span class="native-field__label" aria-hidden="true"><span aria-hidden="true">*</span> Unidad</span>
+                        <lightning-combobox variant="label-hidden"
+                            name="unit"
+                            label="Unidad"
+                            value={form.unit}
+                            options={unitOptions}
+                            placeholder="Selecciona una unidad"
+                            onchange={handleFieldChange}
+                            required>
+                        </lightning-combobox>
+                    </div>
 
                 </div>
             </section>
@@ -396,6 +518,7 @@
                         </label>
                         <select
                             id="supplier-select"
+                            autocomplete="off"
                             class="native-select"
                             name="supplier"
                             onchange={handleSupplierChange}
@@ -409,32 +532,39 @@
                     </div>
 
                     <template lwc:if={showOtherSupplierInput}>
-                        <lightning-input
-                            data-field="otherSupplier"
-                            label="Nombre del proveedor"
-                            value={form.otherSupplier}
-                            placeholder="Escribe el nombre del proveedor"
-                            onchange={handleTextChange}
-                            maxlength="255"
-                            required>
-                        </lightning-input>
+                        <div class="form-field">
+                            <span class="native-field__label" aria-hidden="true"><span aria-hidden="true">*</span> Nombre del proveedor</span>
+                            <lightning-input variant="label-hidden"
+                                data-field="otherSupplier"
+                                autocomplete="off"
+                                label="Nombre del proveedor"
+                                value={form.otherSupplier}
+                                placeholder="Escribe el nombre del proveedor"
+                                onchange={handleTextChange}
+                                maxlength="255"
+                                required>
+                            </lightning-input>
+                        </div>
                     </template>
 
                     <template lwc:if={showFactoryLocationFields}>
                         <div class="lookup">
-                            <lightning-input
-                                data-location="factoryState"
-                                type="search"
-                                label="Lugar de fabricación (Estado)"
-                                value={factoryStateSearch}
-                                placeholder="Escribe para buscar"
-                                onchange={handleFactoryStateSearch}
-                                onfocus={handleFactoryStateFocus}
-                                onblur={handleLookupBlur}
-                                autocomplete="off"
-                                disabled={isLocationDisabled}
-                                required>
-                            </lightning-input>
+                            <div class="form-field">
+                                <span class="native-field__label" aria-hidden="true"><span aria-hidden="true">*</span> Lugar de fabricación (Estado)</span>
+                                <lightning-input variant="label-hidden"
+                                    data-location="factoryState"
+                                    type="search"
+                                    label="Lugar de fabricación (Estado)"
+                                    value={factoryStateSearch}
+                                    placeholder="Escribe para buscar"
+                                    onchange={handleFactoryStateSearch}
+                                    onfocus={handleFactoryStateFocus}
+                                    onblur={handleLookupBlur}
+                                    autocomplete="off"
+                                    disabled={isLocationDisabled}
+                                    required>
+                                </lightning-input>
+                            </div>
                             <template lwc:if={showFactoryStateResults}>
                                 <div class="lookup__menu" role="listbox" aria-label="Estados de fabricación disponibles">
                                     <template for:each={factoryStateMatches} for:item="option">
@@ -456,19 +586,22 @@
 
                     <template lwc:if={showFactoryLocationFields}>
                         <div class="lookup">
-                            <lightning-input
-                                data-location="factoryCity"
-                                type="search"
-                                label="Lugar de fabricación (Ciudad)"
-                                value={factoryCitySearch}
-                                placeholder="Escribe para filtrar"
-                                onchange={handleFactoryCitySearch}
-                                onfocus={handleFactoryCityFocus}
-                                onblur={handleLookupBlur}
-                                autocomplete="off"
-                                disabled={isFactoryCityDisabled}
-                                required>
-                            </lightning-input>
+                            <div class="form-field">
+                                <span class="native-field__label" aria-hidden="true"><span aria-hidden="true">*</span> Lugar de fabricación (Ciudad)</span>
+                                <lightning-input variant="label-hidden"
+                                    data-location="factoryCity"
+                                    type="search"
+                                    label="Lugar de fabricación (Ciudad)"
+                                    value={factoryCitySearch}
+                                    placeholder="Escribe para filtrar"
+                                    onchange={handleFactoryCitySearch}
+                                    onfocus={handleFactoryCityFocus}
+                                    onblur={handleLookupBlur}
+                                    autocomplete="off"
+                                    disabled={isFactoryCityDisabled}
+                                    required>
+                                </lightning-input>
+                            </div>
                             <template lwc:if={showFactoryCityResults}>
                                 <div class="lookup__menu" role="listbox" aria-label="Ciudades de fabricación disponibles">
                                     <template for:each={factoryCityMatches} for:item="option">
@@ -488,19 +621,10 @@
                         </div>
                     </template>
                 </div>
-            </section>
-
-            <footer class="form-footer">
-                <p><span aria-hidden="true">*</span> Campos obligatorios</p>
-                <div class="actions">
-                    <lightning-button
-                        type="submit"
-                        variant="brand"
-                        label="Confirmar"
-                        disabled={isSaving}>
-                    </lightning-button>
+                <div class="form-actions">
+                    <button type="submit" class="confirm-button" disabled={isSaving}>Confirmar</button>
                 </div>
-            </footer>
+            </section>
         </form>
 
         <template lwc:if={isSaving}>

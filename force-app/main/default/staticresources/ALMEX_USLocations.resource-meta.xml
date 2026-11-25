@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">
+    <cacheControl>Public</cacheControl>
+    <contentType>application/json</contentType>
+    <description>Estados y localidades Census Gazetteer 2025, Estados Unidos. Incluye 50 estados, Washington DC y Puerto Rico; no sustituye al catálogo de México.</description>
+</StaticResource>

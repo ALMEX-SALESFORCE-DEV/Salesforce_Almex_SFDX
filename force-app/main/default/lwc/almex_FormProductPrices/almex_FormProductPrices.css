@@ -10,6 +10,41 @@
     background: linear-gradient(145deg, #f8fbff 0%, #f2f6fb 55%, #edf3fa 100%);
 }
 
+.shipment-field { min-width: 0; }
+.shipment-field--other {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 106px;
+    gap: 0.5rem;
+    align-items: end;
+}
+.custom-shipment { min-width: 0; }
+.custom-shipment__control { display: flex; height: 2rem; }
+.custom-shipment__control input {
+    box-sizing: border-box;
+    min-width: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0 0.5rem;
+    border: 1px solid #aebfd4;
+    border-radius: 0.45rem 0 0 0.45rem;
+    color: var(--almex-text);
+    background: white;
+    font: inherit;
+}
+.custom-shipment__unit {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin: 0;
+    padding: 0 0.5rem;
+    border: 1px solid #aebfd4;
+    border-left: 0;
+    border-radius: 0 0.45rem 0.45rem 0;
+    background: #f3f6fa;
+}
+
 .page-shell {
     position: relative;
     box-sizing: border-box;
@@ -222,6 +257,7 @@
 }
 
 .field-grid--four,
+.field-grid--operation,
 .field-grid--commercial {
     grid-template-columns: repeat(4, minmax(0, 1fr));
 }
@@ -239,20 +275,88 @@
 }
 
 .field-grid--product {
-    grid-template-columns: 1.15fr 1.2fr 0.8fr 0.8fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .field-grid--product-without-subproduct {
-    grid-template-columns: 1.35fr 0.8fr 0.8fr;
+    grid-template-columns: 1.35fr 0.8fr;
 }
 
 .field-grid--product-with-shipment {
-    grid-template-columns: 1.05fr 1.1fr 1fr 0.72fr 0.82fr;
+    grid-template-columns: minmax(150px, 1fr) minmax(160px, 1fr) minmax(310px, 1.5fr) minmax(130px, .7fr);
 }
 
 .field-grid--product-with-shipment-no-subproduct {
-    grid-template-columns: 1.15fr 1fr 0.8fr 0.8fr;
+    grid-template-columns: minmax(200px, 1fr) minmax(310px, 1.3fr) minmax(150px, .7fr);
 }
+
+.field-grid--price { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.field-grid > *, .shipment-field { min-width: 0; }
+.shipment-field { align-items: start; }
+.shipment-field--other { grid-template-columns: minmax(160px, 1fr) minmax(100px, .7fr); }
+.shipment-field--other lightning-combobox { min-width: 0; }
+.shipment-field--other .slds-form-element__label { white-space: nowrap; }
+.custom-shipment { min-width: 0; }
+.custom-shipment__control { height: 32px; }
+.custom-shipment__control input, .custom-shipment__unit { box-sizing: border-box; height: 32px; min-height: 32px; }
+.product-origin { grid-column: span 2; min-width: 0; padding-top: 0; }
+.product-origin-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+    width: 100%;
+    max-width: 27rem;
+    min-height: 2rem;
+}
+.product-origin-option {
+    display: flex;
+    box-sizing: border-box;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    min-height: 2rem;
+    padding: 0.4rem 0.65rem;
+    border: 1px solid #b9cae0;
+    border-radius: 0.45rem;
+    color: var(--almex-text);
+    background: var(--almex-surface);
+    font-size: 0.82rem;
+    line-height: 1.25;
+    cursor: pointer;
+}
+.product-origin-option:hover,
+.product-origin-option:focus-within {
+    border-color: var(--almex-blue);
+    box-shadow: 0 0 0 2px rgb(11 79 162 / 12%);
+}
+.product-origin-option--selected {
+    border-color: var(--almex-blue);
+    color: var(--almex-navy);
+    background: #edf5ff;
+    font-weight: 700;
+}
+.product-origin-option input {
+    flex: 0 0 1rem;
+    width: 1rem;
+    height: 1rem;
+    margin: 0;
+    accent-color: var(--almex-blue);
+    cursor: pointer;
+}
+.product-origin-option input:focus-visible { outline: 2px solid var(--almex-blue); outline-offset: 2px; }
+.contract-date-field { min-width: 0; position: relative; }
+.contract-date-control { position: relative; height: 32px; }
+.contract-date-input { height: 32px; padding-right: 36px; border-radius: .45rem; }
+.calendar-button { position: absolute; right: 1px; top: 1px; width: 31px; height: 30px; border: 0; background: transparent; cursor: pointer; display: grid; place-items: center; }
+.calendar-button:focus-visible { outline: 2px solid var(--almex-blue); border-radius: 5px; }
+.contract-calendar-host { position: relative; }
+.branch-selector { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 52px; padding: 8px 12px; text-align: left; border: 1px solid #aebfd4; border-radius: .45rem; background: white; color: var(--almex-text); cursor: pointer; }
+.branch-selector:disabled { opacity: .65; cursor: not-allowed; background: #f8fafc; }
+.branch-selector:focus-visible { outline: 2px solid var(--almex-blue); outline-offset: 1px; }
+.branch-selector-chevron { margin-left: auto; }
+.branch-selector .account-lookup__copy { flex: 1; min-width: 0; }
+.account-lookup__menu { max-height: 300px; overflow-y: auto; }
+.account-lookup__option[aria-selected="true"] { background: #edf5ff; }
 
 .party-mode {
     display: grid;
@@ -296,6 +400,10 @@
     z-index: 5;
     margin-bottom: 0.9rem;
 }
+
+/* Elevate the lookup itself: a child's z-index cannot escape its parent's stacking context. */
+.account-lookup:focus-within { z-index: 60; }
+.account-lookup.account-lookup--open { z-index: 70; }
 
 .account-lookup__spinner {
     position: absolute;
@@ -394,7 +502,11 @@
 
 .lookup {
     position: relative;
+    min-width: 0;
+    z-index: 1;
 }
+
+.lookup.lookup--open { z-index: 80; }
 
 .lookup__menu {
     position: absolute;
@@ -410,6 +522,9 @@
     background: white;
     box-shadow: 0 0.65rem 1.5rem rgb(23 50 85 / 16%);
 }
+
+.lookup__menu,
+.account-lookup__menu { box-sizing: border-box; overscroll-behavior: contain; }
 
 .lookup__option {
     width: 100%;
@@ -430,31 +545,26 @@
     background: #edf5ff;
 }
 
-.form-footer {
+.form-actions {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
-    margin: 0 -1.5rem -1.5rem;
-    padding: 0.8rem 1.8rem;
-    border-top: 1px solid var(--almex-border);
-    background: rgb(255 255 255 / 92%);
-    box-shadow: 0 -0.4rem 1.2rem rgb(31 58 92 / 5%);
+    margin-top: 0.85rem;
 }
-
-.form-footer p {
-    margin: 0;
-    color: var(--almex-muted);
-    font-size: 0.75rem;
+.confirm-button {
+    min-height: 2rem;
+    padding: 0.35rem 1.2rem;
+    border: 1px solid var(--almex-blue);
+    border-radius: 0.45rem;
+    color: white;
+    background: var(--almex-blue);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
 }
-
-.form-footer p span {
-    color: #d9473d;
-}
-
-.actions {
-    display: flex;
-    gap: 0.65rem;
-}
+.confirm-button:hover { background: var(--almex-navy); border-color: var(--almex-navy); }
+.confirm-button:focus-visible { outline: 2px solid var(--almex-blue); outline-offset: 3px; }
+.confirm-button:disabled { opacity: .6; cursor: wait; }
 
 lightning-input,
 lightning-combobox,
@@ -467,16 +577,28 @@ lightning-combobox,
     --slds-c-combobox-color-border: #aebfd4;
 }
 
-.native-field {
+.native-field,
+.form-field {
     min-width: 0;
 }
 
+.form-field lightning-input,
+.form-field lightning-combobox,
+.shipment-select lightning-combobox { display: block; margin: 0; }
+
 .native-field__label {
     display: block;
-    margin-bottom: 0.25rem;
+    box-sizing: border-box;
+    height: 1.25rem;
+    margin: 0 0 0.25rem;
+    padding: 0;
     color: var(--almex-text);
-    font-size: 0.75rem;
-    line-height: 1.25;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .native-field__label span {
@@ -484,7 +606,8 @@ lightning-combobox,
 }
 
 .native-select,
-.native-price {
+.native-price,
+.contract-date-input {
     box-sizing: border-box;
     width: 100%;
     height: 2rem;
@@ -497,7 +620,8 @@ lightning-combobox,
 }
 
 .native-select:focus,
-.native-price:focus {
+.native-price:focus,
+.contract-date-input:focus {
     border-color: var(--almex-blue);
     outline: 0;
     box-shadow: 0 0 0 2px rgb(11 79 162 / 14%);
@@ -515,8 +639,10 @@ lightning-combobox,
     }
 
     .field-grid--four,
+    .field-grid--operation,
     .field-grid--commercial,
     .field-grid--three,
+    .field-grid--price,
     .field-grid--product,
     .field-grid--product-without-subproduct,
     .field-grid--product-with-shipment,
@@ -537,8 +663,10 @@ lightning-combobox,
 
     .summary__grid,
     .field-grid--four,
+    .field-grid--operation,
     .field-grid--commercial,
     .field-grid--three,
+    .field-grid--price,
     .field-grid--product,
     .field-grid--product-without-subproduct,
     .field-grid--product-with-shipment,
@@ -548,6 +676,12 @@ lightning-combobox,
 
     .summary__grid {
         gap: 0.65rem;
+    }
+
+    .product-origin { grid-column: 1 / -1; }
+
+    .shipment-field--other {
+        grid-template-columns: minmax(140px, 1fr) minmax(90px, .7fr);
     }
 
     .summary__grid > div {
@@ -565,16 +699,4 @@ lightning-combobox,
         padding: 1rem;
     }
 
-    .form-footer {
-        align-items: stretch;
-        flex-direction: column;
-        gap: 0.75rem;
-        margin: 0 -0.75rem -0.75rem;
-        padding: 0.9rem;
-    }
-
-    .actions {
-        display: grid;
-        grid-template-columns: 1fr;
-    }
 }

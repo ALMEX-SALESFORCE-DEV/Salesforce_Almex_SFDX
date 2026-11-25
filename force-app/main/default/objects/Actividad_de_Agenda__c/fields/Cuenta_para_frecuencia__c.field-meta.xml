@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cuenta_para_frecuencia__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Indica si la actividad debe sumar al avance de la frecuencia anual de visitas de la sucursal.</description>
+    <label>Cuenta para frecuencia</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>
