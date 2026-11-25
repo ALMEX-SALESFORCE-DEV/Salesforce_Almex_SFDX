@@ -28,3 +28,12 @@ node_modules/
 # construcciones que el deploy rechaza (height+width, section CustomLinks).
 # No son parte del flujo; se gestionan en el org, no por source.
 **/layouts/LiveChatTranscript*
+
+# NotificationTypeConfig: trae tipos de notificacion que dependen de las
+# features de cada org (activity_team_member no existe en Release) y rompe el
+# deploy. Se gestiona en el org, no por source.
+**/notificationTypeConfig/**
+
+# Search settings: PROD entrega resultsPerPageCount=0 (Actividad_de_Agenda__c)
+# y QA lo rechaza (debe estar entre 5 y 50). Se gestiona en el org.
+**/settings/Search.settings-meta.xml
