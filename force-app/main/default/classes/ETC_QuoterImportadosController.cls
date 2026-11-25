@@ -741,7 +741,7 @@ public with sharing class ETC_QuoterImportadosController {
             System.debug('===END_e===');
             Quote quoteRecord = [SELECT Id FROM Quote WHERE Id = :quoteId];
             delete quoteRecord;
-            throw new AuraHandledException(e.getMessage());
+            return 'ERROR:' + e.getMessage();
         }
     }
     

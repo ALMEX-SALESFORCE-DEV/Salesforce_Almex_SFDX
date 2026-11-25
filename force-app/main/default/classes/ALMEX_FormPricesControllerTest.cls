@@ -131,11 +131,10 @@ private class ALMEX_FormPricesControllerTest {
         if (response.periodPersisted) {
             Id savedRecordId = response.recordId;
             SObject savedWithPeriod = Database.query(
-                'SELECT Periodo_Anio__c, Periodo_Mes__c ' +
+                'SELECT Periodo_Anio__c ' +
                 'FROM Precio_productos__c WHERE Id = :savedRecordId'
             );
             System.assertEquals(Decimal.valueOf(2026), savedWithPeriod.get('Periodo_Anio__c'));
-            System.assertEquals(Decimal.valueOf(9), savedWithPeriod.get('Periodo_Mes__c'));
         }
     }
 
@@ -154,17 +153,15 @@ private class ALMEX_FormPricesControllerTest {
         input.clientAccountId = account.Id;
         input.branchId = branch.Id;
         input.commercialName = 'NO GUARDAR ESTE NOMBRE';
-        input.periodMonth = null;
         input.importedProduct = true;
         ALMEX_FormPricesController.SaveResponse result = ALMEX_FormPricesController.savePrice(input);
         Precio_productos__c saved = [SELECT Nombre_comercial__c, Producto_importado__c,
-            Tipo_consumo_toneladas__c, Consumo_mensual__c, Periodo_Mes__c, Periodo_Anio__c
+            Tipo_consumo_toneladas__c, Consumo_mensual__c, Periodo_Anio__c
             FROM Precio_productos__c WHERE Id = :result.recordId];
         System.assertEquals(branch.Name, saved.Nombre_comercial__c);
         System.assertEquals(true, saved.Producto_importado__c);
         System.assertEquals('A', saved.Tipo_consumo_toneladas__c);
         System.assertEquals(input.monthlyConsumption, saved.Consumo_mensual__c);
-        System.assertEquals(null, saved.Periodo_Mes__c);
         System.assertEquals(2026, saved.Periodo_Anio__c);
         input.clientAccountId = unrelated.Id;
         Boolean rejected = false;
@@ -202,7 +199,6 @@ private class ALMEX_FormPricesControllerTest {
                 input.clientAccountId = account.Id;
                 input.branchId = branch.Id;
                 input.importedProduct = true;
-                input.periodMonth = null;
                 input.state = 'Colorado';
                 input.municipality = 'Denver';
                 input.city = 'Denver';
@@ -249,21 +245,19 @@ private class ALMEX_FormPricesControllerTest {
                 input.contractStartDate = Date.newInstance(2027, 1, 1);
                 input.contractEndDate = Date.newInstance(2027, 12, 31);
                 input.periodYear = 2027;
-                input.periodMonth = 1;
                 input.consumptionType = Math.mod(caseIndex, 2) == 0 ? 'M' : 'A';
                 // Mismo contrato JSON que recibe el servicio desde el navegador.
                 input = (ALMEX_FormPricesController.PriceInput) JSON.deserialize(JSON.serialize(input), ALMEX_FormPricesController.PriceInput.class);
                 ALMEX_FormPricesController.SaveResponse response = ALMEX_FormPricesController.savePrice(input);
                 System.assertEquals(true, response.success, product + ' / ' + subproduct);
                 Precio_productos__c saved = [SELECT Nombre_producto__c, Tipo_subproducto__c, Unidad__c,
-                    Periodo_Anio__c, Periodo_Mes__c, Tipo_consumo_toneladas__c,
+                    Periodo_Anio__c, Tipo_consumo_toneladas__c,
                     Tipo_operacion_comercial__c, Fecha_inicio_contrato__c, Fecha_fin_contrato__c
                     FROM Precio_productos__c WHERE Id = :response.recordId];
                 System.assertEquals(product, saved.Nombre_producto__c);
                 System.assertEquals(subproduct, saved.Tipo_subproducto__c);
                 System.assertEquals(input.unit, saved.Unidad__c);
                 System.assertEquals(2027, saved.Periodo_Anio__c);
-                System.assertEquals(1, saved.Periodo_Mes__c);
                 System.assertEquals(input.consumptionType, saved.Tipo_consumo_toneladas__c);
                 System.assertEquals(input.commercialOperationType, saved.Tipo_operacion_comercial__c);
                 System.assertEquals(input.commercialOperationType == 'Contrato' ? input.contractStartDate : null, saved.Fecha_inicio_contrato__c);
@@ -376,14 +370,14 @@ private class ALMEX_FormPricesControllerTest {
     }
 
     @IsTest
-    static void rejectsInvalidMonth() {
+    static void rejectsInvalidYear() {
         ALMEX_FormPricesController.PriceInput input = validInput();
-        input.periodMonth = 13;
+        input.periodYear = 1999;
 
         Test.startTest();
         try {
             ALMEX_FormPricesController.savePrice(input);
-            System.assert(false, 'Se esperaba una validación para el mes.');
+            System.assert(false, 'Se esperaba una validación para el año.');
         } catch (AuraHandledException expected) {
             System.assertNotEquals(null, expected);
         }
@@ -480,7 +474,6 @@ private class ALMEX_FormPricesControllerTest {
         input.commercialOperationType = 'Spot';
         input.subproductType = 'Refinada';
         input.periodYear = 2026;
-        input.periodMonth = 9;
         input.commercialName = 'Cliente de prueba';
         input.state = 'Jalisco';
         input.municipality = 'Guadalajara';

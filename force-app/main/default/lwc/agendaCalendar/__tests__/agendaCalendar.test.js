@@ -1,23 +1,20 @@
+/* eslint-disable @lwc/lwc/no-async-operation, no-await-in-loop -- Los temporizadores y pasos secuenciales simulan debounce, dictado e interacción real en Jest. */
 import { createElement } from 'lwc';
 import AgendaCalendar from 'c/agendaCalendar';
 import getCurrentUser from '@salesforce/apex/ALMEX_AgendaDataController.getCurrentUser';
 import {
     getAgendaActivities, searchActivityClients, getActivityClientBranches, createAgendaActivity,
-    improveAgendaText, completeAgendaActivity, cancelAgendaActivity, rescheduleAgendaActivity
+    completeAgendaActivity, cancelAgendaActivity, rescheduleAgendaActivity
 } from 'c/agendaServices';
 
 jest.mock('@salesforce/apex/ALMEX_AgendaDataController.getCurrentUser', () => ({
     default: jest.fn()
-}), { virtual: true });
-jest.mock('@salesforce/customPermission/ALMEX_Agendas_IA', () => ({
-    default: true
 }), { virtual: true });
 jest.mock('c/agendaServices', () => ({
     getAgendaActivities: jest.fn(),
     searchActivityClients: jest.fn(),
     getActivityClientBranches: jest.fn(),
     createAgendaActivity: jest.fn(),
-    improveAgendaText: jest.fn(),
     completeAgendaActivity: jest.fn(),
     cancelAgendaActivity: jest.fn(),
     rescheduleAgendaActivity: jest.fn()
@@ -93,9 +90,9 @@ function clickWithRetargetedPath(target, element) {
     // Fuera del Shadow DOM, Salesforce puede ocultar los nodos internos del lookup.
     // Dentro del componente se conserva la ruta para sus propios listeners.
     Object.defineProperty(click, 'composedPath', {
-        value: () => click.currentTarget === document || click.currentTarget === window
+        value: () => (click.currentTarget === document || click.currentTarget === window
             ? [element, document, window]
-            : internalPath()
+            : internalPath())
     });
     target.dispatchEvent(click);
     return click;
@@ -166,9 +163,9 @@ describe('Mis actividades y resolución de seguimiento', () => {
         await flush();
         const justification = element.shadowRoot.querySelector('[data-element="activity-action-justification"]');
         justification.value = 'El cliente canceló la actividad.';
-        justification.dispatchEvent(new Event('input'));
+        justification.dispatchEvent(new CustomEvent('input'));
         await flush();
-        element.shadowRoot.querySelector('.activity-action-form').dispatchEvent(new Event('submit'));
+        element.shadowRoot.querySelector('.activity-action-form').dispatchEvent(new CustomEvent('submit'));
         await flush();
         expect(cancelAgendaActivity).toHaveBeenCalledWith('nueva', 'El cliente canceló la actividad.');
     });
@@ -181,12 +178,12 @@ describe('Mis actividades y resolución de seguimiento', () => {
         await flush();
         const newDate = element.shadowRoot.querySelector('[name="newDate"]');
         newDate.value = '2099-12-01';
-        newDate.dispatchEvent(new Event('change'));
+        newDate.dispatchEvent(new CustomEvent('change'));
         const justification = element.shadowRoot.querySelector('[data-element="activity-action-justification"]');
         justification.value = 'El cliente solicitó una nueva fecha.';
-        justification.dispatchEvent(new Event('input'));
+        justification.dispatchEvent(new CustomEvent('input'));
         await flush();
-        element.shadowRoot.querySelector('.activity-action-form').dispatchEvent(new Event('submit'));
+        element.shadowRoot.querySelector('.activity-action-form').dispatchEvent(new CustomEvent('submit'));
         await flush();
         expect(rescheduleAgendaActivity).toHaveBeenCalledWith(
             'nueva', '2099-12-01', 'El cliente solicitó una nueva fecha.'
@@ -234,16 +231,15 @@ describe('Mis actividades y resolución de seguimiento', () => {
         expect(element.shadowRoot.querySelector('.follow-up-completion-form [type="submit"]').disabled).toBe(true);
         recognition.onend();
         await flush();
-        element.shadowRoot.querySelector('.follow-up-completion-form').dispatchEvent(new Event('submit'));
+        element.shadowRoot.querySelector('.follow-up-completion-form').dispatchEvent(new CustomEvent('submit'));
         await flush();
         expect(completeAgendaActivity).toHaveBeenCalledWith('seguimiento', 'Se entregó la cotización.');
     });
 
-    it('oculta temporalmente la IA en notas y seguimiento aunque el usuario tenga permiso', async () => {
+    it('permite dictar y registrar notas y resolución del seguimiento', async () => {
         const element = await openMyActivities([record('seguimiento', 'Programada', true)]);
         element.shadowRoot.querySelector('.activity-subject-button').click();
         await flush();
-        expect(element.shadowRoot.querySelector('.notes-improve-button')).toBeNull();
         expect(element.shadowRoot.querySelector('.notes-speech-button')).not.toBeNull();
         expect(element.shadowRoot.querySelector('[data-element="activity-notes"]').value).toBe('Notas originales');
 
@@ -253,20 +249,17 @@ describe('Mis actividades y resolución de seguimiento', () => {
         summary.value = 'ya se entrego cotizacion y resuelto';
         summary.dispatchEvent(new CustomEvent('input'));
         await flush();
-        expect(element.shadowRoot.querySelector('.notes-improve-button')).toBeNull();
         expect(element.shadowRoot.querySelector('.follow-up-completion-form .notes-speech-button')).not.toBeNull();
-        expect(improveAgendaText).not.toHaveBeenCalled();
         expect(summary.value).toBe('ya se entrego cotizacion y resuelto');
         element.shadowRoot.querySelector('.follow-up-completion-form').dispatchEvent(new CustomEvent('submit'));
         await flush();
         expect(completeAgendaActivity).toHaveBeenCalledWith('seguimiento', 'ya se entrego cotizacion y resuelto');
     });
 
-    it('oculta la IA en nueva actividad y justificaciones sin quitar el dictado', async () => {
+    it('mantiene el dictado en nueva actividad y en las justificaciones', async () => {
         const element = await openMyActivities([record('programada', 'Programada')]);
         element.shadowRoot.querySelector('.new-activity-button').click();
         await flush();
-        expect(element.shadowRoot.querySelector('.notes-improve-button')).toBeNull();
         expect(element.shadowRoot.querySelector('.notes-speech-button')).not.toBeNull();
         await selectClient(element);
         await selectBranch(element);
@@ -277,7 +270,6 @@ describe('Mis actividades y resolución de seguimiento', () => {
         element.shadowRoot.querySelector('[name="callReplacement"][value="yes"]').dispatchEvent(new CustomEvent('change'));
         await flush();
         expect(element.shadowRoot.querySelector('[data-element="activity-exception-justification"]')).not.toBeNull();
-        expect(element.shadowRoot.querySelector('.notes-improve-button')).toBeNull();
         expect(element.shadowRoot.querySelector('.notes-speech-button')).not.toBeNull();
         element.shadowRoot.querySelector('.activity-cancel-button').click();
         await flush();
@@ -286,9 +278,7 @@ describe('Mis actividades y resolución de seguimiento', () => {
         element.shadowRoot.querySelector('.activity-cancel-header-button').click();
         await flush();
         expect(element.shadowRoot.querySelector('[data-element="activity-action-justification"]')).not.toBeNull();
-        expect(element.shadowRoot.querySelector('.notes-improve-button')).toBeNull();
         expect(element.shadowRoot.querySelector('.notes-speech-button')).not.toBeNull();
-        expect(improveAgendaText).not.toHaveBeenCalled();
     });
 
     it('busca clientes en Apex y carga solo sus sucursales disponibles', async () => {
@@ -320,7 +310,7 @@ describe('Mis actividades y resolución de seguimiento', () => {
         await selectClient(element);
         fillNewActivity(element);
         await flush();
-        element.shadowRoot.querySelector('.activity-form').dispatchEvent(new Event('submit', { cancelable: true }));
+        element.shadowRoot.querySelector('.activity-form').dispatchEvent(new CustomEvent('submit', { cancelable: true }));
         await flush();
         expect(createAgendaActivity).toHaveBeenCalledWith(expect.objectContaining({
             clientId: '001cliente', branchId: '', countsTowardFrequency: false
@@ -335,7 +325,7 @@ describe('Mis actividades y resolución de seguimiento', () => {
         await selectBranch(element);
         fillNewActivity(element);
         await flush();
-        element.shadowRoot.querySelector('.activity-form').dispatchEvent(new Event('submit', { cancelable: true }));
+        element.shadowRoot.querySelector('.activity-form').dispatchEvent(new CustomEvent('submit', { cancelable: true }));
         await flush();
         expect(createAgendaActivity).toHaveBeenCalledWith(expect.objectContaining({
             clientId: '001cliente', branchId: 'sucursal-ajena', countsTowardFrequency: true
@@ -394,7 +384,7 @@ describe('Mis actividades y resolución de seguimiento', () => {
         const search = element.shadowRoot.querySelector('.client-picker input');
         search.value = 'Nombre no seleccionado';
         search.dispatchEvent(new CustomEvent('input'));
-        element.shadowRoot.querySelector('.activity-form').dispatchEvent(new Event('submit', { cancelable: true }));
+        element.shadowRoot.querySelector('.activity-form').dispatchEvent(new CustomEvent('submit', { cancelable: true }));
         await flush();
         expect(createAgendaActivity).not.toHaveBeenCalled();
     });
@@ -450,7 +440,7 @@ describe('Mis actividades y resolución de seguimiento', () => {
         expect(element.shadowRoot.querySelector('.branch-results .account-empty').textContent).toContain('Puedes guardar el nombre escrito');
         fillNewActivity(element);
         await flush();
-        element.shadowRoot.querySelector('.activity-form').dispatchEvent(new Event('submit', { cancelable: true }));
+        element.shadowRoot.querySelector('.activity-form').dispatchEvent(new CustomEvent('submit', { cancelable: true }));
         await flush();
         expect(createAgendaActivity).toHaveBeenCalledWith(expect.objectContaining({
             branchId: '', manualBranchName: 'Sucursal que no existe', countsTowardFrequency: false
@@ -470,7 +460,7 @@ describe('Mis actividades y resolución de seguimiento', () => {
         expect(element.shadowRoot.querySelector('.branch-selected-location')).toBeNull();
         fillNewActivity(element);
         await flush();
-        element.shadowRoot.querySelector('.activity-form').dispatchEvent(new Event('submit', { cancelable: true }));
+        element.shadowRoot.querySelector('.activity-form').dispatchEvent(new CustomEvent('submit', { cancelable: true }));
         await flush();
         expect(createAgendaActivity).toHaveBeenCalledWith(expect.objectContaining({
             clientId: '001cliente', branchId: '', countsTowardFrequency: false
@@ -492,7 +482,7 @@ describe('Mis actividades y resolución de seguimiento', () => {
         expect(element.shadowRoot.querySelector('.activity-form [name="state"]').tagName).toBe('SELECT');
         fillNewActivity(element);
         await flush();
-        element.shadowRoot.querySelector('.activity-form').dispatchEvent(new Event('submit', { cancelable: true }));
+        element.shadowRoot.querySelector('.activity-form').dispatchEvent(new CustomEvent('submit', { cancelable: true }));
         await flush();
         expect(createAgendaActivity).toHaveBeenCalledWith(expect.objectContaining({ branchId: '' }));
     });
@@ -508,7 +498,7 @@ describe('Mis actividades y resolución de seguimiento', () => {
         input.dispatchEvent(new CustomEvent('input'));
         fillNewActivity(element);
         await flush();
-        element.shadowRoot.querySelector('.activity-form').dispatchEvent(new Event('submit', { cancelable: true }));
+        element.shadowRoot.querySelector('.activity-form').dispatchEvent(new CustomEvent('submit', { cancelable: true }));
         await flush();
         expect(createAgendaActivity).toHaveBeenCalledWith(expect.objectContaining({
             clientId: '001cliente', branchId: '', manualBranchName: 'Sucursal de otro',
@@ -681,7 +671,7 @@ describe('Mis actividades y resolución de seguimiento', () => {
         expect(element.shadowRoot.querySelector('.branch-selected-location').textContent).toBe('Guadalajara · Jalisco');
         fillNewActivity(element);
         await flush();
-        element.shadowRoot.querySelector('.activity-form').dispatchEvent(new Event('submit', { cancelable: true }));
+        element.shadowRoot.querySelector('.activity-form').dispatchEvent(new CustomEvent('submit', { cancelable: true }));
         await flush();
         expect(createAgendaActivity).toHaveBeenCalledWith(expect.objectContaining({ branchId: 'sucursal-ajena' }));
     });

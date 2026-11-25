@@ -108,9 +108,16 @@
         <criteriaItems>
             <column>SalesAgreement$Status</column>
             <columnToColumn>false</columnToColumn>
-            <isUnlocked>true</isUnlocked>
+            <isUnlocked>false</isUnlocked>
             <operator>equals</operator>
             <value>Borrador,Aprobado,Activado,UnderRevision</value>
+        </criteriaItems>
+        <criteriaItems>
+            <column>SalesAgreement$Account</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>contains</operator>
+            <value></value>
         </criteriaItems>
     </filter>
     <format>Tabular</format>

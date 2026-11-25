@@ -4,5 +4,6 @@
     <description>Fin de vigencia del contrato; no puede preceder a su inicio.</description>
     <label>Fecha de fin del contrato</label>
     <required>false</required>
+    <trackTrending>false</trackTrending>
     <type>Date</type>
 </CustomField>

@@ -2,9 +2,6 @@ import { LightningElement, api } from 'lwc';
 import { getCurrentUserVisitLog } from './visitLogService';
 import { buildVisitLogRows } from './visitLogLogic';
 
-// Referencia temporal solicitada para probar la planeación anual.
-const TEST_REFERENCE_DATE = '2026-01-01';
-const TEST_REFERENCE_YEAR = 2026;
 const VISIT_LOG_PAGE_SIZE = 50;
 
 const MEXICAN_STATE_NAMES = [
@@ -442,26 +439,30 @@ export default class VisitLog extends LightningElement {
         this.errorMessage = '';
 
         await new Promise(resolve => {
+            // eslint-disable-next-line @lwc/lwc/no-async-operation -- Mostrar el estado de carga antes de procesar la bitácora.
             setTimeout(resolve, 0);
         });
 
         try {
             const response = await getCurrentUserVisitLog();
-            const testResponse = {
+            const now = new Date();
+            const referenceDate = response?.today ||
+                `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+            const currentResponse = {
                 ...response,
-                today: TEST_REFERENCE_DATE,
-                year: TEST_REFERENCE_YEAR
+                today: referenceDate,
+                year: Number(response?.year) || Number(referenceDate.slice(0, 4))
             };
 
-            this.allRows = buildVisitLogRows(testResponse);
+            this.allRows = buildVisitLogRows(currentResponse);
             this.summaryMetrics = buildSummaryMetrics(
-                response,
+                currentResponse,
                 this.allRows
             );
             this.scheduledVisits = buildScheduledVisits(
-                response,
+                currentResponse,
                 this.allRows,
-                TEST_REFERENCE_DATE
+                referenceDate
             );
 
             if (!this.scheduledVisits.some(
@@ -872,7 +873,7 @@ function buildSummaryMetrics(response, rows) {
         ? response.branches
         : []
     ).flatMap(branch =>
-        Array.isArray(branch.activities) ? branch.activities : []
+        (Array.isArray(branch.activities) ? branch.activities : [])
     );
 
     const completedVisits = activities.filter(

@@ -4,5 +4,6 @@
     <defaultValue>false</defaultValue>
     <description>Origen del producto: verdadero = importado; falso = nacional. No representa el país del cliente o del proveedor.</description>
     <label>Producto importado</label>
+    <trackTrending>false</trackTrending>
     <type>Checkbox</type>
 </CustomField>
