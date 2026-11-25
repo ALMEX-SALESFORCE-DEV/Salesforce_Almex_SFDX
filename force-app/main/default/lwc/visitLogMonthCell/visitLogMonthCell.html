@@ -1,0 +1,19 @@
+<template>
+    <div class="visit-log-month-events">
+        <template for:each={events} for:item="event">
+            <template lwc:if={event.isSuggested}>
+                <span key={event.key} class={event.className} style={event.style} title={event.title}
+                    aria-label={event.title}>
+                </span>
+            </template>
+
+            <template lwc:else>
+                <button key={event.key} type="button" class={event.className} style={event.style}
+                    data-activity-id={event.activityId} title={event.title} aria-label={event.title}
+                    onclick={handleActivityClick}>
+                    {event.day}
+                </button>
+            </template>
+        </template>
+    </div>
+</template>

@@ -1,0 +1,1365 @@
+public with sharing class ALMEX_AgendaDataController {
+
+    // Id de perfil compartidos por QA y PROD para el Desglose de actividades.
+    private static final Set<Id> ACTIVITY_BREAKDOWN_PROFILE_IDS = new Set<Id>{
+        '00eHu000003O3hMIAS', // System Administrator
+        '00eV5000004e0QQIAY', // Gerencia y Dirección Comercial
+        '00eV5000004eIYbIAM'  // Analista Comercial
+    };
+
+    private static Map<Id, Boolean> managementAccessByProfileId =
+        new Map<Id, Boolean>();
+
+    private static final Map<String, String> MEXICAN_STATES_BY_CODE =
+        new Map<String, String>{
+            'AG' => 'Aguascalientes',
+            'BC' => 'Baja California',
+            'BS' => 'Baja California Sur',
+            'CH' => 'Chihuahua',
+            'CL' => 'Colima',
+            'CM' => 'Campeche',
+            'COAH' => 'Coahuila',
+            'CO' => 'Coahuila',
+            'CS' => 'Chiapas',
+            'DF' => 'Ciudad de México',
+            'DG' => 'Durango',
+            'GR' => 'Guerrero',
+            'GT' => 'Guanajuato',
+            'HG' => 'Hidalgo',
+            'JA' => 'Jalisco',
+            'JAL' => 'Jalisco',
+            'ME' => 'Estado de México',
+            'MI' => 'Michoacán',
+            'CDMX' => 'Ciudad de México',
+            'MO' => 'Morelos',
+            'NA' => 'Nayarit',
+            'NL' => 'Nuevo León',
+            'OA' => 'Oaxaca',
+            'PB' => 'Puebla',
+            'QE' => 'Querétaro',
+            'QRO' => 'Quintana Roo',
+            'QR' => 'Quintana Roo',
+            'SI' => 'Sinaloa',
+            'SIN' => 'Sinaloa',
+            'SL' => 'San Luis Potosí',
+            'SO' => 'Sonora',
+            'TB' => 'Tabasco',
+            'TL' => 'Tlaxcala',
+            'TM' => 'Tamaulipas',
+            'VE' => 'Veracruz',
+            'YU' => 'Yucatán',
+            'ZA' => 'Zacatecas'
+        };
+
+    @AuraEnabled(cacheable=true)
+    public static User getCurrentUser() {
+        return getSessionUser();
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static Boolean canViewActivityBreakdown() {
+        return ACTIVITY_BREAKDOWN_PROFILE_IDS.contains(UserInfo.getProfileId());
+    }
+
+    @AuraEnabled
+    public static List<Actividad_de_Agenda__c> getCurrentUserActivities(Date monthDate) {
+        Date referenceDate = monthDate == null ? Date.today() : monthDate;
+        Date firstDayOfMonth = Date.newInstance(referenceDate.year(), referenceDate.month(), 1);
+        Date firstDayOfNextMonth = firstDayOfMonth.addMonths(1);
+        User currentUser = getSessionUser();
+
+        if (hasManagementAccess(currentUser)) {
+            return [
+                SELECT Id, Name, Titulo__c, Tipo_de_actividad__c, Ejecutivo__c,
+                    Fecha__c, Estado__c, Ciudad__c, Prospecto__c,
+                    Cliente__c, Cliente__r.Name, Sucursal__c, Sucursal__r.Name,
+                    Seguimiento__c, Notas__c, Cuenta_para_frecuencia__c,
+                    Justificacion_de_excepcion__c,
+                    Estatus__c, Justificacion__c, Actividad_Original__c,
+                    Actividad_Original__r.Name
+                FROM Actividad_de_Agenda__c
+                WHERE Fecha__c >= :firstDayOfMonth
+                AND Fecha__c < :firstDayOfNextMonth
+                ORDER BY Fecha__c ASC, CreatedDate ASC
+            ];
+        }
+
+        return [
+            SELECT Id, Name, Titulo__c, Tipo_de_actividad__c, Ejecutivo__c,
+                Fecha__c, Estado__c, Ciudad__c, Prospecto__c,
+                Cliente__c, Cliente__r.Name, Sucursal__c, Sucursal__r.Name,
+                Seguimiento__c, Notas__c, Cuenta_para_frecuencia__c,
+                Justificacion_de_excepcion__c,
+                Estatus__c, Justificacion__c, Actividad_Original__c,
+                Actividad_Original__r.Name
+            FROM Actividad_de_Agenda__c
+            WHERE Fecha__c >= :firstDayOfMonth
+            AND Fecha__c < :firstDayOfNextMonth
+            AND Ejecutivo__c = :currentUser.Name
+            ORDER BY Fecha__c ASC, CreatedDate ASC
+        ];
+    }
+
+    @AuraEnabled
+    public static Actividad_de_Agenda__c getActivityDetail(Id activityId) {
+        if (activityId == null) {
+            throw new AuraHandledException('No se recibió la actividad.');
+        }
+
+        List<Actividad_de_Agenda__c> activities = [
+            SELECT Id, Name, Titulo__c, Tipo_de_actividad__c, Ejecutivo__c,
+                Fecha__c, Estado__c, Ciudad__c, Prospecto__c,
+                Cliente__c, Cliente__r.Name, Sucursal__c, Sucursal__r.Name,
+                Seguimiento__c, Notas__c, Cuenta_para_frecuencia__c,
+                Justificacion_de_excepcion__c,
+                Estatus__c, Justificacion__c, Actividad_Original__c,
+                Actividad_Original__r.Name
+            FROM Actividad_de_Agenda__c
+            WHERE Id = :activityId
+            WITH USER_MODE
+            LIMIT 1
+        ];
+
+        if (activities.isEmpty()) {
+            throw new AuraHandledException(
+                'No fue posible encontrar la actividad seleccionada.'
+            );
+        }
+
+        return activities[0];
+    }
+
+    @AuraEnabled
+    public static VisitLogResponse getCurrentUserVisitLog() {
+        Date today = Date.today();
+        Integer currentYear = today.year();
+        Date firstDayOfYear = Date.newInstance(currentYear, 1, 1);
+        Date firstDayOfNextYear = firstDayOfYear.addYears(1);
+        Id currentUserId = UserInfo.getUserId();
+
+        List<Sucursal__c> branchRecords = [
+            SELECT Id, Name, Cuenta__c, Cuenta__r.Name,
+                Estado__c, Ciudad__c, Frecuencia_visitas__c
+            FROM Sucursal__c
+            WHERE OwnerId = :currentUserId
+            WITH USER_MODE
+            ORDER BY Cuenta__r.Name, Name
+        ];
+
+        Set<Id> branchIds = new Set<Id>();
+
+        for (Sucursal__c branchRecord : branchRecords) {
+            branchIds.add(branchRecord.Id);
+        }
+
+        Map<Id, List<VisitActivity>> activitiesByBranch =
+            new Map<Id, List<VisitActivity>>();
+        Set<String> visitActivityTypes = new Set<String>{'Visita', 'Llamada'};
+        visitActivityTypes.addAll(getActivityTypeFilterValues('Visitas urgentes'));
+
+        if (!branchIds.isEmpty()) {
+            for (Actividad_de_Agenda__c activityRecord : [
+                SELECT Id, Name, Titulo__c, Tipo_de_actividad__c,
+                    Ejecutivo__c, Sucursal__c, Fecha__c, Estatus__c,
+                    Cuenta_para_frecuencia__c
+                FROM Actividad_de_Agenda__c
+                WHERE Sucursal__c IN :branchIds
+                AND Fecha__c >= :firstDayOfYear
+                AND Fecha__c < :firstDayOfNextYear
+                AND Estatus__c IN ('Completada', 'Programada')
+                AND Tipo_de_actividad__c IN :visitActivityTypes
+                WITH USER_MODE
+                ORDER BY Fecha__c ASC, CreatedDate ASC
+            ]) {
+                if (!activitiesByBranch.containsKey(activityRecord.Sucursal__c)) {
+                    activitiesByBranch.put(
+                        activityRecord.Sucursal__c,
+                        new List<VisitActivity>()
+                    );
+                }
+
+                activitiesByBranch.get(activityRecord.Sucursal__c).add(
+                    new VisitActivity(activityRecord)
+                );
+            }
+        }
+
+        VisitLogResponse response = new VisitLogResponse();
+        response.year = currentYear;
+        response.today = today;
+
+        for (Sucursal__c branchRecord : branchRecords) {
+            response.branches.add(
+                new VisitBranch(
+                    branchRecord,
+                    activitiesByBranch.get(branchRecord.Id)
+                )
+            );
+        }
+
+        return response;
+    }
+
+    public class VisitLogResponse {
+        @AuraEnabled public Integer year { get; set; }
+        @AuraEnabled public Date today { get; set; }
+        @AuraEnabled public List<VisitBranch> branches { get; set; }
+
+        public VisitLogResponse() {
+            branches = new List<VisitBranch>();
+        }
+    }
+
+    public class VisitBranch {
+        @AuraEnabled public Id branchId { get; set; }
+        @AuraEnabled public String branchName { get; set; }
+        @AuraEnabled public String accountName { get; set; }
+        @AuraEnabled public String state { get; set; }
+        @AuraEnabled public String city { get; set; }
+        @AuraEnabled public String annualFrequency { get; set; }
+        @AuraEnabled public List<VisitActivity> activities { get; set; }
+
+        public VisitBranch(
+            Sucursal__c branchRecord,
+            List<VisitActivity> branchActivities
+        ) {
+            branchId = branchRecord.Id;
+            branchName = branchRecord.Name;
+            accountName = branchRecord.Cuenta__r == null
+                ? null
+                : branchRecord.Cuenta__r.Name;
+            state = branchRecord.Estado__c;
+            city = branchRecord.Ciudad__c;
+            annualFrequency = branchRecord.Frecuencia_visitas__c;
+            activities = branchActivities == null
+                ? new List<VisitActivity>()
+                : branchActivities;
+        }
+    }
+
+    public class VisitActivity {
+        @AuraEnabled public Id activityId { get; set; }
+        @AuraEnabled public String folio { get; set; }
+        @AuraEnabled public String title { get; set; }
+        @AuraEnabled public String executiveName { get; set; }
+        @AuraEnabled public Date activityDate { get; set; }
+        @AuraEnabled public String status { get; set; }
+        @AuraEnabled public String activityType { get; set; }
+        @AuraEnabled public Boolean countsTowardFrequency { get; set; }
+
+        public VisitActivity(Actividad_de_Agenda__c activityRecord) {
+            activityId = activityRecord.Id;
+            folio = activityRecord.Name;
+            title = activityRecord.Titulo__c;
+            executiveName = activityRecord.Ejecutivo__c;
+            activityDate = activityRecord.Fecha__c;
+            status = activityRecord.Estatus__c;
+            activityType = normalizeActivityType(activityRecord.Tipo_de_actividad__c);
+            countsTowardFrequency =
+                activityType == 'Visita' ||
+                (
+                    activityType == 'Llamada' &&
+                    activityRecord.Cuenta_para_frecuencia__c == true
+                );
+        }
+    }
+
+    @AuraEnabled
+    public static Id createActivity(
+        String title,
+        String activityType,
+        Date activityDate,
+        String state,
+        String city,
+        Id prospectId,
+        Id branchId,
+        Boolean followUp,
+        String notes,
+        Boolean countsTowardFrequency,
+        String exceptionJustification,
+        String manualProspectName,
+        Id clientId
+    ) {
+        if (String.isBlank(title)) {
+            throw new AuraHandledException('El título es obligatorio.');
+        }
+
+        if (String.isBlank(activityType)) {
+            throw new AuraHandledException('El tipo de actividad es obligatorio.');
+        }
+        activityType = normalizeActivityType(activityType);
+
+        if (activityDate == null) {
+            throw new AuraHandledException('La fecha es obligatoria.');
+        }
+
+        String normalizedManualProspectName =
+            String.isBlank(manualProspectName)
+                ? null
+                : manualProspectName.trim();
+
+        if (
+            normalizedManualProspectName != null &&
+            normalizedManualProspectName.length() > 255
+        ) {
+            throw new AuraHandledException(
+                'El nombre del prospecto no puede exceder 255 caracteres.'
+            );
+        }
+
+        Boolean isClientActivity = clientId != null || branchId != null;
+        Boolean isExistingProspectActivity = prospectId != null;
+        Boolean isManualProspectActivity = normalizedManualProspectName != null;
+        Boolean isProspectActivity =
+            isExistingProspectActivity || isManualProspectActivity;
+
+        if (isExistingProspectActivity && isManualProspectActivity) {
+            throw new AuraHandledException(
+                'Registra un prospecto manual o selecciona uno existente, pero no ambos.'
+            );
+        }
+
+        if (isClientActivity == isProspectActivity) {
+            throw new AuraHandledException(
+                'Debes seleccionar un cliente o un prospecto, pero no ambos.'
+            );
+        }
+
+        User currentUser = getSessionUser();
+        Boolean shouldCountTowardFrequency =
+            branchId != null &&
+            (
+                activityType == 'Visita' ||
+                (
+                    activityType == 'Llamada' &&
+                    countsTowardFrequency == true
+                )
+            );
+
+        Boolean requiresExceptionJustification =
+            activityType == 'Visitas urgentes' ||
+            (
+                activityType == 'Llamada' &&
+                shouldCountTowardFrequency
+            );
+
+        if (
+            requiresExceptionJustification &&
+            String.isBlank(exceptionJustification)
+        ) {
+            throw new AuraHandledException(
+                'La justificación de la excepción es obligatoria.'
+            );
+        }
+
+        String normalizedExceptionJustification =
+            String.isBlank(exceptionJustification)
+                ? null
+                : exceptionJustification.trim();
+
+        if (
+            normalizedExceptionJustification != null &&
+            normalizedExceptionJustification.length() > 255
+        ) {
+            throw new AuraHandledException(
+                'La justificación de la excepción no puede exceder 255 caracteres.'
+            );
+        }
+
+        String activityState;
+        String activityCity;
+        String prospectName;
+        Id selectedBranchId;
+        Id selectedClientId = clientId;
+
+        if (isClientActivity) {
+            if (branchId != null) {
+                List<Sucursal__c> branches = queryActivityBranches(currentUser, branchId, null);
+
+                if (branches.isEmpty()) {
+                    throw new AuraHandledException(
+                        hasManagementAccess(currentUser)
+                            ? 'La sucursal seleccionada no está disponible.'
+                            : 'La sucursal seleccionada no está asignada al usuario actual.'
+                    );
+                }
+
+                Sucursal__c selectedBranch = branches[0];
+                if (selectedBranch.Cuenta__c == null ||
+                    (clientId != null && selectedBranch.Cuenta__c != clientId)) {
+                    throw new AuraHandledException('La sucursal no pertenece al cliente seleccionado.');
+                }
+
+                // Compatibilidad con solicitudes anteriores que solo enviaban sucursal.
+                selectedClientId = selectedBranch.Cuenta__c;
+                selectedBranchId = selectedBranch.Id;
+                activityState = normalizeMexicanState(selectedBranch.Estado__c);
+                activityCity = selectedBranch.Ciudad__c;
+            } else {
+                activityState = normalizeMexicanState(state);
+                activityCity = String.isBlank(city) ? null : city.trim();
+            }
+            validateActivityClient(currentUser, selectedClientId);
+        } else {
+            if (branchId != null) {
+                throw new AuraHandledException(
+                    'Una actividad de prospecto no puede tener una sucursal asignada.'
+                );
+            }
+
+            if (isExistingProspectActivity) {
+                List<Lead> prospects = [
+                    SELECT Id, Name, Company
+                    FROM Lead
+                    WHERE Id = :prospectId
+                    AND OwnerId = :currentUser.Id
+                    AND IsConverted = false
+                    WITH USER_MODE
+                    LIMIT 1
+                ];
+
+                if (prospects.isEmpty()) {
+                    throw new AuraHandledException(
+                        'El prospecto seleccionado no está asignado al usuario actual.'
+                    );
+                }
+
+                prospectName = prospects[0].Name;
+            } else {
+                // El prospecto aún no existe como Lead: se conserva el nombre
+                // capturado para no bloquear el registro de la actividad.
+                prospectName = normalizedManualProspectName;
+            }
+            activityState = normalizeMexicanState(state);
+            activityCity = String.isBlank(city) ? null : city.trim();
+        }
+
+        Actividad_de_Agenda__c activityRecord = new Actividad_de_Agenda__c(
+            Titulo__c = title.trim(),
+            Tipo_de_actividad__c = activityType,
+            Ejecutivo__c = currentUser.Name,
+            Fecha__c = activityDate,
+            Estado__c = activityState,
+            Ciudad__c = activityCity,
+            Prospecto__c = prospectName,
+            Cliente__c = selectedClientId,
+            Sucursal__c = selectedBranchId,
+            Seguimiento__c = followUp == true,
+            Notas__c = String.isBlank(notes) ? null : notes.trim(),
+            Cuenta_para_frecuencia__c = shouldCountTowardFrequency,
+            Justificacion_de_excepcion__c =
+                normalizedExceptionJustification,
+            Estatus__c = 'Programada'
+        );
+
+        Database.SaveResult result = Database.insert(
+            activityRecord,
+            AccessLevel.USER_MODE
+        );
+
+        validateSaveResult(result);
+
+        return result.getId();
+    }
+
+    @AuraEnabled
+    public static void completeActivity(
+        Id activityId,
+        String followUpResolution
+    ) {
+        Actividad_de_Agenda__c activity = getActivityForUpdate(activityId);
+
+        validateActivityAccess(activity);
+        validateScheduledActivity(activity);
+
+        if (activity.Seguimiento__c == true) {
+            if (String.isBlank(followUpResolution)) {
+                throw new AuraHandledException(
+                    'El resumen de resolución del seguimiento es obligatorio.'
+                );
+            }
+
+            activity.Justificacion__c = followUpResolution.trim();
+            activity.Seguimiento__c = false;
+        }
+
+        activity.Estatus__c = 'Completada';
+
+        Database.SaveResult result = Database.update(
+            activity,
+            AccessLevel.USER_MODE
+        );
+
+        validateSaveResult(result);
+    }
+
+    @AuraEnabled
+    public static void updateActivityDetails(
+        Id activityId,
+        Boolean followUp,
+        String notes,
+        String exceptionJustification
+    ) {
+        Actividad_de_Agenda__c activity = getActivityForUpdate(activityId);
+
+        validateActivityAccess(activity);
+        validateActivityDetailsEditable(activity);
+
+        String normalizedExceptionJustification =
+            String.isBlank(exceptionJustification)
+                ? null
+                : exceptionJustification.trim();
+
+        if (
+            normalizedExceptionJustification != null &&
+            normalizedExceptionJustification.length() > 255
+        ) {
+            throw new AuraHandledException(
+                'La justificación de la excepción no puede exceder 255 caracteres.'
+            );
+        }
+
+        activity.Seguimiento__c = followUp == true;
+        String normalizedNotes = String.isBlank(notes) ? null : notes.trim();
+        // La sucursal escrita libremente vive en Notas; se conserva al editar
+        // el texto visible, incluso si el usuario borra todas sus notas.
+        if (activity.Cliente__c != null && activity.Sucursal__c == null &&
+            activity.Notas__c != null &&
+            activity.Notas__c.startsWith('Sucursal (captura manual): ')) {
+            Integer lineEnd = activity.Notas__c.indexOf('\n');
+            String branchHeader = lineEnd < 0 ? activity.Notas__c :
+                activity.Notas__c.substring(0, lineEnd).trim();
+            if (normalizedNotes == null ||
+                !(normalizedNotes == branchHeader || normalizedNotes.startsWith(branchHeader + '\n'))) {
+                normalizedNotes = branchHeader + (normalizedNotes == null ? '' : '\n\n' + normalizedNotes);
+            }
+        }
+        if (normalizedNotes != null && normalizedNotes.length() > 32768) {
+            throw new AuraHandledException('Las notas y el nombre de la sucursal superan el límite de 32768 caracteres.');
+        }
+        activity.Notas__c = normalizedNotes;
+        activity.Justificacion_de_excepcion__c =
+            normalizedExceptionJustification;
+
+        Database.SaveResult result = Database.update(
+            activity,
+            AccessLevel.USER_MODE
+        );
+
+        validateSaveResult(result);
+    }
+
+    @AuraEnabled
+    public static void cancelActivity(
+        Id activityId,
+        String justification
+    ) {
+        if (String.isBlank(justification)) {
+            throw new AuraHandledException(
+                'La justificación de la cancelación es obligatoria.'
+            );
+        }
+
+        Actividad_de_Agenda__c activity = getActivityForUpdate(activityId);
+
+        validateActivityAccess(activity);
+        validateScheduledActivity(activity);
+
+        activity.Estatus__c = 'Cancelada';
+        activity.Justificacion__c = justification.trim();
+
+        Database.SaveResult result = Database.update(
+            activity,
+            AccessLevel.USER_MODE
+        );
+
+        validateSaveResult(result);
+    }
+
+    @AuraEnabled
+    public static Id rescheduleActivity(
+        Id activityId,
+        Date newDate,
+        String justification
+    ) {
+        if (newDate == null) {
+            throw new AuraHandledException('La nueva fecha es obligatoria.');
+        }
+
+        if (String.isBlank(justification)) {
+            throw new AuraHandledException(
+                'La justificación de la reagendación es obligatoria.'
+            );
+        }
+
+        Actividad_de_Agenda__c originalActivity =
+            getActivityForUpdate(activityId);
+
+        validateActivityAccess(originalActivity);
+        validateScheduledActivity(originalActivity);
+
+        if (newDate == originalActivity.Fecha__c) {
+            throw new AuraHandledException(
+                'La nueva fecha debe ser diferente a la fecha actual.'
+            );
+        }
+
+        originalActivity.Estatus__c = 'Reagendada';
+        originalActivity.Justificacion__c = justification.trim();
+
+        Actividad_de_Agenda__c newActivity =
+            originalActivity.clone(false, false, false, false);
+
+        newActivity.Fecha__c = newDate;
+        newActivity.Estatus__c = 'Programada';
+        newActivity.Justificacion__c = null;
+        newActivity.Actividad_Original__c = originalActivity.Id;
+        newActivity.Tipo_de_actividad__c = normalizeActivityType(originalActivity.Tipo_de_actividad__c);
+
+        Database.SaveResult updateResult = Database.update(
+            originalActivity,
+            AccessLevel.USER_MODE
+        );
+
+        validateSaveResult(updateResult);
+
+        Database.SaveResult insertResult = Database.insert(
+            newActivity,
+            AccessLevel.USER_MODE
+        );
+
+        validateSaveResult(insertResult);
+
+        return insertResult.getId();
+    }
+
+    @AuraEnabled
+    public static List<SalesAgreement> getAlmexSupplyAgreements() {
+        validateActivityBreakdownAccess();
+
+        Date periodStart = Date.newInstance(2025, 1, 1);
+        Date periodEnd = Date.newInstance(2026, 12, 31);
+
+        return [
+            SELECT Id, AccountId, Account.Name, Volumen_total__c
+            FROM SalesAgreement
+            WHERE AccountId != null
+            AND StartDate >= :periodStart
+            AND EndDate <= :periodEnd
+            AND Unidad_de_negocio__c = 'Almex'
+            WITH USER_MODE
+            ORDER BY Volumen_total__c DESC NULLS LAST
+        ];
+    }
+
+    @AuraEnabled
+    public static ManagementActivityPage getManagementActivities(
+        Date dateFrom,
+        Date dateTo,
+        List<String> executives,
+        List<String> activityTypes,
+        List<String> states,
+        Id branchId,
+        String prospect,
+        List<Boolean> followUps,
+        List<String> statuses,
+        Date cursorDate,
+        Datetime cursorCreatedDate,
+        Id cursorId,
+        Integer pageSize,
+        Id accountId
+    ) {
+        validateActivityBreakdownAccess();
+
+        if (dateTo != null && dateFrom == null) {
+            throw new AuraHandledException(
+                'Debes seleccionar la fecha inicial antes de la fecha final.'
+            );
+        }
+
+        if (dateFrom != null && dateTo != null && dateFrom > dateTo) {
+            throw new AuraHandledException(
+                'La fecha inicial no puede ser posterior a la fecha final.'
+            );
+        }
+
+        if (dateFrom == null && dateTo == null) {
+            dateFrom = Date.newInstance(Date.today().year(), Date.today().month(), 1);
+            dateTo = dateFrom.addMonths(1).addDays(-1);
+        }
+
+        Integer safePageSize = pageSize == null
+            ? 50
+            : Math.max(1, Math.min(pageSize, 100));
+
+        List<String> scopeConditions = new List<String>();
+        Map<String, Object> scopeBinds = new Map<String, Object>();
+
+        scopeConditions.add('Fecha__c >= :dateFrom');
+        scopeBinds.put('dateFrom', dateFrom);
+
+        if (dateTo != null) {
+            scopeConditions.add('Fecha__c <= :dateTo');
+            scopeBinds.put('dateTo', dateTo);
+        }
+
+        List<String> dataConditions = new List<String>();
+        dataConditions.addAll(scopeConditions);
+
+        Map<String, Object> dataBinds = new Map<String, Object>();
+        dataBinds.putAll(scopeBinds);
+
+        if (executives != null && !executives.isEmpty()) {
+            Set<String> executiveNames = new Set<String>();
+
+            for (String executive : executives) {
+                if (!String.isBlank(executive)) {
+                    executiveNames.add(executive.trim());
+                }
+            }
+
+            if (!executiveNames.isEmpty()) {
+                dataConditions.add('Ejecutivo__c IN :executiveNames');
+                dataBinds.put('executiveNames', executiveNames);
+            }
+        }
+
+        // OR entre opciones de una categoría, AND entre categorías. Se mantienen
+        // los alias históricos de los tipos renombrados y los binds seguros.
+        Set<String> activityTypeValues = new Set<String>();
+        for (String activityType : cleanManagementFilterValues(activityTypes)) {
+            activityTypeValues.addAll(getActivityTypeFilterValues(activityType));
+        }
+        if (!activityTypeValues.isEmpty()) {
+            dataConditions.add('Tipo_de_actividad__c IN :activityTypeValues');
+            dataBinds.put('activityTypeValues', activityTypeValues);
+        }
+        Set<String> stateValues = cleanManagementFilterValues(states);
+        if (!stateValues.isEmpty()) {
+            dataConditions.add('Estado__c IN :stateValues');
+            dataBinds.put('stateValues', stateValues);
+        }
+
+        String prospectName = String.isBlank(prospect)
+            ? null
+            : prospect.trim();
+
+        Integer selectedPartyCount =
+            (branchId == null ? 0 : 1) +
+            (prospectName == null ? 0 : 1) +
+            (accountId == null ? 0 : 1);
+        if (selectedPartyCount > 1) {
+            throw new AuraHandledException(
+                'Selecciona solo una sucursal, un cliente o un prospecto.'
+            );
+        }
+
+        if (branchId != null) {
+            dataConditions.add('Sucursal__c = :branchId');
+            dataBinds.put('branchId', branchId);
+        }
+
+        if (accountId != null) {
+            dataConditions.add('Cliente__c = :accountId');
+            dataBinds.put('accountId', accountId);
+        }
+
+        if (prospectName != null) {
+            dataConditions.add('Prospecto__c = :prospectName');
+            dataBinds.put('prospectName', prospectName);
+        }
+
+        Set<Boolean> followUpValues = new Set<Boolean>();
+        if (followUps != null) {
+            followUpValues.addAll(followUps);
+            followUpValues.remove(null);
+        }
+        // Elegir ambos booleanos equivale a no restringir seguimiento.
+        if (followUpValues.size() == 1) {
+            dataConditions.add('Seguimiento__c = :followUpValue');
+            dataBinds.put('followUpValue', followUpValues.contains(true));
+        }
+        Set<String> statusValues = cleanManagementFilterValues(statuses);
+        if (!statusValues.isEmpty()) {
+            dataConditions.add('Estatus__c IN :statusValues');
+            dataBinds.put('statusValues', statusValues);
+        }
+
+        String dataWhere = String.join(dataConditions, ' AND ');
+
+        Integer totalRecords = Database.countQueryWithBinds(
+            'SELECT COUNT() FROM Actividad_de_Agenda__c WHERE ' + dataWhere,
+            dataBinds,
+            AccessLevel.USER_MODE
+        );
+
+        if (
+            cursorDate != null &&
+            cursorCreatedDate != null &&
+            cursorId != null
+        ) {
+            dataConditions.add(
+                '(' +
+                    'Fecha__c < :cursorDate ' +
+                    'OR (Fecha__c = :cursorDate AND CreatedDate < :cursorCreatedDate) ' +
+                    'OR (Fecha__c = :cursorDate AND CreatedDate = :cursorCreatedDate ' +
+                        'AND Id < :cursorId)' +
+                ')'
+            );
+
+            dataBinds.put('cursorDate', cursorDate);
+            dataBinds.put('cursorCreatedDate', cursorCreatedDate);
+            dataBinds.put('cursorId', cursorId);
+        }
+
+        dataBinds.put('queryLimit', safePageSize + 1);
+
+        String dataQuery =
+            'SELECT Id, Name, Fecha__c, Titulo__c, Tipo_de_actividad__c, ' +
+                'Ejecutivo__c, Prospecto__c, Cliente__c, Cliente__r.Name, Sucursal__c, ' +
+                'Sucursal__r.Name, ' +
+                'Estado__c, Ciudad__c, Seguimiento__c, ' +
+                'Notas__c, Estatus__c, Justificacion__c, ' +
+                'Cuenta_para_frecuencia__c, Justificacion_de_excepcion__c, ' +
+                'Actividad_Original__c, Actividad_Original__r.Name, CreatedDate ' +
+            'FROM Actividad_de_Agenda__c ' +
+            'WHERE ' + String.join(dataConditions, ' AND ') + ' ' +
+            'ORDER BY Fecha__c DESC, CreatedDate DESC, Id DESC ' +
+            'LIMIT :queryLimit';
+
+        List<Actividad_de_Agenda__c> records =
+            new List<Actividad_de_Agenda__c>();
+
+        for (
+            SObject queriedRecord :
+            Database.queryWithBinds(
+                dataQuery,
+                dataBinds,
+                AccessLevel.USER_MODE
+            )
+        ) {
+            records.add(
+                (Actividad_de_Agenda__c) queriedRecord
+            );
+        }
+
+        Boolean hasNext = records.size() > safePageSize;
+
+        if (hasNext) {
+            records.remove(safePageSize);
+        }
+
+        ManagementActivityPage result = new ManagementActivityPage();
+
+        result.records = records;
+        result.totalRecords = totalRecords;
+        result.hasNext = hasNext;
+
+        if (hasNext && !records.isEmpty()) {
+            Actividad_de_Agenda__c lastRecord =
+                records[records.size() - 1];
+
+            result.nextCursorDate = lastRecord.Fecha__c;
+            result.nextCursorCreatedDate = lastRecord.CreatedDate;
+            result.nextCursorId = lastRecord.Id;
+        }
+
+        String executiveOptionsQuery =
+            'SELECT Ejecutivo__c executiveName ' +
+            'FROM Actividad_de_Agenda__c ' +
+            'WHERE ' + String.join(scopeConditions, ' AND ') + ' ' +
+            'AND Ejecutivo__c != null ' +
+            'GROUP BY Ejecutivo__c ' +
+            'ORDER BY Ejecutivo__c';
+
+        for (
+            SObject optionRecord :
+            Database.queryWithBinds(
+                executiveOptionsQuery,
+                scopeBinds,
+                AccessLevel.USER_MODE
+            )
+        ) {
+            String executiveName =
+                (String) optionRecord.get('executiveName');
+
+            if (!String.isBlank(executiveName)) {
+                result.executiveOptions.add(executiveName);
+            }
+        }
+
+        return result;
+    }
+
+    public class ManagementActivityPage {
+        @AuraEnabled public List<Actividad_de_Agenda__c> records { get; set; }
+        @AuraEnabled public List<String> executiveOptions { get; set; }
+        @AuraEnabled public Integer totalRecords { get; set; }
+        @AuraEnabled public Boolean hasNext { get; set; }
+        @AuraEnabled public Date nextCursorDate { get; set; }
+        @AuraEnabled public Datetime nextCursorCreatedDate { get; set; }
+        @AuraEnabled public Id nextCursorId { get; set; }
+
+        public ManagementActivityPage() {
+            records = new List<Actividad_de_Agenda__c>();
+            executiveOptions = new List<String>();
+            totalRecords = 0;
+            hasNext = false;
+        }
+    }
+
+    private static Actividad_de_Agenda__c getActivityForUpdate(Id activityId) {
+        if (activityId == null) {
+            throw new AuraHandledException('No se recibió la actividad.');
+        }
+
+        return [
+            SELECT Id, Name, Titulo__c, Tipo_de_actividad__c, Ejecutivo__c,
+                Fecha__c, Estado__c, Ciudad__c, Prospecto__c,
+                Cliente__c, Sucursal__c, Seguimiento__c, Notas__c, Estatus__c,
+                Justificacion__c, Cuenta_para_frecuencia__c,
+                Justificacion_de_excepcion__c, Actividad_Original__c
+            FROM Actividad_de_Agenda__c
+            WHERE Id = :activityId
+            LIMIT 1
+            FOR UPDATE
+        ];
+    }
+
+    private static void validateActivityAccess(
+        Actividad_de_Agenda__c activity
+    ) {
+        User currentUser = getSessionUser();
+
+        Boolean isOwner =
+            activity.Ejecutivo__c == currentUser.Name;
+
+        if (!hasManagementAccess(currentUser) && !isOwner) {
+            throw new AuraHandledException(
+                'No tienes permisos para modificar esta actividad.'
+            );
+        }
+    }
+
+    private static void validateScheduledActivity(
+        Actividad_de_Agenda__c activity
+    ) {
+        if (
+            !String.isBlank(activity.Estatus__c) &&
+            activity.Estatus__c != 'Programada'
+        ) {
+            throw new AuraHandledException(
+                'Solo las actividades programadas pueden modificarse.'
+            );
+        }
+    }
+
+    private static void validateActivityDetailsEditable(
+        Actividad_de_Agenda__c activity
+    ) {
+        if (
+            activity.Estatus__c == 'Cancelada' ||
+            activity.Estatus__c == 'Completada' ||
+            activity.Estatus__c == 'Reagendada'
+        ) {
+            throw new AuraHandledException(
+                'Las notas de una actividad cancelada, completada o reagendada no pueden modificarse.'
+            );
+        }
+    }
+
+    private static String normalizeMexicanState(String stateValue) {
+        if (String.isBlank(stateValue)) {
+            return null;
+        }
+
+        String state = stateValue.trim();
+        String stateCode = state.toUpperCase();
+
+        return MEXICAN_STATES_BY_CODE.containsKey(stateCode)
+            ? MEXICAN_STATES_BY_CODE.get(stateCode)
+            : state;
+    }
+
+    @TestVisible
+    private static Boolean hasManagementAccess(User userRecord) {
+        if (userRecord == null || userRecord.Profile == null) {
+            return false;
+        }
+        if (userRecord.Profile.PermissionsModifyAllData == true) {
+            return true;
+        }
+        Id profileId = userRecord.ProfileId;
+        if (profileId == null) {
+            return false;
+        }
+        if (!managementAccessByProfileId.containsKey(profileId)) {
+            // Profile no tiene DeveloperName. Consultar por su Id evita depender
+            // del idioma, cambios de nombre o identificadores propios de QA.
+            // IsOwnedByProfile excluye los permission sets asignados al usuario.
+            List<ObjectPermissions> profilePermissions = [
+                SELECT PermissionsRead, PermissionsCreate, PermissionsEdit,
+                    PermissionsViewAllRecords
+                FROM ObjectPermissions
+                WHERE Parent.ProfileId = :profileId
+                    AND Parent.IsOwnedByProfile = true
+                    AND SobjectType = 'Actividad_de_Agenda__c'
+                WITH SYSTEM_MODE
+                LIMIT 1
+            ];
+            managementAccessByProfileId.put(profileId,
+                !profilePermissions.isEmpty() &&
+                grantsManagementAccess(profilePermissions[0]));
+        }
+        return managementAccessByProfileId.get(profileId);
+    }
+
+    @TestVisible
+    private static Boolean grantsManagementAccess(ObjectPermissions profilePermissions) {
+        // Gerencia ya tiene estos permisos en su perfil. Exigir edición y alta
+        // evita dar funciones gerenciales a perfiles de integración de solo lectura.
+        return profilePermissions != null &&
+            profilePermissions.PermissionsRead == true &&
+            profilePermissions.PermissionsCreate == true &&
+            profilePermissions.PermissionsEdit == true &&
+            profilePermissions.PermissionsViewAllRecords == true;
+    }
+
+    private static void validateActivityBreakdownAccess() {
+        if (!canViewActivityBreakdown()) {
+            throw new AuraHandledException(
+                'No tienes permisos para consultar el desglose de actividades.'
+            );
+        }
+    }
+
+    // Compatibilidad de lectura/filtros: no requiere migrar registros históricos.
+    @TestVisible
+    private static String normalizeActivityType(String value) {
+        String type = value == null ? '' : value.trim();
+        String lowerType = type.toLowerCase();
+        if (new Set<String>{'reunión', 'reunion', 'reunión teams', 'reunion teams'}.contains(lowerType)) {
+            return 'Reunión Teams';
+        }
+        if (new Set<String>{'visita extraordinaria', 'visitas extraordinarias',
+            'visita urgente', 'visitas urgentes'}.contains(lowerType)) {
+            return 'Visitas urgentes';
+        }
+        return type;
+    }
+
+    private static Set<String> cleanManagementFilterValues(List<String> values) {
+        Set<String> cleaned = new Set<String>();
+        if (values != null) {
+            for (String value : values) {
+                if (!String.isBlank(value)) {
+                    cleaned.add(value.trim());
+                }
+            }
+        }
+        return cleaned;
+    }
+
+    @TestVisible
+    private static Set<String> getActivityTypeFilterValues(String value) {
+        String type = normalizeActivityType(value);
+        Set<String> values = new Set<String>{type};
+        if (type == 'Reunión Teams') {
+            values.addAll(new Set<String>{'Reunión', 'Reunion', 'Reunion Teams'});
+        } else if (type == 'Visitas urgentes') {
+            values.addAll(new Set<String>{'Visita extraordinaria',
+                'Visitas extraordinarias', 'Visita urgente'});
+        }
+        return values;
+    }
+
+    private static User getSessionUser() {
+        return [
+            SELECT Id, Name, FirstName, LastName, ProfileId, Profile.PermissionsModifyAllData
+            FROM User
+            WHERE Id = :UserInfo.getUserId()
+            LIMIT 1
+        ];
+    }
+
+    private static void validateSaveResult(
+        Database.SaveResult result
+    ) {
+        if (!result.isSuccess()) {
+            throw new AuraHandledException(
+                result.getErrors()[0].getMessage()
+            );
+        }
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static List<Sucursal__c> searchManagementBranches(
+        String searchTerm
+    ) {
+        validateActivityBreakdownAccess();
+
+        String normalizedSearch = String.isBlank(searchTerm)
+            ? ''
+            : searchTerm.trim().replace('%', '').replace('_', '');
+
+        if (normalizedSearch.length() < 2) {
+            return new List<Sucursal__c>();
+        }
+
+        List<String> searchTokens = normalizedSearch.split('\\s+');
+        List<String> searchConditions = new List<String>();
+        Map<String, Object> searchBinds = new Map<String, Object>();
+        Integer tokenLimit = Math.min(searchTokens.size(), 6);
+
+        for (Integer index = 0; index < tokenLimit; index++) {
+            String bindName = 'searchToken' + index;
+
+            searchConditions.add(
+                '(Name LIKE :' + bindName +
+                ' OR Cuenta__r.Name LIKE :' + bindName + ')'
+            );
+
+            searchBinds.put(
+                bindName,
+                '%' + searchTokens[index] + '%'
+            );
+        }
+
+        String branchQuery =
+            'SELECT Id, Name, Cuenta__c, Cuenta__r.Name, ' +
+                'Estado__c, Ciudad__c ' +
+            'FROM Sucursal__c ' +
+            'WHERE ' + String.join(searchConditions, ' AND ') + ' ' +
+            'ORDER BY Cuenta__r.Name, Name ' +
+            'LIMIT 8';
+
+        List<Sucursal__c> branches = new List<Sucursal__c>();
+
+        for (
+            SObject branchRecord :
+            Database.queryWithBinds(
+                branchQuery,
+                searchBinds,
+                AccessLevel.USER_MODE
+            )
+        ) {
+            branches.add((Sucursal__c) branchRecord);
+        }
+
+        return branches;
+    }
+
+    /** El filtro de actividades usa el Cliente guardado, con o sin sucursal. */
+    @AuraEnabled(cacheable=true)
+    public static List<Account> searchManagementClients(String searchTerm) {
+        validateActivityBreakdownAccess();
+
+        String normalizedSearch = String.isBlank(searchTerm)
+            ? ''
+            : searchTerm.trim().replace('%', '').replace('_', '');
+        if (normalizedSearch.length() < 2) {
+            return new List<Account>();
+        }
+
+        List<String> tokens = normalizedSearch.split('\\s+');
+        List<String> conditions = new List<String>();
+        Map<String, Object> binds = new Map<String, Object>();
+        for (Integer index = 0; index < Math.min(tokens.size(), 6); index++) {
+            String bindName = 'clientToken' + index;
+            conditions.add('Name LIKE :' + bindName);
+            binds.put(bindName, '%' + tokens[index] + '%');
+        }
+
+        List<Account> clients = new List<Account>();
+        for (SObject record : Database.queryWithBinds(
+            'SELECT Id, Name FROM Account WHERE ' + String.join(conditions, ' AND ') +
+            ' ORDER BY Name, Id LIMIT 8', binds, AccessLevel.USER_MODE
+        )) {
+            clients.add((Account) record);
+        }
+        return clients;
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static List<Lead> searchCurrentUserProspects(
+        String searchTerm
+    ) {
+        return searchProspects(searchTerm, UserInfo.getUserId());
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static List<Lead> searchManagementProspects(
+        String searchTerm
+    ) {
+        validateActivityBreakdownAccess();
+
+        return searchProspects(searchTerm, null);
+    }
+
+    private static List<Lead> searchProspects(
+        String searchTerm,
+        Id ownerId
+    ) {
+        String normalizedSearch = String.isBlank(searchTerm)
+            ? ''
+            : searchTerm.trim().replace('%', '').replace('_', '');
+
+        if (normalizedSearch.length() < 2) {
+            return new List<Lead>();
+        }
+
+        List<String> searchTokens = normalizedSearch.split('\\s+');
+        List<String> searchConditions = new List<String>();
+        Map<String, Object> searchBinds = new Map<String, Object>();
+        Integer tokenLimit = Math.min(searchTokens.size(), 6);
+
+        for (Integer index = 0; index < tokenLimit; index++) {
+            String bindName = 'searchToken' + index;
+
+            searchConditions.add('Name LIKE :' + bindName);
+            searchBinds.put(
+                bindName,
+                '%' + searchTokens[index] + '%'
+            );
+        }
+
+        if (ownerId != null) {
+            searchConditions.add('OwnerId = :ownerId');
+            searchBinds.put('ownerId', ownerId);
+        }
+
+        String prospectQuery =
+            'SELECT Id, Name, Company ' +
+            'FROM Lead ' +
+            'WHERE IsConverted = false ' +
+            'AND ' + String.join(searchConditions, ' AND ') + ' ' +
+            'ORDER BY Name, Company ' +
+            'LIMIT 8';
+
+        List<Lead> prospects = new List<Lead>();
+
+        for (
+            SObject prospectRecord :
+            Database.queryWithBinds(
+                prospectQuery,
+                searchBinds,
+                AccessLevel.USER_MODE
+            )
+        ) {
+            prospects.add((Lead) prospectRecord);
+        }
+
+        return prospects;
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static List<Account> searchActivityClients(String searchTerm) {
+        String search = String.isBlank(searchTerm)
+            ? '' : searchTerm.trim().replace('%', '').replace('_', '');
+        if (search.length() < 2) {
+            return new List<Account>();
+        }
+        return queryActivityClients(getSessionUser(), search, null);
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static List<Sucursal__c> getActivityClientBranches(Id clientId) {
+        if (clientId == null) {
+            return new List<Sucursal__c>();
+        }
+        User currentUser = getSessionUser();
+        validateActivityClient(currentUser, clientId);
+        return queryActivityBranches(currentUser, null, clientId);
+    }
+
+    private static void validateActivityClient(User currentUser, Id clientId) {
+        if (clientId == null || queryActivityClients(currentUser, null, clientId).isEmpty()) {
+            throw new AuraHandledException('El cliente seleccionado no está disponible para el usuario actual.');
+        }
+    }
+
+    private static List<Account> queryActivityClients(User currentUser, String searchTerm, Id clientId) {
+        List<String> conditions = new List<String>();
+        Map<String, Object> binds = new Map<String, Object>();
+        if (!hasManagementAccess(currentUser)) {
+            Set<Id> assignedClientIds = new Set<Id>();
+            Id ownerId = currentUser.Id;
+            for (Sucursal__c branch : [
+                SELECT Cuenta__c FROM Sucursal__c
+                WHERE OwnerId = :ownerId AND Cuenta__c != null
+                WITH USER_MODE
+            ]) {
+                assignedClientIds.add(branch.Cuenta__c);
+            }
+            // Incluye cuentas propias sin sucursales y cuentas con sucursales asignadas.
+            conditions.add('(OwnerId = :ownerId OR Id IN :assignedClientIds)');
+            binds.put('ownerId', ownerId);
+            binds.put('assignedClientIds', assignedClientIds);
+        }
+        if (clientId != null) {
+            conditions.add('Id = :clientId');
+            binds.put('clientId', clientId);
+        }
+        if (!String.isBlank(searchTerm)) {
+            List<String> tokens = searchTerm.split('\\s+');
+            for (Integer index = 0; index < Math.min(tokens.size(), 6); index++) {
+                String bindName = 'clientToken' + index;
+                conditions.add('Name LIKE :' + bindName);
+                binds.put(bindName, '%' + tokens[index] + '%');
+            }
+        }
+        String clientQuery = 'SELECT Id, Name FROM Account';
+        if (!conditions.isEmpty()) {
+            clientQuery += ' WHERE ' + String.join(conditions, ' AND ');
+        }
+        clientQuery += ' ORDER BY Name, Id LIMIT 8';
+        return Database.queryWithBinds(clientQuery, binds, AccessLevel.USER_MODE);
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static List<Sucursal__c> getCurrentUserBranches() {
+        return queryActivityBranches(getSessionUser(), null, null);
+    }
+
+    // Nueva actividad usa el mismo alcance al listar y al validar el guardado.
+    // Gerencia/Dirección y Administración no se restringen por asignación;
+    // USER_MODE conserva los permisos de lectura y campos de Salesforce.
+    private static List<Sucursal__c> queryActivityBranches(User currentUser, Id branchId, Id clientId) {
+        Boolean canSelectAnyBranch = hasManagementAccess(currentUser);
+        List<String> conditions = new List<String>();
+        Map<String, Object> queryBinds = new Map<String, Object>();
+
+        if (!canSelectAnyBranch) {
+            conditions.add('OwnerId = :ownerId');
+            queryBinds.put('ownerId', currentUser.Id);
+        }
+
+        if (branchId != null) {
+            conditions.add('Id = :branchId');
+            queryBinds.put('branchId', branchId);
+        }
+
+        if (clientId != null) {
+            conditions.add('Cuenta__c = :clientId');
+            queryBinds.put('clientId', clientId);
+        }
+
+        String branchQuery =
+            'SELECT Id, Name, Cuenta__c, Cuenta__r.Name, Estado__c, Ciudad__c ' +
+            'FROM Sucursal__c';
+
+        if (!conditions.isEmpty()) {
+            branchQuery += ' WHERE ' + String.join(conditions, ' AND ');
+        }
+
+        branchQuery += ' ORDER BY Name, Id';
+
+        if (branchId != null) {
+            branchQuery += ' LIMIT 1';
+        } else if (!canSelectAnyBranch) {
+            branchQuery += ' LIMIT 1000';
+        }
+
+        return Database.queryWithBinds(branchQuery, queryBinds, AccessLevel.USER_MODE);
+    }
+}

@@ -1,0 +1,144 @@
+<template>
+    <div class="activity-modal-backdrop" onclick={handleClose}></div>
+
+    <section class="activity-modal" role="dialog" aria-modal="true" aria-labelledby="visit-log-modal-title">
+        <header class="activity-modal-header">
+            <div class="activity-modal-heading">
+                <h2 id="visit-log-modal-title">Detalle de actividad</h2>
+
+                <template lwc:if={activity.status}>
+                    <span class="activity-status-badge">{activity.status}</span>
+                </template>
+            </div>
+
+            <button type="button" class="activity-modal-close" title="Cerrar" onclick={handleClose}>
+                <lightning-icon icon-name="utility:close" size="small" alternative-text="Cerrar">
+                </lightning-icon>
+            </button>
+        </header>
+
+        <template lwc:if={isLoading}>
+            <div class="activity-modal-state">
+                <lightning-spinner alternative-text="Cargando detalle de actividad" size="medium">
+                </lightning-spinner>
+                <p>Cargando información de la actividad...</p>
+            </div>
+        </template>
+
+        <template lwc:elseif={errorMessage}>
+            <div class="activity-modal-state activity-modal-error">
+                <lightning-icon icon-name="utility:error" size="small" alternative-text="Error">
+                </lightning-icon>
+                <p>{errorMessage}</p>
+                <button type="button" class="retry-button" onclick={handleRetry}>Reintentar</button>
+            </div>
+        </template>
+
+        <template lwc:else>
+            <div class="activity-form">
+                <div class="activity-field activity-field-full">
+                    <label for="visit-log-activity-title">Título de la actividad</label>
+                    <input id="visit-log-activity-title" type="text" value={activity.title} readonly>
+                </div>
+
+                <div class="activity-field">
+                    <label for="visit-log-activity-type">Tipo de actividad</label>
+                    <select id="visit-log-activity-type" disabled>
+                        <option>{activity.activityType}</option>
+                    </select>
+                </div>
+
+                <div class="activity-field">
+                    <label for="visit-log-activity-executive">Ejecutivo</label>
+                    <input id="visit-log-activity-executive" type="text" value={activity.executiveName} readonly>
+                </div>
+
+                <div class="activity-field">
+                    <label for="visit-log-activity-date">Fecha</label>
+                    <input id="visit-log-activity-date" type="date" value={activity.dateValue} readonly>
+                </div>
+
+                <div class="activity-field">
+                    <label for="visit-log-activity-relationship">{activity.relationshipLabel}</label>
+                    <input id="visit-log-activity-relationship" type="text" value={activity.relationshipName} readonly>
+                </div>
+
+                <template lwc:if={activity.branchName}>
+                    <div class="activity-field">
+                        <label for="visit-log-activity-branch">Sucursal</label>
+                        <input id="visit-log-activity-branch" type="text" value={activity.branchName} readonly>
+                    </div>
+                </template>
+
+                <div class="activity-field">
+                    <label for="visit-log-activity-state">Estado</label>
+                    <input id="visit-log-activity-state" type="text" value={activity.state} readonly>
+                </div>
+
+                <div class="activity-field">
+                    <label for="visit-log-activity-city">Ciudad</label>
+                    <input id="visit-log-activity-city" type="text" value={activity.city} readonly>
+                </div>
+
+                <div class="activity-follow-up activity-field-full">
+                    <input id="visit-log-activity-follow-up" type="checkbox" checked={activity.followUp} disabled>
+                    <label for="visit-log-activity-follow-up">¿Requiere seguimiento?</label>
+                </div>
+
+                <template lwc:if={hasExceptionJustification}>
+                    <div class="activity-field activity-field-full call-justification-preview">
+                        <label for="visit-log-exception-justification">Justificación</label>
+                        <textarea id="visit-log-exception-justification"
+                            value={activity.exceptionJustification} readonly>
+                        </textarea>
+                        <small>Información registrada para documentar la excepción de esta actividad.</small>
+                    </div>
+                </template>
+
+                <div class="activity-field activity-field-full">
+                    <label for="visit-log-activity-notes">Notas</label>
+                    <textarea id="visit-log-activity-notes" value={activity.notes}
+                        placeholder="Sin notas registradas." readonly>
+                    </textarea>
+                </div>
+
+                <div class="activity-audit-panel">
+                    <div class="activity-audit-item">
+                        <span>Folio</span>
+                        <strong>{activity.folio}</strong>
+                    </div>
+
+                    <div class="activity-audit-item">
+                        <span>Estatus</span>
+                        <strong>{activity.status}</strong>
+                    </div>
+
+                    <template lwc:if={showFrequencyIndicator}>
+                        <div class="activity-audit-item">
+                            <span>Cuenta para frecuencia</span>
+                            <strong>{activity.frequencyLabel}</strong>
+                        </div>
+                    </template>
+
+                    <template lwc:if={hasOriginalActivity}>
+                        <div class="activity-audit-item">
+                            <span>Actividad original</span>
+                            <strong>{activity.originalFolio}</strong>
+                        </div>
+                    </template>
+
+                    <template lwc:if={hasRecordJustification}>
+                        <div class="activity-audit-item activity-audit-item-full">
+                            <span>Justificación</span>
+                            <p>{activity.recordJustification}</p>
+                        </div>
+                    </template>
+                </div>
+
+                <footer class="activity-form-actions">
+                    <button type="button" class="activity-close-button" onclick={handleClose}>Cerrar</button>
+                </footer>
+            </div>
+        </template>
+    </section>
+</template>

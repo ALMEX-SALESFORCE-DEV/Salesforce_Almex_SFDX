@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>ALMEX_FormPricesController</members>
+        <members>ALMEX_FormPricesControllerTest</members>
+        <members>ALMEX_MapDataController</members>
+        <members>ALMEX_MapDataControllerTest</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>almex_FormProductPrices</members>
+        <members>mapaNacional</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <types>
+        <members>Precio_productos__c.Tipo_operacion_comercial__c</members>
+        <members>Precio_productos__c.Fecha_inicio_contrato__c</members>
+        <members>Precio_productos__c.Fecha_fin_contrato__c</members>
+        <members>Precio_productos__c.Producto_importado__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>ALMEX_Banxico_Auth</members>
+        <name>ExternalCredential</name>
+    </types>
+    <types>
+        <members>ALMEX_Banxico_API</members>
+        <name>NamedCredential</name>
+    </types>
+    <types>
+        <members>Gerencia y Dirección Comercial</members>
+        <members>Supervisor y Ejecutivo Comercial</members>
+        <name>Profile</name>
+    </types>
+    <types>
+        <members>ALMEX_MexicoLocations</members>
+        <members>ALMEX_USLocations</members>
+        <members>ALMEX_ContractCalendar</members>
+        <members>Highmaps</members>
+        <members>MexicoStatesMap</members>
+        <members>sheetjs</members>
+        <name>StaticResource</name>
+    </types>
+    <version>67.0</version>
+</Package>
