@@ -1,0 +1,260 @@
+/* =========================================================
+   CONTENEDOR DE FULLCALENDAR
+   ========================================================= */
+
+.agenda-fullcalendar .fc {
+    width: 100% !important;
+    height: 100% !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    color: #181818;
+
+    font-family:
+        Arial,
+        "Helvetica Neue",
+        sans-serif;
+
+    font-size: 13px;
+}
+
+/* Evitar apariencia de hipervínculo */
+
+.agenda-fullcalendar .fc a {
+    color: inherit !important;
+
+    text-decoration: none !important;
+}
+
+/* =========================================================
+   ALTURA DEL CALENDARIO
+   ========================================================= */
+
+.agenda-fullcalendar .fc-view-harness {
+    min-height: 0 !important;
+
+    flex: 1 1 auto !important;
+}
+
+.agenda-fullcalendar .fc-view-harness-active {
+    height: auto !important;
+}
+
+.agenda-fullcalendar .fc-scrollgrid {
+    width: 100% !important;
+    height: 100% !important;
+
+    overflow: hidden;
+
+    border-color: #d8dde6;
+    border-radius: 6px;
+}
+
+.agenda-fullcalendar .fc-scrollgrid-section-body > td {
+    height: 100% !important;
+}
+
+.agenda-fullcalendar .fc-daygrid-body {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.agenda-fullcalendar .fc-scrollgrid-sync-table {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* =========================================================
+   BORDES
+   ========================================================= */
+
+.agenda-fullcalendar .fc-theme-standard td,
+.agenda-fullcalendar .fc-theme-standard th {
+    border-color: #dfe3e8;
+}
+
+/* =========================================================
+   ENCABEZADOS: DOM, LUN, MAR...
+   ========================================================= */
+
+/* El header es una tabla independiente del cuerpo. Debe ocupar el mismo
+   ancho incluso si FullCalendar se midió mientras su pestaña estaba oculta. */
+.agenda-fullcalendar .fc-col-header {
+    width: 100% !important;
+    table-layout: fixed !important;
+}
+
+.agenda-fullcalendar .fc-col-header-cell {
+    width: 14.285714%;
+    height: 36px;
+    text-align: center;
+
+    background: #ffffff;
+}
+
+.agenda-fullcalendar .fc-col-header-cell-cushion {
+    display: block;
+    text-align: center;
+
+    padding: 9px 4px;
+
+    color: #2e3340 !important;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    text-decoration: none !important;
+}
+
+/* =========================================================
+   CELDAS Y NÚMEROS DE DÍA
+   ========================================================= */
+
+.agenda-fullcalendar .fc-daygrid-day-frame {
+    height: 100%;
+
+    min-height: 0;
+}
+
+.agenda-fullcalendar .fc-daygrid-day-number {
+    padding: 8px 10px;
+
+    color: #252b37 !important;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    text-decoration: none !important;
+}
+
+.agenda-fullcalendar .fc-day-other {
+    background: #fbfbfc;
+}
+
+.agenda-fullcalendar
+.fc-day-other
+.fc-daygrid-day-number {
+    color: #b0b4bb !important;
+}
+
+.agenda-fullcalendar .fc-day-today {
+    background: #fffbea !important;
+}
+
+.agenda-fullcalendar
+.fc-day-today
+.fc-daygrid-day-number {
+    color: #0176d3 !important;
+}
+
+/* =========================================================
+   ETIQUETAS DE ACTIVIDADES
+   ========================================================= */
+
+.agenda-fullcalendar .fc-daygrid-event {
+    min-width: 0;
+
+    display: block !important;
+
+    margin: 2px 5px !important;
+    padding: 2px 6px !important;
+
+    overflow: hidden;
+
+    border-width: 1px !important;
+    border-style: solid !important;
+    border-radius: 4px !important;
+
+    background-image: none !important;
+
+    box-sizing: border-box;
+
+    box-shadow: none !important;
+
+    text-decoration: none !important;
+}
+
+.agenda-fullcalendar
+.fc-daygrid-block-event
+.fc-event-main {
+    color: inherit !important;
+}
+
+.agenda-fullcalendar .fc-event-main {
+    overflow: hidden;
+}
+
+/* Contenido personalizado creado en createEventContent */
+
+.agenda-fullcalendar .agenda-event-content {
+    width: 100%;
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    overflow: hidden;
+}
+
+.agenda-fullcalendar .agenda-event-dot {
+    width: 7px;
+    height: 7px;
+
+    display: inline-block;
+    flex: 0 0 7px;
+
+    border-radius: 50%;
+}
+
+.agenda-fullcalendar .agenda-event-label {
+    min-width: 0;
+
+    overflow: hidden;
+
+    color: inherit !important;
+
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 16px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* =========================================================
+   +N MÁS
+   ========================================================= */
+
+.agenda-fullcalendar .fc-daygrid-more-link {
+    display: block;
+
+    margin-top: 5px;
+    padding: 0 10px;
+
+    color: #0176d3 !important;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    text-decoration: none !important;
+}
+
+/* =========================================================
+   POPOVER
+   ========================================================= */
+
+.agenda-fullcalendar .fc-popover {
+    border: 1px solid #d8dde6;
+    border-radius: 6px;
+
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+.agenda-fullcalendar .fc-popover-header {
+    padding: 8px 10px;
+
+    background: #f3f6fa;
+}

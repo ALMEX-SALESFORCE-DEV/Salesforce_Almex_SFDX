@@ -11,7 +11,7 @@
         <inputParameters>
             <name>emailAddresses</name>
             <value>
-                <stringValue>sergio.garza@almidones.com.mx,carlos.trevino@almidones.com.mx,sagrario.torres@almidones.com.mx,itzia.anaya@almidones.com.mx,yuli.becerra@almidones.com.mx,elia.aguilar@almidones.com.mx,jaime.hermosillo@almidones.com.mx,luis.casillas@almidones.com.mx,blanca.peraza@almidones.com.mx,miguel.azori@almidones.com.mx,lilien.carpio@almidones.com.mx,juan.carlos@almidones.com.mx,juan.santoyo@almidones.com.mx,arturo.gomez@almidones.com.mx,oscar.medina@almidones.com.mx,jorge.lira@almidones.com.mx</stringValue>
+                <stringValue>sergio.garza@almidones.com.mx,carlos.trevino@almidones.com.mx,sagrario.torres@almidones.com.mx,itzia.anaya@almidones.com.mx,yuli.becerra@almidones.com.mx,elia.aguilar@almidones.com.mx,jaime.hermosillo@almidones.com.mx,blanca.peraza@almidones.com.mx,miguel.azori@almidones.com.mx,lilien.carpio@almidones.com.mx,juan.carlos@almidones.com.mx,juan.santoyo@almidones.com.mx,arturo.gomez@almidones.com.mx,oscar.medina@almidones.com.mx,jorge.lira@almidones.com.mx</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -26,7 +26,6 @@
         <inputParameters>
             <name>senderAddress</name>
             <value>
-                <inputConfiguratorMode>Custom</inputConfiguratorMode>
                 <stringValue>admin.apps@almidones.com.mx</stringValue>
             </value>
         </inputParameters>
@@ -81,7 +80,7 @@
         <inputParameters>
             <name>emailAddresses</name>
             <value>
-                <stringValue>sergio.garza@almidones.com.mx,carlos.trevino@almidones.com.mx,sagrario.torres@almidones.com.mx,itzia.anaya@almidones.com.mx,yuli.becerra@almidones.com.mx,elia.aguilar@almidones.com.mx,jaime.hermosillo@almidones.com.mx,luis.casillas@almidones.com.mx,blanca.peraza@almidones.com.mx,miguel.azori@almidones.com.mx,lilien.carpio@almidones.com.mx,juan.carlos@almidones.com.mx,juan.santoyo@almidones.com.mx,arturo.gomez@almidones.com.mx,oscar.medina@almidones.com.mx,jorge.lira@almidones.com.mx</stringValue>
+                <stringValue>sergio.garza@almidones.com.mx,carlos.trevino@almidones.com.mx,sagrario.torres@almidones.com.mx,itzia.anaya@almidones.com.mx,yuli.becerra@almidones.com.mx,elia.aguilar@almidones.com.mx,jaime.hermosillo@almidones.com.mx,blanca.peraza@almidones.com.mx,miguel.azori@almidones.com.mx,lilien.carpio@almidones.com.mx,juan.carlos@almidones.com.mx,juan.santoyo@almidones.com.mx,arturo.gomez@almidones.com.mx,oscar.medina@almidones.com.mx,jorge.lira@almidones.com.mx</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -96,7 +95,6 @@
         <inputParameters>
             <name>senderAddress</name>
             <value>
-                <inputConfiguratorMode>Custom</inputConfiguratorMode>
                 <stringValue>admin.apps@almidones.com.mx</stringValue>
             </value>
         </inputParameters>

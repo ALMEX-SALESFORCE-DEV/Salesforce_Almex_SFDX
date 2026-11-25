@@ -105,6 +105,11 @@
                 <label>PIPA_ALCOHOL</label>
             </value>
             <value>
+                <fullName>TOLVA_FULL</fullName>
+                <default>false</default>
+                <label>TOLVA_FULL</label>
+            </value>
+            <value>
                 <fullName>Camioneta</fullName>
                 <default>false</default>
                 <isActive>false</isActive>

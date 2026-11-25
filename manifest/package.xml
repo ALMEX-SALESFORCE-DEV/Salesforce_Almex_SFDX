@@ -21,6 +21,8 @@
         <name>AnimationRule</name>
     </types>
     <types>
+        <members>ALMEX_AgendaDataController</members>
+        <members>ALMEX_AgendaDataControllerTest</members>
         <members>ALMEX_FormPricesController</members>
         <members>ALMEX_FormPricesControllerTest</members>
         <members>ALMEX_MapDataController</members>
@@ -388,6 +390,22 @@
         <members>Account.Unidad_de_negocio__c</members>
         <members>Account.Uso_de_CFDI__c</members>
         <members>AccountContactRelation.Relationship_Strength__c</members>
+        <members>Actividad_de_Agenda__c.Actividad_Original__c</members>
+        <members>Actividad_de_Agenda__c.Ciudad__c</members>
+        <members>Actividad_de_Agenda__c.Cliente__c</members>
+        <members>Actividad_de_Agenda__c.Cuenta_para_frecuencia__c</members>
+        <members>Actividad_de_Agenda__c.Ejecutivo__c</members>
+        <members>Actividad_de_Agenda__c.Estado__c</members>
+        <members>Actividad_de_Agenda__c.Estatus__c</members>
+        <members>Actividad_de_Agenda__c.Fecha__c</members>
+        <members>Actividad_de_Agenda__c.Justificacion__c</members>
+        <members>Actividad_de_Agenda__c.Justificacion_de_excepcion__c</members>
+        <members>Actividad_de_Agenda__c.Notas__c</members>
+        <members>Actividad_de_Agenda__c.Prospecto__c</members>
+        <members>Actividad_de_Agenda__c.Seguimiento__c</members>
+        <members>Actividad_de_Agenda__c.Sucursal__c</members>
+        <members>Actividad_de_Agenda__c.Tipo_de_actividad__c</members>
+        <members>Actividad_de_Agenda__c.Titulo__c</members>
         <members>Case.Cantidad_programada__c</members>
         <members>Case.Descripci_n_motivo_del_caso__c</members>
         <members>Case.Fecha_de_env_o_programada__c</members>
@@ -576,6 +594,8 @@
         <members>Precio_productos__c.Ciudad__c</members>
         <members>Precio_productos__c.Consumo_mensual__c</members>
         <members>Precio_productos__c.Estado__c</members>
+        <members>Precio_productos__c.Fecha_fin_contrato__c</members>
+        <members>Precio_productos__c.Fecha_inicio_contrato__c</members>
         <members>Precio_productos__c.Lugar_fabricaci_n_ciudad__c</members>
         <members>Precio_productos__c.Lugar_fabricaci_n_estado__c</members>
         <members>Precio_productos__c.Municipio__c</members>
@@ -584,9 +604,11 @@
         <members>Precio_productos__c.Periodo_Anio__c</members>
         <members>Precio_productos__c.Periodo_Mes__c</members>
         <members>Precio_productos__c.Precio_producto__c</members>
+        <members>Precio_productos__c.Producto_importado__c</members>
         <members>Precio_productos__c.Proveedor__c</members>
         <members>Precio_productos__c.Tama_o_embarque__c</members>
         <members>Precio_productos__c.Tipo_consumo_toneladas__c</members>
+        <members>Precio_productos__c.Tipo_operacion_comercial__c</members>
         <members>Precio_productos__c.Tipo_subproducto__c</members>
         <members>Precio_productos__c.Unidad__c</members>
         <members>Pricebook2.Actualizacion_Manual__c</members>
@@ -889,6 +911,7 @@
         <members>Sucursal__c.Descripcion_de_requerimientos_especiales__c</members>
         <members>Sucursal__c.Estado__c</members>
         <members>Sucursal__c.Finalidades_de_direccion__c</members>
+        <members>Sucursal__c.Frecuencia_visitas__c</members>
         <members>Sucursal__c.ID_requerimiento_especial__c</members>
         <members>Sucursal__c.Industria__c</members>
         <members>Sucursal__c.Juego_de_direccion_de_cuenta__c</members>
@@ -957,6 +980,7 @@
         <members>ActionPlanItemDependency</members>
         <members>ActionPlanTmplItmAssessmentInd</members>
         <members>ActionPlnTmplItmDependency</members>
+        <members>Actividad_de_Agenda__c</members>
         <members>Activity</members>
         <members>Address</members>
         <members>AdvAccountForecastFact</members>
@@ -969,6 +993,8 @@
         <members>ApprovalSubmission</members>
         <members>ApprovalSubmissionDetail</members>
         <members>ApprovalWorkItem</members>
+        <members>AssessmentIndDefinedValue</members>
+        <members>AssessmentIndValue</members>
         <members>AssessmentIndicatorDefinition</members>
         <members>AssessmentTask</members>
         <members>AssessmentTaskContentDocument</members>
@@ -1345,6 +1371,7 @@
     </types>
     <types>
         <members>Account-es_MX</members>
+        <members>Actividad_de_Agenda__c-es_MX</members>
         <members>Documento__c-es_MX</members>
         <members>Factor__c-es_MX</members>
         <members>Fletes__c-es_MX</members>
@@ -1373,7 +1400,9 @@
         <name>CustomSite</name>
     </types>
     <types>
+        <members>ALMEX_Agendas</members>
         <members>ALMEX_FormPrices</members>
+        <members>Actividad_de_Agenda__c</members>
         <members>Documento__c</members>
         <members>Factor__c</members>
         <members>Fletes__c</members>
@@ -1618,6 +1647,10 @@
         <name>ExternalClientApplication</name>
     </types>
     <types>
+        <members>ALMEX_Banxico_Auth</members>
+        <name>ExternalCredential</name>
+    </types>
+    <types>
         <members>ALMEX_SF_API_plcy</members>
         <members>SF_API_V1_plcy</members>
         <name>ExtlClntAppConfigurablePolicies</name>
@@ -1776,6 +1809,7 @@
         <members>Oportunidad_Actualizaci_n_de_propietario</members>
         <members>Oportunidad_Relacion_lista_de_precios</members>
         <members>PFDEV01_Update_Status_When_Set_Status_Cerrado</members>
+        <members>ProductoDelAcuerdo_Actualizaci_n_Forecast</members>
         <members>ProductoDelAcuerdo_Actualizar_valores</members>
         <members>ProductoDelAcuerdo_Cantidad_en_decimales</members>
         <members>Prospecto_Envio_de_correo_Legal</members>
@@ -1852,6 +1886,7 @@
         <members>Oportunidad_Actualizaci_n_de_propietario</members>
         <members>Oportunidad_Relacion_lista_de_precios</members>
         <members>PFDEV01_Update_Status_When_Set_Status_Cerrado</members>
+        <members>ProductoDelAcuerdo_Actualizaci_n_Forecast</members>
         <members>ProductoDelAcuerdo_Actualizar_valores</members>
         <members>ProductoDelAcuerdo_Cantidad_en_decimales</members>
         <members>Prospecto_Envio_de_correo_Legal</members>
@@ -1962,9 +1997,12 @@
         <members>ActionPlanTemplateItemValue-Formato Valor de elemento de plantilla de plan de acción</members>
         <members>ActionPlanTemplateVersion-Formato Versión de plantilla de plan de acción</members>
         <members>ActionPlnTmplItmDependency-Formato Dependencia de elemento de plantilla de plan de acción</members>
+        <members>Actividad_de_Agenda__c-Actividad de Agenda Layout</members>
         <members>Address-Formato Dirección</members>
         <members>ApprovalSubmission-Formato Envío de aprobación</members>
         <members>ApprovalSubmissionDetail-Formato Detalle de envío de aprobación</members>
+        <members>AssessmentIndDefinedValue-%5F%5FMISSING LABEL%5F%5F PropertyFile - val AssessmentIndDefinedValue not found in section StandardLayouts</members>
+        <members>AssessmentIndValue-Formato de Valor de indicador de evaluación</members>
         <members>AssessmentIndicatorDefinition-Formato de Definición de indicador de evaluación</members>
         <members>AssessmentTask-Formato de Tarea de evaluación</members>
         <members>AssessmentTaskContentDocument-Formato de Documento de contenido de tarea de evaluación</members>
@@ -1972,6 +2010,7 @@
         <members>Asset-Asset Layout</members>
         <members>AssetRelationship-Asset Relationship Layout</members>
         <members>AssociatedLocation-Formato Ubicación asociada</members>
+        <members>AttributeDefinition-Formato Definición de atributo</members>
         <members>AttributePicklist-Formato Lista de selección de atributos</members>
         <members>AttributePicklistValue-Formato Valor de lista de selección de atributos</members>
         <members>BrowserPolicyViolation-Formato Infracción de política de navegador</members>
@@ -1999,6 +2038,8 @@
         <members>ContentVersion-Content Version</members>
         <members>Contract-Contract Layout</members>
         <members>ContractLineItem-Formato de partida de contrato</members>
+        <members>CostBook-Formato Libro de costos</members>
+        <members>CostBookEntry-Formato Entrada de libro de costos</members>
         <members>CspTrustedSite-Trusted URL Layout</members>
         <members>DocumentChecklistItem-Formato Elemento de lista de comprobación de documento</members>
         <members>DocumentType-Formato Tipo de documento</members>
@@ -2006,6 +2047,7 @@
         <members>Documento__c-Formato certificado de calidad</members>
         <members>Documento__c-Formato factura</members>
         <members>DuplicateRecordSet-Duplicate Record Set Layout</members>
+        <members>DynamicDataCapture-Formato Formulario</members>
         <members>EmailMessage-Email Message Layout</members>
         <members>EmpUserProvisionProcessErr-Formato Error de Proceso de aprovisionamiento de usuario empleado</members>
         <members>EmpUserProvisioningProcess-Formato Proceso de aprovisionamiento de usuario empleado</members>
@@ -2032,6 +2074,7 @@
         <members>LiveChatTranscriptActive-Formato de transcripción de chat %28en curso%29</members>
         <members>LiveChatTranscriptWaiting-Formato de transcripción de chat %28en espera%29</members>
         <members>Location-Formato Ubicación</members>
+        <members>LocationTrustMeasure-Formato Medición de confianza de ubicación</members>
         <members>Macro-Macro Layout</members>
         <members>ManagedContent-Formato Contenido gestionado</members>
         <members>ManagedContentVariant-Formato Variante de contenido gestionado</members>
@@ -2045,6 +2088,7 @@
         <members>Opportunity-Formato de pagina venta coproducto</members>
         <members>Opportunity-Formato de pagina venta spot</members>
         <members>Opportunity-Opportunity Layout</members>
+        <members>OpportunityContactRole-Formato Función del contacto de oportunidades</members>
         <members>OpportunityLineItem-Opportunity Product Layout</members>
         <members>Order-Order Layout</members>
         <members>OrderItem-Order Product Layout</members>
@@ -2061,10 +2105,15 @@
         <members>ProductCatalog-Formato Catálogo</members>
         <members>ProductCategory-Formato Categoría</members>
         <members>ProductCategoryProduct-Formato Producto de categoría de producto</members>
+        <members>ProductConsumed-Formato Producto consumido</members>
+        <members>ProductConsumedState-Formato Estado de producto consumido</members>
         <members>ProductItem-Formato Artículo de producto</members>
+        <members>ProductItemTransaction-Formato Transacción de artículo de producto</members>
         <members>ProductRequest-Product Request Layout</members>
         <members>ProductRequestLineItem-Product Request Line Item Layout</members>
+        <members>ProductRequired-Formato Producto requerido</members>
         <members>ProductTransfer-%5F%5FMISSING LABEL%5F%5F PropertyFile - val ProductTransfer not found in section StandardLayouts</members>
+        <members>ProductTransferState-Formato Estado de transferencia de producto</members>
         <members>ProfileSkill-Skill Layout</members>
         <members>ProfileSkillEndorsement-Endorsement Layout</members>
         <members>ProfileSkillUser-Skill User Layout</members>
@@ -2083,6 +2132,7 @@
         <members>ReturnOrder-Return Order Layout</members>
         <members>ReturnOrderLineItem-Return Order Line Item Layout</members>
         <members>SalesAgreement-Formato Acuerdo de ventas</members>
+        <members>SalesAgreementProdSchdAdj-Formato Ajuste de programación de producto de acuerdo de ventas</members>
         <members>SalesAgreementProduct-Formato Producto de acuerdo de ventas</members>
         <members>SalesAgreementProductSchedule-Formato Programación de producto de acuerdo de ventas</members>
         <members>SalesforceContract-Formato Contrato de Salesforce</members>
@@ -2091,9 +2141,14 @@
         <members>ScorecardAssociation-Scorecard Association Layout</members>
         <members>ScorecardMetric-Scorecard Metric Layout</members>
         <members>SerializedProduct-%5F%5FMISSING LABEL%5F%5F PropertyFile - val SerializedProduct not found in section StandardLayouts</members>
+        <members>ServiceAppointment-Formato Cita de servicio</members>
         <members>ServiceContract-Formato del contrato de servicio</members>
+        <members>ServiceCrew-Formato Plantilla de servicio</members>
+        <members>ServiceCrewMember-Formato Miembro de plantilla de servicio</members>
+        <members>ServiceRequestRelatedRecord-Formato Registro relacionado de solicitud de servicio</members>
         <members>ServiceResource-Formato Recurso de servicio</members>
         <members>Shipment-Formato Envío</members>
+        <members>ShipmentItem-Formato Artículo de envío</members>
         <members>Solution-Solution Layout</members>
         <members>Sucursal__c-Formato Sucursal</members>
         <members>Suministro__c-Formato Suministro</members>
@@ -2106,9 +2161,11 @@
         <members>UserProvisioningRequest-User Provisioning Request Layout</members>
         <members>Vehicle-Formato Vehículo</members>
         <members>VehicleDefinition-Formato Definición de vehículo</members>
+        <members>VideoCall-Formato Videollamada</members>
         <members>Visit-Formato de Visita</members>
         <members>VisitedParty-Formato de Parte visitada</members>
         <members>Visitor-Formato de Visitante</members>
+        <members>VoiceCall-Formato Llamada de voz</members>
         <members>WorkAccess-Access Layout</members>
         <members>WorkBadge-Badge Layout</members>
         <members>WorkBadge-Badge Received Layout 192</members>
@@ -2123,6 +2180,8 @@
         <members>WorkStepTemplate-Work Step Template Layout</members>
         <members>WorkThanks-Thanks Layout</members>
         <members>WorkType-%5F%5FMISSING LABEL%5F%5F PropertyFile - val WorkType not found in section StandardLayouts</members>
+        <members>WorkTypeGroup-Formato Grupo de tipo de trabajo</members>
+        <members>WorkTypeGroupMember-Formato Miembro de grupo de tipo de trabajo</members>
         <members>endpoint__mdt-Formato endpoint</members>
         <name>Layout</name>
     </types>
@@ -2131,6 +2190,12 @@
         <name>LeadConvertSettings</name>
     </types>
     <types>
+        <members>activityBreakdownDatatable</members>
+        <members>agendaActivityBreakdown</members>
+        <members>agendaCalendar</members>
+        <members>agendaServices</members>
+        <members>agendaUtils</members>
+        <members>agendas</members>
         <members>almex_FormProductPrices</members>
         <members>cotizadorAceites</members>
         <members>cotizadorImportados</members>
@@ -2139,6 +2204,10 @@
         <members>menuCotizadores</members>
         <members>pdfScreenFlow</members>
         <members>updateQuoteImportados</members>
+        <members>visitLog</members>
+        <members>visitLogActivityModal</members>
+        <members>visitLogDatatable</members>
+        <members>visitLogMonthCell</members>
         <name>LightningComponentBundle</name>
     </types>
     <types>
@@ -2151,6 +2220,7 @@
         <members>Account.Clientes_inactivos</members>
         <members>Account.MyAccounts</members>
         <members>AccountBrand.Todas_las_Marcas_de_cuentas</members>
+        <members>Actividad_de_Agenda__c.All</members>
         <members>Activity.MyActivities</members>
         <members>Activity.MyDelegatedActivities</members>
         <members>Activity.MyTeamsActivities</members>
@@ -2468,6 +2538,10 @@
         <name>ModerationRule</name>
     </types>
     <types>
+        <members>ALMEX_Banxico_API</members>
+        <name>NamedCredential</name>
+    </types>
+    <types>
         <members>Default_User_Profile_Menu1</members>
         <members>SFDC_Default_Navigation_ALMEXUU002dCLIENTES</members>
         <members>SFDC_Default_Navigation_ESWUU005fChatWebALMEXUU005f1750830639468</members>
@@ -2595,6 +2669,7 @@
         <members>Standard</members>
         <members>Supervisor de servicio</members>
         <members>Supervisor y Ejecutivo Comercial</members>
+        <members>System Administrator</members>
         <members>Usuario de comunidades</members>
         <members>portal de clientes ALMEX Perfil</members>
         <name>Profile</name>
@@ -3334,6 +3409,7 @@
         <members>AccountPlan</members>
         <members>ActionPlan</members>
         <members>ActionPlanTemplate</members>
+        <members>Actividad_de_Agenda__c</members>
         <members>ActivityRecurrence2</members>
         <members>ActivityRecurrence2Exception</members>
         <members>AdvAccountForecastFact</members>
@@ -3344,6 +3420,7 @@
         <members>AiJobRun</members>
         <members>AnalyticsUserAttrFuncTkn</members>
         <members>ApprovalSubmission</members>
+        <members>AssessmentIndValue</members>
         <members>AssessmentIndicatorDefinition</members>
         <members>AssessmentTask</members>
         <members>AssessmentTaskDefinition</members>
@@ -3632,7 +3709,9 @@
         <name>StandardValueSet</name>
     </types>
     <types>
+        <members>ALMEX_ContractCalendar</members>
         <members>ALMEX_MexicoLocations</members>
+        <members>ALMEX_USLocations</members>
         <members>AlmexGif</members>
         <members>Highmaps</members>
         <members>MexicoStatesMap</members>
@@ -3640,7 +3719,9 @@
         <members>SNA_oaofL_sf_default_cdn_ESW_Chat_web_prueba_17320480308811</members>
         <members>SNA_uCXBy_sf_default_cdn_ESW_ChatWebALMEX_17508306394681</members>
         <members>SiteSamples</members>
+        <members>agendaCalendarStyles</members>
         <members>custom_modal</members>
+        <members>fullCalendar</members>
         <members>logosPDF</members>
         <members>sheetjs</members>
         <name>StaticResource</name>
@@ -3656,6 +3737,7 @@
         <members>AccountForecastPeriodMetric</members>
         <members>AccountProductForecast</members>
         <members>AccountProductPeriodForecast</members>
+        <members>Actividad_de_Agenda__c</members>
         <members>AdvAccountForecastFact</members>
         <members>AdvAcctForecastFactAdj</members>
         <members>AdvAcctForecastSetPartner</members>
@@ -3923,6 +4005,7 @@
         <members>Oportunidad_Actualizaci_n_de_propietario</members>
         <members>Oportunidad_Relacion_lista_de_precios</members>
         <members>PFDEV01_Update_Status_When_Set_Status_Cerrado</members>
+        <members>ProductoDelAcuerdo_Actualizaci_n_Forecast</members>
         <members>ProductoDelAcuerdo_Actualizar_valores</members>
         <members>ProductoDelAcuerdo_Cantidad_en_decimales</members>
         <members>Prospecto_Envio_de_correo_Legal</members>
