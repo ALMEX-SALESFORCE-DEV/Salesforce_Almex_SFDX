@@ -351,6 +351,7 @@
         <members>standard__SalesforceCMS</members>
         <members>standard__Service</members>
         <members>standard__ServiceConsole</members>
+        <members>standard__Shield</members>
         <name>CustomApplication</name>
     </types>
     <types>
@@ -1098,6 +1099,7 @@
         <members>DuplicateRecordSet</members>
         <members>DynamicDataCapture</members>
         <members>EmailMessage</members>
+        <members>EmailMessageMigration</members>
         <members>EmpUserProvisionProcessErr</members>
         <members>EngagementAttendee</members>
         <members>EngagementInteraction</members>
@@ -1172,6 +1174,7 @@
         <members>MfgProgramCpntFrcstFact</members>
         <members>MfgProgramForecastFact</members>
         <members>MfgProgramVariantFrcstFact</members>
+        <members>MigratedEmail</members>
         <members>NetworkMember</members>
         <members>NetworkMemberChunk</members>
         <members>OmniComponentErrorLog</members>
@@ -1309,6 +1312,9 @@
         <members>SourceCodeRepoProvider</members>
         <members>SourceCodeRepository</members>
         <members>SourceCodeRepositoryBranch</members>
+        <members>StagedEmail</members>
+        <members>StagedUnmtchdEmailAddr</members>
+        <members>StagedUnmtchdEmailAddrRela</members>
         <members>StreamActivityAccess</members>
         <members>StreamingChannel</members>
         <members>Sucursal__c</members>
@@ -2312,6 +2318,7 @@
         <members>Event.MyTeamsUpcomingEvents</members>
         <members>Event.MyUpcomingEvents</members>
         <members>Event.TodaysAgenda</members>
+        <members>ExpressionSet.All_DiscoveryProcedures</members>
         <members>ExpressionSet.All_ExpressionSets</members>
         <members>ExpressionSet.All_ITServiceManagement</members>
         <members>ExpressionSet.All_PricingCalculationSchemas</members>
@@ -3305,6 +3312,7 @@
         <members>IndustriesInsurance</members>
         <members>IndustriesManufacturing</members>
         <members>IndustriesMfgSampleManagement</members>
+        <members>IndustriesPricing</members>
         <members>IndustriesUnifiedInventory</members>
         <members>InsuranceBrokerage</members>
         <members>InterestTagging</members>
