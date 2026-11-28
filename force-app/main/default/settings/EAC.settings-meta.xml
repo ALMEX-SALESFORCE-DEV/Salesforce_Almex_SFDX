@@ -5,14 +5,12 @@
     <autoPopulateGoogleMeetLinks>false</autoPopulateGoogleMeetLinks>
     <automatedEmailFilter>true</automatedEmailFilter>
     <dSThresholdNotification>true</dSThresholdNotification>
-    <enableActivityAnalyticsPref>false</enableActivityAnalyticsPref>
     <enableActivityCapture>true</enableActivityCapture>
-    <enableActivityMetrics>false</enableActivityMetrics>
     <enableActivitySyncEngine>true</enableActivitySyncEngine>
     <enableEACForEveryonePref>true</enableEACForEveryonePref>
     <enableEnforceEacSharingPref>false</enableEnforceEacSharingPref>
     <enableInboxActivitySharing>false</enableInboxActivitySharing>
-    <enableInsightsInTimeline>true</enableInsightsInTimeline>
+    <enableInsightsInTimeline>false</enableInsightsInTimeline>
     <enableInsightsInTimelineEacStd>false</enableInsightsInTimelineEacStd>
     <provisionProductivityFeatures>false</provisionProductivityFeatures>
     <relationshipGraphPref>true</relationshipGraphPref>
@@ -20,6 +18,6 @@
     <salesforceEventsOnlyPref>true</salesforceEventsOnlyPref>
     <sensitiveEmailFilter>true</sensitiveEmailFilter>
     <showEACCalendarPref>false</showEACCalendarPref>
-    <syncEmailToCoreActivity>false</syncEmailToCoreActivity>
+    <syncEmailToCoreActivity>true</syncEmailToCoreActivity>
     <syncInternalEvents>true</syncInternalEvents>
 </EACSettings>
